@@ -30,7 +30,7 @@
 
   <!-- id(이메일)로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, id, passwd, name, tel, zipcode, address1, address2, mdate, grade
+    SELECT memberno, id, passwd, name,address
     FROM member
     WHERE id = #{id}
   </select>
