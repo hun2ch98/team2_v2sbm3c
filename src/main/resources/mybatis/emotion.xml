@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.emotion.EmotionDAOInter">
+
+  <!-- 감정 등록 -->
+  <insert id="create" parameterType="dev.mvc.emotion.EmotionVO">
+    INSERT INTO emotion (emno, em_type, em_image)
+    VALUES (#{emno}, #{em_type}, #{em_image})
+  </insert>
+
+  <!-- 감정 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.emotion.EmotionVO">
+    SELECT emno, em_type, em_image
+    FROM emotion
+    WHERE emno = #{emno}
+  </select>
+
+  <!-- 수정 -->
+  <update id="update" parameterType="dev.mvc.emotion.EmotionVO">
+    UPDATE emotion
+    SET em_type = #{em_type}, em_image = #{em_image}
+    WHERE emno = #{emno}
+  </update>
+
+  <!-- 감정 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM emotion
+    WHERE emno = #{emno}
+  </delete>
+
+</mapper>
