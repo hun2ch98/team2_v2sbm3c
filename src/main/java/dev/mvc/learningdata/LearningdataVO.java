@@ -2,8 +2,8 @@ package dev.mvc.learningdata;
 
 public class LearningdataVO {
   /*
-  datano      NUMBER(100)       NOT NULL, --학습 데이터 번호
-  ethical     CHAR(1)             DEFAULT 'Y' NOT NULL, --도덕성 검증 여부
+  datano      NUMBER(10)       NOT NULL, --학습 데이터 번호
+  ethical     CHAR(1)            NOT NULL, --도덕성 검증 여부
   ques        VARCHAR(100)        NOT NULL, -- 학습 데이터 질문
   ans     VARCHAR(100)      NOT NULL --학습 데이터 답변
   */
