@@ -3,7 +3,6 @@ package dev.mvc.learningdata;
 public class LearningdataVO {
   /*
   datano      NUMBER(100)       NOT NULL, --학습 데이터 번호
-  data_type VARCHAR(100)      NOT NULL, --데이터 타입
   ethical     CHAR(1)             DEFAULT 'Y' NOT NULL, --도덕성 검증 여부
   ques        VARCHAR(100)        NOT NULL, -- 학습 데이터 질문
   ans     VARCHAR(100)      NOT NULL --학습 데이터 답변
@@ -11,8 +10,6 @@ public class LearningdataVO {
   
   /**학습 데이터 번호*/
   private int datano;
-  /**데이터 타입*/
-  private String data_type ="";
   /**데이터 등록일*/
   private String rdate = "";
   /**학습 데이터 질문*/
