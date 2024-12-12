@@ -4,7 +4,7 @@
 
 <mapper namespace="dev.mvc.emotion.EmotionDAOInter">
 
-  <!-- 감정 등록 -->
+  <!-- 감정 추가 -->
   <insert id="create" parameterType="dev.mvc.emotion.EmotionVO">
     INSERT INTO emotion (emno, em_type, em_image)
     VALUES (#{emno}, #{em_type}, #{em_image})
@@ -15,6 +15,12 @@
     SELECT emno, em_type, em_image
     FROM emotion
     WHERE emno = #{emno}
+  </select>
+
+  <select id="list_all" resultType="dev.mvc.emotion.EmotionVO">
+    SELECT emno, em_type, em_image
+    FROM emotion
+    ORDER BY emno
   </select>
 
   <!-- 수정 -->
