@@ -1,6 +1,6 @@
 package dev.mvc.emotion;
 
-public interface EmotionDAOInter {
+public interface EmotionProcInter {
   
   /**
    * 감정 생성
