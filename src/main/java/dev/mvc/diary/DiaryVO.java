@@ -15,7 +15,7 @@ import lombok.ToString;
 //);
 
 @Getter @Setter @ToString
-public class diary {
+public class DiaryVO {
   
   /** 일기 번호, Sequence를 통해 자동 생성 */
   private Integer diaryno;
@@ -31,6 +31,16 @@ public class diary {
   /** 날씨 테이블과 연결 */
   private Integer weather_code;
   
-  private String summary="";
+  /** 감정번호 */
+  private Integer emno;
+  
+  /** 대화번호 */
+  private Integer conversationno;
+  
+  /** 회원번호 */
+  private Integer memberno;
+  
+  /** 그림번호 */
+  private Integer illustno;
   
 }
