@@ -14,5 +14,4 @@ public class FeedbackVO {
   private String fcontent ="";
   /**작성 날짜*/
   private String rdate = "";
-  
 }
