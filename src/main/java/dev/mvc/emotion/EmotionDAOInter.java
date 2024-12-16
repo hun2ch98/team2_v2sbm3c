@@ -4,10 +4,10 @@ public interface EmotionDAOInter {
   
   /**
    * 감정 생성
-   * @param emotio1nVO
+   * @param emotionVO
    * @return
    */
-  public int create(EmotionVO emotio1nVO);
+  public int create(EmotionVO emotionVO);
   
   /**
    * 감정 조회
@@ -18,10 +18,10 @@ public interface EmotionDAOInter {
   
   /**
    * 수정
-   * @param emotio1nVO
+   * @param emotionVO
    * @return
    */
-  public int update(EmotionVO emotio1nVO);
+  public int update(EmotionVO emotionVO);
   
   /**
    * 감정 삭제
