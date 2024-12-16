@@ -25,7 +25,7 @@ public class MemberVO {
     /** 패스워드 */
     private String passwd = "";
     /** 이메일 주소 */
-    private String emai="";
+    private String email="";
     /** 회원 성명 */
     private String name = "";
     /** 회원 별명 */
