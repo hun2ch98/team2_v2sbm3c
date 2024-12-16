@@ -118,8 +118,6 @@ public class DiaryCont {
   public String list_all(Model model) {
     DiaryVO diaryVO = new DiaryVO();
     
-    // 카테고리 그룹 목록
-    ArrayList<String> list_genre = this.diaryProc.genreset();
     diaryVO.setIllustno(null);
     diaryVO.setEmno(null);
     diaryVO.setWeather_code(null);
@@ -142,8 +140,6 @@ public class DiaryCont {
     DiaryVO diaryVO = this.diaryProc.read(diaryno);
     model.addAttribute("diaryVO", diaryVO);
 
-    // ArrayList<DiaryVO> list = this.diaryProc.list_all();
-    // ArrayList<DiaryVO> list = this.diaryProc.list_search(word);
     ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
     model.addAttribute("list", list);
     model.addAttribute("word", word);
@@ -242,7 +238,7 @@ public class DiaryCont {
       ra.addAttribute("word", word); // redirect로 데이터 전송
       ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
 
-      return "redirect:/diary/update/" + diaryVO.getCateno(); // @GetMapping(value="/update/{diaryno}")
+      return "redirect:/diary/update/" + diaryVO.getDiaryno(); // @GetMapping(value="/update/{diaryno}")
     } else {
       model.addAttribute("code", "update_fail");
     }
@@ -307,9 +303,6 @@ public class DiaryCont {
         // 콘텐츠가 없을 경우 diary/delete.html로 이동
         return "/diary/delete";
       } else {
-        // 콘텐츠가 있을 경우 diary/list_all_delete.html로 이동
-        ArrayList<ContentsVO> contentsList = contentsProc.listByCateNo(diaryno);  // 해당 카테고리의 콘텐츠 리스트 불러오기
-        model.addAttribute("contentsList", contentsList);
         model.addAttribute("cnt", cnt);
         model.addAttribute("word", word);
         model.addAttribute("now_page", now_page);
@@ -486,80 +479,80 @@ public class DiaryCont {
     }
   }
 
-  
-  /**
-   * 등록 폼 및 검색 목록 + 페이징 http://localhost:9091/diary/list_search
-   * http://localhost:9091/diary/list_search?word=&now_page=
-   * http://localhost:9091/diary/list_search?word=까페&now_page=1
-   * 
-   * @param model
-   * @return
-   */
-  @GetMapping(value = "/list_search")
-  public String list_search_paging(HttpSession session, Model model,
-                                                      @RequestParam(name = "word", defaultValue = "") String word,
-                                                      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    if (this.memberProc.isMemberAdmin(session)) {
-      DiaryVO diaryVO = new DiaryVO();
-      // diaryVO.setGenre("분류");
-      // diaryVO.setName("카테고리 이름을 입력하세요."); // Form으로 초기값을 전달
-
-      // 카테고리 그룹 목록
-      ArrayList<String> list_genre = this.diaryProc.genreset();
-      diaryVO.setGenre(String.join("/", list_genre));
-
-      model.addAttribute("diaryVO", diaryVO);
-
-      word = Tool.checkNull(word);
-
-      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
-      model.addAttribute("list", list);
-
-//      ArrayList<DiaryVO> menu = this.diaryProc.list_all_diarygrp_y();
-//      model.addAttribute("menu", menu);
-      
-      for (DiaryVO diary : list) {
-        if (diary.getName().equals("--")) {  // 대분류인 경우
-            int totalCnt = 0;
-
-            // 중분류 카테고리에서 대분류에 속하는 자료 수를 합산
-            for (DiaryVO subCate : list) {
-                if (!subCate.getName().equals("--") && subCate.getGenre().equals(diary.getGenre())) {
-                    totalCnt += this.diaryProc.cntcount(subCate.getCateno());
-                    }
-                } 
-            diary.setCnt(totalCnt); // 대분류 카테고리의 자료 수 설정
-        } else {
-            int contentsCount = this.diaryProc.cntcount(diary.getCateno()); // 각 중분류 카테고리의 자료 수 조회
-            diary.setCnt(contentsCount); // DiaryVO 객체에 자료 수 설정
-        }
-      }
-
-
-      int search_cnt = this.diaryProc.list_search_count(word);
-      model.addAttribute("search_cnt", search_cnt);
-
-      model.addAttribute("word", word); // 검색어
-
-      // --------------------------------------------------------------------------------------
-      // 페이지 번호 목록 생성
-      // --------------------------------------------------------------------------------------
-      int search_count = this.diaryProc.list_search_count(word);
-      String paging = this.diaryProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
-          this.page_per_block);
-      model.addAttribute("paging", paging);
-      model.addAttribute("now_page", now_page);
-
-      // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-      int no = search_count - ((now_page - 1) * this.record_per_page);
-      model.addAttribute("no", no);
-      // --------------------------------------------------------------------------------------
-
-      return "/diary/list_search"; // /templates/diary/list_search.html
-    } else {
-      return "redirect:/member/login_cookie_need"; // redirect
-    }
-
-  }
+// 아래의 기능은 팀원들과의 상의가 필요함. 우리 앱의 일기 파트에서 유의미하게 검색 기능이 사용되는 순간이 없을 것 같다고 생각함.
+//  /**
+//   * 등록 폼 및 검색 목록 + 페이징 http://localhost:9091/diary/list_search
+//   * http://localhost:9091/diary/list_search?word=&now_page=
+//   * http://localhost:9091/diary/list_search?word=까페&now_page=1
+//   * 
+//   * @param model
+//   * @return
+//   */
+//  @GetMapping(value = "/list_search")
+//  public String list_search_paging(HttpSession session, Model model,
+//                                                      @RequestParam(name = "word", defaultValue = "") String word,
+//                                                      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//    if (this.memberProc.isMemberAdmin(session)) {
+//      DiaryVO diaryVO = new DiaryVO();
+//      // diaryVO.setGenre("분류");
+//      // diaryVO.setName("카테고리 이름을 입력하세요."); // Form으로 초기값을 전달
+//
+//      // 카테고리 그룹 목록
+//      ArrayList<String> list_genre = this.diaryProc.genreset();
+//      diaryVO.setTitle(String.join("/", list_genre));
+//
+//      model.addAttribute("diaryVO", diaryVO);
+//
+//      word = Tool.checkNull(word);
+//
+//      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
+//      model.addAttribute("list", list);
+//
+////      ArrayList<DiaryVO> menu = this.diaryProc.list_all_diarygrp_y();
+////      model.addAttribute("menu", menu);
+//      
+//      for (DiaryVO diary : list) {
+//        if (diary.getName().equals("--")) {  // 대분류인 경우
+//            int totalCnt = 0;
+//
+//            // 중분류 카테고리에서 대분류에 속하는 자료 수를 합산
+//            for (DiaryVO subCate : list) {
+//                if (!subCate.getName().equals("--") && subCate.getGenre().equals(diary.getGenre())) {
+//                    totalCnt += this.diaryProc.cntcount(subCate.getCateno());
+//                    }
+//                } 
+//            diary.setCnt(totalCnt); // 대분류 카테고리의 자료 수 설정
+//        } else {
+//            int contentsCount = this.diaryProc.cntcount(diary.getCateno()); // 각 중분류 카테고리의 자료 수 조회
+//            diary.setCnt(contentsCount); // DiaryVO 객체에 자료 수 설정
+//        }
+//      }
+//
+//
+//      int search_cnt = this.diaryProc.list_search_count(word);
+//      model.addAttribute("search_cnt", search_cnt);
+//
+//      model.addAttribute("word", word); // 검색어
+//
+//      // --------------------------------------------------------------------------------------
+//      // 페이지 번호 목록 생성
+//      // --------------------------------------------------------------------------------------
+//      int search_count = this.diaryProc.list_search_count(word);
+//      String paging = this.diaryProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
+//          this.page_per_block);
+//      model.addAttribute("paging", paging);
+//      model.addAttribute("now_page", now_page);
+//
+//      // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//      int no = search_count - ((now_page - 1) * this.record_per_page);
+//      model.addAttribute("no", no);
+//      // --------------------------------------------------------------------------------------
+//
+//      return "/diary/list_search"; // /templates/diary/list_search.html
+//    } else {
+//      return "redirect:/member/login_cookie_need"; // redirect
+//    }
+//
+//  }
 
 }
