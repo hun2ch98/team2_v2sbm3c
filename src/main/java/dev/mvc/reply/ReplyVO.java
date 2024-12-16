@@ -15,7 +15,7 @@ public class ReplyVO {
   private int replyno;
   /* 댓글 내용 */
   private String rcontent;
-  /* 댓글 날짜 */
+  /* 작성 날짜 */
   private String rdate;
   
 }
