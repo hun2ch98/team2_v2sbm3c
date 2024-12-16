@@ -31,7 +31,15 @@ public class DiaryCont {
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") 
   private MemberProcInter memberProc;
+  
+  /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
+  public int record_per_page = 10;
 
+  /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
+  public int page_per_block = 10;
+
+  /** 페이징 목록 주소 */
+  private String list_file_name = "/diary/list_search";
 
   public DiaryCont() {
     System.out.println("-> CateCont created.");
@@ -138,13 +146,6 @@ public class DiaryCont {
     // ArrayList<DiaryVO> list = this.diaryProc.list_search(word);
     ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
     model.addAttribute("list", list);
-
-//   ArrayList<DiaryVO> menu = this.diaryProc.list_all_diarygrp_y();
-//   model.addAttribute("menu", menu);
-
-    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-    model.addAttribute("menu", menu);
-
     model.addAttribute("word", word);
 
     // --------------------------------------------------------------------------------------
@@ -178,12 +179,6 @@ public class DiaryCont {
       // ArrayList<DiaryVO> list = this.diaryProc.list_all();
       ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
       model.addAttribute("list", list);
-
-//     ArrayList<DiaryVO> menu = this.diaryProc.list_all_diarygrp_y();
-//     model.addAttribute("menu", menu);
-
-      ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-      model.addAttribute("menu", menu);
 
       // 카테고리 그룹 목록
       ArrayList<String> list_genre = this.diaryProc.genreset();
@@ -291,12 +286,6 @@ public class DiaryCont {
       ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
       model.addAttribute("list", list);
 
-//     ArrayList<DiaryVO> menu = this.diaryProc.list_all_diarygrp_y();
-//     model.addAttribute("menu", menu);
-
-      ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-      model.addAttribute("menu", menu);
-
       model.addAttribute("cnt", cnt);  // 콘텐츠 개수 추가
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
@@ -337,8 +326,6 @@ public class DiaryCont {
   @PostMapping(value = "/delete_all_confirm")
   public String deleteAllCategory(@RequestParam (name="diaryno", defaultValue="0") int diaryno,
                                                        RedirectAttributes redirectAttributes) {
-    // 콘텐츠 삭제
-    contentsProc.deleteByCateNo(diaryno);
 
     // 카테고리 삭제
     diaryProc.delete(diaryno);
@@ -406,9 +393,6 @@ public class DiaryCont {
                   return "/diary/msg"; // 실패 메시지 출력
               }
           } else {
-              // 콘텐츠가 있을 경우 diary/list_all_delete.html로 이동하여 확인 요청
-              ArrayList<ContentsVO> contentsList = contentsProc.listByCateNo(diaryno); // 해당 카테고리의 콘텐츠 리스트 불러오기
-              model.addAttribute("contentsList", contentsList);
               model.addAttribute("cnt", cnt);
               model.addAttribute("word", word);
               model.addAttribute("now_page", now_page);
@@ -502,47 +486,7 @@ public class DiaryCont {
     }
   }
 
-//  /**
-//   * 등록 폼 및 검색 목록
-//   * http://localhost:9091/diary/list_search
-//   * http://localhost:9091/diary/list_search?word=
-//   * http://localhost:9091/diary/list_search?word=까페
-//   * @param model
-//   * @return
-//   */
-//  @GetMapping(value="/list_search") 
-//  public String list_search(Model model, 
-//                                   @RequestParam(name="word", defaultValue = "") String word) {
-//    DiaryVO diaryVO = new DiaryVO();
-//    // diaryVO.setGenre("분류");
-//    // diaryVO.setName("카테고리 이름을 입력하세요."); // Form으로 초기값을 전달
-//    
-//    // 카테고리 그룹 목록
-//    ArrayList<String> list_genre = this.diaryProc.genreset();
-//    diaryVO.setGenre(String.join("/", list_genre));
-//    
-//    model.addAttribute("diaryVO", diaryVO);
-//    
-//    word = Tool.checkNull(word);
-//    
-//    ArrayList<DiaryVO> list = this.diaryProc.list_search(word);
-//    model.addAttribute("list", list);
-//    
-////    ArrayList<DiaryVO> menu = this.diaryProc.list_all_diarygrp_y();
-////    model.addAttribute("menu", menu);
-//
-//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-//    model.addAttribute("menu", menu);
-//    
-//    int search_cnt = this.diaryProc.list_search_count(word);
-//    model.addAttribute("search_cnt", search_cnt);    
-//    
-//    model.addAttribute("word", word);  
-//    
-//    return "/diary/list_search";  // /templates/diary/list_search.html
-//  }
-//  
-
+  
   /**
    * 등록 폼 및 검색 목록 + 페이징 http://localhost:9091/diary/list_search
    * http://localhost:9091/diary/list_search?word=&now_page=
@@ -591,8 +535,6 @@ public class DiaryCont {
         }
       }
 
-      ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-      model.addAttribute("menu", menu);
 
       int search_cnt = this.diaryProc.list_search_count(word);
       model.addAttribute("search_cnt", search_cnt);
