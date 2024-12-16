@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.board.BoardDAOInter">
+
+  <!-- 게시글 추가 -->
+  <insert id="create" parameterType="dev.mvc.board.BoardVO">
+    INSERT INTO board (boardno, memberno, bcontent, rdate, board_cate, file1)
+    VALUES (board_seq.nextval, #{memberno}, #{bcontent}, sysdate, #{board_cate}, #{file1})
+  </insert>
+
+  <!-- 게시글 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.board.BoardVO">
+    SELECT boardno, memberno, bcontent, rdate, board_cate, file1
+    FROM board
+    WHERE boardno = #{boardno}
+  </select>
+
+  <select id="list_all" resultType="dev.mvc.board.BoardVO">
+    SELECT boardno, memberno, bcontent, rdate, board_cate, file1
+    FROM board
+    ORDER BY boardno
+  </select>
+
+  <!-- 게시글 내용 수정 -->
+  <update id="update" parameterType="dev.mvc.board.BoardVO">
+    UPDATE board
+    SET bcontent = #{bcontent}
+    WHERE boardno = #{boardno}
+  </update>
+
+  <!-- 게시글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM board
+    WHERE boardno = #{boardno}
+  </delete>
+
+</mapper>

@@ -7,7 +7,7 @@
   <!-- 감정 추가 -->
   <insert id="create" parameterType="dev.mvc.emotion.EmotionVO">
     INSERT INTO emotion (emno, em_type, em_image)
-    VALUES (#{emno}, #{em_type}, #{em_image})
+    VALUES (emotion_seq.nextval, #{em_type}, #{em_image})
   </insert>
 
   <!-- 감정 조회 -->
