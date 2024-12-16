@@ -7,132 +7,109 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.mvc.contents.ContentsDAOInter;
-
 // 알고리즘 구현
-@Service("dev.mvc.cate.CateProc")
+@Service("dev.mvc.diary.DiaryProc")
 public class DiaryProc implements DiaryProcInter {
-  @Autowired // CateDAOInter를 구현한 클래스의 객체를 자동으로 생성하여 cateDAO 객체에 할당
-  private DiaryDAOInter cateDAO;
+  @Autowired // DiaryDAOInter를 구현한 클래스의 객체를 자동으로 생성하여 diaryDAO 객체에 할당
+  private DiaryDAOInter diaryDAO;
   
   public DiaryProc() {
-    System.out.println("-> CateProc created.");
+    System.out.println("-> DiaryProc created.");
   }
   
   @Override
-  public int create(CateVO cateVO) {
-    int cnt = this.cateDAO.create(cateVO);
+  public int create(DiaryVO diaryVO) {
+    int cnt = this.diaryDAO.create(diaryVO);
     
     return cnt;
   }
 
   @Override
-  public ArrayList<CateVO> list_all() {
-    ArrayList<CateVO> list = this.cateDAO.list_all();
+  public ArrayList<DiaryVO> list_all() {
+    ArrayList<DiaryVO> list = this.diaryDAO.list_all();
     
     return list;
   }
 
   @Override
-  public CateVO read(Integer cateno) {
-    CateVO cateVO = this.cateDAO.read(cateno);
+  public DiaryVO read(Integer diaryno) {
+    DiaryVO diaryVO = this.diaryDAO.read(diaryno);
     
-    return cateVO;
+    return diaryVO;
   }
 
   @Override
-  public int update(CateVO cateVO) {
-    int cnt = this.cateDAO.update(cateVO);
+  public int update(DiaryVO diaryVO) {
+    int cnt = this.diaryDAO.update(diaryVO);
     
     return cnt;
   }
 
   @Override
-  public int delete(int cateno) {
-      int cnt = this.cateDAO.delete(cateno);
+  public int delete(int diaryno) {
+      int cnt = this.diaryDAO.delete(diaryno);
       return cnt;
   }
 
   @Override
-  public int update_seqno_forward(int cateno) {
-    int cnt = this.cateDAO.update_seqno_forward(cateno);
+  public int update_seqno_forward(int diaryno) {
+    int cnt = this.diaryDAO.update_seqno_forward(diaryno);
     return cnt;
   }
 
   @Override
-  public int update_seqno_backward(int cateno) {
-    int cnt = this.cateDAO.update_seqno_backward(cateno);
+  public int update_seqno_backward(int diaryno) {
+    int cnt = this.diaryDAO.update_seqno_backward(diaryno);
     return cnt;
   }
 
   @Override
-  public int update_visible_y(int cateno) {
-    int cnt = this.cateDAO.update_visible_y(cateno);
+  public int update_visible_y(int diaryno) {
+    int cnt = this.diaryDAO.update_visible_y(diaryno);
     return cnt;
   }
 
   @Override
-  public int update_visible_n(int cateno) {
-    int cnt = this.cateDAO.update_visible_n(cateno);
+  public int update_visible_n(int diaryno) {
+    int cnt = this.diaryDAO.update_visible_n(diaryno);
     return cnt;
   }
 
   @Override
-  public ArrayList<CateVO> list_all_categrp_y() {
-    ArrayList<CateVO> list = this.cateDAO.list_all_categrp_y();
+  public ArrayList<DiaryVO> list_all_diarygrp_y() {
+    ArrayList<DiaryVO> list = this.diaryDAO.list_all_diarygrp_y();
     
     return list;
   }
 
   @Override
-  public ArrayList<CateVO> list_all_cate_y(String genre) {
-    ArrayList<CateVO> list = this.cateDAO.list_all_cate_y(genre);
+  public ArrayList<DiaryVO> list_all_diary_y(String genre) {
+    ArrayList<DiaryVO> list = this.diaryDAO.list_all_diary_y(genre);
     
     return list;
   }
 
-  @Override
-  public ArrayList<CateVOMenu> menu() {
-    // 대분류+중분류의 결합 목록
-    ArrayList<CateVOMenu> menu = new ArrayList<CateVOMenu>();
-    
-    ArrayList<CateVO> genres = this.cateDAO.list_all_categrp_y(); // 대분류 목록 추출
-    for (CateVO cateVO:genres) {
-      CateVOMenu cateVOMenu = new CateVOMenu(); // 대분류+중분류의 결합 객체
-      
-      // System.out.println(cateVO.getGenre());
-      cateVOMenu.setGenre(cateVO.getGenre()); // 대분류명 저장
-      
-      // 카테고리 그룹(대분류)에 해당하는 카테고리 목록(중분류) 로딩
-      ArrayList<CateVO> list_name = this.cateDAO.list_all_cate_y(cateVO.getGenre());
-      cateVOMenu.setList_name(list_name);
-      
-      menu.add(cateVOMenu);
-    }
-    
-    return menu;
-  }
 
   @Override
   public ArrayList<String> genreset() {
-    ArrayList<String> list = this.cateDAO.genreset();
+    ArrayList<String> list = this.diaryDAO.genreset();
     return list;
   }
 
   @Override
-  public ArrayList<CateVO> list_search(String word) {
-    ArrayList<CateVO> list = this.cateDAO.list_search(word);
+  public ArrayList<DiaryVO> list_search(String word) {
+    ArrayList<DiaryVO> list = this.diaryDAO.list_search(word);
     return list;
   }
 
   @Override
   public Integer list_search_count(String word) {
-    int cnt = this.cateDAO.list_search_count(word);
+    int cnt = this.diaryDAO.list_search_count(word);
     return cnt;
   }
 
   @Override
-  public ArrayList<CateVO> list_search_paging(String word, int now_page, int record_per_page) {
+  public ArrayList<DiaryVO> list_search_paging(String word, int now_page, int record_per_page) {
     /*
      페이지당 10개의 레코드 출력
      1 page: WHERE r >= 1 AND r <= 10
@@ -157,7 +134,7 @@ public class DiaryProc implements DiaryProcInter {
     map.put("start_num", start_num);
     map.put("end_num", end_num);
     
-    ArrayList<CateVO> list = this.cateDAO.list_search_paging(map);
+    ArrayList<DiaryVO> list = this.diaryDAO.list_search_paging(map);
     // System.out.println("-> " + list.size());
     
     return list;
@@ -263,8 +240,8 @@ public class DiaryProc implements DiaryProcInter {
   }
   
   @Override
-  public int cntcount(int cateno) {
-      return cateDAO.cntcount(cateno);
+  public int cntcount(int diaryno) {
+      return diaryDAO.cntcount(diaryno);
   }
 
   
