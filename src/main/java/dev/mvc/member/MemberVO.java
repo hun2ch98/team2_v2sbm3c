@@ -20,7 +20,8 @@ public class MemberVO {
   
   public enum Role {
     ADMIN(1), 
-    MEMBER(0); // 회원 역할의 기본 값
+    MEMBER(0), // 회원 역할의 기본 값
+    GUEST(2); // GUEST 역할의 기본 값
     private final int value;
 
     Role(int value) {
@@ -48,7 +49,7 @@ public class MemberVO {
     private String birth = "";
     /** 주소 */
     private String address = "";
-    /** 역할 설정 : 0(회원), 1(관리자)만 허용 */
+    /** 역할 설정 : 0(회원), 1(관리자), 2(GUEST)만 허용 */
     private Role role = Role.MEMBER; //기본값   
     /** 프로필 이미지 */
     private String pf_img = "";
