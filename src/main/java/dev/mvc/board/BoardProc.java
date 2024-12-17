@@ -1,10 +1,18 @@
 package dev.mvc.board;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 
-@Service("dev.mvc.board.BoardProc")
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import dev.mvc.tool.Security;
+import dev.mvc.tool.Tool;
+
+@Component("dev.mvc.board.BoardProc")
 public class BoardProc implements BoardProcInter {
+  @Autowired
+  Security security;
+  
   @Autowired
   private BoardDAOInter boardDAO;
   
@@ -15,21 +23,30 @@ public class BoardProc implements BoardProcInter {
   @Override
   public int create(BoardVO boardVO) {
     int cnt = this.boardDAO.create(boardVO);
-    
     return cnt;
   }
   
   @Override
   public BoardVO read(int boardno) {
     BoardVO boardVO = this.boardDAO.read(boardno);
-    
     return boardVO;
   }
   
   @Override
-  public int update(BoardVO boardVO) {
-    int cnt = this.boardDAO.update(boardVO);
-    
+  public ArrayList<BoardVO> list_all() {
+    ArrayList<BoardVO> list = this.boardDAO.list_all();
+    return list;
+  }
+  
+  @Override
+  public int update_text(BoardVO boardVO) {
+    int cnt = this.boardDAO.update_text(boardVO);
+    return cnt;
+  }
+  
+  @Override
+  public int update_file(BoardVO boardVO) {
+    int cnt = this.boardDAO.update_file(boardVO);
     return cnt;
   }
 
@@ -38,6 +55,7 @@ public class BoardProc implements BoardProcInter {
       int cnt = this.boardDAO.delete(boardno);
       return cnt;
   }
+
 
 
 }

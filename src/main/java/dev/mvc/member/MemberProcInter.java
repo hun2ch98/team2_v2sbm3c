@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import jakarta.servlet.http.HttpSession;
 
-public class MemberProcInter {
+public interface MemberProcInter {
   /**
    * 중복 아이디 검사
    * @param id
