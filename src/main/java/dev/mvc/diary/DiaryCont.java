@@ -55,15 +55,20 @@ public class DiaryCont {
   // http://localhost:9091/diary/create/ X
   // http://localhost:9091/diary/create
   @GetMapping(value = "/create")
-  public String create(Model model, @RequestParam(name="emotion", defaultValue="") String emotion) {
+  public String create(Model model, 
+                                  @RequestParam(name="title", defaultValue="오늘의 제목") String title, 
+                                  @RequestParam(name="emotion", defaultValue="오늘의 기분") String emotion, 
+                                  @RequestParam(name="summary", defaultValue="오늘의 일기") String summary) {
     // create method에 사용될 테이블
+    // summary를 가져올 테이블
     DiaryVO diaryVO = new DiaryVO();
     EmotionVO emotionVO = new EmotionVO();
     
     model.addAttribute("diaryVO", diaryVO);
     model.addAttribute("emotionVO", emotionVO);
 
-    diaryVO.setTitle("오늘과 어울리는 제목을 선택해줘.");
+    diaryVO.setTitle(title);
+    diaryVO.setSummary(summary);
     emotionVO.setEm_type(emotion);
     
     return "/diary/create"; // /templates/diary/create.html
@@ -81,6 +86,7 @@ public class DiaryCont {
   @PostMapping(value = "/create")
   public String create(Model model, 
                                   @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+                                  @ModelAttribute("emotionVO") EmotionVO emotionVO, 
                                   //감정이나 코드 테이블의 VO 삽입할 곳
                                   //@ModelAttribute("VO") VO VO, 
                                   BindingResult bindingResult) {
@@ -91,9 +97,11 @@ public class DiaryCont {
     }
 
     diaryVO.setTitle(diaryVO.getTitle().trim());
+    emotionVO.setEm_type(emotionVO.getEm_type().trim());
+    diaryVO.setSummary(diaryVO.getSummary().trim());
     
     int cnt = this.diaryProc.create(diaryVO);
-    System.out.println("-> cnt: " + cnt);
+    System.out.println("-> create_cnt: " + cnt);
 
     if (cnt == 1) {
       // model.addAttribute("code", "create_success");
@@ -137,32 +145,41 @@ public class DiaryCont {
    * http://localhost:9091/diary/read/1
    */
   @GetMapping(value = "/read/{diaryno}")
-  public String read(Model model, @PathVariable("diaryno") Integer diaryno,
-                                @RequestParam(name = "word", defaultValue = "") String word,
-                                @RequestParam(name = "now_page", defaultValue = "") int now_page) {
-    DiaryVO diaryVO = this.diaryProc.read(diaryno);
-    model.addAttribute("diaryVO", diaryVO);
+  public String read(Model model, 
+                     @PathVariable("diaryno") Integer diaryno, 
+                     @RequestParam(name = "title", defaultValue = "") String title, 
+                     @RequestParam(name = "date", defaultValue = "") String date, 
+                     @RequestParam(name = "sort", defaultValue = "DESC") String sort, 
+                     @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
-    ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
-    model.addAttribute("list", list);
-    model.addAttribute("word", word);
+      DiaryVO diaryVO = this.diaryProc.read(diaryno);
+      model.addAttribute("diaryVO", diaryVO);
 
-    // --------------------------------------------------------------------------------------
-    // 페이지 번호 목록 생성
-    // --------------------------------------------------------------------------------------
-    int search_count = this.diaryProc.list_search_count(word);
-    String paging = this.diaryProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
-        this.page_per_block);
-    model.addAttribute("paging", paging);
-    model.addAttribute("now_page", now_page);
+      // 검색 및 정렬 수행
+      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(title.trim(), date.trim(), sort, now_page, this.record_per_page);
+      model.addAttribute("list", list);
 
-    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-    int no = search_count - ((now_page - 1) * this.record_per_page);
-    model.addAttribute("no", no);
-    // --------------------------------------------------------------------------------------
+      model.addAttribute("title", title);
+      model.addAttribute("date", date);
+      model.addAttribute("sort", sort);
 
-    return "/diary/read";
+      // 페이징 처리
+      int search_count = this.diaryProc.list_search_count(title.trim(), date.trim());
+      String paging = this.diaryProc.pagingBox(now_page, title, date, this.list_file_name, search_count, this.record_per_page, this.page_per_block);
+      model.addAttribute("paging", paging);
+      model.addAttribute("now_page", now_page);
+      
+
+      // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+      int no = search_count - ((now_page - 1) * this.record_per_page);
+      model.addAttribute("no", no);
+      // --------------------------------------------------------------------------------------
+
+      return "/diary/read";
   }
+
+
+  
 
   /**
    * 수정폼 http://localhost:9091/diary/update/1

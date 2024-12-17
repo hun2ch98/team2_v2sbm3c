@@ -118,9 +118,15 @@ public interface DiaryDAOInter {
    * @return
    */
   public ArrayList<DiaryVO> list_search_paging(Map<String, Object> map);
+
   
 
   public int cntcount(int diaryno);
+  
+  public ArrayList<DiaryVO> list_search(String title, String date);
+  
+  public Integer list_search_count(String title, String date);
+
 }
 
 
