@@ -3,14 +3,15 @@ package dev.mvc.member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import jakarta.servlet.http.HttpSession;
+import dev.mvc.tool.Security;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dev.mvc.tool.Security;
-import jakarta.servlet.http.HttpSession;
 
 @Component("dev.mvc.member.MemberProc") // Spring의 컴포넌트로 등록, DI(Dependency Injection)를 통해 사용
-public class MemberProc {
+public class MemberProc implements MemberProcInter{
   
   @Autowired // MemberDAOInter 타입의 빈을 자동 주입
   private MemberDAOInter memberDAO;
@@ -59,10 +60,10 @@ public class MemberProc {
   @Override
   public boolean isMember(HttpSession session){
     boolean sw = false; // 로그인하지 않은 것으로 초기화
-    String grade = (String)session.getAttribute("grade");
+    String role = (String)session.getAttribute("role");
     
-    if (grade != null) {
-      if (grade.equals("admin") || grade.equals("member")) {
+    if (role != null) {
+      if (role.equals("admin") || role.equals("member")) {
         sw = true;  // 로그인 한 경우
       }      
     }
@@ -76,10 +77,10 @@ public class MemberProc {
   @Override
   public boolean isMemberAdmin(HttpSession session){
     boolean sw = false; // 로그인하지 않은 것으로 초기화
-    String grade = (String)session.getAttribute("grade");
+    String role = (String)session.getAttribute("role");
     
-    if (grade != null) {
-      if (grade.equals("admin")) {
+    if (role != null) {
+      if (role.equals("admin")) {
         sw = true;  // 관리자 로그인 한 경우
       }      
     }
