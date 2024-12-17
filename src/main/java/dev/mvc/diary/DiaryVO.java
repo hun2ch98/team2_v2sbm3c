@@ -43,4 +43,8 @@ public class DiaryVO {
   /** 그림번호 */
   private Integer illustno;
   
+  /**
+   * test
+   */
+  
 }

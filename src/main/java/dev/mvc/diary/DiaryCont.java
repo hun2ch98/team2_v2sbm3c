@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
+import dev.mvc.emotion.EmotionVO;
 import dev.mvc.tool.Tool;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -54,15 +55,17 @@ public class DiaryCont {
   // http://localhost:9091/diary/create/ X
   // http://localhost:9091/diary/create
   @GetMapping(value = "/create")
-  public String create(Model model) {
+  public String create(Model model, @RequestParam(name="emotion", defaultValue="") String emotion) {
+    // create method에 사용될 테이블
     DiaryVO diaryVO = new DiaryVO();
+    EmotionVO emotionVO = new EmotionVO();
+    
     model.addAttribute("diaryVO", diaryVO);
+    model.addAttribute("emotionVO", emotionVO);
 
     diaryVO.setTitle("오늘과 어울리는 제목을 선택해줘.");
-    //null 대신 들어갈 값도 고려해봐야함.
-    diaryVO.setEmno(null);
-    // 감정이나 코드 테이블을 만들고 해당 테이블 VO에서 불러오는 것으로 바꿀 것.
-    //diaryVO.setEmno("오늘을 표현할 감정을 선택해줘."); 
+    emotionVO.setEm_type(emotion);
+    
     return "/diary/create"; // /templates/diary/create.html
   }
 
@@ -135,8 +138,8 @@ public class DiaryCont {
    */
   @GetMapping(value = "/read/{diaryno}")
   public String read(Model model, @PathVariable("diaryno") Integer diaryno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "") int now_page) {
+                                @RequestParam(name = "word", defaultValue = "") String word,
+                                @RequestParam(name = "now_page", defaultValue = "") int now_page) {
     DiaryVO diaryVO = this.diaryProc.read(diaryno);
     model.addAttribute("diaryVO", diaryVO);
 
