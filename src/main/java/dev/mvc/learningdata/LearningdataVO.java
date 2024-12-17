@@ -16,4 +16,5 @@ public class LearningdataVO {
   private String ques ="";
   /**학습 데이터 답변*/
   private String ans ="";
+  /**test*/
 }
