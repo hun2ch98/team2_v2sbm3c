@@ -95,14 +95,15 @@ public interface DiaryProcInter {
    * select id="list_search" resultType="dev.mvc.diary.DiaryVO" parameterType="String"
    * @return
    */
-  public ArrayList<DiaryVO> list_search(String word);  
+  public ArrayList<DiaryVO> list_search(String title, String date);  
   
   /**
    * 검색 갯수
-   * @param word
+   * @param title
+   * @param date
    * @return
    */
-  public Integer list_search_count(String word);
+  public Integer list_search_count(String title, String date);
   
   /**
    * 검색 + 페이징 목록
@@ -112,7 +113,7 @@ public interface DiaryProcInter {
    * @param record_per_page 페이지당 출력할 레코드 수
    * @return
    */
-  public ArrayList<DiaryVO> list_search_paging(String word, int now_page, int record_per_page);
+  public ArrayList<DiaryVO> list_search_paging(String title, String date, String sort, int now_page, int record_per_page);
 
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 
@@ -126,7 +127,7 @@ public interface DiaryProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */
-  String pagingBox(int now_page, String word, String list_file_name, int search_count, int record_per_page,
+  String pagingBox(int now_page, String title, String date, String list_file_name, int search_count, int record_per_page,
       int page_per_block);
   
 
