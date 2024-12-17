@@ -2,58 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- SB가 자동으로 구현하여 연동하는 interface -->
 <mapper namespace="dev.mvc.member.MemberDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+  
+  <!-- ID 중복 검사 -->
   <select id="checkID" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
     WHERE id=#{id}
   </select>
   
+  <!-- 회원 등록 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, address)
-    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email},  #{name}, #{nickname}, 
-                 #{birth}, #{address}, )
+    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, address, role, pf_img)
+    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{address}, #{role}, #{pf_img})
   </insert>
-
-  <!-- 관리자용 회원 정보 조회-->
-  <select id="list" resultType="dev.mvc.member.MemberVO">
-    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img
-    FROM member
-    ORDER BY memberno ASC
-  </select>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, id, passwd, name, address
+    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, role
     FROM member
     WHERE memberno = #{memberno}
-  </select>  
+  </select>
 
-  <!-- id(이메일)로 회원 정보 조회 -->
+  <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, id, passwd, name,address
+    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, role
     FROM member
     WHERE id = #{id}
   </select>
   
+  <!-- 회원 정보 수정 -->
   <update id="update" parameterType="dev.mvc.member.MemberVO">
     UPDATE member 
-    SET passwd=#{passwd}, name=#{name}, nickname=#{nickname}, address=#{address}, 
+    SET passwd=#{passwd}, name=#{name}, nickname=#{nickname}, address=#{address}
     WHERE memberno=#{memberno}
   </update>
   
+  <!-- 회원 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM member
     WHERE memberno=#{memberno}
   </delete>
 
-  <!-- 로그인, 1: 로그인 처리, 0: 메시지 출력 -->
+  <!-- 로그인 처리 (1: 성공, 0: 실패) -->
   <select id="login" resultType="int" parameterType="HashMap">
     SELECT COUNT(memberno) as cnt
     FROM member
     WHERE id=#{id} AND passwd=#{passwd}
   </select>
   
-  <!--  현재 패스워드 검사 -->
+  <!-- 현재 패스워드 검사 -->
   <select id="passwd_check" parameterType="HashMap" resultType="int">
     SELECT COUNT(memberno) as cnt
     FROM member
