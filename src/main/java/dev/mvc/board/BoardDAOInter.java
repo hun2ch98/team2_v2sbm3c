@@ -1,5 +1,7 @@
 package dev.mvc.board;
 
+import java.util.ArrayList;
+
 public interface BoardDAOInter {
   
   /**
@@ -17,11 +19,24 @@ public interface BoardDAOInter {
   public BoardVO read(int boardno);
   
   /**
+   * 모든 목록
+   * @return
+   */
+  public ArrayList<BoardVO> list_all();
+  
+  /**
    * 게시글 내용 수정
    * @param boardVO
    * @return
    */
-  public int update(BoardVO boardVO);
+  public int update_text(BoardVO boardVO);
+  
+  /**
+   * 파일 수정
+   * @param boardVO
+   * @return
+   */
+  public int update_file(BoardVO boardVO);
   
   /**
    * 게시글 삭제
