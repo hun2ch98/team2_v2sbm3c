@@ -8,7 +8,7 @@
       <ul>
         <li th:switch="${code}" class="li_none">
           <div th:case="create_success">
-            <span class="span_success" th:text="|${mname}(${id})님 회원 가입을 축하합니다.|"></span><br>
+            <span class="span_success" th:text="|${name}(${id})님 회원 가입을 축하합니다.|"></span><br>
             <button type='button'
                          th:attr="onclick=|location.href='./login?id=${id}'|" 
                          class="btn btn-primary btn-sm">로그인</button>
@@ -23,20 +23,20 @@
                     
           <div th:case="update_success">
             <span class="span_success">회원 정보 수정에 성공했습니다.</span><br>
-            수정된 회원 정보: <span th:text="${mname}"></span>
+            수정된 회원 정보: <span th:text="${name}"></span>
           </div>
           <div th:case="update_fail">
             <span class="span_fail">회원 정보 수정에 실패했습니다.</span><br>
-            수정 실패된 회원 정보: <span th:text="${mname}"></span>
+            수정 실패된 회원 정보: <span th:text="${name}"></span>
           </div>
           
           <div th:case="delete_success">
             <span class="span_success">회원 정보 삭제에 성공했습니다.</span><br>
-            삭제된 회원 정보: <span th:text="${mname}"></span> 
+            삭제된 회원 정보: <span th:text="${name}"></span> 
           </div>
           <div th:case="delete_fail">
             <span class="span_fail">회원 정보 삭제에 실패했습니다.</span><br>
-            삭제 실패된 회원 정보: <span th:text="${mname}"></span>
+            삭제 실패된 회원 정보: <span th:text="${name}"></span>
           </div>
           <div th:case="login_fail">
             <span class="span_fail">로그인에 실패했습니다. 다시 시도해주세요.</span><br>
