@@ -40,14 +40,14 @@ public interface ReplyProcInter {
    * @param map
    * @return
    */
-  public ArrayList<ReplyVO> list_by_boardno_search(HashMap<String, Object> hashMap);
+  public ArrayList<ReplyVO> list_by_boardno_search(HashMap<String, Object> map);
   
   /**
    * 게시물별 검색된 레코드 갯수
    * @param map
    * @return
    */
-  public int list_by_boardno_search_count(HashMap<String, Object> hashMap);
+  public int list_by_boardno_search_count(HashMap<String, Object> map);
   
   
   /**

@@ -53,14 +53,14 @@ public class ReplyProc implements ReplyProcInter {
   }
 
   @Override
-  public ArrayList<ReplyVO> list_by_boardno_search(HashMap<String, Object> hashMap) {
-    ArrayList<ReplyVO> list = this.replyDAO.list_by_replyno_search(hashMap);
+  public ArrayList<ReplyVO> list_by_boardno_search(HashMap<String, Object> map) {
+    ArrayList<ReplyVO> list = this.replyDAO.list_by_replyno_search(map);
     return list;
   }
 
   @Override
-  public int list_by_boardno_search_count(HashMap<String, Object> hashMap) {
-    int cnt = this.replyDAO.list_by_replyno_search_count(hashMap);
+  public int list_by_boardno_search_count(HashMap<String, Object> map) {
+    int cnt = this.replyDAO.list_by_replyno_search_count(map);
     return cnt;
   }
 
