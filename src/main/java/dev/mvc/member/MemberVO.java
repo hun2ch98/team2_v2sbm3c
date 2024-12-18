@@ -21,8 +21,14 @@ public class MemberVO {
     private String birth = "";
     /** 주소 */
     private String address = "";
+<<<<<<< HEAD
     /** 등급 */
     private int role = 0;
+=======
+    /** 역할 설정 : 0(회원), 1(관리자), 2(GUEST)만 허용 */
+    private int role = Role.MEMBER.getValue(); // 기본값을 숫자로 설정
+
+>>>>>>> main
     /** 프로필 이미지 */
     private String pf_img = "";
     /** 등록된 패스워드 */
