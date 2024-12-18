@@ -294,39 +294,44 @@ public class ReplyCont {
    * 댓글 조회
    * @return
    */
-  @GetMapping(value = "/read")
+  @GetMapping(value = "/read/{boardno}")
   public String read(Model model, 
-      @RequestParam(name="replyno", defaultValue = "0") int replyno, 
+      @PathVariable(name="boardno") int boardno, 
       @RequestParam(name="word", defaultValue = "") String word, 
       @RequestParam(name="now_page", defaultValue = "1") int now_page) {
-    
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
-
-    ReplyVO replyVO = this.replyProc.read(replyno);
-
-//    String title = contentsVO.getTitle();
-//    String content = contentsVO.getContent();
-//    
-//    title = Tool.convertChar(title);  // 특수 문자 처리
-//    content = Tool.convertChar(content); 
-//    
-//    contentsVO.setTitle(title);
-//    contentsVO.setContent(content);  
-
-    model.addAttribute("replyVO", replyVO);
-
-    BoardVO boardVO = this.boardProc.read(replyVO.getBoardno());
+    BoardVO boardVO = this.boardProc.read(boardno);
     model.addAttribute("boardVO", boardVO);
 
-    // 조회에서 화면 하단에 출력
-    // ArrayList<ReplyVO> reply_list = this.replyProc.list_contents(contentsno);
-    // mav.addObject("reply_list", reply_list);
+    // ArrayList<CateVO> list = this.cateProc.list_all();
+    // ArrayList<CateVO> list = this.cateProc.list_search(word);
+//    ArrayList<BoardVO> list = this.boardProc.list_search_paging(word, now_page, this.record_per_page);
+//    model.addAttribute("list", list);
 
-    model.addAttribute("word", word);
+//   ArrayList<CateVO> menu = this.cateProc.list_all_categrp_y();
+//   model.addAttribute("menu", menu);
+
+//    ArrayList<ReplyVOMenu> menu = this.cateProc.menu();
+//    model.addAttribute("menu", menu);
+//
+//    model.addAttribute("word", word);
+
+    // --------------------------------------------------------------------------------------
+    // 페이지 번호 목록 생성
+    // --------------------------------------------------------------------------------------
+    int search_count = this.replyProc.list_by_boardno_search_count(map);
+    String paging = this.replyProc.pagingBox(boardno, now_page, word, "/reply/list_by_boardno", search_count,
+        Reply.RECORD_PER_PAGE, Reply.PAGE_PER_BLOCK);
+    model.addAttribute("paging", paging);
     model.addAttribute("now_page", now_page);
 
-    return "/contents/read";
+    model.addAttribute("search_count", search_count);
+
+    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+    int no = search_count - ((now_page - 1) * Reply.RECORD_PER_PAGE);
+    model.addAttribute("no", no);
+    // --------------------------------------------------------------------------------------
+
+    return "/reply/read";
   }
 
   /**
