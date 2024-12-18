@@ -12,20 +12,20 @@
   
   <!-- 회원 등록 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, address, role, pf_img)
-    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{address}, #{role}, #{pf_img})
+    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, address, pf_img, mdate, grade)
+    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{address}, #{pf_img}, sysdate, #{grade})
   </insert>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, role
+    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, grade
     FROM member
     WHERE memberno = #{memberno}
   </select>
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, role
+    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, grade
     FROM member
     WHERE id = #{id}
   </select>
