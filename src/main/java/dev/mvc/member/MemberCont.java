@@ -56,14 +56,14 @@ public class MemberCont {
    * @param memberVO
    * @return
    */
-//  @GetMapping(value="/create") // http://localhost:9091/member/create
-//  public String create_form(Model model, 
-//                                      @ModelAttribute("memberVO") MemberVO memberVO) {
+  @GetMapping(value="/create") // http://localhost:9091/member/create
+  public String create_form(Model model, 
+                                      @ModelAttribute("memberVO") MemberVO memberVO) {
 //    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
-//    
-//    return "/member/create";    // /template/member/create.html
-//  }
+    
+    return "/member/create";    // /template/member/create.html
+  }
   
   @PostMapping(value="/create")
   public String create_proc(Model model,

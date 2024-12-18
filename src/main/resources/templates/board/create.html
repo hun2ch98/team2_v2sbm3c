@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${BoardVO.board_cate}" class="title_line_text"></span>
+    <span th:text="${BoardVO?.board_cate ?: '게시글 종류'}" class="title_line_text"></span>
     > 글 등록
   </div>
   
@@ -11,8 +11,7 @@
     <span class='menu_divide'>│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <!-- 관리자만 목록 버튼 표시 -->
-    <a th:if="${session.member.role == 1}" th:href="@{/board/list_all}">목록</a>
+    <a th:href="@{/board/list_all}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -22,23 +21,23 @@
     
     <div>
        <label>제목</label>
-       <input type='text' name='title' th:value="${BoardVO.title}" required="required" 
+       <input type='text' name='title' th:value="${BoardVO?.title ?: ''}" required="required" 
                  autofocus="autofocus" class="form-control" style='width: 100%;'>
     </div>
     <div>
        <label>내용</label>
-       <textarea name='bcontent' th:text="${BoardVO.bcontent}" required="required" 
+       <textarea name='bcontent' th:text="${BoardVO?.bcontent ?: ''}" required="required" 
                  class="form-control" rows="12" style='width: 100%;'></textarea>
     </div>
     <div>
        <label>게시글 종류</label>
-       <input type='text' name='board_cate' th:value="${BoardVO.board_cate}" required="required" 
+       <input type='text' name='board_cate' th:value="${BoardVO?.board_cate ?: '금지단어'}" required="required" 
                  class="form-control" style='width: 100%;'>
     </div>   
     <div>
        <label>파일 선택</label>
        <input type='file' class="form-control" name='file1MF' id='file1MF' 
-                 th:value="${BoardVO.file1}" placeholder="파일 선택">
+                 th:value="${BoardVO?.file1 ?: ''}" placeholder="파일 선택">
     </div>   
       
     <div class="content_body_bottom">
