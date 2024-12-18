@@ -29,7 +29,7 @@ public class BoardVO {
   private int boardno;
   
   /** 작성 멤버 */
-  private Integer memberno;
+  private int memberno;
   
   /** 게시글 제목*/
   @NotEmpty(message="제목 입력은 필수 사항입니다.")
