@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import dev.mvc.diary.DiaryProcInter;
-import dev.mvc.member.MemberVO.Role;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -71,8 +70,7 @@ public class MemberCont {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
-      // Role 열거형을 직접 지정하여 기본 회원 설정
-      memberVO.setRole(MemberVO.Role.MEMBER);
+      memberVO.setRole(10); // 기본 회원 10
    
       int cnt = this.memberProc.create(memberVO);
       
@@ -321,12 +319,12 @@ public class MemberCont {
       session.setAttribute("id", memverVO.getId());
       session.setAttribute("name", memverVO.getName());
       
-      if (memverVO.getRole().ordinal() >= Role.ADMIN.ordinal() && memverVO.getRole().ordinal() <= Role.ADMIN.ordinal() + 9) {
+      if (memverVO.getRole() >= 1 && memverVO.getRole() <= 10) {
         session.setAttribute("role", "admin");
-      } else if (memverVO.getRole().ordinal() >= Role.MEMBER.ordinal() && memverVO.getRole().ordinal() <= Role.MEMBER.ordinal() + 9) {
-          session.setAttribute("role", "member");
-      } else if (memverVO.getRole().ordinal() >= Role.GUEST.ordinal()) { // GUEST가 마지막 역할이라고 가정
-          session.setAttribute("role", "guest");
+      } else if (memverVO.getRole() >= 11 && memverVO.getRole() <= 20) {
+        session.setAttribute("role", "member");
+      } else if (memverVO.getRole() >= 21) {
+        session.setAttribute("role", "guest");
       }
 
       
