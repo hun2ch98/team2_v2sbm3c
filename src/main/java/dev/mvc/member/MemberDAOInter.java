@@ -3,7 +3,7 @@ package dev.mvc.member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MemberDAOInter {
+public interface MemberDAOInter {
   
   /**
    * 중복 아이디 검사

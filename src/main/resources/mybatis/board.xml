@@ -6,27 +6,35 @@
 
   <!-- 게시글 추가 -->
   <insert id="create" parameterType="dev.mvc.board.BoardVO">
-    INSERT INTO board (boardno, memberno, bcontent, rdate, board_cate, file1)
-    VALUES (board_seq.nextval, #{memberno}, #{bcontent}, sysdate, #{board_cate}, #{file1})
+    INSERT INTO board (boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1)
+    VALUES (board_seq.nextval, #{memberno}, #{title}, #{bcontent}, sysdate, #{board_cate}, #{file1}, #{file1saved}, #{thumb1}, #{size1})
   </insert>
 
   <!-- 게시글 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.board.BoardVO">
-    SELECT boardno, memberno, bcontent, rdate, board_cate, file1
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1
     FROM board
     WHERE boardno = #{boardno}
   </select>
 
+  <!-- 모든 목록 -->
   <select id="list_all" resultType="dev.mvc.board.BoardVO">
-    SELECT boardno, memberno, bcontent, rdate, board_cate, file1
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1
     FROM board
     ORDER BY boardno
   </select>
 
   <!-- 게시글 내용 수정 -->
-  <update id="update" parameterType="dev.mvc.board.BoardVO">
+  <update id="update_text" parameterType="dev.mvc.board.BoardVO">
     UPDATE board
-    SET bcontent = #{bcontent}
+    SET title=#{title}, bcontent = #{bcontent}, board_cate = #{board_cate}
+    WHERE boardno = #{boardno}
+  </update>
+  
+  <!-- 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.board.BoardVO">
+    UPDATE board
+    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
     WHERE boardno = #{boardno}
   </update>
 

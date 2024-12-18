@@ -1,7 +1,9 @@
 package dev.mvc.member;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -9,12 +11,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import dev.mvc.diary.DiaryProcInter;
+import dev.mvc.member.MemberVO.Role;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RequestMapping("/member")
@@ -50,14 +56,14 @@ public class MemberCont {
    * @param memberVO
    * @return
    */
-  @GetMapping(value="/create") // http://localhost:9091/member/create
-  public String create_form(Model model, 
-                                      @ModelAttribute("memberVO") MemberVO memberVO) {
-    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-    model.addAttribute("menu", menu);
-    
-    return "/member/create";    // /template/member/create.html
-  }
+//  @GetMapping(value="/create") // http://localhost:9091/member/create
+//  public String create_form(Model model, 
+//                                      @ModelAttribute("memberVO") MemberVO memberVO) {
+//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+//    model.addAttribute("menu", menu);
+//    
+//    return "/member/create";    // /template/member/create.html
+//  }
   
   @PostMapping(value="/create")
   public String create_proc(Model model,
@@ -65,13 +71,14 @@ public class MemberCont {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
-      memberVO.setGrade(15); // 기본 회원 15
+      // Role 열거형을 직접 지정하여 기본 회원 설정
+      memberVO.setRole(MemberVO.Role.MEMBER);
    
       int cnt = this.memberProc.create(memberVO);
       
       if (cnt == 1) {
         model.addAttribute("code", "create_success");
-        model.addAttribute("mname", memberVO.getMname());
+        model.addAttribute("mname", memberVO.getName());
         model.addAttribute("id", memberVO.getId());
       } else {
         model.addAttribute("code", "create_fail");
@@ -88,8 +95,8 @@ public class MemberCont {
   
   @GetMapping(value="/list")
   public String list(HttpSession session, Model model) {
-    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-    model.addAttribute("menu", menu);
+//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+//    model.addAttribute("menu", menu);
     
     if (this.memberProc.isMemberAdmin(session)) {
       ArrayList<MemberVO> list = this.memberProc.list();
@@ -157,7 +164,7 @@ public class MemberCont {
       
       if (cnt == 1) {
         model.addAttribute("code", "update_success");
-        model.addAttribute("mname", memberVO.getMname());
+        model.addAttribute("mname", memberVO.getName());
         model.addAttribute("id", memberVO.getId());
       } else {
         model.addAttribute("code", "update_fail");
@@ -242,8 +249,6 @@ public class MemberCont {
    */
   @GetMapping(value="/login")
   public String login_form(Model model, HttpServletRequest request) {
-    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-    model.addAttribute("menu", menu);
     
     // Cookie 관련 코드---------------------------------------------------------
     Cookie[] cookies = request.getCookies();
@@ -314,15 +319,16 @@ public class MemberCont {
       MemberVO memverVO = this.memberProc.readById(id);
       session.setAttribute("memberno", memverVO.getMemberno());
       session.setAttribute("id", memverVO.getId());
-      session.setAttribute("mname", memverVO.getMname());
+      session.setAttribute("name", memverVO.getName());
       
-      if (memverVO.getGrade() >= 1 && memverVO.getGrade() <= 10) {
-        session.setAttribute("grade", "admin");
-      } else if (memverVO.getGrade() >= 11 && memverVO.getGrade() <= 20) {
-        session.setAttribute("grade", "member");
-      } else if (memverVO.getGrade() >= 21) {
-        session.setAttribute("grade", "guest");
+      if (memverVO.getRole().ordinal() >= Role.ADMIN.ordinal() && memverVO.getRole().ordinal() <= Role.ADMIN.ordinal() + 9) {
+        session.setAttribute("role", "admin");
+      } else if (memverVO.getRole().ordinal() >= Role.MEMBER.ordinal() && memverVO.getRole().ordinal() <= Role.MEMBER.ordinal() + 9) {
+          session.setAttribute("role", "member");
+      } else if (memverVO.getRole().ordinal() >= Role.GUEST.ordinal()) { // GUEST가 마지막 역할이라고 가정
+          session.setAttribute("role", "guest");
       }
+
       
       // Cookie 관련 코드---------------------------------------------------------
       // -------------------------------------------------------------------
@@ -388,8 +394,8 @@ public class MemberCont {
    */
   @GetMapping(value="/passwd_update")
   public String passwd_update_form(HttpSession session, Model model) {
-    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-    model.addAttribute("menu", menu);
+//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+//    model.addAttribute("menu", menu);
     
     if (this.memberProc.isMember(session)) {
       int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기

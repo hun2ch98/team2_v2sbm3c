@@ -37,14 +37,14 @@ public class DiaryVO {
   /** 대화번호 */
   private Integer conversationno;
   
+  /** 요약일기  */
+  private String summary;
+  
   /** 회원번호 */
   private Integer memberno;
   
   /** 그림번호 */
   private Integer illustno;
-  
-  /**
-   * test
-   */
+
   
 }
