@@ -19,7 +19,7 @@ import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
 import dev.mvc.diary.DiaryProcInter;
-//import dev.mvc.diary.DiaryVOMenu;
+import dev.mvc.board.BoardVOMenu;
 import dev.mvc.diary.DiaryVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
@@ -50,13 +50,12 @@ public class BoardCont {
   /**
    * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
    * 전송
-   * 
    * @return
    */
   @GetMapping(value = "/post2get")
   public String post2get(Model model, 
       @RequestParam(name="url", defaultValue="") String url) {
-//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+//    ArrayList<BoardVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
 
     return url; // forward, /templates/...
@@ -93,7 +92,7 @@ public class BoardCont {
       @ModelAttribute("boardVO") BoardVO boardVO,
       RedirectAttributes ra) {
 
-    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+    if (memberProc.isMember(session)) { // 로그인한경우
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
@@ -284,7 +283,7 @@ public class BoardCont {
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
 
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+    if (this.memberProc.isMember(session)) { // 관리자로 로그인한경우
       BoardVO boardVO = this.boardProc.read(boardno);
       model.addAttribute("boardVO", boardVO);
 
@@ -317,7 +316,7 @@ public class BoardCont {
       ra.addAttribute("word", search_word);
       ra.addAttribute("now_page", now_page);
 
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
+    if (this.memberProc.isMember(session)) { // 관리자 로그인 확인
       HashMap<String, Object> map = new HashMap<String, Object>();
       map.put("contentsno", boardVO.getBoardno());
 
@@ -381,7 +380,7 @@ public class BoardCont {
                             @RequestParam(name="word", defaultValue="") String word, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
-    if (this.memberProc.isMemberAdmin(session)) {
+    if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       BoardVO boardVO_old = boardProc.read(boardVO.getBoardno());
 
@@ -462,7 +461,7 @@ public class BoardCont {
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
@@ -479,7 +478,7 @@ public class BoardCont {
       return "/board/delete"; // forward
       
     } else {
-      ra.addAttribute("url", "/admin/login_cookie_need");
+      ra.addAttribute("url", "/member/login_cookie_need");
       return "redirect:/board/msg"; 
     }
 

@@ -26,6 +26,4 @@ public class ReplyVO {
   private int recom;
   /** 관리자 권한의 회원 번호 */
   private int memberno;
-   
-  
 }
