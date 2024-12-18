@@ -30,9 +30,6 @@ public class BoardVO {
   
   /** 파일 업로드 */
   private String file1="";
-  
-  /**
-   * test
-   */
+
 
 }

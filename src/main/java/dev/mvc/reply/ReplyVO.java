@@ -8,8 +8,9 @@ public class ReplyVO {
   /*
    * replyno    NUMBER(10)    NOT NULL,
    * rcontent   VARCHAR(100)  NOT NULL,
-   * rdate      DATE          NOT NULL
-  댓글 */
+   * rdate      DATE          NOT NULL,
+   * fixed_at  DATE         NOT NULL
+   */
   
   /* 댓글 번호 */
   private int replyno;
@@ -17,5 +18,7 @@ public class ReplyVO {
   private String rcontent;
   /* 작성 날짜 */
   private String rdate;
+  /*수정 시간*/
+  private String fixed_at;
   
 }
