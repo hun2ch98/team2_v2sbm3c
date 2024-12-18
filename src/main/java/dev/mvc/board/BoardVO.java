@@ -44,7 +44,7 @@ public class BoardVO {
   private String rdate = "";
   
   /** 게시글 종류 */
-  private int board_cate;
+  private String board_cate="";
   
 <<<<<<< HEAD
 =======

@@ -5,19 +5,6 @@ import lombok.Setter;
 
 @Setter @Getter
 public class MemberVO {
-  /*
-  memberno NUMBER(100)       NOT NULL, -- 회원 번호, 레코드를 구분하는 컬럼 
-  id                VARCHAR(10)     NOT NULL UNIQUE, -- 아이디, 중복 안됨, 레코드를 구분
-  passwd       VARCHAR(255)   NOT NULL, -- 패스워드, 영숫자 조합, 암호화
-  email          VARCHAR(50)     NOT NULL UNIQUE,  -- 이메일, 중복 안됨, 비밀번호 찾기용(인증코드 전송)
-  name       VARCHAR(30)     NOT NULL, -- 성명, 한글 10자 저장 가능
-  nickname    VARCHAR(10)     NULL, -- 별명 
-  birth          VARCHAR(20)            NOT NULL, -- 생년월일
-  address       VARCHAR(100)     NULL, -- 주소 1 
-  role             NUMBER(1)            NOT NULL, -- 역할
-  pf_img  VARCHAR(255) NULL -- 프로필 이미지
-  */
-  
   public enum Role {
     ADMIN(1), 
     MEMBER(0), // 회원 역할의 기본 값
