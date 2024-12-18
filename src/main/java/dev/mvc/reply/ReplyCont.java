@@ -140,21 +140,16 @@ public class ReplyCont {
    * 조회 http://localhost:9091/cate/read/1
    */
   @GetMapping(value = "/read/{replyno}")
-  public String read(Model model, @PathVariable("cateno") Integer cateno,
+  public String read(Model model, @PathVariable("replyno") Integer replyno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "") int now_page) {
-    CateVO cateVO = this.cateProc.read(cateno);
-    model.addAttribute("cateVO", cateVO);
+    ReplyVO replyVO = this.replyProc.read(replyno);
+    model.addAttribute("replyVO", replyVO);
 
-    // ArrayList<CateVO> list = this.cateProc.list_all();
-    // ArrayList<CateVO> list = this.cateProc.list_search(word);
-    ArrayList<CateVO> list = this.cateProc.list_search_paging(word, now_page, this.record_per_page);
+    ArrayList<ReplyVO> list = this.replyProc.list_search_paging(word, now_page, this.record_per_page);
     model.addAttribute("list", list);
 
-//   ArrayList<CateVO> menu = this.cateProc.list_all_categrp_y();
-//   model.addAttribute("menu", menu);
-
-    ArrayList<CateVOMenu> menu = this.cateProc.menu();
+    ArrayList<ReplyVOMenu> menu = this.replyProc.menu();
     model.addAttribute("menu", menu);
 
     model.addAttribute("word", word);
@@ -162,8 +157,8 @@ public class ReplyCont {
     // --------------------------------------------------------------------------------------
     // 페이지 번호 목록 생성
     // --------------------------------------------------------------------------------------
-    int search_count = this.cateProc.list_search_count(word);
-    String paging = this.cateProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
+    int search_count = this.replyProc.list_search_count(word);
+    String paging = this.replyProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
         this.page_per_block);
     model.addAttribute("paging", paging);
     model.addAttribute("now_page", now_page);
@@ -173,7 +168,7 @@ public class ReplyCont {
     model.addAttribute("no", no);
     // --------------------------------------------------------------------------------------
 
-    return "/cate/read";
+    return "/reply/read";
   }
   
   /**
