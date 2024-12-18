@@ -16,6 +16,8 @@ public class ReplyVO {
   
   /* 댓글 번호 */
   private int replyno;
+  /** 게시판 번호*/
+  private int boardno;
   /* 댓글 내용 */
   private String rcontent;
   /* 작성 날짜 */
