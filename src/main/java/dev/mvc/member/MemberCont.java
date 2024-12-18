@@ -34,7 +34,7 @@ public class MemberCont {
   private DiaryProcInter diaryProc;
   
   public MemberCont() {
-    System.out.println("-> MemberCont created.");  
+    System.out.println("-> MemberCont created.");
   }
   
   @GetMapping(value="/checkID") // http://localhost:9091/member/checkID?id=admin
@@ -58,6 +58,8 @@ public class MemberCont {
   @GetMapping(value="/create") // http://localhost:9091/member/create
   public String create_form(Model model, 
                                       @ModelAttribute("memberVO") MemberVO memberVO) {
+    
+    System.out.println(memberVO);
 //    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
     
@@ -70,7 +72,7 @@ public class MemberCont {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
-      memberVO.setRole(10); // 기본 회원 10
+      memberVO.setGrade(10); // 기본 회원 10
    
       int cnt = this.memberProc.create(memberVO);
       
@@ -319,12 +321,12 @@ public class MemberCont {
       session.setAttribute("id", memverVO.getId());
       session.setAttribute("name", memverVO.getName());
       
-      if (memverVO.getRole() >= 1 && memverVO.getRole() <= 10) {
-        session.setAttribute("role", "admin");
-      } else if (memverVO.getRole() >= 11 && memverVO.getRole() <= 20) {
-        session.setAttribute("role", "member");
-      } else if (memverVO.getRole() >= 21) {
-        session.setAttribute("role", "guest");
+      if (memverVO.getGrade() >= 1 && memverVO.getGrade() <= 10) {
+        session.setAttribute("grade", "admin");
+      } else if (memverVO.getGrade() >= 11 && memverVO.getGrade() <= 20) {
+        session.setAttribute("grade", "member");
+      } else if (memverVO.getGrade() >= 21) {
+        session.setAttribute("grade", "guest");
       }
 
       
