@@ -5,21 +5,6 @@ import lombok.Setter;
 
 @Setter @Getter
 public class MemberVO {
-  public enum Role {
-    ADMIN(1), 
-    MEMBER(0), // 회원 역할의 기본 값
-    GUEST(2); // GUEST 역할의 기본 값
-    private final int value;
-
-    Role(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-        return value;
-    }
-} 
-
     /** 회원 번호 */
     private int memberno;
     /** 아이디(이메일) */
@@ -36,8 +21,8 @@ public class MemberVO {
     private String birth = "";
     /** 주소 */
     private String address = "";
-    /** 역할 설정 : 0(회원), 1(관리자), 2(GUEST)만 허용 */
-    private Role role = Role.MEMBER; //기본값   
+    /** 등급 */
+    private int role = 0;
     /** 프로필 이미지 */
     private String pf_img = "";
     /** 등록된 패스워드 */
