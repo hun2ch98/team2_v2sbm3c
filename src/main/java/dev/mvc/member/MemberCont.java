@@ -58,8 +58,6 @@ public class MemberCont {
   @GetMapping(value="/create") // http://localhost:9091/member/create
   public String create_form(Model model, 
                                       @ModelAttribute("memberVO") MemberVO memberVO) {
-    
-    System.out.println(memberVO);
 //    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
     
@@ -72,13 +70,13 @@ public class MemberCont {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
-      memberVO.setGrade(10); // 기본 회원 10
+      memberVO.setGrade(15); // 기본 회원 15
    
       int cnt = this.memberProc.create(memberVO);
       
       if (cnt == 1) {
         model.addAttribute("code", "create_success");
-        model.addAttribute("mname", memberVO.getName());
+        model.addAttribute("name", memberVO.getName());
         model.addAttribute("id", memberVO.getId());
       } else {
         model.addAttribute("code", "create_fail");
@@ -164,7 +162,7 @@ public class MemberCont {
       
       if (cnt == 1) {
         model.addAttribute("code", "update_success");
-        model.addAttribute("mname", memberVO.getName());
+        model.addAttribute("name", memberVO.getName());
         model.addAttribute("id", memberVO.getId());
       } else {
         model.addAttribute("code", "update_fail");
@@ -254,9 +252,9 @@ public class MemberCont {
     Cookie[] cookies = request.getCookies();
     Cookie cookie = null;
   
-    String ck_id = ""; // id 저장
+    String ck_id = "admin"; // id 저장
     String ck_id_save = ""; // id 저장 여부를 체크
-    String ck_passwd = ""; // passwd 저장
+    String ck_passwd = "1234"; // passwd 저장
     String ck_passwd_save = ""; // passwd 저장 여부를 체크
   
     if (cookies != null) { // 쿠키가 존재한다면
@@ -457,9 +455,9 @@ public class MemberCont {
    */
   @PostMapping(value="/passwd_update_proc")
   public String passwd_update_proc(HttpSession session, 
-                                                    Model model, 
-                                                    @RequestParam(value="current_passwd", defaultValue = "") String current_passwd, 
-                                                    @RequestParam(value="passwd", defaultValue = "") String passwd) {
+                                    Model model, 
+                                    @RequestParam(value="current_passwd", defaultValue = "") String current_passwd, 
+                                    @RequestParam(value="passwd", defaultValue = "") String passwd) {
     
     if (this.memberProc.isMember(session)) {
       int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
