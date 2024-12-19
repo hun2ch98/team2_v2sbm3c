@@ -1,0 +1,58 @@
+<!--/* 
+<div th:replace="~{reply/reply_list_all_com::reply_list_fragment}"></div> 
+'/reply/reply_list_all_com.html' 파일의 reply_list_fragment를 가져다 사용
+*/-->
+<div th:fragment="reply_list_fragment"> 
+  <table class="table table-hover" style="width: 100%;">
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 10%;'/>    
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">순서</th>
+        <th class="th_bs">이름</th>
+        <th class="th_bs">내용</th>
+        <th class="th_bs">등록일</th>
+        <th class="th_bs">추천수</th>
+        <th class="th_bs">기타</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="replyVO, status:${list}">
+        <td class="td_bs" th:text="${no-status.index}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/reply/read/${replyVO.replyno}?word=${word}&now_page=${now_page}|}" style="display:block;" th:text="${memberVO.name}"></a>
+        </td>
+        <td class="td_bs">
+          <a th:href="@{|/reply/read/${replyVO.replyno}?word=${word}&now_page=${now_page}|}" style="display:block;" th:text="${replyVO.rcontent}"></a>
+        </td>
+        <td class="td_bs" th:text="${replyVO.recom}"></td>
+        <td class="td_bs" th:text="${replyVO.rdate.substring(0, 10)}"></td>
+        <td class="td_bs">
+          <span th:text="${replyVO.seqno}"></span>
+          <span th:if="${replyVO.visible == 'Y'}">
+            <a th:href="@{|/reply/update_visible_n/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/show.png" class="icon" title="출력"></a>
+          </span>
+          <span th:if="${replyVO.visible == 'N'}">
+            <a th:href="@{|/reply/update_visible_y/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/hide.png" class="icon" title="숨김"></a>  
+          </span>
+          <a th:href="@{|/reply/update_seqno_forward/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/decrease.png" class="icon" title="우선순위 높임"></a>
+          <a th:href="@{|/reply/update_seqno_backward/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/increase.png" class="icon" title="우선순위 낮춤"></a>
+          <a th:href="@{|/reply/update/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/update.png" class="icon" title="수정"></a> <!-- /static 기준 -->
+          <a th:href="@{|/reply/delete/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="Bottom_menu" th:utext="${paging}"></div> 
+  <!-- 페이지 버튼 목록 출력 종료 -->
+ 
+</div>
+

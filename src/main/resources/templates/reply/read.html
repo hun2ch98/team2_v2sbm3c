@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${board.title }" class="title_line_text"></span > 
+    > 댓글 조회
+  </div>
+  <aside class="aside_right" th:if="${session.grade == 'admin'}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/reply/create?boardno=${boardVO.boardno}|}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/reply/update_text?boardno=${boardVO.boardno}&now_page=${now_page}&word=${word }|}">글 수정</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./delete?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}&boardno=${boardVO.boardno}|}">삭제</a>  
+ </aside> 
+  
+  <div class="container mt-3" style="width: 60%; margin: 5px auto;"> <!--/* mt-3: margin top 16px */-->
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        번호: <span th:text="${boardVO.boardno}" style="margin-right: 10px;"></span>
+        게시글 종류: <span th:text="${boardVO.board_cate}" style="margin-right: 10px;"></span>
+      </li>
+      <li class="list-group-item">게시글 제목: <span th:text="${boardVO.title}"></span></li>
+      <li class="list-group-item">게시글 내용: <span th:text="${boardVO.bcontent}"></span></li>
+      <li class="list-group-item">등록일: <span th:text="${boardVO.rdate}"></span></li>
+    </ul>  
+  </div>
+  
+  <!--/* '/reply/reply_list_all_com.html' 파일의 reply_list_fragment를 가져다 사용 */--> 
+  <div th:replace="~{board/reply_list_all_com::reply_list_fragment}"></div> 
+  
+</div>
+</html>

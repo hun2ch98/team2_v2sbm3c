@@ -39,14 +39,14 @@ public interface ReplyDAOInter {
    * @param map
    * @return
    */
-  public ArrayList<ReplyVO> list_by_replyno_search(HashMap<String, Object> hashMap);
+  public ArrayList<ReplyVO> list_by_replyno_search(HashMap<String, Object> map);
   
   /**
    * 카테고리별 검색된 레코드 갯수
    * @param map
    * @return
    */
-  public int list_by_replyno_search_count(HashMap<String, Object> hashMap);
+  public int list_by_replyno_search_count(HashMap<String, Object> map);
   
   /**
    * 카테고리별 검색 목록 + 페이징
@@ -60,7 +60,7 @@ public interface ReplyDAOInter {
    * @param hashMap
    * @return
    */
-  public int password_check(HashMap<String, Object> hashMap);
+  public int password_check(HashMap<String, Object> map);
   
   /**
    * 댓글 정보 수정
