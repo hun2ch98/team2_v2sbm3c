@@ -14,7 +14,14 @@ public interface ReplyProcInter {
    * @return
    */
   public int create(ReplyVO replyVO);
-
+  
+  /**
+   * 조회
+   * @param replyno
+   * @return
+   */
+  public ReplyVO read(int replyno);
+  
   /**
    * 모든 게시글의 등록된 댓글목록
    * @return
@@ -28,13 +35,7 @@ public interface ReplyProcInter {
    */
   public ArrayList<ReplyVO> list_by_replyno(int replyno);
   
-  /**
-   * 조회
-   * @param replyno
-   * @return
-   */
-  public ReplyVO read(int replyno);
-  
+
   /**
    * 게시물별 검색 목록
    * @param map
@@ -85,15 +86,8 @@ public interface ReplyProcInter {
    * @param replyVO
    * @return 처리된 레코드 갯수
    */
-  public int update_text(ReplyVO replyVO);
+  public int update(ReplyVO replyVO);
 
-  /**
-   * 파일 정보 수정
-   * @param replyVO
-   * @return 처리된 레코드 갯수
-   */
-  public int update_file(ReplyVO replyVO);
- 
   /**
    * 삭제
    * @param replyno

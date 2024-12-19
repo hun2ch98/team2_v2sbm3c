@@ -67,15 +67,8 @@ public interface ReplyDAOInter {
    * @param replyVO
    * @return 처리된 레코드 갯수
    */
-  public int update_text(ReplyVO replyVO);
+  public int update(ReplyVO replyVO);
 
-  /**
-   * 파일 정보 수정
-   * @param replyVO
-   * @return 처리된 레코드 갯수
-   */
-  public int update_file(ReplyVO replyVO);
- 
   /**
    * 삭제
    * @param replyno
