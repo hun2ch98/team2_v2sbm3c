@@ -57,7 +57,7 @@ public class DiaryCont {
   @GetMapping(value = "/create")
   public String create(Model model, 
                                   @RequestParam(name="title", defaultValue="오늘의 제목") String title, 
-                                  @RequestParam(name="emotion", defaultValue="오늘의 기분") String emotion, 
+                                  @RequestParam(name="emotion", defaultValue="0") int emotion, 
                                   @RequestParam(name="summary", defaultValue="오늘의 일기") String summary) {
     // create method에 사용될 테이블
     // summary를 가져올 테이블
@@ -69,7 +69,7 @@ public class DiaryCont {
 
     diaryVO.setTitle(title);
     diaryVO.setSummary(summary);
-    emotionVO.setEm_type(emotion);
+    diaryVO.setEmno(emotion);
     
     return "/diary/create"; // /templates/diary/create.html
   }
@@ -97,7 +97,7 @@ public class DiaryCont {
     }
 
     diaryVO.setTitle(diaryVO.getTitle().trim());
-    emotionVO.setEm_type(emotionVO.getEm_type().trim());
+    diaryVO.setEmno(diaryVO.getEmno());
     diaryVO.setSummary(diaryVO.getSummary().trim());
     
     int cnt = this.diaryProc.create(diaryVO);
