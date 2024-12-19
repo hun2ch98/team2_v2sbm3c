@@ -36,15 +36,15 @@
         <td class="td_bs">
           <span th:text="${replyVO.seqno}"></span>
           <span th:if="${replyVO.visible == 'Y'}">
-            <a th:href="@{|/reply/update_visible_n/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/reply/images/show.png" class="icon" title="출력"></a>
+            <a th:href="@{|/reply/update_visible_n/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/show.png" class="icon" title="출력"></a>
           </span>
           <span th:if="${replyVO.visible == 'N'}">
-            <a th:href="@{|/reply/update_visible_y/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/reply/images/hide.png" class="icon" title="숨김"></a>  
+            <a th:href="@{|/reply/update_visible_y/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/hide.png" class="icon" title="숨김"></a>  
           </span>
-          <a th:href="@{|/reply/update_seqno_forward/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/reply/images/decrease.png" class="icon" title="우선순위 높임"></a>
-          <a th:href="@{|/reply/update_seqno_backward/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/reply/images/increase.png" class="icon" title="우선순위 낮춤"></a>
-          <a th:href="@{|/reply/update/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/reply/images/update.png" class="icon" title="수정"></a> <!-- /static 기준 -->
-          <a th:href="@{|/reply/delete/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/reply/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+          <a th:href="@{|/reply/update_seqno_forward/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/decrease.png" class="icon" title="우선순위 높임"></a>
+          <a th:href="@{|/reply/update_seqno_backward/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/increase.png" class="icon" title="우선순위 낮춤"></a>
+          <a th:href="@{|/reply/update/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/update.png" class="icon" title="수정"></a> <!-- /static 기준 -->
+          <a th:href="@{|/reply/delete/${replyVO.replyno}?word=${word}&now_page=${now_page}|}"><img src="/images/reply/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
         </td>
       </tr>
     </tbody>

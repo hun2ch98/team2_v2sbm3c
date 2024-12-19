@@ -22,7 +22,7 @@ public class MemberVO {
     /** 주소 */
     private String address = "";
     /** 등급 */
-    private int role = 0;
+    private int grade = 0;
     /** 프로필 이미지 */
     private String pf_img = "";
     /** 등록된 패스워드 */

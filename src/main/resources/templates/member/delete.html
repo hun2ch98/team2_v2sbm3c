@@ -13,7 +13,7 @@
     }    
   </script>
 
-  <div class="title_line">회원 정보 조회 및 수정(*: 필수) > <span th:text="@{|${memberVO.mname} (${memberVO.id})|}"></span></div>
+  <div class="title_line">회원 정보 조회 및 수정(*: 필수) > <span th:text="@{|${memberVO.name} (${memberVO.id})|}"></span></div>
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span> 
@@ -29,7 +29,7 @@
       <input type="hidden" name="memberno" th:value="${memberVO.memberno}">
       
       <div class="msg_warning">회원 정보는 삭제하면 복구 할 수 없습니다.<br>그래도 사제하시겠습니까?</div>
-      <div style='text-align: center;'>회원 이름: <span th:text="${memberVO.mname}"></span></div>
+      <div style='text-align: center;'>회원 이름: <span th:text="${memberVO.name}"></span></div>
       
       <div class="content_body_bottom">
         <button type="button" onclick="send();" class="btn btn-secondary btn-sm">삭제</button>

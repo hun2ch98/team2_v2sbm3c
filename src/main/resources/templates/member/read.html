@@ -5,7 +5,7 @@
 <div layout:fragment="content">
   <script>
     window.onload = () => {
-      document.querySelector('#mname').addEventListener('keypress', (event) => {
+      document.querySelector('#name').addEventListener('keypress', (event) => {
       // document.getElementById('passwd').addEventListener('keypress', (event) => {
         if(event.key === 'Enter') {
           document.getElementById('tel').focus();
@@ -93,7 +93,7 @@
                   class="form-control form-control-sm">
       </div>   
 
-<!-- ------------------------------ DAUM 우편번호 API 시작 ------------------------------ -->
+<!-- ------------------------------ DAUM 우편번호 API 시작 ------------------------------ 
     <div>
 <div id="wrap" style="display:none;border:1px solid;width:500px;height:300px;margin:5px 0;position:relative">
 <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnFoldWrap" style="cursor:pointer;position:absolute;right:0px;top:-1px;z-index:1" onclick="foldDaumPostcode()" alt="접기 버튼">
@@ -181,7 +181,7 @@
 </script>
 
     </div>
-<!-- ------------------------------ DAUM 우편번호 API 종료 ------------------------------ -->
+------------------------------ DAUM 우편번호 API 종료 ------------------------------ -->
 
       <div class="content_body_bottom">
         <button type="button" onclick="send();" class="btn btn-secondary btn-sm">저장</button>
