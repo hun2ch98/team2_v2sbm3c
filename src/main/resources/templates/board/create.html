@@ -11,7 +11,7 @@
     <span class='menu_divide'>│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/board/list_all}">목록</a>
+    <a th:href="@{/board/list_by_boardno}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -30,10 +30,22 @@
                   class="form-control" rows="12" style="width: 100%;"></textarea>
     </div>
     <div>
-        <label>게시글 종류</label>
-        <input type="text" name="board_cate" th:value="${BoardVO?.board_cate ?: '기본 종류'}" required="required"
-               class="form-control" style="width: 100%;">
+    <label>게시글 종류</label>
+    <select id="board_cate" name="board_cate" class="form-control" required="required">
+        <!-- 기본값 -->
+        <option value="" selected="selected">문의사항</option>
+        
+        <!-- 옵션 목록 -->
+        <option th:value="'금지 단어'" th:selected="${BoardVO?.board_cate == '금지 단어'}">금지 단어</option>
+        <option th:value="'문의사항'" th:selected="${BoardVO?.board_cate == '문의사항'}">문의사항</option>
+    </select>
+    
+    <!-- 유효성 검사 오류 메시지 -->
+        <div th:if="${#fields.hasErrors('board_cate')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+            <div th:each="err: ${#fields.errors('board_cate')}" th:text="${err}"></div>
+        </div>
     </div>
+
     <div>
         <label>파일 선택</label>
         <input type="file" class="form-control" name="file1MF" id="file1MF"

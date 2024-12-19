@@ -5,33 +5,39 @@
   <div class="message">
     <fieldset class="fieldset_basic">
       <ul>
-        <li class="li_none">
-          <!-- 성공/실패 메시지 표시 -->
-          <div th:if="${message != null}">
-            <span th:classappend="${code == 'create_success'} ? 'span_success' : 'span_fail'" 
-                  th:text="${message}"></span>
+        <li th:switch="${code}" class="li_none">
+          <div th:case="create_fail">
+            <span class="span_fail">알수 없는 원인으로 등록에 실패했습니다.</span><br>
+            다시 시도해주세요.
           </div>
+          
+          <div th:case="update_fail">
+            <span class="span_fail">게시글 수정에 실패했습니다.</span><br>
+          </div>
+          
+          <div th:case="update_fail">
+            <span class="span_fail">파일 수정에 실패했습니다.</span><br>
+          </div>
+          
+          <div th:case="delete_success">
+            <span class="span_success">카테고리 삭제에 성공했습니다.</span><br>
+            삭제된 카테고리: <span th:text="${title}"></span> 
+            <span th:if="${titlesub != '-'}" th:text="' - ' + ${titlesub}"></span>
+          </div>
+          <div th:case="delete_fail">
+            <span class="span_fail">카테고리 삭제에 실패했습니다.</span><br>
+            삭제 실패된 카테고리: <span th:text="${title}"></span>
+            <span th:if="${titlesub != '-'}" th:text="' - ' + ${titlesub}"></span> 
+          </div>
+
         </li>
         
         <li class="li_none">
-          <!-- 성공 시 버튼 -->
-          <div th:if="${code == 'create_success'}">
-            <button type="button" 
-                    th:onclick="|location.href='/board/read?boardno=${boardno}'|" 
-                    class="btn btn-primary btn-sm">조회</button>
-            <button type="button" 
-                    onclick="location.href='/board/list_all'" 
-                    class="btn btn-secondary btn-sm">전체 목록</button>
+          <div th:if="${cnt == 0}">
+            <button type="button" onclick="history.back()" class="btn btn-secondary btn-sm">다시 시도</button>
           </div>
-
-          <!-- 실패 시 버튼 -->
-          <div th:if="${code == 'create_fail'}">
-            <button type="button" 
-                    onclick="history.back()" 
-                    class="btn btn-secondary btn-sm">다시 시도</button>
-            <button type="button" 
-                    onclick="location.href='/board/list_all'" 
-                    class="btn btn-secondary btn-sm">전체 목록</button>
+          <div th:if="${cnt != 0}">
+            <button type="button" onclick="location.href='./list_by_boardno'" class="btn btn-secondary btn-sm">목록</button>
           </div>
         </li>
       </ul>

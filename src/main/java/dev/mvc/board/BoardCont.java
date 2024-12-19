@@ -89,54 +89,59 @@ public class BoardCont {
                        @ModelAttribute("boardVO") BoardVO boardVO,
                        RedirectAttributes ra) {
 
-      // ------------------------------------------------------------------------------
-      // 파일 전송 코드 시작
-      // ------------------------------------------------------------------------------
-      String file1 = ""; // 원본 파일명
-      String file1saved = ""; // 저장된 파일명
-      String thumb1 = ""; // 미리보기 이미지
+      String file1 = ""; 
+      String file1saved = ""; 
+      String thumb1 = ""; 
       long size1 = 0;
 
-      String upDir = Board.getUploadDir(); // 업로드 폴더 경로
-      System.out.println("-> upDir: " + upDir);
+      String upDir = Board.getUploadDir(); 
 
-      MultipartFile mf = boardVO.getFile1MF(); // 업로드된 파일 가져오기
-      if (mf != null && !mf.isEmpty()) { // 파일이 있을 때만 처리
+      MultipartFile mf = boardVO.getFile1MF(); 
+      if (mf != null && !mf.isEmpty()) { 
           file1 = mf.getOriginalFilename();
           size1 = mf.getSize();
 
-          if (Tool.checkUploadFile(file1)) { // 유효한 파일 형식인지 확인
-              file1saved = Upload.saveFileSpring(mf, upDir); // 파일 저장
+          if (Tool.checkUploadFile(file1)) { 
+              file1saved = Upload.saveFileSpring(mf, upDir); 
               if (Tool.isImage(file1saved)) {
-                  thumb1 = Tool.preview(upDir, file1saved, 200, 150); // 미리보기 생성
+                  thumb1 = Tool.preview(upDir, file1saved, 200, 150); 
               }
           } else {
               ra.addFlashAttribute("code", "check_upload_file_fail");
-              return "redirect:/board/msg"; // 파일 형식 오류 시 리다이렉트
+              return "redirect:/board/msg"; 
           }
       }
 
-      // 파일 관련 필드 설정
       boardVO.setFile1(file1);
       boardVO.setFile1saved(file1saved);
       boardVO.setThumb1(thumb1);
       boardVO.setSize1(size1);
 
-      // ------------------------------------------------------------------------------
-      // 파일 전송 코드 종료
-      // ------------------------------------------------------------------------------
-
-      int memberno = 1; // 고정된 회원 번호 설정 (로그인 체크 제거)
-      boardVO.setMemberno(memberno); // 게시글 작성자 설정
+      int memberno = 1; 
+      boardVO.setMemberno(memberno); 
 
       int cnt = this.boardProc.create(boardVO);
       if (cnt == 1) {
-          ra.addAttribute("boardno", boardVO.getBoardno()); // 게시글 번호 전달
-          return "redirect:/board/read"; // 게시글 조회 화면으로 이동
+          ra.addAttribute("boardno", boardVO.getBoardno()); 
+          ra.addAttribute("now_page", 1); 
+          return "redirect:/board/list_by_boardno"; 
       } else {
           ra.addFlashAttribute("code", "create_fail");
-          return "redirect:/board/msg"; // 등록 실패 시 메시지 페이지로 이동
+          return "redirect:/board/msg"; 
       }
+  }
+  
+  /**
+   * 게시글 목록 페이지
+   * @param boardno
+   * @param model
+   * @return
+   */
+  @GetMapping("/list_by_boardno")
+  public String listByBoardno(@RequestParam(name = "boardno", defaultValue = "0") int boardno, Model model) {
+      ArrayList<BoardVO> list = this.boardProc.list_by_boardno(boardno);
+      model.addAttribute("list", list);
+      return "/board/list_by_boardno";
   }
 
   
@@ -176,6 +181,58 @@ public class BoardCont {
 //    }
 
   }
+  
+  /**
+   * 유형 3
+   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9091/contents/list_by_cateno?cateno=5
+   * http://localhost:9091/contents/list_by_cateno?cateno=6
+   * 
+   * @return
+   */
+//  @GetMapping(value = "/list_by_boardno")
+//  public String list_by_boardno_search_paging(
+//      HttpSession session, 
+//      Model model, 
+//      @RequestParam(name = "memberno", defaultValue = "1") int memberno,
+//      @RequestParam(name = "word", defaultValue = "") String word,
+//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//
+//    // System.out.println("-> cateno: " + cateno);
+//
+////    ArrayList<BoardVOMenu> menu = this.boardProc.menu();
+////    model.addAttribute("menu", menu);
+//
+//    MemberVO memberVO = this.memberProc.read(memberno);
+//    model.addAttribute("memberVO", memberVO);
+//
+//    word = Tool.checkNull(word).trim();
+//
+//    HashMap<String, Object> map = new HashMap<>();
+//    map.put("memberno", memberno);
+//    map.put("word", word);
+//    map.put("now_page", now_page);
+//
+//    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
+//    model.addAttribute("list", list);
+//
+//    // System.out.println("-> size: " + list.size());
+//    model.addAttribute("word", word);
+//
+//    int search_count = this.boardProc.list_by_cateno_search_count(map);
+//    String paging = this.boardProc.pagingBox(cateno, now_page, word, "/contents/list_by_cateno", search_count,
+//        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
+//    model.addAttribute("paging", paging);
+//    model.addAttribute("now_page", now_page);
+//
+//    model.addAttribute("search_count", search_count);
+//
+//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
+//    model.addAttribute("no", no);
+//
+//    return "/contents/list_by_cateno_search_paging"; // /templates/contents/list_by_cateno_search_paging.html
+//  }
+
   
   /**
    * 게시글 조회 
@@ -256,44 +313,49 @@ public class BoardCont {
   }
 
   /**
-   * 게시글 수정 처리 
+   * 게시글 수정 처리
    * @return
    */
   @PostMapping(value = "/update_text")
-  public String update_text(HttpSession session, 
-      Model model, 
-      @ModelAttribute("boardVO") BoardVO boardVO, 
-      RedirectAttributes ra,
-      @RequestParam(name="search_word", defaultValue="") String search_word, // contentsVO.word와 구분 필요
-      @RequestParam(name="now_page", defaultValue="0") int now_page) {
+  public String update_text(
+          HttpSession session, 
+          Model model, 
+          @ModelAttribute("boardVO") BoardVO boardVO, 
+          RedirectAttributes ra,
+          @RequestParam(name = "search_word", defaultValue = "") String search_word, 
+          @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
+
+      // Redirect 시 검색어 및 현재 페이지를 유지하기 위한 파라미터 추가
       ra.addAttribute("word", search_word);
       ra.addAttribute("now_page", now_page);
 
-//    if (this.memberProc.isMember(session)) { // 관리자 로그인 확인
-      HashMap<String, Object> map = new HashMap<String, Object>();
-      map.put("contentsno", boardVO.getBoardno());
+      // bcontent 값 검증
+      if (boardVO.getBcontent() == null || boardVO.getBcontent().trim().isEmpty()) {
+          ra.addFlashAttribute("message", "내용은 필수 입력 사항입니다.");
+          ra.addFlashAttribute("code", "update_fail");
+          return "redirect:/board/msg"; // 실패 시 msg 페이지로 이동
+      }
 
-//      if (this.boardProc.password_check(map) == 1) { // 패스워드 일치
-        this.boardProc.update_text(boardVO); // 글수정
-
-        // mav 객체 이용
-        ra.addAttribute("boardno", boardVO.getBoardno());
-        ra.addAttribute("memberno", boardVO.getMemberno());
-        return "redirect:/board/read"; // @GetMapping(value = "/read")
-
-//      } else { // 패스워드 불일치
-//        ra.addFlashAttribute("code", "passwd_fail"); // redirect -> forward -> html
-//        ra.addFlashAttribute("cnt", 0);
-//        ra.addAttribute("url", "/board/msg"); // msg.html, redirect parameter 적용
-//
-//        return "redirect:/board/post2get"; // @GetMapping(value = "/msg")
-//      }
-//    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      return "redirect:/board/post2get"; // @GetMapping(value = "/msg")
-//    }
-
+      // 글 수정 처리
+      try {
+          int cnt = this.boardProc.update_text(boardVO); // 글 수정
+          if (cnt > 0) { // 수정 성공
+              ra.addAttribute("boardno", boardVO.getBoardno());
+              return "redirect:/board/read"; // 성공 시 게시글 조회 페이지로 이동
+          } else { // 수정 실패
+              ra.addFlashAttribute("message", "게시글 수정에 실패했습니다.");
+              ra.addFlashAttribute("code", "update_fail");
+              return "redirect:/board/msg"; // 실패 시 msg 페이지로 이동
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+          ra.addFlashAttribute("message", "글 수정 중 오류가 발생했습니다.");
+          ra.addFlashAttribute("code", "update_fail");
+          return "redirect:/board/msg"; // 오류 발생 시 msg 페이지로 이동
+      }
   }
+
+
   
   /**
    * 파일 수정 폼 http://localhost:9091/contents/update_file?contentsno=1
@@ -410,7 +472,7 @@ public class BoardCont {
    */
   @GetMapping(value = "/delete")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
-                               @RequestParam(name="memberno", defaultValue="") int memberno, 
+                               @RequestParam(name="memberno", defaultValue="0") int memberno, 
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
@@ -444,7 +506,7 @@ public class BoardCont {
    */
   @PostMapping(value = "/delete")
   public String delete(RedirectAttributes ra,
-      @RequestParam(name="memberno", defaultValue="") int memberno, 
+      @RequestParam(name="memberno", defaultValue="0") int memberno, 
       @RequestParam(name="boardno", defaultValue="0") int boardno, 
       @RequestParam(name="word", defaultValue="") String word, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
@@ -489,7 +551,7 @@ public class BoardCont {
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
     
-    return "redirect:/board/list_by_cateno";    
+    return "redirect:/board/list_by_boardno";    
     
   }   
 

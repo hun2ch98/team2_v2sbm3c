@@ -39,6 +39,12 @@ public class BoardProc implements BoardProcInter {
   }
   
   @Override
+  public ArrayList<BoardVO> list_by_boardno(int boardno) {
+    ArrayList<BoardVO> list = this.boardDAO.list_by_boardno(boardno);
+    return list;
+  }
+  
+  @Override
   public int update_text(BoardVO boardVO) {
     int cnt = this.boardDAO.update_text(boardVO);
     return cnt;
