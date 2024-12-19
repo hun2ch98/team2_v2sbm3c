@@ -1,6 +1,8 @@
 package dev.mvc.tool;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -38,8 +40,18 @@ public class Download {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     } else {
       Resource resource = new FileSystemResource(file);
-      return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downname + "\"").body(resource);
-          
+      // 한글 파일명을 UTF-8로 인코딩
+      String encodedDownname = "";
+      
+      try {
+          encodedDownname = URLEncoder.encode(downname, "UTF-8").replaceAll("\\+", "%20");
+      } catch (UnsupportedEncodingException e) {
+          encodedDownname = downname; // 인코딩 실패 시 원래 이름 사용
+      }
+
+      return ResponseEntity.ok()
+              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedDownname)
+              .body(resource);
     }
   }
     

@@ -50,5 +50,34 @@
     DELETE FROM board
     WHERE boardno = #{boardno}
   </delete>
+  
+  <!-- 게시글 종류별 검색 목록 -->
+  <select id="list_by_boardno_search" resultType="dev.mvc.board.BoardVO" parameterType="HashMap">
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1
+    FROM board
+    WHERE board_cate = #{board_cate} 
+    ORDER BY boardno DESC
+    LIMIT #{startRow}, #{pageSize} 
+  </select>
+  
+    <!-- 게시글 종류별 검색 레코드 갯수 -->
+    <select id="count_by_boardno_search" resultType="int" parameterType="HashMap">
+      SELECT COUNT(*)
+      FROM board
+      WHERE board_cate = #{board_cate} 
+    </select>
+  
+  <!-- 게시글 종류별 검색 및 페이징 -->
+  <select id="list_by_boardno_search_paging" resultType="dev.mvc.board.BoardVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+      SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, 
+             ROW_NUMBER() OVER (ORDER BY boardno DESC) AS rnum
+      FROM board
+      WHERE board_cate = #{board_cate} 
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow} 
+  </select>
+  
 
 </mapper>
