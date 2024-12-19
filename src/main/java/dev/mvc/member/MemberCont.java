@@ -70,7 +70,11 @@ public class MemberCont {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
-      memberVO.setGrade(15); // 기본 회원 15
+      if ("admin".equals(memberVO.getId())) {
+          memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+      } else {
+          memberVO.setGrade(15); // 기본 회원 15
+      }
    
       int cnt = this.memberProc.create(memberVO);
       
@@ -97,7 +101,7 @@ public class MemberCont {
 //    model.addAttribute("menu", menu);
     // 세션에서 등급 확인
     String grade = (String) session.getAttribute("grade");
-    
+ 
     // 관리자 등급만 접근 허용
     if (grade != null && grade.equals("admin")) {
       ArrayList<MemberVO> list = this.memberProc.list();
@@ -138,7 +142,7 @@ public class MemberCont {
       model.addAttribute("memberVO", memberVO);
       return "member/read";  // templates/member/read.html
     } else if (grade.equals("admin")) {
-//      System.out.println("-> read memberno: " + memberno);
+      System.out.println("-> read memberno: " + memberno);
       
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
@@ -397,14 +401,14 @@ public class MemberCont {
    */
   @GetMapping(value="/passwd_update")
   public String passwd_update_form(HttpSession session, Model model) {
-//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+//    ArrayList<MemberVOMenu> menu = this.memberProc.menu();
 //    model.addAttribute("menu", menu);
     
     if (this.memberProc.isMember(session)) {
       int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
       
       MemberVO memberVO = this.memberProc.read(memberno);
-      
+
       model.addAttribute("memberVO", memberVO);
       
       return "/member/passwd_update";    // /templates/member/passwd_update.html      
@@ -465,7 +469,7 @@ public class MemberCont {
                                     @RequestParam(value="passwd", defaultValue = "") String passwd) {
     
     if (this.memberProc.isMember(session)) {
-      int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
+      int memberno = (int) session.getAttribute("memberno"); // session에서 가져오기
       HashMap<String, Object> map = new HashMap<String, Object>();
       map.put("memberno", memberno);
       map.put("passwd", current_passwd);
