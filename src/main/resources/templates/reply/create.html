@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">댓글 등록</div>
+  
+  <aside class="aside_right">
+    <a href="javascript: location.reload();">새로 고침</a>
+  </aside>
+  
+  <!--/* '/reply/list_search_com.html' 파일의 list_search_fragment를 가져다 사용 */--> 
+  <!--<div th:replace="~{reply/list_search_com::list_search_fragment}"></div>  -->
+
+  <div class="menu_line"></div>
+    
+  <div style="width: 50%; margin: 0px auto;">  
+    <form name="frm" method="post" action="/reply/create" th:object="${replyVO}">
+      <div>
+        <label>댓글 번호</label>
+        <input type="text" name="replyno" value="" autofocus="autofocus"
+               class="form-control" style="width: 30%;" th:field="*{replyno}">
+        <div th:if="${#fields.hasErrors('replyno')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('replyno'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+      <div>
+        <label>댓글 내용</label>
+        <input type="text" name="rcontent" value="" autofocus="autofocus"
+               class="form-control" style="width: 100%;" th:field="*{rcontent}">
+        <div th:if="${#fields.hasErrors('rcontent')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('rcontent'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+      <div>
+        <label>패스워드</label>
+        <input type="text" name="passwd" value="" autofocus="autofocus"
+               class="form-control" style="width: 50%;" th:field="*{passwd}">
+        <div th:if="${#fields.hasErrors('passwd')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('passwd'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        <button type="button" onclick="location.href='/reply/list_search'" class="btn btn-secondary btn-sm">목록</button>
+      </div>
+      
+    </form>
+  <div>  
+</div>
+</html>
+

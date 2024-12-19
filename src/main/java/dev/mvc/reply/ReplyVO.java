@@ -26,6 +26,6 @@ public class ReplyVO {
   private String passwd = "";
   /** 추천수 */
   private int recom;
-  /** 관리자 권한의 회원 번호 */
+  /**회원 번호 */
   private int memberno;
 }
