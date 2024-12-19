@@ -21,7 +21,14 @@
   <select id="list_all" resultType="dev.mvc.board.BoardVO">
     SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1
     FROM board
-    ORDER BY boardno
+    ORDER BY boardno DESC
+  </select>
+  
+  <!-- 게시글 등록된 목록 -->
+  <select id="list_by_boardno" resultType="dev.mvc.board.BoardVO" parameterType="int">
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1
+    FROM board
+    ORDER BY boardno DESC
   </select>
 
   <!-- 게시글 내용 수정 -->
