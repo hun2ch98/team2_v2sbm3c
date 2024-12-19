@@ -7,25 +7,32 @@
   <select id="checkID" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
-    WHERE id=#{id}
+    WHERE id = #{id}
   </select>
   
   <!-- 회원 등록 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, address, pf_img, mdate, grade)
-    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{address}, #{pf_img}, sysdate, #{grade})
+    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, mdate, grade)
+    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, sysdate, #{grade})
   </insert>
+  
+  <!-- 회원 목록 -->
+  <select id="list" resultType="dev.mvc.member.MemberVO">
+    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, mdate, grade
+    FROM member
+    ORDER BY grade ASC, id ASC
+  </select>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, grade
+    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, mdate, grade
     FROM member
     WHERE memberno = #{memberno}
   </select>
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, id, passwd, name, nickname, birth, address, pf_img, grade
+    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, mdate, grade
     FROM member
     WHERE id = #{id}
   </select>
@@ -33,7 +40,7 @@
   <!-- 회원 정보 수정 -->
   <update id="update" parameterType="dev.mvc.member.MemberVO">
     UPDATE member 
-    SET passwd=#{passwd}, name=#{name}, nickname=#{nickname}, address=#{address}
+    SET name=#{name}, email=#{email}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
     WHERE memberno=#{memberno}
   </update>
   

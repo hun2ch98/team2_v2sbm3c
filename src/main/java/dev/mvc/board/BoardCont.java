@@ -63,7 +63,6 @@ public class BoardCont {
   
   /**
    * 게시글 생성
-   * @param model
    * @param BoardVO
    * @param boardno
    * @return
@@ -71,14 +70,12 @@ public class BoardCont {
   @GetMapping(value = "/create")
   public String create(Model model, 
       @ModelAttribute("boardVO") BoardVO boardVO, 
-      @RequestParam(name="memberno", defaultValue="0") int memberno) {
-//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();  // 일기 메뉴 클래스 생성 필요
-//    model.addAttribute("menu", menu);
+      @RequestParam(name = "memberno", defaultValue = "1") int memberno) {
 
-    MemberVO memberVO = this.memberProc.read(memberno); // 카테고리 정보를 출력하기위한 목적
-    model.addAttribute("MemberVO", memberVO);
+      boardVO.setMemberno(memberno); // 기본값 설정
+      model.addAttribute("BoardVO", boardVO); // 수정된 BoardVO 전달
 
-    return "/board/create"; // /templates/contents/create.html
+      return "/board/create"; // /templates/contents/create.html
   }
 
   /**
@@ -87,105 +84,61 @@ public class BoardCont {
    */
   @PostMapping(value = "/create")
   public String create(HttpServletRequest request, 
-      HttpSession session, 
-      Model model, 
-      @ModelAttribute("boardVO") BoardVO boardVO,
-      RedirectAttributes ra) {
+                       HttpSession session, 
+                       Model model, 
+                       @ModelAttribute("boardVO") BoardVO boardVO,
+                       RedirectAttributes ra) {
 
-    if (memberProc.isMember(session)) { // 로그인한경우
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
-      String file1 = ""; // 원본 파일명 image
-      String file1saved = ""; // 저장된 파일명, image
-      String thumb1 = ""; // preview image
+      String file1 = ""; // 원본 파일명
+      String file1saved = ""; // 저장된 파일명
+      String thumb1 = ""; // 미리보기 이미지
+      long size1 = 0;
 
-      String upDir = Board.getUploadDir(); // 파일을 업로드할 폴더 준비
-      // upDir = upDir + "/" + 한글을 제외한 카테고리 이름
+      String upDir = Board.getUploadDir(); // 업로드 폴더 경로
       System.out.println("-> upDir: " + upDir);
 
-      // 전송 파일이 없어도 file1MF 객체가 생성됨.
-      // <input type='file' class="form-control" name='file1MF' id='file1MF'
-      // value='' placeholder="파일 선택">
-      MultipartFile mf = boardVO.getFile1MF();
+      MultipartFile mf = boardVO.getFile1MF(); // 업로드된 파일 가져오기
+      if (mf != null && !mf.isEmpty()) { // 파일이 있을 때만 처리
+          file1 = mf.getOriginalFilename();
+          size1 = mf.getSize();
 
-      file1 = mf.getOriginalFilename(); // 원본 파일명 산출, 01.jpg
-      System.out.println("-> 원본 파일명 산출 file1: " + file1);
-
-      long size1 = mf.getSize(); // 파일 크기
-      if (size1 > 0) { // 파일 크기 체크, 파일을 올리는 경우
-        if (Tool.checkUploadFile(file1) == true) { // 업로드 가능한 파일인지 검사
-          // 파일 저장 후 업로드된 파일명이 리턴됨, spring.jsp, spring_1.jpg, spring_2.jpg...
-          file1saved = Upload.saveFileSpring(mf, upDir);
-
-          if (Tool.isImage(file1saved)) { // 이미지인지 검사
-            // thumb 이미지 생성후 파일명 리턴됨, width: 200, height: 150
-            thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+          if (Tool.checkUploadFile(file1)) { // 유효한 파일 형식인지 확인
+              file1saved = Upload.saveFileSpring(mf, upDir); // 파일 저장
+              if (Tool.isImage(file1saved)) {
+                  thumb1 = Tool.preview(upDir, file1saved, 200, 150); // 미리보기 생성
+              }
+          } else {
+              ra.addFlashAttribute("code", "check_upload_file_fail");
+              return "redirect:/board/msg"; // 파일 형식 오류 시 리다이렉트
           }
-
-          boardVO.setFile1(file1); // 순수 원본 파일명
-          boardVO.setFile1saved(file1saved); // 저장된 파일명(파일명 중복 처리)
-          boardVO.setThumb1(thumb1); // 원본이미지 축소판
-          boardVO.setSize1(size1); // 파일 크기
-
-        } else { // 전송 못하는 파일 형식
-          ra.addFlashAttribute("code", "check_upload_file_fail"); // 업로드 할 수 없는 파일
-          ra.addFlashAttribute("cnt", 0); // 업로드 실패
-          ra.addFlashAttribute("url", "/board/msg"); // msg.html, redirect parameter 적용
-          return "redirect:/board/msg"; // Post -> Get - param...
-        }
-      } else { // 글만 등록하는 경우
-        System.out.println("-> 글만 등록");
       }
+
+      // 파일 관련 필드 설정
+      boardVO.setFile1(file1);
+      boardVO.setFile1saved(file1saved);
+      boardVO.setThumb1(thumb1);
+      boardVO.setSize1(size1);
 
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 종료
       // ------------------------------------------------------------------------------
 
-      // Call By Reference: 메모리 공유, Hashcode 전달
-      int memberno = (int) session.getAttribute("memberno"); // memberno FK
-      boardVO.setMemberno(memberno);
+      int memberno = 1; // 고정된 회원 번호 설정 (로그인 체크 제거)
+      boardVO.setMemberno(memberno); // 게시글 작성자 설정
+
       int cnt = this.boardProc.create(boardVO);
-
-      // ------------------------------------------------------------------------------
-      // PK의 return
-      // ------------------------------------------------------------------------------
-      // System.out.println("--> contentsno: " + contentsVO.getContentsno());
-      // mav.addObject("contentsno", contentsVO.getContentsno()); // redirect
-      // parameter 적용
-      // ------------------------------------------------------------------------------
-
       if (cnt == 1) {
-        // type 1, 재업로드 발생
-        // return "<h1>파일 업로드 성공</h1>"; // 연속 파일 업로드 발생
-
-        // type 2, 재업로드 발생
-        // model.addAttribute("cnt", cnt);
-        // model.addAttribute("code", "create_success");
-        // return "contents/msg";
-
-        // type 3 권장
-        // return "redirect:/contents/list_all"; // /templates/contents/list_all.html
-
-        // System.out.println("-> contentsVO.getCateno(): " + contentsVO.getCateno());
-        // ra.addFlashAttribute("diaryno", contentsVO.getCateno()); // controller ->
-        // controller: X
-
-        ra.addAttribute("memberno", boardVO.getMemberno()); // controller -> controller: O
-        return "redirect:/board/list_by_diaryno";
-
-        // return "redirect:/contents/list_by_cateno?cateno=" + contentsVO.getCateno();
-        // // /templates/contents/list_by_cateno.html
+          ra.addAttribute("boardno", boardVO.getBoardno()); // 게시글 번호 전달
+          return "redirect:/board/read"; // 게시글 조회 화면으로 이동
       } else {
-        ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
-        ra.addFlashAttribute("cnt", 0); // 업로드 실패
-        ra.addFlashAttribute("url", "/board/msg"); // msg.html, redirect parameter 적용
-        return "redirect:/board/msg"; // Post -> Get - param...
+          ra.addFlashAttribute("code", "create_fail");
+          return "redirect:/board/msg"; // 등록 실패 시 메시지 페이지로 이동
       }
-    } else { // 로그인 실패 한 경우
-      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-    }
   }
+
   
   /**
    * 전체 목록
@@ -197,7 +150,7 @@ public class BoardCont {
 //    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
       ArrayList<BoardVO> list = this.boardProc.list_all(); // 모든 목록
 
       // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
@@ -217,10 +170,10 @@ public class BoardCont {
       model.addAttribute("list", list);
       return "/board/list_all";
 
-    } else {
-      return "redirect:/member/login_cookie_need";
-
-    }
+//    } else {
+//      return "redirect:/member/login_cookie_need";
+//
+//    }
 
   }
   
@@ -283,7 +236,7 @@ public class BoardCont {
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
 
-    if (this.memberProc.isMember(session)) { // 관리자로 로그인한경우
+//    if (this.memberProc.isMember(session)) { // 관리자로 로그인한경우
       BoardVO boardVO = this.boardProc.read(boardno);
       model.addAttribute("boardVO", boardVO);
 
@@ -294,11 +247,11 @@ public class BoardCont {
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
-    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
-      return "member/login_cookie_need";
-    }
+//    } else {
+////      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+////      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
+//      return "member/login_cookie_need";
+//    }
 
   }
 
@@ -316,7 +269,7 @@ public class BoardCont {
       ra.addAttribute("word", search_word);
       ra.addAttribute("now_page", now_page);
 
-    if (this.memberProc.isMember(session)) { // 관리자 로그인 확인
+//    if (this.memberProc.isMember(session)) { // 관리자 로그인 확인
       HashMap<String, Object> map = new HashMap<String, Object>();
       map.put("contentsno", boardVO.getBoardno());
 
@@ -328,13 +281,13 @@ public class BoardCont {
         ra.addAttribute("memberno", boardVO.getMemberno());
         return "redirect:/board/read"; // @GetMapping(value = "/read")
 
-      } else { // 패스워드 불일치
-        ra.addFlashAttribute("code", "passwd_fail"); // redirect -> forward -> html
-        ra.addFlashAttribute("cnt", 0);
-        ra.addAttribute("url", "/board/msg"); // msg.html, redirect parameter 적용
-
-        return "redirect:/board/post2get"; // @GetMapping(value = "/msg")
-      }
+//      } else { // 패스워드 불일치
+//        ra.addFlashAttribute("code", "passwd_fail"); // redirect -> forward -> html
+//        ra.addFlashAttribute("cnt", 0);
+//        ra.addAttribute("url", "/board/msg"); // msg.html, redirect parameter 적용
+//
+//        return "redirect:/board/post2get"; // @GetMapping(value = "/msg")
+//      }
 //    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
 //      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
 //      return "redirect:/board/post2get"; // @GetMapping(value = "/msg")
@@ -380,7 +333,7 @@ public class BoardCont {
                             @RequestParam(name="word", defaultValue="") String word, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
-    if (this.memberProc.isMember(session)) {
+//    if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       BoardVO boardVO_old = boardProc.read(boardVO.getBoardno());
 
@@ -443,10 +396,10 @@ public class BoardCont {
       ra.addAttribute("now_page", now_page);
       
       return "redirect:/board/read";
-    } else {
-      ra.addAttribute("url", "/member/login_cookie_need"); 
-      return "redirect:/board/post2get"; // GET
-    }
+//    } else {
+//      ra.addAttribute("url", "/member/login_cookie_need"); 
+//      return "redirect:/board/post2get"; // GET
+//    }
   }
   
   /**
@@ -461,7 +414,7 @@ public class BoardCont {
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    if (this.memberProc.isMember(session)) { // 로그인한경우
+//    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
@@ -477,10 +430,10 @@ public class BoardCont {
       
       return "/board/delete"; // forward
       
-    } else {
-      ra.addAttribute("url", "/member/login_cookie_need");
-      return "redirect:/board/msg"; 
-    }
+//    } else {
+//      ra.addAttribute("url", "/member/login_cookie_need");
+//      return "redirect:/board/msg"; 
+//    }
 
   }
   

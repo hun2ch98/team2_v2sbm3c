@@ -95,47 +95,42 @@ public class ReplyCont {
   public String create(HttpServletRequest request, 
       HttpSession session, 
       Model model, 
-      @ModelAttribute("boardVO") BoardVO boardVO,
+      @ModelAttribute("replyVO") ReplyVO replyVO,
       RedirectAttributes ra) {
+    
+    String passwd = replyVO.getPasswd();
+    if (passwd != null && passwd.length() > 10) { // 10자로 제한
+        ra.addFlashAttribute("code", "passwd_length_exceeded"); // 길이 초과 오류
+        ra.addFlashAttribute("cnt", 0); // 등록 실패
+        ra.addFlashAttribute("url", "/reply/msg"); // msg.html, redirect parameter 적용
+        return "redirect:/reply/msg"; // Post -> Get - param...
+    }
+    
+      // 비회원의 경우 memberno를 0으로 설정
+      int memberno = 0;
+      if (memberProc.isMember(session)) { // 로그인한 경우
+          memberno = (int) session.getAttribute("memberno"); // memberno FK
+      }
+      replyVO.setMemberno(memberno); // memberno를 설정 (비회원은 0)
 
-    if (memberProc.isMember(session)) { // 로그인한경우
-      // Call By Reference: 메모리 공유, Hashcode 전달
-      int memberno = (int) session.getAttribute("memberno"); // memberno FK
-      boardVO.setMemberno(memberno);
-      int cnt = this.boardProc.create(boardVO);
+      // 댓글 등록 처리
+      int cnt = this.replyProc.create(replyVO);
 
       if (cnt == 1) {
-        // type 1, 재업로드 발생
-        // return "<h1>파일 업로드 성공</h1>"; // 연속 파일 업로드 발생
-
-        // type 2, 재업로드 발생
-        // model.addAttribute("cnt", cnt);
-        // model.addAttribute("code", "create_success");
-        // return "contents/msg";
-
-        // type 3 권장
-        // return "redirect:/contents/list_all"; // /templates/contents/list_all.html
-
-        // System.out.println("-> contentsVO.getCateno(): " + contentsVO.getCateno());
-        // ra.addFlashAttribute("diaryno", contentsVO.getCateno()); // controller ->
-        // controller: X
-
-        ra.addAttribute("memberno", boardVO.getMemberno()); // controller -> controller: O
-        return "redirect:/board/list_by_boardno";
-
-        // return "redirect:/contents/list_by_cateno?cateno=" + contentsVO.getCateno();
-        // // /templates/contents/list_by_cateno.html
+          // 댓글 등록 성공 시
+          ra.addAttribute("boardno", replyVO.getBoardno()); // controller -> controller
+          return "redirect:/reply/list_by_boardno";
       } else {
-        ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
-        ra.addFlashAttribute("cnt", 0); // 업로드 실패
-        ra.addFlashAttribute("url", "/board/msg"); // msg.html, redirect parameter 적용
-        return "redirect:/board/msg"; // Post -> Get - param...
+          // 댓글 등록 실패 시
+          ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
+          ra.addFlashAttribute("cnt", 0); // 등록 실패
+          ra.addFlashAttribute("url", "/reply/msg"); // msg.html, redirect parameter 적용
+          return "redirect:/reply/msg"; // Post -> Get - param...
       }
-    } else { // 로그인 실패 한 경우
-      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-    }
   }
 
+
+ 
   /**
    * 전체 목록
    * 

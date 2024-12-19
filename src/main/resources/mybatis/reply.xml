@@ -2,22 +2,22 @@
  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
-<mapper namespace="dev.mvc.diary.DiaryDAOInter">
+<mapper namespace="dev.mvc.reply.ReplyDAOInter">
   <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
-  <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
-    INSERT INTO contents(diaryno, title, ddate, summary, weather_code, emno, memberno, illustno)
-    VALUES(contents_seq.nextval, #{title}, #{ddate}, #{summary}, #{weather_code}, #{emno}, #{memberno}, #{illustno})
+  <insert id="create" parameterType="dev.mvc.reply.ReplyVO">
+    INSERT INTO reply(replyno, rcontent, rdate, memberno, boardno, passwd)
+    VALUES(reply_seq.nextval, #{rcontent}, sysdate, #{memberno}, #{boardno}, #{passwd})
   </insert>
 
   <!-- 모든 카테고리의 등록된 글목록 -->
-  <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, ddate, summary, weather_code, emno, illustno
-    FROM diary
-    ORDER BY diaryno DESC
+  <select id="list_all" resultType="dev.mvc.reply.ReplyVO">
+    SELECT replyno, rcontent, rdate, memberno, boardno, fixed_at, passwd, recom
+    FROM reply
+    ORDER BY replyno DESC
   </select>
   
   <!-- 특정 카테고리의 등록된 글목록 
-  <select id="list_by_cateno" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
+  <select id="list_by_cateno" resultType="dev.mvc.reply.ReplyVO" parameterType="int">
     SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, rdate,
               LOWER(file1) as file1, file1saved, thumb1, size1, mp4
     FROM contents 
@@ -26,29 +26,14 @@
   </select> -->
   
   <!-- 일반적인 조회 -->
-  <select id="read" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
-    SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, passwd, word, rdate,
-              file1, file1saved, thumb1, size1, map, youtube
-    FROM contents
-    WHERE diaryno = #{diaryno}
+  <select id="read" resultType="dev.mvc.reply.ReplyVO" parameterType="int">
+    SELECT replyno, rcontent, rdate, memberno, boardno, fixed_at, passwd, recom
+    FROM reply
+    WHERE replyno = #{replyno}
   </select>
   
-  <!-- map 등록, 수정, 삭제, 
-         HashMap: VO 클래스는 변수가 너무 많아서 메모리 낭비가 발생함으로,
-                       보통 3개 이하의 적은 변수만 전달하는 경우 HashMap 사용 권장 
-  <update id="map" parameterType="HashMap">
-    UPDATE contents SET map=#{map} WHERE diaryno=#{diaryno}
-  </update> -->
-
-  <!-- Youtube 등록, 수정, 삭제, 
-         HashMap: VO 클래스는 변수가 너무 많아서 메모리 낭비가 발생함으로,
-                       보통 3개 이하의 적은 변수만 전달하는 경우 HashMap 사용 권장
-  <update id="youtube" parameterType="HashMap">
-    UPDATE contents SET youtube=#{youtube} WHERE diaryno=#{diaryno}
-  </update> -->
-
   <!-- 카테고리별 검색 목록 
-  <select id="list_by_cateno_search" resultType="dev.mvc.diary.DiaryVO" parameterType="HashMap">
+  <select id="list_by_cateno_search" resultType="dev.mvc.reply.ReplyVO" parameterType="HashMap">
     SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, word, rdate,
             file1, file1saved, thumb1, size1, map, youtube
     FROM contents
@@ -82,7 +67,7 @@
   </select>   -->
 
   <!-- 카테고리별 검색 + 페이징 목록 
-  <select id="list_by_cateno_search_paging" resultType="dev.mvc.diary.DiaryVO" parameterType="HashMap">
+  <select id="list_by_cateno_search_paging" resultType="dev.mvc.reply.ReplyVO" parameterType="HashMap">
    SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube, r
    FROM (
               SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube, rownum as r
@@ -115,19 +100,18 @@
   </select> -->
   
   <!-- 글 수정 -->
-  <update id="update_text" parameterType="dev.mvc.diary.DiaryVO">
+  <update id="update_text" parameterType="dev.mvc.reply.ReplyVO">
     UPDATE contents
     SET title=#{title}, content=#{content},  word=#{word}
     WHERE diaryno = #{diaryno}
   </update>
 
-
   <!-- 파일 수정 -->
-  <update id="update_file" parameterType="dev.mvc.diary.DiaryVO">
+  <!--<update id="update_file" parameterType="dev.mvc.reply.ReplyVO">
     UPDATE contents
     SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
     WHERE diaryno = #{diaryno}
-  </update>  
+  </update>  -->
 
   <!-- 글 삭제 -->
   <delete id="delete" parameterType="int">

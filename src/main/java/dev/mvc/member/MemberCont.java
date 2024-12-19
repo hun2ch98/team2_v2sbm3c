@@ -58,8 +58,6 @@ public class MemberCont {
   @GetMapping(value="/create") // http://localhost:9091/member/create
   public String create_form(Model model, 
                                       @ModelAttribute("memberVO") MemberVO memberVO) {
-    
-    System.out.println(memberVO);
 //    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
     
@@ -72,13 +70,13 @@ public class MemberCont {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
-      memberVO.setGrade(10); // 기본 회원 10
+      memberVO.setGrade(15); // 기본 회원 15
    
       int cnt = this.memberProc.create(memberVO);
       
       if (cnt == 1) {
         model.addAttribute("code", "create_success");
-        model.addAttribute("mname", memberVO.getName());
+        model.addAttribute("name", memberVO.getName());
         model.addAttribute("id", memberVO.getId());
       } else {
         model.addAttribute("code", "create_fail");
@@ -97,16 +95,25 @@ public class MemberCont {
   public String list(HttpSession session, Model model) {
 //    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
+    // 세션에서 등급 확인
+    String grade = (String) session.getAttribute("grade");
     
-    if (this.memberProc.isMemberAdmin(session)) {
+    // 관리자 등급만 접근 허용
+    if (grade != null && grade.equals("admin")) {
       ArrayList<MemberVO> list = this.memberProc.list();
-      
       model.addAttribute("list", list);
-      
-      return "/member/list";  // /templates/member/list.html
+      return "/member/list"; // /templates/member/list.html
     } else {
-      return "redirect:/member/login_cookie_need";  // redirect
+      return "redirect:/member/login_cookie_need"; // redirect
     }
+//    if (this.memberProc.isMemberAdmin(session)) {
+//      ArrayList<MemberVO> list = this.memberProc.list();
+//      model.addAttribute("list", list);
+//      
+//      return "/member/list";  // /templates/member/list.html
+//    } else {
+//        return "redirect:/member/login_cookie_need";  // redirect
+//    }
   }
 
   /**
@@ -116,12 +123,11 @@ public class MemberCont {
    * @return 회원 정보
    */
   @GetMapping(value="/read")
-  public String read(HttpSession session, 
-                            Model model,
-                            @RequestParam(name="memberno", defaultValue = "") int memberno) {
+  public String read(HttpSession session, Model model,
+                     @RequestParam(name="memberno", defaultValue = "") int memberno) {
     // 회원은 회원 등급만 처리, 관리자: 1 ~ 10, 사용자: 11 ~ 20
     // int gradeno = this.memberProc.read(memberno).getGrade(); // 등급 번호
-    String grade = (String)session.getAttribute("grade"); // 등급: admin, member, guest
+    String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
     
     // 사용자: member && 11 ~ 20
     // if (grade.equals("member") && (gradeno >= 11 && gradeno <= 20) && memberno == (int)session.getAttribute("memberno")) {
@@ -130,11 +136,9 @@ public class MemberCont {
       
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
-      
       return "member/read";  // templates/member/read.html
-      
     } else if (grade.equals("admin")) {
-      System.out.println("-> read memberno: " + memberno);
+//      System.out.println("-> read memberno: " + memberno);
       
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
@@ -164,7 +168,7 @@ public class MemberCont {
       
       if (cnt == 1) {
         model.addAttribute("code", "update_success");
-        model.addAttribute("mname", memberVO.getName());
+        model.addAttribute("name", memberVO.getName());
         model.addAttribute("id", memberVO.getId());
       } else {
         model.addAttribute("code", "update_fail");
@@ -254,9 +258,9 @@ public class MemberCont {
     Cookie[] cookies = request.getCookies();
     Cookie cookie = null;
   
-    String ck_id = ""; // id 저장
+    String ck_id = "admin"; // id 저장
     String ck_id_save = ""; // id 저장 여부를 체크
-    String ck_passwd = ""; // passwd 저장
+    String ck_passwd = "1234"; // passwd 저장
     String ck_passwd_save = ""; // passwd 저장 여부를 체크
   
     if (cookies != null) { // 쿠키가 존재한다면
@@ -303,8 +307,7 @@ public class MemberCont {
                                      @RequestParam(value="id", defaultValue = "") String id, 
                                      @RequestParam(value="passwd", defaultValue = "") String passwd,
                                      @RequestParam(value="id_save", defaultValue = "") String id_save,
-                                     @RequestParam(value="passwd_save", defaultValue = "") String passwd_save
-                                     ) {
+                                     @RequestParam(value="passwd_save", defaultValue = "") String passwd_save) {
     HashMap<String, Object> map = new HashMap<String, Object>();
     map.put("id", id);
     map.put("passwd", passwd);
@@ -457,9 +460,9 @@ public class MemberCont {
    */
   @PostMapping(value="/passwd_update_proc")
   public String passwd_update_proc(HttpSession session, 
-                                                    Model model, 
-                                                    @RequestParam(value="current_passwd", defaultValue = "") String current_passwd, 
-                                                    @RequestParam(value="passwd", defaultValue = "") String passwd) {
+                                    Model model, 
+                                    @RequestParam(value="current_passwd", defaultValue = "") String current_passwd, 
+                                    @RequestParam(value="passwd", defaultValue = "") String passwd) {
     
     if (this.memberProc.isMember(session)) {
       int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기

@@ -57,7 +57,7 @@ public class DiaryCont {
   @GetMapping(value = "/create")
   public String create(Model model, 
                                   @RequestParam(name="title", defaultValue="오늘의 제목") String title, 
-                                  @RequestParam(name="emotion", defaultValue="오늘의 기분") String emotion, 
+                                  @RequestParam(name="emotion", defaultValue="0") int emotion, 
                                   @RequestParam(name="summary", defaultValue="오늘의 일기") String summary) {
     // create method에 사용될 테이블
     // summary를 가져올 테이블
@@ -69,7 +69,7 @@ public class DiaryCont {
 
     diaryVO.setTitle(title);
     diaryVO.setSummary(summary);
-    emotionVO.setEm_type(emotion);
+    diaryVO.setEmno(emotion);
     
     return "/diary/create"; // /templates/diary/create.html
   }
@@ -97,7 +97,7 @@ public class DiaryCont {
     }
 
     diaryVO.setTitle(diaryVO.getTitle().trim());
-    emotionVO.setEm_type(emotionVO.getEm_type().trim());
+    diaryVO.setEmno(diaryVO.getEmno());
     diaryVO.setSummary(diaryVO.getSummary().trim());
     
     int cnt = this.diaryProc.create(diaryVO);
@@ -185,28 +185,34 @@ public class DiaryCont {
    * 수정폼 http://localhost:9091/diary/update/1
    */
   @GetMapping(value = "/update/{diaryno}")
-  public String update(HttpSession session, Model model, @PathVariable("diaryno") Integer diaryno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "") int now_page) {
+  public String update(HttpSession session, Model model, 
+                                    @PathVariable("diaryno") Integer diaryno, 
+                                    @RequestParam(name = "title", defaultValue = "") String title, 
+                                    @RequestParam(name = "date", defaultValue = "") String date, 
+                                    @RequestParam(name = "sort", defaultValue = "DESC") String sort, 
+                                    @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) {
       DiaryVO diaryVO = this.diaryProc.read(diaryno);
       model.addAttribute("diaryVO", diaryVO);
 
       // ArrayList<DiaryVO> list = this.diaryProc.list_all();
-      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
+      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(title, date, sort, now_page, this.record_per_page);
       model.addAttribute("list", list);
+      model.addAttribute("title", title);
+      model.addAttribute("date", date);
+      model.addAttribute("sort", sort);
+
 
       // 카테고리 그룹 목록
       ArrayList<String> list_genre = this.diaryProc.genreset();
       model.addAttribute("list_genre", String.join("/", list_genre));
 
-      model.addAttribute("word", word);
 
       // --------------------------------------------------------------------------------------
       // 페이지 번호 목록 생성
       // --------------------------------------------------------------------------------------
-      int search_count = this.diaryProc.list_search_count(word);
-      String paging = this.diaryProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
+      int search_count = this.diaryProc.list_search_count(title, date);
+      String paging = this.diaryProc.pagingBox(now_page, title, date, this.list_file_name, search_count, this.record_per_page,
           this.page_per_block);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
@@ -234,8 +240,10 @@ public class DiaryCont {
   @PostMapping(value = "/update")
   public String update(HttpSession session, Model model, 
                                     @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, BindingResult bindingResult,
-                                    @RequestParam(name = "word", defaultValue = "") String word,
-                                    @RequestParam(name = "now_page", defaultValue = "") int now_page, RedirectAttributes ra) {
+                                    @RequestParam(name = "title", defaultValue = "") String title, 
+                                    @RequestParam(name = "date", defaultValue = "") String date, 
+                                    @RequestParam(name = "sort", defaultValue = "DESC") String sort, 
+                                    @RequestParam(name = "now_page", defaultValue = "1") int now_page, RedirectAttributes ra) {
     if (this.memberProc.isMemberAdmin(session)) {
 //    System.out.println("-> update post.");
     if (bindingResult.hasErrors() == true) { // 에러가 있으면 폼으로 돌아갈 것.
@@ -251,11 +259,6 @@ public class DiaryCont {
     System.out.println("-> cnt: " + cnt);
 
     if (cnt == 1) {
-//      model.addAttribute("code", "update_success");
-//      model.addAttribute("genre", diaryVO.getGenre());
-//      model.addAttribute("name", diaryVO.getName());
-
-      ra.addAttribute("word", word); // redirect로 데이터 전송
       ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
 
       return "redirect:/diary/update/" + diaryVO.getDiaryno(); // @GetMapping(value="/update/{diaryno}")
@@ -268,8 +271,8 @@ public class DiaryCont {
     // --------------------------------------------------------------------------------------
     // 페이지 번호 목록 생성
     // --------------------------------------------------------------------------------------
-    int search_count = this.diaryProc.list_search_count(word);
-    String paging = this.diaryProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page, this.page_per_block);
+    int search_count = this.diaryProc.list_search_count(title, date);
+    String paging = this.diaryProc.pagingBox(now_page, title, date, this.list_file_name, search_count, this.record_per_page, this.page_per_block);
     model.addAttribute("paging", paging);
     model.addAttribute("now_page", now_page);
 
@@ -291,26 +294,30 @@ public class DiaryCont {
   @GetMapping(value = "/delete/{diaryno}")
   public String delete(HttpSession session, Model model, 
                                    @PathVariable("diaryno") Integer diaryno,
-                                   @RequestParam(name = "word", defaultValue = "") String word,
-                                   @RequestParam(name = "now_page", defaultValue = "") int now_page) {
+                                   @RequestParam(name = "title", defaultValue = "") String title, 
+                                   @RequestParam(name = "date", defaultValue = "") String date, 
+                                   @RequestParam(name = "sort", defaultValue = "DESC") String sort, 
+                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) {
       DiaryVO diaryVO = this.diaryProc.read(diaryno);
       model.addAttribute("diaryVO", diaryVO);
       int cnt = this.diaryProc.cntcount(diaryno);
 
       // ArrayList<DiaryVO> list = this.diaryProc.list_all();
-      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(word, now_page, this.record_per_page);
+      ArrayList<DiaryVO> list = this.diaryProc.list_search_paging(title, date, sort, now_page, this.record_per_page);
       model.addAttribute("list", list);
+      model.addAttribute("title", title);
+      model.addAttribute("date", date);
+      model.addAttribute("sort", sort);
 
       model.addAttribute("cnt", cnt);  // 콘텐츠 개수 추가
-      model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
 
       // --------------------------------------------------------------------------------------
       // 페이지 번호 목록 생성
       // --------------------------------------------------------------------------------------
-      int search_count = this.diaryProc.list_search_count(word);
-      String paging = this.diaryProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
+      int search_count = this.diaryProc.list_search_count(title, date);
+      String paging = this.diaryProc.pagingBox(now_page, title, date, this.list_file_name, search_count, this.record_per_page,
           this.page_per_block);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
@@ -324,7 +331,8 @@ public class DiaryCont {
         return "/diary/delete";
       } else {
         model.addAttribute("cnt", cnt);
-        model.addAttribute("word", word);
+        model.addAttribute("title", title);
+        model.addAttribute("date", date);
         model.addAttribute("now_page", now_page);
         return "/diary/list_all_delete"; // diary/list_all_delete.html로 이동
       }
@@ -368,8 +376,10 @@ public class DiaryCont {
   @PostMapping(value = "/delete")
   public String delete_process(HttpSession session, Model model, 
                                @RequestParam(name = "diaryno", defaultValue = "0") Integer diaryno,
-                               @RequestParam(name = "word", defaultValue = "") String word,
-                               @RequestParam(name = "now_page", defaultValue = "") int now_page, 
+                               @RequestParam(name = "title", defaultValue = "") String title, 
+                               @RequestParam(name = "date", defaultValue = "") String date, 
+                               @RequestParam(name = "sort", defaultValue = "DESC") String sort, 
+                               @RequestParam(name = "now_page", defaultValue = "1") int now_page, 
                                RedirectAttributes ra) {
       // 관리자 권한 확인
       if (this.memberProc.isMemberAdmin(session)) {
@@ -387,10 +397,11 @@ public class DiaryCont {
               System.out.println("-> deleteCnt: " + deleteCnt);
 
               if (deleteCnt == 1) {
-                  ra.addAttribute("word", word); // redirect로 데이터 전송
+                  ra.addAttribute("title", title); // redirect로 데이터 전송
+                  ra.addAttribute("date", date); // redirect로 데이터 전송
 
                   // 마지막 페이지에서 모든 레코드가 삭제되면 페이지수를 1 감소 시켜야 함.
-                  int search_cnt = this.diaryProc.list_search_count(word);
+                  int search_cnt = this.diaryProc.list_search_count(title, date);
                   if (search_cnt % this.record_per_page == 0) {
                       now_page = now_page - 1;
                       if (now_page < 1) {
@@ -407,7 +418,9 @@ public class DiaryCont {
               }
           } else {
               model.addAttribute("cnt", cnt);
-              model.addAttribute("word", word);
+              model.addAttribute("title", title); 
+              model.addAttribute("date", date);
+              model.addAttribute("sort", sort);
               model.addAttribute("now_page", now_page);
               return "/diary/list_all_delete"; // diary/list_all_delete.html로 이동
           }
