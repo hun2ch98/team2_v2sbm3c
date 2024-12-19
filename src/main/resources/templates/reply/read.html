@@ -2,33 +2,50 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${board.title }" class="title_line_text"></span > 
+    <span th:text="${replyVO.replyno }" class="title_line_text"></span > 
     > 댓글 조회
   </div>
-  <aside class="aside_right" th:if="${session.grade == 'admin'}">
+  
+  <aside class="aside_right" th:if="${session?.role != 1}">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/reply/create?boardno=${boardVO.boardno}|}">등록</a>
+    <a th:href="@{|/reply/create?replyno=${replyVO.replyno}|}">등록</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/reply/update_text?boardno=${boardVO.boardno}&now_page=${now_page}&word=${word }|}">글 수정</a>
+    <a th:href="@{|/reply/update_text?replyno=${replyVO.replyno}&now_page=${now_page}&word=${word }|}">댓글 수정</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./delete?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}&boardno=${boardVO.boardno}|}">삭제</a>  
+    <a th:href="@{|./delete?replyno=${replyVO.replyno}&word=${word}&now_page=${now_page}&replyno=${replyVO.replyno}|}">삭제</a>  
  </aside> 
-  
-  <div class="container mt-3" style="width: 60%; margin: 5px auto;"> <!--/* mt-3: margin top 16px */-->
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-        번호: <span th:text="${boardVO.boardno}" style="margin-right: 10px;"></span>
-        게시글 종류: <span th:text="${boardVO.board_cate}" style="margin-right: 10px;"></span>
+ 
+ <aside class="aside_right" th:if="${session?.role != 1}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/reply/list_all}">목록</a>
+  </aside>
+
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div style="width: 100%; word-break: break-all;">
+
+          <!-- 제목 및 작성일 -->
+          <span style="font-size: 1.5em; font-weight: bold;" th:text="${replyVO.replyno}"></span>
+          <span style="font-size: 1em;" th:text="${replyVO.rdate}"></span><br><br>
+
+          <!-- 본문 내용 -->
+          <div style="white-space: pre-wrap;"><span th:text="${replyVO.rcontent}"></span></div>
+        </div>
       </li>
-      <li class="list-group-item">게시글 제목: <span th:text="${boardVO.title}"></span></li>
-      <li class="list-group-item">게시글 내용: <span th:text="${boardVO.bcontent}"></span></li>
-      <li class="list-group-item">등록일: <span th:text="${boardVO.rdate}"></span></li>
-    </ul>  
-  </div>
-  
-  <!--/* '/reply/reply_list_all_com.html' 파일의 reply_list_fragment를 가져다 사용 */--> 
-  <div th:replace="~{board/reply_list_all_com::reply_list_fragment}"></div> 
+
+      <!-- 작성자 정보 -->
+      <li class="li_none">
+        작성자: <span th:text="${memberVO?.nickname ?: '알 수 없음'}"></span> <br>
+        이메일: <span th:text="${memberVO?.email ?: '알 수 없음'}"></span> <br>
+      </li>
+      
+    </ul>
+  </fieldset>
   
 </div>
 </html>
