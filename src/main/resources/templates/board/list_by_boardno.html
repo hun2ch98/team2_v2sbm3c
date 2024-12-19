@@ -24,10 +24,6 @@
       </tr>
     </thead>
     <tbody>
-      <!-- 목록이 비어 있는 경우 처리 -->
-      <tr th:if="${list == null or list.size() == 0}">
-        <td colspan="2" style="text-align: center;">등록된 게시글이 없습니다.</td>
-      </tr>
 
       <!-- 게시글 목록 출력 -->
       <tr th:each="boardVO, status : ${list}" 
@@ -35,7 +31,7 @@
           th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}'|"
           style="cursor: pointer; height: 90px;">
         <td class="td_basic" style="vertical-align: middle; text-align: center;">
-          <!-- 업로드된 이미지가 있는 경우 -->
+          <!-- 업로드된 이미지 -->
           <div th:if="${boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')}">
             <img th:src="@{|/board/storage/${boardVO.thumb1}|}" style="width: 120px; height: 90px;">
           </div>
@@ -44,7 +40,7 @@
             <span th:text="${boardVO.file1}"></span>
           </div>
           
-          <!-- 업로드된 이미지가 없는 경우 기본 이미지 출력 -->
+          <!-- 기본 이미지 -->
           <div th:if="${boardVO.thumb1 == null or boardVO.thumb1 == ''}">
             <img src="/board/images/none1.png" style="width: 120px; height: 90px;">
           </div>
