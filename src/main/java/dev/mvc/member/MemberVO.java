@@ -1,7 +1,5 @@
 package dev.mvc.member;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,17 +30,7 @@ public class MemberVO {
     /** 등급 */
     private int grade = 0;
     /** 프로필 이미지 */
-    private String  pf_img;
-    
-    // Getters and Setters
-    public String getPf_img() {
-      return pf_img;
-    }
-    
-    public void setPf_img(String pf_img) {
-      this.pf_img = pf_img;
-    }
-//    
+    private String pf_img = "";
     /** 등록된 패스워드 */
     private String old_passwd = "";
     /** id 저장 여부 */
