@@ -24,6 +24,14 @@
         </div>  
       </div>
       <div>
+        <label>게시물 번호</label>
+        <input type="text" name="boardno" value="" autofocus="autofocus"
+               class="form-control" style="width: 30%;" th:field="*{boardno}">
+        <div th:if="${#fields.hasErrors('boardno')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('boardno'))}" th:text="${err}"></div>
+        </div>  
+      </div>
+      <div>
         <label>댓글 내용</label>
         <input type="text" name="rcontent" value="" autofocus="autofocus"
                class="form-control" style="width: 100%;" th:field="*{rcontent}">
@@ -33,7 +41,7 @@
       </div>
       <div>
         <label>패스워드</label>
-        <input type="text" name="passwd" value="" autofocus="autofocus"
+        <input type="text" name="passwd" maxlength="10" value="" autofocus="autofocus"
                class="form-control" style="width: 50%;" th:field="*{passwd}">
         <div th:if="${#fields.hasErrors('passwd')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
           <div th:each="err: ${#lists.sort(#fields.errors('passwd'))}" th:text="${err}"></div>

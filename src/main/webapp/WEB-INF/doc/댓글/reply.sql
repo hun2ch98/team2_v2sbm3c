@@ -7,8 +7,8 @@ CREATE TABLE reply (
 	rdate	    DATE		NOT NULL,
 	memberno	NUMBER(10)		NOT NULL,
 	boardno	    NUMBER(10)		NOT NULL,
-	fixed_at	DATE		NOT NULL,
-	passwd	    VARCHAR(10)		NOT NULL,
+	fixed_at	DATE		NULL,
+	passwd	    VARCHAR(50)		NOT NULL,
 	recom	    NUMBER(10)		NULL
 );
 
@@ -31,11 +31,11 @@ CREATE SEQUENCE reply_seq
   CACHE 2                        -- 2번은 메모리에서만 계산
   NOCYCLE;                      -- 다시 1부터 생성되는 것을 방지
   
-INSERT INTO reply(replyno, rcontent, rdate, memberno, boardno, fixed_at, passwd, recom)
-VALUES(reply_seq.nextval, '댓글 남겨요', sysdate, 1, 1, sysdate, '1234', 1);
+INSERT INTO reply(replyno, rcontent, rdate, memberno, boardno,passwd)
+VALUES(reply_seq.nextval, '댓글 남겨요', sysdate, 1, 1, '1234');
 
-INSERT INTO reply(replyno, rcontent, rdate, memberno, boardno, fixed_at, passwd, recom)
-VALUES(reply_seq.nextval, '댓글 남겨요', sysdate, 1, 17, sysdate, '1234', 1);
+INSERT INTO reply(replyno, rcontent, rdate, memberno, boardno, passwd)
+VALUES(reply_seq.nextval, '댓글 남겨요', sysdate, 1, 17, '1234');
 
 SELECT * FROM reply;
 

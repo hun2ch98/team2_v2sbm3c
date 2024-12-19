@@ -28,4 +28,6 @@ public class ReplyVO {
   private int recom;
   /**회원 번호 */
   private int memberno;
+  /**수정일자*/
+  private String fixed_at;
 }
