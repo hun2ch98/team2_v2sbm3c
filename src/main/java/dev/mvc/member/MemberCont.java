@@ -95,16 +95,25 @@ public class MemberCont {
   public String list(HttpSession session, Model model) {
 //    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
 //    model.addAttribute("menu", menu);
+    // 세션에서 등급 확인
+    String grade = (String) session.getAttribute("grade");
     
-    if (this.memberProc.isMemberAdmin(session)) {
+    // 관리자 등급만 접근 허용
+    if (grade != null && grade.equals("admin")) {
       ArrayList<MemberVO> list = this.memberProc.list();
-      
       model.addAttribute("list", list);
-      
-      return "/member/list";  // /templates/member/list.html
+      return "/member/list"; // /templates/member/list.html
     } else {
-      return "redirect:/member/login_cookie_need";  // redirect
+      return "redirect:/member/login_cookie_need"; // redirect
     }
+//    if (this.memberProc.isMemberAdmin(session)) {
+//      ArrayList<MemberVO> list = this.memberProc.list();
+//      model.addAttribute("list", list);
+//      
+//      return "/member/list";  // /templates/member/list.html
+//    } else {
+//        return "redirect:/member/login_cookie_need";  // redirect
+//    }
   }
 
   /**
@@ -114,12 +123,11 @@ public class MemberCont {
    * @return 회원 정보
    */
   @GetMapping(value="/read")
-  public String read(HttpSession session, 
-                            Model model,
-                            @RequestParam(name="memberno", defaultValue = "") int memberno) {
+  public String read(HttpSession session, Model model,
+                     @RequestParam(name="memberno", defaultValue = "") int memberno) {
     // 회원은 회원 등급만 처리, 관리자: 1 ~ 10, 사용자: 11 ~ 20
     // int gradeno = this.memberProc.read(memberno).getGrade(); // 등급 번호
-    String grade = (String)session.getAttribute("grade"); // 등급: admin, member, guest
+    String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
     
     // 사용자: member && 11 ~ 20
     // if (grade.equals("member") && (gradeno >= 11 && gradeno <= 20) && memberno == (int)session.getAttribute("memberno")) {
@@ -128,11 +136,9 @@ public class MemberCont {
       
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
-      
       return "member/read";  // templates/member/read.html
-      
     } else if (grade.equals("admin")) {
-      System.out.println("-> read memberno: " + memberno);
+//      System.out.println("-> read memberno: " + memberno);
       
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
@@ -301,8 +307,7 @@ public class MemberCont {
                                      @RequestParam(value="id", defaultValue = "") String id, 
                                      @RequestParam(value="passwd", defaultValue = "") String passwd,
                                      @RequestParam(value="id_save", defaultValue = "") String id_save,
-                                     @RequestParam(value="passwd_save", defaultValue = "") String passwd_save
-                                     ) {
+                                     @RequestParam(value="passwd_save", defaultValue = "") String passwd_save) {
     HashMap<String, Object> map = new HashMap<String, Object>();
     map.put("id", id);
     map.put("passwd", passwd);

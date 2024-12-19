@@ -19,12 +19,19 @@ public class MemberVO {
     private String nickname = "";
     /** 생년월일 */
     private String birth = "";
-    /** 주소 */
-    private String address = "";
+    /** 우편 번호 */
+    private String zipcode = "";
+    /** 주소 1 */
+    private String address1 = "";
+    /** 주소 2 */
+    private String address2 = "";
+    /** 가입일 */
+    private String mdate = "";
     /** 등급 */
     private int grade = 0;
     /** 프로필 이미지 */
     private String pf_img = "";
+    
     /** 등록된 패스워드 */
     private String old_passwd = "";
     /** id 저장 여부 */
