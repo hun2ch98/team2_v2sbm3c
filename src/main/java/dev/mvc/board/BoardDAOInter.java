@@ -25,6 +25,13 @@ public interface BoardDAOInter {
   public ArrayList<BoardVO> list_all();
   
   /**
+   * 게시글 등록된 목록
+   * @param boardno
+   * @return
+   */
+  public ArrayList<BoardVO> list_by_boardno(int boardno);
+  
+  /**
    * 게시글 내용 수정
    * @param boardVO
    * @return

@@ -129,8 +129,6 @@ public class ReplyCont {
       }
   }
 
-
- 
   /**
    * 전체 목록
    * 
@@ -138,36 +136,17 @@ public class ReplyCont {
    */
   @GetMapping(value = "/list_all")
   public String list_all(HttpSession session, Model model) {
-    // System.out.println("-> list_all");
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
-
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
-      ArrayList<ReplyVO> list = this.replyProc.list_all(); // 모든 목록
+      // 댓글 목록 조회
+      ArrayList<ReplyVO> list = this.replyProc.list_all(); // 모든 댓글 목록
 
       // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
-      // for문을 사용하여 객체를 추출, Call By Reference 기반의 원본 객체 값 변경
-//      for (ContentsVO contentsVO : list) {
-//        String title = contentsVO.getTitle();
-//        String content = contentsVO.getContent();
-//        
-//        title = Tool.convertChar(title);  // 특수 문자 처리
-//        content = Tool.convertChar(content); 
-//        
-//        contentsVO.setTitle(title);
-//        contentsVO.setContent(content);  
-//
-//      }
-
+      // 필요한 경우, 댓글 목록을 안전하게 변환하거나 필터링하는 로직 추가 가능
       model.addAttribute("list", list);
+
+      // 댓글 목록 페이지로 이동
       return "/reply/list_all";
-
-    } else {
-      return "redirect:/member/login_cookie_need";
-
-    }
-
   }
+  
 
 //  /**
 //   * 유형 1
