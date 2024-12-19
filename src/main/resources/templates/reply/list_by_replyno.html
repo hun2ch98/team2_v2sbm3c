@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout}">
+<div layout:fragment="content">
+
+  <div class="title_line"></div>
+
+  <aside class="aside_right">
+    <a th:href="@{/reply/create}">등록</a>
+    <span class="menu_divide">|</span>
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside>
+
+  <div class="menu_line"></div>
+
+  <table class="table table-striped" style="width: 100%;">
+    <colgroup>
+      <col style="width: 10%;"/>
+      <col style="width: 90%;"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">파일</th>
+        <th class="th_bs">제목</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 목록이 비어 있는 경우 처리 -->
+      <tr th:if="${list == null or list.size() == 0}">
+        <td colspan="2" style="text-align: center;">등록된 게시글이 없습니다.</td>
+      </tr>
+
+      <!-- 댓글 목록 출력 -->
+      <tr th:each="replyVO, status : ${list}" 
+          th:if="${replyVO != null}" 
+          th:attr="onclick=|location.href='/reply/read?replyno=${replyVO.replyno}'|"
+          style="cursor: pointer; height: 90px;">
+
+        <td class='td_basic' th:text="${replyVO.replyno}" style="text-align: center;"></td> <!-- 가운데 정렬 -->
+        <td class='td_basic' style="text-align: center;"> <!-- 가운데 정렬 -->
+          <span th:text="${replyVO.rcontent}" style="font-weight: bold;"></span><br>
+          <span th:if="${replyVO.rcontent.length() > 140 }" 
+              th:text="|${replyVO.rcontent.substring(0, 160) }...|"></span>
+          <span th:if="${replyVO.rcontent.length() <= 140 }" 
+              th:text="|${replyVO.rcontent}|"></span>
+        </td>
+        <td class='td_basic' th:text="${replyVO.rdate}" style="text-align: center;"></td> <!-- 가운데 정렬 -->
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="bottom_menu">
+    <button type="button" onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+  </div>
+
+</div>
+</html>

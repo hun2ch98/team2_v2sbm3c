@@ -18,7 +18,11 @@ public class ReplyProc implements ReplyProcInter {
   
   @Autowired // ReplyDAOInter interface를 구현한 클래스의 객체를 만들어 자동으로 할당해라.
   private ReplyDAOInter replyDAO;
-
+  
+  public ReplyProc() {
+    System.out.println("-> Reply created.");
+  }
+  
   @Override // 추상 메소드를 구현했음.
   public int create(ReplyVO replyVO) {
     // -------------------------------------------------------------------
@@ -253,14 +257,8 @@ public class ReplyProc implements ReplyProcInter {
   }
 
   @Override
-  public int update_text(ReplyVO replyVO) {
-    int cnt = this.replyDAO.update_text(replyVO);
-    return cnt;
-  }
-
-  @Override
-  public int update_file(ReplyVO replyVO) {
-    int cnt = this.replyDAO.update_file(replyVO);
+  public int update(ReplyVO replyVO) {
+    int cnt = this.replyDAO.update(replyVO);
     return cnt;
   }
 
@@ -317,4 +315,3 @@ public class ReplyProc implements ReplyProcInter {
   }
   
 }
-

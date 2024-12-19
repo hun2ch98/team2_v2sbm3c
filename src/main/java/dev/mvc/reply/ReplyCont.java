@@ -248,35 +248,33 @@ public class ReplyCont {
    * 수정 폼
    *
    */
-  @GetMapping(value = "/update_text")
-  public String update_text(HttpSession session, 
-      Model model, 
-      @RequestParam(name="replyno", defaultValue="") int replyno, 
-      RedirectAttributes ra, 
+  @GetMapping(value = "/update")
+  public String update(HttpSession session,  Model model, 
+      @RequestParam(name="replyno", defaultValue="0") int replyno, 
       @RequestParam(name="word", defaultValue="") String word,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
 //    ArrayList<CateVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
-    model.addAttribute("word", word);
-    model.addAttribute("now_page", now_page);
+      model.addAttribute("word", word);
+      model.addAttribute("now_page", now_page);
 
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+ //   if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       ReplyVO replyVO = this.replyProc.read(replyno);
       model.addAttribute("replyVO", replyVO);
       
       BoardVO boardVO = this.boardProc.read(replyVO.getBoardno());
       model.addAttribute("boardVO", boardVO);
 
-      return "/reply/update_text"; // /templates/contents/update_text.html
+      return "/reply/update"; // /templates/contents/update.html
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
-    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
-      return "member/login_cookie_need";
-    }
+//    } else {
+////      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+////      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
+//      return "member/login_cookie_need";
+//    }
 
   }
 
@@ -284,56 +282,87 @@ public class ReplyCont {
    * 수정 처리
    * @return
    */
-  @PostMapping(value = "/update_text")
-  public String update_text(HttpSession session, 
-      Model model, 
+  @PostMapping(value = "/update")
+  public String update(HttpSession session, Model model, RedirectAttributes ra,
       @ModelAttribute("replyVO") ReplyVO replyVO, 
-      RedirectAttributes ra,
-      @RequestParam(name="search_word", defaultValue="") String search_word, // replyVO.word와 구분 필요
-      @RequestParam(name="now_page", defaultValue="0") int now_page) {
-      ra.addAttribute("word", search_word);
-      ra.addAttribute("now_page", now_page);
+      @RequestParam(name="word", defaultValue="") String word, // replyVO.word와 구분 필요
+      @RequestParam(name="now_page", defaultValue="1") int now_page) {
+    
+//  if (this.memberProc.isMember(session)) { // 로그인한경우
+//    model.addAttribute("boardno", boardno);
+//    model.addAttribute("word", word);
+//    model.addAttribute("now_page", now_page);
+//    
+//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
+//    model.addAttribute("menu", menu);
 
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
-      HashMap<String, Object> map = new HashMap<String, Object>();
-      map.put("replyno", replyVO.getReplyno());
-      map.put("passwd", replyVO.getPasswd());
+    this.replyProc.update(replyVO); // Oracle 처리
+    ra.addAttribute ("replyno", replyVO.getBoardno());
+    ra.addAttribute("word", word);
+    ra.addAttribute("now_page", now_page);
+    
+    return "redirect:/reply/read";
+//  } else {
+//    ra.addAttribute("url", "/member/login_cookie_need"); 
+//    return "redirect:/board/post2get"; // GET
+//  }
+}
+  
+  /**
+   * 삭제 폼
+   * http://localhost:9093/reply/delete?replyno=1
+   * 
+   * @return
+   */
+  @GetMapping(value = "/delete")
+  public String delete(HttpSession session, Model model, RedirectAttributes ra,
+                               @RequestParam(name="replyno", defaultValue="0") int replyno, 
+                               @RequestParam(name="boardno", defaultValue="0") int boardno, 
+                               @RequestParam(name="word", defaultValue="") String word, 
+                               @RequestParam(name="now_page", defaultValue="1") int now_page) {
+//    if (this.memberProc.isMember(session)) { // 로그인한경우
+      model.addAttribute("boardno", boardno);
+      model.addAttribute("word", word);
+      model.addAttribute("now_page", now_page);
+      
+//      ArrayList<CateVOMenu> menu = this.cateProc.menu();
+//      model.addAttribute("menu", menu);
+      
+      ReplyVO replyVO = this.replyProc.read(replyno);
+      model.addAttribute("replyVO", replyVO);
 
-      if (this.replyProc.password_check(map) == 1) { // 패스워드 일치
-        this.replyProc.update_text(replyVO); // 글수정
-
-        // mav 객체 이용
-        ra.addAttribute("replyno", replyVO.getReplyno());
-        ra.addAttribute("boardno", replyVO.getBoardno());
-        return "redirect:/reply/read"; // @GetMapping(value = "/read")
-
-      } else { // 패스워드 불일치
-        ra.addFlashAttribute("code", "passwd_fail"); // redirect -> forward -> html
-        ra.addFlashAttribute("cnt", 0);
-        ra.addAttribute("url", "/reply/msg"); // msg.html, redirect parameter 적용
-
-        return "redirect:/reply/post2get"; // @GetMapping(value = "/msg")
-      }
-    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-      return "redirect:/reply/post2get"; // @GetMapping(value = "/msg")
-    }
+      BoardVO boardVO = this.boardProc.read(replyVO.getBoardno());
+      model.addAttribute("boardVO", boardVO);
+      
+      return "/reply/delete"; // forward
+      
+//    } else {
+//      ra.addAttribute("url", "/member/login_cookie_need");
+//      return "redirect:/board/msg"; 
+//    }
 
   }
   
   /**
-   * 삭제 처리 http://localhost:9093/contents/delete
+   * 삭제 처리 http://localhost:9093/reply/delete
    * 
    * @return
    */
   @PostMapping(value = "/delete")
-  public String delete(RedirectAttributes ra,
-      @RequestParam(name="boardno", defaultValue="") int boardno, 
+  public String delete(RedirectAttributes ra,  
+      @RequestParam(name="boardno", defaultValue="0") int boardno, 
       @RequestParam(name="replyno", defaultValue="0") int replyno, 
       @RequestParam(name="word", defaultValue="") String word, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
    
-    this.replyProc.delete(replyno); // DBMS 삭제
+    ReplyVO replyVO_read = replyProc.read(replyno);
+    String rcontent = replyVO_read.getRcontent();
+    String rdate = replyVO_read.getRdate();
+    
+//    this.replyProc.delete(replyno); // DBMS 삭제
+    System.out.println("->replyno: " + replyno);
+    int cnt = this.replyProc.delete(replyno);
+    System.out.println("->cnt: " + cnt);
         
     // -------------------------------------------------------------------------------------
     // 마지막 페이지의 마지막 레코드 삭제시의 페이지 번호 -1 처리
@@ -346,19 +375,19 @@ public class ReplyCont {
     map.put("boardno", boardno);
     map.put("word", word);
     
-    if (this.replyProc.list_by_boardno_search_count(map) % Reply.RECORD_PER_PAGE == 0) {
-      now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
-      if (now_page < 1) {
-        now_page = 1; // 시작 페이지
-      }
-    }
+//    if (this.replyProc.list_by_boardno_search_count(map) % Reply.RECORD_PER_PAGE == 0) {
+//      now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
+//      if (now_page < 1) {
+//        now_page = 1; // 시작 페이지
+//      }
+//    }
     // -------------------------------------------------------------------------------------
 
     ra.addAttribute("boardno", boardno);
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
     
-    return "redirect:/reply/list_by_boardno";    
+    return "redirect:/reply/list_by_replyno";    
     
   }   
   
