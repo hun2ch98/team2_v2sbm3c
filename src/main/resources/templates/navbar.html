@@ -55,7 +55,8 @@
                 <li class="nav-item">
                     <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
                     <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout">
-                      <img th:src="@{|${session.pf_img}|}" alt="로그아웃" style="width: 30px; height: 30px; border-radius: 50%;">
+                      <img th:src="@{${session.pf_img}}" alt="" style="width: 30px; height: 30px; border-radius: 50%;">
+                      <span th:text="'로그아웃'"></span>
                     </a>
                     <!--<a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.pf_img} 로그아웃|}"></a>-->
                 </li>
