@@ -5,28 +5,25 @@
 <mapper namespace="dev.mvc.diary.DiaryDAOInter">
   <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
   <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
-    INSERT INTO contents(diaryno, memberno, cateno, title, content, passwd, word,
-                                     file1, file1saved, thumb1, size1, rdate)
-    VALUES(contents_seq.nextval, #{memberno}, #{cateno}, #{title}, #{content}, #{passwd}, #{word},
-                #{file1}, #{file1saved}, #{thumb1}, #{size1}, sysdate)
+    INSERT INTO contents(diaryno, title, ddate, summary, weather_code, emno, memberno, illustno)
+    VALUES(contents_seq.nextval, #{title}, #{ddate}, #{summary}, #{weather_code}, #{emno}, #{memberno}, #{illustno})
   </insert>
 
   <!-- 모든 카테고리의 등록된 글목록 -->
   <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, passwd, word, rdate,
-               file1, file1saved, thumb1, size1, mp4
-    FROM contents
+    SELECT diaryno, title, ddate, summary, weather_code, emno, illustno
+    FROM diary
     ORDER BY diaryno DESC
   </select>
   
-  <!-- 특정 카테고리의 등록된 글목록 -->
+  <!-- 특정 카테고리의 등록된 글목록 
   <select id="list_by_cateno" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
     SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, rdate,
               LOWER(file1) as file1, file1saved, thumb1, size1, mp4
     FROM contents 
     WHERE cateno = #{cateno}
     ORDER BY diaryno DESC
-  </select> 
+  </select> -->
   
   <!-- 일반적인 조회 -->
   <select id="read" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
@@ -38,53 +35,53 @@
   
   <!-- map 등록, 수정, 삭제, 
          HashMap: VO 클래스는 변수가 너무 많아서 메모리 낭비가 발생함으로,
-                       보통 3개 이하의 적은 변수만 전달하는 경우 HashMap 사용 권장 -->
+                       보통 3개 이하의 적은 변수만 전달하는 경우 HashMap 사용 권장 
   <update id="map" parameterType="HashMap">
     UPDATE contents SET map=#{map} WHERE diaryno=#{diaryno}
-  </update>
+  </update> -->
 
   <!-- Youtube 등록, 수정, 삭제, 
          HashMap: VO 클래스는 변수가 너무 많아서 메모리 낭비가 발생함으로,
-                       보통 3개 이하의 적은 변수만 전달하는 경우 HashMap 사용 권장 -->
+                       보통 3개 이하의 적은 변수만 전달하는 경우 HashMap 사용 권장
   <update id="youtube" parameterType="HashMap">
     UPDATE contents SET youtube=#{youtube} WHERE diaryno=#{diaryno}
-  </update>
+  </update> -->
 
-  <!-- 카테고리별 검색 목록 -->
+  <!-- 카테고리별 검색 목록 
   <select id="list_by_cateno_search" resultType="dev.mvc.diary.DiaryVO" parameterType="HashMap">
     SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, word, rdate,
             file1, file1saved, thumb1, size1, map, youtube
     FROM contents
     <choose>
-      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 -->
+      <when test="word == null or word == ''"> 
         WHERE cateno=#{cateno}
       </when>
-      <otherwise> <!-- 검색하는 경우 -->
+      <otherwise> 
         WHERE cateno=#{cateno} AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%' 
                                                   OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%' 
                                                   OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
       </otherwise>
     </choose>
     ORDER BY diaryno DESC   
-  </select>
+  </select>-->
    
-  <!-- 카테고리별 검색 레코드 갯수 -->
+  <!-- 카테고리별 검색 레코드 갯수 
   <select id="list_by_cateno_search_count" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as cnt
     FROM contents
     <choose>
-      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우의 레코드 갯수 -->
+      <when test="word == null or word == ''"> 
         WHERE cateno=#{cateno}
       </when>
-      <otherwise> <!-- 검색하는 경우의 레코드 갯수 -->
+      <otherwise> 
         WHERE cateno=#{cateno} AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%' 
                                                   OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%' 
                                                   OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
       </otherwise>
     </choose>
-  </select>   
+  </select>   -->
 
-  <!-- 카테고리별 검색 + 페이징 목록 -->
+  <!-- 카테고리별 검색 + 페이징 목록 
   <select id="list_by_cateno_search_paging" resultType="dev.mvc.diary.DiaryVO" parameterType="HashMap">
    SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube, r
    FROM (
@@ -93,7 +90,7 @@
                         SELECT diaryno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube
                         FROM contents
                         <choose>
-                          <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 -->
+                          <when test="word == null or word == ''">
                             WHERE cateno=#{cateno}
                           </when>
                           <otherwise>
@@ -107,17 +104,15 @@
     )
     WHERE <![CDATA[ r >= #{start_num} AND r <= #{end_num} ]]>
      
-    <!-- 1 page: WHERE r >= 1 AND r <= 10; 
-          2 page: WHERE r >= 11 AND r <= 20;
-          3 page: WHERE r >= 21 AND r <= 30; -->
-  </select>
+    
+  </select>-->
   
-  <!-- 패스워드 검사 -->
+  <!-- 패스워드 검사
   <select id="password_check" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as cnt 
     FROM contents
     WHERE diaryno = #{diaryno} AND passwd=#{passwd}
-  </select>
+  </select> -->
   
   <!-- 글 수정 -->
   <update id="update_text" parameterType="dev.mvc.diary.DiaryVO">
@@ -141,46 +136,33 @@
   </delete>
   
   <!-- FK cateno 컬럼에 대응하는 필수 SQL -->
-  <!-- 특정 카테고리에 속한 레코드 갯수를 리턴 -->
+  <!-- 특정 카테고리에 속한 레코드 갯수를 리턴 
   <select id="count_by_cateno" resultType="int" parameterType="int">
     SELECT COUNT(*) as cnt 
     FROM contents 
     WHERE cateno=#{cateno}
-  </select>
+  </select>-->
   
-  <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->
+  <!-- 특정 카테고리에 속한 모든 레코드 삭제
   <delete id="delete_by_cateno" parameterType="int">
     DELETE FROM contents
     WHERE cateno=#{cateno}
-  </delete>
+  </delete> -->
 
   <!-- FK memberno 컬럼에 대응하는 필수 SQL -->
-  <!-- 특정 카테고리에 속한 레코드 갯수를 리턴 -->
+  <!-- 특정 카테고리에 속한 레코드 갯수를 리턴
   <select id="count_by_memberno" resultType="int" parameterType="int">
     SELECT COUNT(*) as cnt 
     FROM contents 
     WHERE memberno=#{memberno}
-  </select>
+  </select> -->
   
-  <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->
+  <!-- 특정 카테고리에 속한 모든 레코드 삭제
   <delete id="delete_by_memberno" parameterType="int">
     DELETE FROM contents
     WHERE memberno=#{memberno}
-  </delete>
+  </delete> -->
 
-   <!-- 댓글 수 증가 -->
-   <update id="increaseReplycnt" parameterType="int">
-     UPDATE contents
-     SET replycnt = replycnt + 1
-     WHERE diaryno = #{diaryno}
-   </update>
-
-   <!-- 댓글 수 감소 -->
-   <update id="decreaseReplycnt" parameterType="int">
-     UPDATE contents
-     SET replycnt = replycnt - 1
-     WHERE diaryno = #{diaryno}
-   </update>
     
 </mapper> 
 
