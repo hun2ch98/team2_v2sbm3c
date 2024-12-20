@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<div layout:fragment="content">
+  <div class="title_line">
+    <span th:if="${diaryVO != null}" th:text="${diaryVO.title}" class="title_line_text"></span>
+    <span th:if="${diaryVO == null}">제목 없음</span> > 글 수정
+  </div>
+
+  <aside class="aside_right">
+    <a th:href="@{/diary/create}">등록</a>
+    <span class="menu_divide">│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class="menu_divide">│</span>
+    <a th:href="@{/diary/list_search}">목록</a>
+  </aside>
+
+  <div class="menu_line"></div>
+
+  <form name="frm" method="post" th:object="${diaryVO}" th:action="@{/diary/update}">
+    <input type="hidden" name="diaryno" th:value="${diaryVO.diaryno}" />
+
+    <div>
+      <label for="title">제목</label>
+      <input id="title" type="text" name="title" th:value="${diaryVO.title}" required="required" 
+             autofocus="autofocus" class="form-control full-width" />
+    </div>
+
+    <div>
+      <label for="summary">내용</label>
+      <textarea id="summary" name="summary" required="required" class="form-control full-width" 
+                rows="12" th:text="${diaryVO.summary}"></textarea>
+    </div>
+
+    <div>
+      <label for="emno">감정 번호</label>
+      <input id="emno" type="number" name="emno" th:value="${diaryVO.emno}" required="required" 
+             class="form-control full-width" />
+    </div>
+
+    <div>
+      <label for="weather_code">날씨 코드</label>
+      <input id="weather_code" type="number" name="weather_code" th:value="${diaryVO.weather_code}" 
+             class="form-control full-width" />
+    </div>
+
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+      <button type="button" th:attr="onclick=|location.href='/diary/list_by_diaryno_search_paging'|" 
+              class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  </form>
+</div>
+</html>

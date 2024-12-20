@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
   <div class="title_line">
-    일기 목록 
+    일기 목록
     <span th:if="${word != null and word != ''}" th:text="|검색어: '${word}'|"></span>
     <span th:if="${start_date != null and end_date != null}" th:text="|날짜: ${start_date} ~ ${end_date}|"></span>
   </div>
@@ -37,29 +37,35 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>번호</th>
           <th>제목</th>
           <th>날짜</th>
+          <th>날씨</th>
           <th>감정</th>
-          <th>일기</th>
+          <th>요약</th>
           <th>관리</th>
         </tr>
       </thead>
       <tbody>
         <tr th:each="diary : ${diaryList}">
-          <td th:text="${diary.diaryno}"></td>
           <td th:text="${diary.title}"></td>
           <td th:text="${diary.ddate}"></td>
+          <td th:text="${diary.weather_code}"></td>
           <td th:text="${diary.emno}"></td>
           <td th:text="${diary.summary}"></td>
           <td>
             <a th:href="@{/diary/update/{diaryno}(diaryno=${diary.diaryno})}">수정</a>
-            <span class='menu_divide'>│</span>
-            <a th:href="@{/diary/delete/{diaryno}(diaryno=${diary.diaryno})}">삭제</a>
+            <span class="menu_divide">│</span>
+            <form th:action="@{/diary/delete}" method="post" style="display: inline;">
+              <input type="hidden" name="diaryno" th:value="${diary.diaryno}" />
+              <button type="submit" class="btn btn-link">삭제</button>
+            </form>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <!-- 페이징 처리 -->
+  <div th:if="${paging != null}" th:utext="${paging}" style="margin-top: 20px; text-align: center;"></div>
 </div>
 </html>
