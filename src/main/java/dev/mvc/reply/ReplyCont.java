@@ -298,10 +298,11 @@ public class ReplyCont {
 
     this.replyProc.update(replyVO); // Oracle 처리
     ra.addAttribute ("replyno", replyVO.getBoardno());
+    ra.addAttribute("boardno", replyVO.getBoardno());
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
     
-    return "redirect:/reply/read";
+    return "redirect:/reply/list_all";
 //  } else {
 //    ra.addAttribute("url", "/member/login_cookie_need"); 
 //    return "redirect:/board/post2get"; // GET

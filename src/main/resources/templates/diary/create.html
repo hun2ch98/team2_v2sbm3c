@@ -17,6 +17,9 @@
   </aside>
   
   <div class='menu_line'></div>
+  
+  <form name='frm' method='post' th:object="${diaryVO}" action='./create' enctype="multipart/form-data">
+    <input type="hidden" name="diaryno" th:value="${param.diaryno }">
     
     <div>
        <label>오늘의 제목</label>
@@ -25,7 +28,7 @@
     </div>
     <div>
        <label>오늘의 기분</label>
-       <input type='number' name='emotion' required="required" 
+       <input type='emotion' name='emotion' required="required" 
                  autofocus="autofocus" class="form-control" style='width: 100%;'>
     </div>
     <div>
@@ -37,13 +40,11 @@
        <label>이미지</label>
        <input type='file' class="form-control" name='file1MF' id='file1MF' value='' placeholder="파일 선택">
     </div>   
-    
     <div>
        <label>패스워드</label>
        <input type='password' name='passwd' value='1234' required="required" 
                  class="form-control" style='width: 50%;'>
     </div>   
-    
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">등록</button>
       <button type="button" th:attr="onclick=|location.href='./list_by_diaryno_search_paging?diaryno=${diaryno}'|" class="btn btn-secondary btn-sm">목록</button>

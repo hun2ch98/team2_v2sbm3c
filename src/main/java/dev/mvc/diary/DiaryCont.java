@@ -129,9 +129,10 @@ public class DiaryCont {
   public String list_all(Model model) {
     DiaryVO diaryVO = new DiaryVO();
     
-    diaryVO.setIllustno(null);
-    diaryVO.setEmno(null);
-    diaryVO.setWeather_code(null);
+    // requestParam으로 불러와야함.
+    diaryVO.setIllustno(0);
+    diaryVO.setEmno(0);
+    diaryVO.setWeather_code(0);
     model.addAttribute("diaryVO", diaryVO);
 
     ArrayList<DiaryVO> list = this.diaryProc.list_all();

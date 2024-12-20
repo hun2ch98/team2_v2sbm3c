@@ -1,7 +1,10 @@
 package dev.mvc.member;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import dev.mvc.diary.DiaryProcInter;
 import jakarta.servlet.http.Cookie;
@@ -65,31 +69,106 @@ public class MemberCont {
   }
   
   @PostMapping(value="/create")
-  public String create_proc(Model model,
-                                     @ModelAttribute("memberVO") MemberVO memberVO) {
-    int checkID_cnt = this.memberProc.checkID(memberVO.getId());
-    
-    if (checkID_cnt == 0) {
-      memberVO.setGrade(15); // 기본 회원 15
-   
-      int cnt = this.memberProc.create(memberVO);
-      
-      if (cnt == 1) {
-        model.addAttribute("code", "create_success");
-        model.addAttribute("name", memberVO.getName());
-        model.addAttribute("id", memberVO.getId());
-      } else {
-        model.addAttribute("code", "create_fail");
+  public String create_proc(HttpSession session, Model model,
+                            @ModelAttribute("memberVO") MemberVO memberVO,
+                            @RequestParam("pf_img") MultipartFile pf_img_file) {
+      int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+
+      if (checkID_cnt == 0) {
+          if ("admin".equals(memberVO.getId())) {
+              memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+          } else {
+              memberVO.setGrade(15); // 기본 회원 15
+          }
+
+          // 프로필 이미지 업로드 처리
+          if (!pf_img_file.isEmpty()) {
+              String uploadDir = "static/images"; // 이미지 업로드 경로 설정
+              String fileName = UUID.randomUUID().toString() + "_" + pf_img_file.getOriginalFilename();
+              File file = new File(uploadDir, fileName);
+              try {
+                  pf_img_file.transferTo(file);
+                  memberVO.setPf_img("/static/images" + fileName); // 이미지 경로 세팅
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+          }
+
+          int cnt = this.memberProc.create(memberVO);
+
+          if (cnt == 1) {
+              // 회원가입 성공 시 세션에 프로필 이미지 경로 저장
+              session.setAttribute("memberno", memberVO.getMemberno());
+              session.setAttribute("id", memberVO.getId());
+              session.setAttribute("name", memberVO.getName());
+              session.setAttribute("pf_img", memberVO.getPf_img());
+
+              model.addAttribute("code", "create_success");
+              model.addAttribute("name", memberVO.getName());
+              model.addAttribute("id", memberVO.getId());
+          } else {
+              model.addAttribute("code", "create_fail");
+          }
+
+          model.addAttribute("cnt", cnt);
+      } else { // id 중복
+          model.addAttribute("code", "duplicate_fail");
+          model.addAttribute("cnt", 0);
       }
-      
-      model.addAttribute("cnt", cnt);
-    } else { // id 중복
-      model.addAttribute("code", "duplicte_fail");
-      model.addAttribute("cnt", 0);
-    }
-    
-    return "/member/msg"; // /templates/member/msg.html
+
+      return "/member/msg"; // /templates/member/msg.html
   }
+  
+//  @PostMapping(value="/create")
+//  public String create_proc(HttpSession session, Model model,
+//                             @ModelAttribute("memberVO") MemberVO memberVO,
+//                             @RequestParam("pf_img") MultipartFile pf_img) {
+//    int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+//    
+//    if (checkID_cnt == 0) {
+//      if ("admin".equals(memberVO.getId())) {
+//          memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+//      } else {
+//          memberVO.setGrade(15); // 기본 회원 15
+//      }
+//      
+//      // 프로필 이미지 업로드 처리
+//      if (!pf_img.isEmpty()) {
+//          String uploadDir = "path/to/upload/directory"; // 이미지 업로드 경로 설정
+//          String fileName = UUID.randomUUID().toString() + "_" + pf_img.getOriginalFilename();
+//          File file = new File(uploadDir, fileName);
+//          try {
+//              pf_img.transferTo(file);
+//              memberVO.setPf_img(fileName);
+//          } catch (IOException e) {
+//              e.printStackTrace();
+//          }
+//      }
+//   
+//      int cnt = this.memberProc.create(memberVO);
+//      
+//      if (cnt == 1) {
+//        // 회원가입 성공 시 세션에 프로필 이미지 경로 저장
+//        session.setAttribute("memberno", memberVO.getMemberno());
+//        session.setAttribute("id", memberVO.getId());
+//        session.setAttribute("name", memberVO.getName());
+//        session.setAttribute("pf_img", memberVO.getPf_img());
+//        
+//        model.addAttribute("code", "create_success");
+//        model.addAttribute("name", memberVO.getName());
+//        model.addAttribute("id", memberVO.getId());
+//      } else {
+//        model.addAttribute("code", "create_fail");
+//      }
+//      
+//      model.addAttribute("cnt", cnt);
+//    } else { // id 중복
+//      model.addAttribute("code", "duplicte_fail");
+//      model.addAttribute("cnt", 0);
+//    }
+//    
+//    return "/member/msg"; // /templates/member/msg.html
+//  }
   
   @GetMapping(value="/list")
   public String list(HttpSession session, Model model) {
@@ -97,7 +176,7 @@ public class MemberCont {
 //    model.addAttribute("menu", menu);
     // 세션에서 등급 확인
     String grade = (String) session.getAttribute("grade");
-    
+ 
     // 관리자 등급만 접근 허용
     if (grade != null && grade.equals("admin")) {
       ArrayList<MemberVO> list = this.memberProc.list();
@@ -138,7 +217,7 @@ public class MemberCont {
       model.addAttribute("memberVO", memberVO);
       return "member/read";  // templates/member/read.html
     } else if (grade.equals("admin")) {
-//      System.out.println("-> read memberno: " + memberno);
+      System.out.println("-> read memberno: " + memberno);
       
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
@@ -301,13 +380,13 @@ public class MemberCont {
    */
   @PostMapping(value="/login")
   public String login_proc(HttpSession session,
-                                     HttpServletRequest request,
-                                     HttpServletResponse response,
-                                     Model model, 
-                                     @RequestParam(value="id", defaultValue = "") String id, 
-                                     @RequestParam(value="passwd", defaultValue = "") String passwd,
-                                     @RequestParam(value="id_save", defaultValue = "") String id_save,
-                                     @RequestParam(value="passwd_save", defaultValue = "") String passwd_save) {
+                           HttpServletRequest request,
+                           HttpServletResponse response,
+                           Model model, 
+                           @RequestParam(value="id", defaultValue = "") String id, 
+                           @RequestParam(value="passwd", defaultValue = "") String passwd,
+                           @RequestParam(value="id_save", defaultValue = "") String id_save,
+                           @RequestParam(value="passwd_save", defaultValue = "") String passwd_save) {
     HashMap<String, Object> map = new HashMap<String, Object>();
     map.put("id", id);
     map.put("passwd", passwd);
@@ -319,16 +398,17 @@ public class MemberCont {
     
     if (cnt == 1) {
       // id를 이용하여 회원 정보 조회
-      MemberVO memverVO = this.memberProc.readById(id);
-      session.setAttribute("memberno", memverVO.getMemberno());
-      session.setAttribute("id", memverVO.getId());
-      session.setAttribute("name", memverVO.getName());
+      MemberVO memberVO = this.memberProc.readById(id);
+      session.setAttribute("memberno", memberVO.getMemberno());
+      session.setAttribute("id", memberVO.getId());
+      session.setAttribute("name", memberVO.getName());
+      session.setAttribute("pf_img", memberVO.getPf_img()); // 프로필 이미지 경로 설정
       
-      if (memverVO.getGrade() >= 1 && memverVO.getGrade() <= 10) {
+      if (memberVO.getGrade() >= 1 && memberVO.getGrade() <= 10) {
         session.setAttribute("grade", "admin");
-      } else if (memverVO.getGrade() >= 11 && memverVO.getGrade() <= 20) {
+      } else if (memberVO.getGrade() >= 11 && memberVO.getGrade() <= 20) {
         session.setAttribute("grade", "member");
-      } else if (memverVO.getGrade() >= 21) {
+      } else if (memberVO.getGrade() >= 21) {
         session.setAttribute("grade", "guest");
       }
 
@@ -397,14 +477,14 @@ public class MemberCont {
    */
   @GetMapping(value="/passwd_update")
   public String passwd_update_form(HttpSession session, Model model) {
-//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+//    ArrayList<MemberVOMenu> menu = this.memberProc.menu();
 //    model.addAttribute("menu", menu);
     
     if (this.memberProc.isMember(session)) {
       int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
       
       MemberVO memberVO = this.memberProc.read(memberno);
-      
+
       model.addAttribute("memberVO", memberVO);
       
       return "/member/passwd_update";    // /templates/member/passwd_update.html      
@@ -465,7 +545,7 @@ public class MemberCont {
                                     @RequestParam(value="passwd", defaultValue = "") String passwd) {
     
     if (this.memberProc.isMember(session)) {
-      int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
+      int memberno = (int) session.getAttribute("memberno"); // session에서 가져오기
       HashMap<String, Object> map = new HashMap<String, Object>();
       map.put("memberno", memberno);
       map.put("passwd", current_passwd);

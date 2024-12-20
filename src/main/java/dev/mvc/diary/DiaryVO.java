@@ -1,5 +1,7 @@
 package dev.mvc.diary;
 
+import java.util.Date;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -26,25 +28,25 @@ public class DiaryVO {
   private String title="";
   
   /** 일기 날짜, 캘린더 API와 연동 */
-  private String date="";
+  private String ddate;
   
   /** 날씨 테이블과 연결 */
-  private Integer weather_code;
+  private int weather_code;
   
   /** 감정번호 */
-  private Integer emno;
+  private int emno;
   
   /** 대화번호 */
-  private Integer conversationno;
+  private int conversationno;
   
   /** 요약일기  */
   private String summary;
   
   /** 회원번호 */
-  private Integer memberno;
+  private int memberno;
   
   /** 그림번호 */
-  private Integer illustno;
+  private int illustno;
 
   
 }
