@@ -34,9 +34,7 @@ public class MemberVO {
     
     // -----------------------------------------------------------------------------------
     /** 파일 업로드 관련 */
-    private MultipartFile file1MF = null;
-    /** 메인 이미지 크기 단위, 파일 크기 */
-    private String size1_label = "";
+    private MultipartFile pf_imgMF = null;
     /** 프로필 이미지 */
     private String pf_img = "";
     /** 실제 저장된 프로필 이미지 */

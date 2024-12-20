@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import jakarta.servlet.http.HttpSession;
+import dev.mvc.board.BoardVO;
 import dev.mvc.tool.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,18 @@ public class MemberProc implements MemberProcInter{
   @Override
   public int update(MemberVO memberVO) {
     int cnt = this.memberDAO.update(memberVO); // 회원 정보 수정
+    return cnt;
+  }
+  
+  @Override
+  public int update_text(MemberVO memberVO) {
+    int cnt = this.memberDAO.update_text(memberVO);
+    return cnt;
+  }
+  
+  @Override
+  public int update_file(MemberVO memberVO) {
+    int cnt = this.memberDAO.update_file(memberVO);
     return cnt;
   }
   
