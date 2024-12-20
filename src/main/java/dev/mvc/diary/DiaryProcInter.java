@@ -97,13 +97,7 @@ public interface DiaryProcInter {
    */
   public ArrayList<DiaryVO> list_search(String title, String date);  
   
-  /**
-   * 검색 갯수
-   * @param title
-   * @param date
-   * @return
-   */
-  public Integer list_search_count(String title, String date);
+  int list_search_count(String title, String date);
   
   /**
    * 검색 + 페이징 목록
@@ -113,7 +107,7 @@ public interface DiaryProcInter {
    * @param record_per_page 페이지당 출력할 레코드 수
    * @return
    */
-  public ArrayList<DiaryVO> list_search_paging(String title, String date, String sort, int now_page, int record_per_page);
+  public ArrayList<DiaryVO> list_search_paging(String title, String date, int now_page, int record_per_page);
 
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 

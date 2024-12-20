@@ -3,6 +3,8 @@ package dev.mvc.diary;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 public interface DiaryDAOInter {
   /**
    * <pre>
@@ -106,10 +108,10 @@ public interface DiaryDAOInter {
   
   /**
    * 검색 갯수
-   * @param word
    * @return
    */
-  public Integer list_search_count(String word);
+  int list_search_count(@Param("title") String title, @Param("date") String date);
+
   
   /**
    * 검색 + 페이징 목록
@@ -125,7 +127,6 @@ public interface DiaryDAOInter {
   
   public ArrayList<DiaryVO> list_search(String title, String date);
   
-  public Integer list_search_count(String title, String date);
 
   ArrayList<DiaryVO> listSearch(Map<String, Object> paramMap);
 

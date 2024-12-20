@@ -103,33 +103,24 @@ public class DiaryProc implements DiaryProcInter {
   }
 
   @Override
-  public Integer list_search_count(String title, String date) {
-    int cnt = this.diaryDAO.list_search_count(title, date);
-    return cnt;
+  public int list_search_count(String title, String date) {
+      return diaryDAO.list_search_count(title, date);
   }
 
   @Override
-  public ArrayList<DiaryVO> list_search_paging(String title, String date, String sort, int now_page, int record_per_page) {
-      /*
-       페이지당 10개의 레코드 출력
-       now_page가 1일 때: start_num = 1, end_num = 10
-       now_page가 2일 때: start_num = 11, end_num = 20
-      */
-      int start_num = ((now_page - 1) * record_per_page) + 1;
-      int end_num = (start_num + record_per_page) - 1;
+  public ArrayList<DiaryVO> list_search_paging(String title, String date, int nowPage, int recordPerPage) {
+      int startNum = (nowPage - 1) * recordPerPage; 
+      int endNum = startNum + recordPerPage; // 마지막 행 번호 계산
 
-      // 파라미터를 map에 넣어 전달
-      Map<String, Object> map = new HashMap<String, Object>();
-      map.put("title", title.trim());   // title 검색 조건
-      map.put("date", date.trim());     // date 검색 조건
-      map.put("sort", sort);            // 정렬 기준 (ASC/DESC)
-      map.put("start_num", start_num);  // 페이징 시작 번호
-      map.put("end_num", end_num);      // 페이징 끝 번호
+      Map<String, Object> paramMap = new HashMap<>();
+      paramMap.put("title", title != null ? title.trim() : "");
+      paramMap.put("startNum", startNum);
+      paramMap.put("endNum", endNum);
 
-      // DAO에서 SQL을 실행
-      ArrayList<DiaryVO> list = this.diaryDAO.list_search_paging(map);
-      return list;
+      return diaryDAO.list_search_paging(paramMap);
   }
+
+
 
 
   /** 
@@ -240,8 +231,8 @@ public class DiaryProc implements DiaryProcInter {
   public ArrayList<DiaryVO> listSearch(String title, String startDate, String endDate) {
       Map<String, Object> paramMap = new HashMap<>();
       paramMap.put("title", title != null ? "%" + title.trim() + "%" : null);
-      paramMap.put("startDate", startDate != null ? startDate.trim() : null);
-      paramMap.put("endDate", endDate != null ? endDate.trim() : null);
+      paramMap.put("start_date", startDate);
+      paramMap.put("end_date", endDate);
 
       return diaryDAO.listSearch(paramMap);
   }

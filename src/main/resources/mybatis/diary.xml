@@ -21,48 +21,43 @@
     SELECT COUNT(*) FROM diary WHERE diaryno = #{diaryno}
 </select>
 
-  <select id="listSearch" resultType="dev.mvc.diary.DiaryVO" parameterType="HashMap">
-    SELECT diaryno, title, ddate, summary, weather_code, emno, illustno
+  <select id="listSearch" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
+    SELECT *
     FROM diary
-    WHERE (#{title,jdbcType=VARCHAR} IS NULL OR LOWER(title) LIKE LOWER(#{title,jdbcType=VARCHAR}))
-      AND (#{startDate,jdbcType=DATE} IS NULL OR ddate >= TO_DATE(#{startDate,jdbcType=DATE}, 'YYYY-MM-DD'))
-      AND (#{endDate,jdbcType=DATE} IS NULL OR ddate &lt;= TO_DATE(#{endDate,jdbcType=DATE}, 'YYYY-MM-DD'))
-    ORDER BY ddate DESC
+    WHERE title LIKE #{title}
+      <if test="start_date != null and start_date != ''">
+        AND TRUNC(ddate) >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+      </if>
+      <if test="end_date != null and end_date != ''">
+        AND TRUNC(ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+      </if>
+    ORDER BY diaryno DESC
+</select>
+
+
+
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM diary
+  </select>
+
+  
+  
+  <select id="list_search_paging" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
+    SELECT * FROM (
+        SELECT A.*, ROWNUM rnum
+        FROM (
+            SELECT *
+            FROM diary
+            WHERE title LIKE '%' || #{title} || '%'
+            ORDER BY diaryno DESC
+        ) A
+        WHERE ROWNUM &lt;= #{endNum}
+    )
+    WHERE rnum > #{startNum}
   </select>
 
 
 
-  
-  
-  <!-- 일반적인 조회 -->
-  <select id="read" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
-    SELECT diaryno, title, ddate, weather_code, illustno, emno
-    FROM diary
-    WHERE diaryno = #{diaryno}
-  </select>
-  
-  
-  <select id="list_by_diaryno_search_paging" resultType="dev.mvc.diary.DiaryVO" parameterType="HashMap">
-     SELECT *
-     FROM (
-         SELECT ROWNUM rnum, diaryno, title, ddate, emno, illustno, summary, weather_code
-         FROM (
-             SELECT diaryno, title, ddate, emno, illustno, summary, weather_code
-             FROM diary
-             <choose>
-                 <when test="title == null or title == ''">
-                     WHERE 1 = 1
-                 </when>
-                 <otherwise>
-                     WHERE UPPER(title) LIKE '%' || UPPER(#{title}) || '%'
-                 </otherwise>
-             </choose>
-             ORDER BY diaryno DESC
-         )
-         WHERE ROWNUM <![CDATA[<=]]> #{end_num}
-     )
-     WHERE rnum <![CDATA[>=]]> #{start_num}
-  </select>
 
   
   <!-- 패스워드 검사
@@ -93,6 +88,21 @@
     WHERE diaryno=#{diaryno}
   </delete>
   
+  <update id="update" parameterType="dev.mvc.diary.DiaryVO">
+    UPDATE diary
+    SET title = #{title},
+        summary = #{summary},
+        weather_code = #{weather_code},
+        emno = #{emno}
+    WHERE diaryno = #{diaryno}
+  </update>
+
+  <select id="read" parameterType="int" resultType="dev.mvc.diary.DiaryVO">
+    SELECT diaryno, title, summary, weather_code, emno, ddate
+    FROM diary
+    WHERE diaryno = #{diaryno}
+  </select>
+
   
     
 </mapper> 
