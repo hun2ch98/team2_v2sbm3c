@@ -16,6 +16,7 @@ public class Board {
     String path = "";
 
     if (osName.contains("win")) { // Windows
+//      C:\kd\deploy\team2\board\storage
       path = "C:\\kd\\deploy\\team2\\board\\storage\\";
       // System.out.println("Windows: " + path);
     } else if (osName.contains("mac")) { // MacOS
