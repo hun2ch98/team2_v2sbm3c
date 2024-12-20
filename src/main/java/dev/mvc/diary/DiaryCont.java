@@ -109,20 +109,37 @@ public class DiaryCont {
   }
 
 
-  // 아직도 처음 접근시 작동이 완벽하지 않음.
+  
   @GetMapping("/list_by_diaryno_search_paging")
   public String listSearch(@RequestParam(value = "title", required = false, defaultValue="") String title,
                                          @RequestParam(value = "start_date", required = false, defaultValue="") String startDate,
-                                         @RequestParam(value = "end_date", required = false, defaultValue="") String endDate,
+                                         @RequestParam(value = "end_date", required = false, defaultValue="") String endDate, 
+                                         @RequestParam(value = "now_page", required = false, defaultValue = "1") int now_page,
                                          Model model) {
 
- 
-      // 검색 조건에 따라 데이터 가져오기
-      ArrayList<DiaryVO> diaryList = diaryProc.listSearch(title, startDate, endDate);
-      model.addAttribute("diaryList", diaryList);
-      model.addAttribute("title", title);
-      model.addAttribute("start_date", startDate);
-      model.addAttribute("end_date", endDate);
+    title = title.trim();
+    startDate = startDate.trim();
+    endDate = endDate.trim();
+
+    // 검색 결과 및 페이징 데이터 준비
+    ArrayList<DiaryVO> diaryList = diaryProc.listSearch(title, startDate, endDate);
+    int search_count = diaryProc.countSearchResults(title, startDate, endDate);
+
+    String list_file_name = "/diary/list_by_diaryno_search_paging"; // 목록 파일 이름
+
+    // 페이징 HTML 생성
+    String paging = diaryProc.pagingBox(
+            now_page, title, startDate, endDate, list_file_name, search_count, record_per_page, page_per_block
+    );
+
+    // 모델에 데이터 추가
+    model.addAttribute("diaryList", diaryList);
+    model.addAttribute("title", title);
+    model.addAttribute("start_date", startDate);
+    model.addAttribute("end_date", endDate);
+    model.addAttribute("paging", paging);
+    model.addAttribute("search_count", search_count);
+    model.addAttribute("now_page", now_page);
 
       return "/diary/list_by_diaryno_search_paging";
   }

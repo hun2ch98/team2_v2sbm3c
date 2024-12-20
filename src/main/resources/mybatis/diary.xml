@@ -7,7 +7,7 @@
   <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
   <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
     INSERT INTO diary(diaryno, title, ddate, summary, weather_code, emno, memberno, illustno)
-    VALUES(diary_seq.nextval, #{title}, sysdate, #{summary}, #{weather_code}, #{emno}, #{memberno}, #{illustno})
+    VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weather_code}, #{emno}, #{memberno}, #{illustno})
   </insert>
 
   <!-- 모든 카테고리의 등록된 글목록 -->
@@ -32,7 +32,7 @@
         AND TRUNC(ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
       </if>
     ORDER BY diaryno DESC
-</select>
+  </select>
 
 
 
@@ -103,7 +103,22 @@
     WHERE diaryno = #{diaryno}
   </select>
 
-  
+  <select id="countSearchResults" resultType="int" parameterType="map">
+    SELECT COUNT(*) 
+    FROM diary 
+    WHERE 1=1
+    <if test="title != null and title != ''">
+        AND title LIKE #{title}
+    </if>
+    <if test="start_date != null and start_date != ''">
+        AND ddate &gt;= #{start_date}
+    </if>
+    <if test="end_date != null and end_date != ''">
+        AND ddate &lt;= #{end_date}
+    </if>
+  </select>
+
+
     
 </mapper> 
 
