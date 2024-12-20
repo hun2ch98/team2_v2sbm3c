@@ -29,8 +29,12 @@ public class MemberVO {
     private String mdate = "";
     /** 등급 */
     private int grade = 0;
+    
     /** 프로필 이미지 */
     private String pf_img = "";
+    
+    
+    
     /** 등록된 패스워드 */
     private String old_passwd = "";
     /** id 저장 여부 */
