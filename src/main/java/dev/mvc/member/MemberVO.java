@@ -1,5 +1,7 @@
 package dev.mvc.member;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,10 +32,20 @@ public class MemberVO {
     /** 등급 */
     private int grade = 0;
     
+    // -----------------------------------------------------------------------------------
+    /** 파일 업로드 관련 */
+    private MultipartFile file1MF = null;
+    /** 메인 이미지 크기 단위, 파일 크기 */
+    private String size1_label = "";
     /** 프로필 이미지 */
     private String pf_img = "";
-    
-    
+    /** 실제 저장된 프로필 이미지 */
+    private String file1saved = "";
+    /** 프로필 이미지 preview */
+    private String thumb1 = "";
+    /** 메인 이미지 크기 */
+    private long size1 = 0;
+    // -----------------------------------------------------------------------------------
     
     /** 등록된 패스워드 */
     private String old_passwd = "";
