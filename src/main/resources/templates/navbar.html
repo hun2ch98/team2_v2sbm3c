@@ -48,6 +48,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_search?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">전체 글 목록</a></li>
                     </ul>
                 </li>
                 
@@ -63,12 +64,12 @@
                 <li class="nav-item">
                     <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
                     <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout">
-                      <img th:src="@{${session.pf_img}}" alt="" style="width: 30px; height: 30px; border-radius: 50%;">
+                      <img th:src="@{${session.pf_img}}" alt="프로필 이미지" style="width: 30px; height: 30px; border-radius: 50%;">
                       <span th:text="'로그아웃'"></span>
                     </a>
                     <!--<a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.pf_img} 로그아웃|}"></a>-->
                 </li>
-
+                  
             </ul>
         </div>
         <!-- 메뉴 종료 -->
