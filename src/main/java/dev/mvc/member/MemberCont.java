@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.diary.DiaryProcInter;
+import dev.mvc.tool.Tool;
+import dev.mvc.tool.Upload;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -72,7 +76,8 @@ public class MemberCont {
    */
   @PostMapping(value="/create")
   public String create_proc(Model model,
-                                     @ModelAttribute("memberVO") MemberVO memberVO) {
+                             @ModelAttribute("memberVO") MemberVO memberVO,
+                             RedirectAttributes ra) {
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     
     if (checkID_cnt == 0) {
@@ -81,7 +86,47 @@ public class MemberCont {
       } else {
           memberVO.setGrade(15); // 기본 회원 15
       }
-   
+      
+   // 파일 전송 코드 시작
+      String pf_img = ""; // 원본 파일명 image
+      String file1saved = ""; // 저장된 파일명, image
+      String thumb1 = ""; // preview image
+
+      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
+      System.out.println("-> upDir: " + upDir);
+
+      MultipartFile mf = memberVO.getFile1MF(); // MemberVO에 파일 필드가 있다고 가정
+
+      if (mf != null && !mf.isEmpty()) {
+          pf_img = mf.getOriginalFilename(); // 원본 파일명 산출, 01.jpg
+          System.out.println("-> 원본 파일명 산출 file1: " + pf_img);
+
+          long size1 = mf.getSize(); // 파일 크기
+          if (size1 > 0) { // 파일 크기 체크, 파일을 올리는 경우
+              if (Tool.checkUploadFile(pf_img)) { // 업로드 가능한 파일인지 검사
+                  file1saved = Upload.saveFileSpring(mf, upDir);
+
+                  if (Tool.isImage(file1saved)) { // 이미지인지 검사
+                      thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+                  }
+
+                  memberVO.setPf_img(pf_img); // 순수 원본 파일명
+                  memberVO.setFile1saved(file1saved); // 저장된 파일명(파일명 중복 처리)
+                  memberVO.setThumb1(thumb1); // 원본이미지 축소판
+                  memberVO.setSize1(size1); // 파일 크기
+
+              } else { // 전송 못하는 파일 형식
+                  ra.addFlashAttribute("code", "check_upload_file_fail"); // 업로드 할 수 없는 파일
+                  ra.addFlashAttribute("cnt", 0); // 업로드 실패
+                  ra.addFlashAttribute("url", "/member/msg"); // msg.html, redirect parameter 적용
+                  return "redirect:/member/msg"; // Post -> Get - param...
+              }
+          } else { // 파일이 없을 경우
+              System.out.println("-> 파일이 없으므로 글만 등록");
+          }
+      }
+      // 파일 전송 코드 종료
+      
       int cnt = this.memberProc.create(memberVO);
       
       if (cnt == 1) {
@@ -100,7 +145,6 @@ public class MemberCont {
     
     return "/member/msg"; // /templates/member/msg.html
   }
-  
   
   
   @GetMapping(value="/list")

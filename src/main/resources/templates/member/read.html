@@ -4,6 +4,12 @@
 <div layout:fragment="content">
   <script>
     window.onload = () => {
+      document.querySelector('#pf_img').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          document.getElementById('name').focus();
+        }
+      });
+      
       document.querySelector('#name').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           document.getElementById('email').focus();
@@ -52,6 +58,13 @@
   <div style="width: 60%; margin: 0px auto ">
     <form name="frm" id="frm" th:object="${memberVO}" method="post" action="/member/update">
       <input type="hidden" name="memberno" th:value="${memberVO.memberno}">
+      
+      <div class="form-group">
+        <label for="name">프로필</label>
+        <input type='file' name='pf_img' id='pf_img' th:value='${memberVO.pf_img}' required="required" 
+               placeholder="프로필" class="form-control form-control-sm" style="width: 30%;">
+        <span id='pf_img_msg'></span>
+      </div>
       
       <div class="form-group">
         <label for="name">성명*</label>
