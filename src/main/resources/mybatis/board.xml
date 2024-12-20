@@ -55,7 +55,7 @@
   <select id="list_by_boardno_search" resultType="dev.mvc.board.BoardVO" parameterType="HashMap">
     SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1
     FROM board
-    WHERE board_cate = #{board_cate} 
+    WHERE board_cate = #{board_cate} <!--OR #{board_cate} IS NULL -->
     ORDER BY boardno DESC
     LIMIT #{startRow}, #{pageSize} 
   </select>
@@ -64,7 +64,7 @@
     <select id="count_by_boardno_search" resultType="int" parameterType="HashMap">
       SELECT COUNT(*)
       FROM board
-      WHERE board_cate = #{board_cate} 
+      WHERE board_cate = #{board_cate} <!--OR #{board_cate} IS NULL -->
     </select>
   
   <!-- 게시글 종류별 검색 및 페이징 -->
@@ -74,7 +74,7 @@
       SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, 
              ROW_NUMBER() OVER (ORDER BY boardno DESC) AS rnum
       FROM board
-      WHERE board_cate = #{board_cate} 
+      WHERE board_cate = #{board_cate} <!--OR #{board_cate} IS NULL -->
     )
     WHERE rnum BETWEEN #{startRow} AND #{endRow} 
   </select>
