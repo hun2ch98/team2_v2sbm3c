@@ -88,6 +88,8 @@ public class BoardCont {
                        Model model, 
                        @ModelAttribute("boardVO") BoardVO boardVO,
                        RedirectAttributes ra) {
+    
+//    if (memberProc.isMemberAdmin(session)) { // ghld 로그인한경우
 
       String file1 = ""; 
       String file1saved = ""; 
@@ -132,21 +134,28 @@ public class BoardCont {
   }
   
   /**
-   * 게시글 목록 페이지
+   * 게시글 목록 (회원용)
    * @param boardno
    * @param model
    * @return
    */
   @GetMapping("/list_by_boardno")
-  public String listByBoardno(@RequestParam(name = "boardno", defaultValue = "0") int boardno, Model model) {
+  public String listByBoardno(@RequestParam(name = "boardno", defaultValue = "0") int boardno, Model model,
+      HttpSession session) {
+//    if (this.memberProc.isMember(session)) {
       ArrayList<BoardVO> list = this.boardProc.list_by_boardno(boardno);
       model.addAttribute("list", list);
       return "/board/list_by_boardno";
+      
+//    } else {
+//      return "redirect:/member/login_cookie_need";
+//
+//    }
   }
 
   
   /**
-   * 전체 목록
+   * 전체 목록(관리자)
    * @return
    */
   @GetMapping(value = "/list_all")
