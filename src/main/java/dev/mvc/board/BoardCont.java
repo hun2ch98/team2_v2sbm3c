@@ -189,98 +189,98 @@ public class BoardCont {
    * 
    * @return
    */
-//  @GetMapping(value = "/list_by_boardno")
-//  public String list_by_boardno_search_paging(
-//      HttpSession session, 
-//      Model model, 
-//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-//      @RequestParam(name = "boardno", defaultValue = "1") int boardno,
-//      @RequestParam(name = "word", defaultValue = "") String word,
-//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-//
-//    // System.out.println("-> cateno: " + cateno);
-//
-////    ArrayList<BoardVOMenu> menu = this.boardProc.menu();
-////    model.addAttribute("menu", menu);
-//
-//    MemberVO memberVO = this.memberProc.read(memberno);
-//    model.addAttribute("memberVO", memberVO);
-//
-//    word = Tool.checkNull(word).trim();
-//
-//    HashMap<String, Object> map = new HashMap<>();
-//    map.put("memberno", memberno);
-//    map.put("word", word);
-//    map.put("now_page", now_page);
-//
-//    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
-//    model.addAttribute("list", list);
-//
-//    // System.out.println("-> size: " + list.size());
-//    model.addAttribute("word", word);
-//
-//    int search_count = this.boardProc.count_by_boardno_search(map);
-////    String paging = this.boardProc.pagingBox(boardno, now_page, word, "/board/list_by_boardno", search_count,
-////        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
-////    model.addAttribute("paging", paging);
-//    model.addAttribute("now_page", now_page);
-//
-//    model.addAttribute("search_count", search_count);
-//
-//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-//    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
-//    model.addAttribute("no", no);
-//
-//    return "/contents/list_by_boardno_search_paging"; // /templates/board/list_by_boardno_search_paging.html
-//  }
-//
-//  /**
-//   * 카테고리별 목록 + 검색 + 페이징 + Grid
-//   * @return
-//   */
-//  @GetMapping(value = "/list_by_cateno_grid")
-//  public String list_by_cateno_search_paging_grid(HttpSession session, 
-//      Model model, 
-//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-//      @RequestParam(name = "boardno", defaultValue = "1") int boardno,
-//      @RequestParam(name = "word", defaultValue = "") String word,
-//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-//
-//
-////  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
-////  model.addAttribute("menu", menu);
-//
-//    MemberVO memberVO = this.memberProc.read(memberno);
-//    model.addAttribute("memberVO", memberVO);
-//
-//    word = Tool.checkNull(word).trim();
-//
-//    HashMap<String, Object> map = new HashMap<>();
-//    map.put("memberno", memberno);
-//    map.put("word", word);
-//    map.put("now_page", now_page);
-//
-//    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
-//    model.addAttribute("list", list);
-//
-//    // System.out.println("-> size: " + list.size());
-//    model.addAttribute("word", word);
-//
-//    int search_count = this.boardProc.count_by_boardno_search(map);
-////    String paging = this.boardProc.pagingBox(boardno, now_page, word, "/board/list_by_boardno_grid", search_count,
-////        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
-////    model.addAttribute("paging", paging);
-//    model.addAttribute("now_page", now_page);
-//
-//    model.addAttribute("search_count", search_count);
-//
-//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-//    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
-//    model.addAttribute("no", no);
-//
-//    // /templates/contents/list_by_cateno_search_paging_grid.html
-//    return "/contents/list_by_cateno_search_paging_grid";
-//  }
+  @GetMapping(value = "/list_by_search")
+  public String list_by_boardno_search_paging(
+      HttpSession session, 
+      Model model, 
+      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+      @RequestParam(name = "boardno", defaultValue = "1") int boardno,
+      @RequestParam(name = "word", defaultValue = "") String word,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+
+    // System.out.println("-> cateno: " + cateno);
+
+//    ArrayList<BoardVOMenu> menu = this.boardProc.menu();
+//    model.addAttribute("menu", menu);
+
+    MemberVO memberVO = this.memberProc.read(memberno);
+    model.addAttribute("memberVO", memberVO);
+
+    word = Tool.checkNull(word).trim();
+
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("memberno", memberno);
+    map.put("word", word);
+    map.put("now_page", now_page);
+
+    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
+    model.addAttribute("list", list);
+
+    // System.out.println("-> size: " + list.size());
+    model.addAttribute("word", word);
+
+    int search_count = this.boardProc.count_by_boardno_search(map);
+//    String paging = this.boardProc.pagingBox(boardno, now_page, word, "/board/list_by_boardno", search_count,
+//        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
+//    model.addAttribute("paging", paging);
+    model.addAttribute("now_page", now_page);
+
+    model.addAttribute("search_count", search_count);
+
+    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
+    model.addAttribute("no", no);
+
+    return "/contents/list_by_boardno_search_paging"; // /templates/board/list_by_boardno_search_paging.html
+  }
+
+  /**
+   * 카테고리별 목록 + 검색 + 페이징 + Grid
+   * @return
+   */
+  @GetMapping(value = "/list_by_boardno_grid")
+  public String list_by_cateno_search_paging_grid(HttpSession session, 
+      Model model, 
+      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+      @RequestParam(name = "boardno", defaultValue = "1") int boardno,
+      @RequestParam(name = "word", defaultValue = "") String word,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+
+
+//  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
+//  model.addAttribute("menu", menu);
+
+    MemberVO memberVO = this.memberProc.read(memberno);
+    model.addAttribute("memberVO", memberVO);
+
+    word = Tool.checkNull(word).trim();
+
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("memberno", memberno);
+    map.put("word", word);
+    map.put("now_page", now_page);
+
+    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
+    model.addAttribute("list", list);
+
+    // System.out.println("-> size: " + list.size());
+    model.addAttribute("word", word);
+
+    int search_count = this.boardProc.count_by_boardno_search(map);
+//    String paging = this.boardProc.pagingBox(boardno, now_page, word, "/board/list_by_boardno_grid", search_count,
+//        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
+//    model.addAttribute("paging", paging);
+    model.addAttribute("now_page", now_page);
+
+    model.addAttribute("search_count", search_count);
+
+    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
+    model.addAttribute("no", no);
+
+    // /templates/contents/list_by_cateno_search_paging_grid.html
+    return "/contents/list_by_cateno_search_paging_grid";
+  }
 
   
   /**
