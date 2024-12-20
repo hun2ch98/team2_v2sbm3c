@@ -127,6 +127,9 @@ public interface DiaryDAOInter {
   
   public Integer list_search_count(String title, String date);
 
+  ArrayList<DiaryVO> listSearch(Map<String, Object> paramMap);
+
+  
 }
 
 
