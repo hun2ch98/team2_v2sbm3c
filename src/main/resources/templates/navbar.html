@@ -18,7 +18,7 @@
                 <li class="nav-item dropdown" th:each="memberVOMenu:${menu}"> 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                          role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${memberVOMenu.genre}">                                                            
-                    </a>
+                    </a>           
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li th:each="memberVO:${memberVOMenu.list_name}">
                             <a class="dropdown-item" th:href="@{|/board/list_by_boardno?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a>
@@ -34,10 +34,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{|/member/create|}">회원 가입</a>
-                        </li>
-                        <li class="nav-item" th:if="${session.memberno != null}">
-                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀 번호 변경</a>
-                        </li>  
+                        </li> 
                     </ul>
                 </li>
 
@@ -52,7 +49,7 @@
                     </ul>
                 </li>
                 
-                <li class="nav-item dropdown" >
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="요청사항">                                                            
                     </a>
@@ -62,26 +59,68 @@
                     </ul>
                 </li>
                 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" th:href="@{|/member/list_by_boardno|}" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="프로필">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/mypage|}">MyPage</a>
+                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀 번호 변경</a>
+                        </li>  
+                    </ul>
+                </li>
+                
+                <li class="nav-item">
+                    <tr th:if="${login.size() > 0}" th:each="memberVO, status: ${login}"
+                         th:attr="onclick=|location.href='/member/read?memberno=${memberVO.memberno}'|"
+                         style="cursor: pointer; height: 90px;">
+                        <td class="td_basic" style="vertical-align: middle; text-align: center;">
+                            <!-- 프로필 이미지 추가 -->
+                            <div th:if="${memberVO.pf_img != null}">
+                                <img th:src="@{|/member/storage/${memberVO.thumb1}|}" style="width: 30px; height: 30px; border-radius: 50%;"
+                                     th:alt="Profile Image">
+                            </div>
+                            
+                            <!-- 이미지가 아닌 파일은 파일명만 출력 -->
+                            <div th:if="${((memberVO.pf_img.endsWith('jpg') or memberVO.pf_img.endsWith('png')  or memberVO.pf_img.endsWith('gif')) == false) and (memberVO.size1 > 0)}">
+                                <span th:text="${memberVO.pf_img}"></span>
+                            </div>
+                            
+                            <!-- 파일이 없는 경우 기본 이미지 출력 -->
+                            <div th:if="${memberVO.size1 == 0}">
+                                <img src="/images/default.png" style="width: 30px; height: 30px; border-radius: 50%;" alt="Default Image">
+                            </div>
+                        </td>
+                    </tr>
+                </li>
+                
+                <!-- 프로필 이미지 추가 -->
+                <li class="nav-item">
+                    <img th:if="${session.memberno != null}" 
+                         th:src="@{${session.file1saved} == 'default.png' ? '/images/default.png' : '/member/storage/' + ${session.file1saved}}" 
+                         alt="Profile Image" 
+                         style="width: 30px; height: 30px; border-radius: 50%;">
+                </li>
+                <!-- 프로필 이미지 끝 -->
+                
                 <li class="nav-item">
                     <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
-                    <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout">
-                      <img th:src="@{${session.pf_img}}" alt="" style="width: 30px; height: 30px; border-radius: 50%;">
-                      <span th:text="'로그아웃'"></span>
-                    </a>
-                    <!--<a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.pf_img} 로그아웃|}"></a>-->
+                    <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.id} 로그아웃|}"></a>
                 </li>
-                  
             </ul>
         </div>
         <!-- 메뉴 종료 -->
         
-        <!-- 회원과 관리자 버튼 -->
+        <!-- 회원과 관리자 버튼 => 나중에 지울 부분 -->
         <div class="login-buttons">
           <button type="button" onclick="loginAsMember();" class="btn btn-secondary btn-sm">회원</button>
           <button type="button" onclick="loginAsAdmin();" class="btn btn-secondary btn-sm">관리자</button>
         </div>
+        <!-- 회원과 관리자 버튼 => 나중에 지울 부분 -->
     </div>  
   </nav>
+  <!-- 나중에 지울 부분 -->
   <script>
     function loginAsMember() {
       const form = document.createElement('form');
@@ -127,4 +166,5 @@
       form.submit();
     }
   </script>
+  <!-- 나중에 지울 부분 -->
 </div>

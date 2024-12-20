@@ -3,6 +3,8 @@ package dev.mvc.member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dev.mvc.board.BoardVO;
+
 public interface MemberDAOInter {
   
   /**
@@ -45,6 +47,20 @@ public interface MemberDAOInter {
    * @return
    */
   public int update(MemberVO memberVO);
+  
+  /**
+   * 프로필 이미지 수정
+   * @param memberVO
+   * @return
+   */
+  public int update_text(MemberVO memberVO);
+  
+  /**
+   * 파일 수정
+   * @param memberVO
+   * @return
+   */
+  public int update_file(MemberVO memberVO);
  
   /**
    * 회원 삭제 처리

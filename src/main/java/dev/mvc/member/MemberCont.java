@@ -75,77 +75,192 @@ public class MemberCont {
    * @return
    */
   @PostMapping(value="/create")
-  public String create_proc(Model model,
-                             @ModelAttribute("memberVO") MemberVO memberVO,
-                             RedirectAttributes ra) {
-    int checkID_cnt = this.memberProc.checkID(memberVO.getId());
-    
-    if (checkID_cnt == 0) {
-      if ("admin".equals(memberVO.getId())) {
-          memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
-      } else {
-          memberVO.setGrade(15); // 기본 회원 15
-      }
-      
-   // 파일 전송 코드 시작
-      String pf_img = ""; // 원본 파일명 image
-      String file1saved = ""; // 저장된 파일명, image
-      String thumb1 = ""; // preview image
+  public String create_proc(HttpServletRequest request,
+                            HttpSession session, 
+                            Model model,
+                            @ModelAttribute("memberVO") MemberVO memberVO,
+                            RedirectAttributes ra) {
+      // 파일 업로드 디렉토리 설정
+      String upDir = Member.getUploadDir();
+      MultipartFile mf = memberVO.getPf_imgMF();
+      String file1 = mf.getOriginalFilename();
+      long size1 = mf.getSize();
 
-      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
-      System.out.println("-> upDir: " + upDir);
-
-      MultipartFile mf = memberVO.getFile1MF(); // MemberVO에 파일 필드가 있다고 가정
-
-      if (mf != null && !mf.isEmpty()) {
-          pf_img = mf.getOriginalFilename(); // 원본 파일명 산출, 01.jpg
-          System.out.println("-> 원본 파일명 산출 file1: " + pf_img);
-
-          long size1 = mf.getSize(); // 파일 크기
-          if (size1 > 0) { // 파일 크기 체크, 파일을 올리는 경우
-              if (Tool.checkUploadFile(pf_img)) { // 업로드 가능한 파일인지 검사
-                  file1saved = Upload.saveFileSpring(mf, upDir);
-
-                  if (Tool.isImage(file1saved)) { // 이미지인지 검사
-                      thumb1 = Tool.preview(upDir, file1saved, 200, 150);
-                  }
-
-                  memberVO.setPf_img(pf_img); // 순수 원본 파일명
-                  memberVO.setFile1saved(file1saved); // 저장된 파일명(파일명 중복 처리)
-                  memberVO.setThumb1(thumb1); // 원본이미지 축소판
-                  memberVO.setSize1(size1); // 파일 크기
-
-              } else { // 전송 못하는 파일 형식
-                  ra.addFlashAttribute("code", "check_upload_file_fail"); // 업로드 할 수 없는 파일
-                  ra.addFlashAttribute("cnt", 0); // 업로드 실패
-                  ra.addFlashAttribute("url", "/member/msg"); // msg.html, redirect parameter 적용
-                  return "redirect:/member/msg"; // Post -> Get - param...
-              }
-          } else { // 파일이 없을 경우
-              System.out.println("-> 파일이 없으므로 글만 등록");
+      if (size1 > 0) {
+          // 파일 저장 및 정보 설정
+          String file1saved = Upload.saveFileSpring(mf, upDir);
+          String thumb1 = "";
+          if (Tool.isImage(file1saved)) {
+              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
           }
-      }
-      // 파일 전송 코드 종료
-      
-      int cnt = this.memberProc.create(memberVO);
-      
-      if (cnt == 1) {
-        model.addAttribute("code", "create_success");
-        model.addAttribute("name", memberVO.getName());
-        model.addAttribute("id", memberVO.getId());
+          memberVO.setPf_img(file1);
+          memberVO.setFile1saved(file1saved);
+          memberVO.setThumb1(thumb1);
+          memberVO.setSize1(size1);
+
+          // 세션에 프로필 이미지 파일 이름 저장
+          session.setAttribute("file1saved", file1saved);
       } else {
-        model.addAttribute("code", "create_fail");
+          // 기본 이미지 설정
+          memberVO.setPf_img("default.png");
+          memberVO.setFile1saved("default.png");
+          memberVO.setThumb1("default_thumb.png");
+          memberVO.setSize1(0);
+
+          // 기본 이미지 파일 이름을 세션에 저장
+          session.setAttribute("file1saved", "default.png");
       }
       
-      model.addAttribute("cnt", cnt);
-    } else { // id 중복
-      model.addAttribute("code", "duplicte_fail");
-      model.addAttribute("cnt", 0);
-    }
-    
-    return "/member/msg"; // /templates/member/msg.html
+      int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+      if (checkID_cnt == 0) {
+          if ("admin".equals(memberVO.getId())) {
+              memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+          } else {
+              memberVO.setGrade(15); // 기본 회원 15
+          }
+          
+          // 회원 등록
+          int cnt = this.memberProc.create(memberVO);
+          if (cnt == 1) {
+              model.addAttribute("code", "create_success");
+              model.addAttribute("name", memberVO.getName());
+              model.addAttribute("id", memberVO.getId());
+          } else {
+              model.addAttribute("code", "create_fail");
+          }
+
+          model.addAttribute("cnt", cnt);
+      } else { // id 중복
+          model.addAttribute("code", "duplicate_fail");
+          model.addAttribute("cnt", 0);
+      }
+
+      return "/member/msg"; // /templates/member/msg.html
+  }
+//  @PostMapping(value="/create")
+//  public String create_proc(HttpServletRequest requeset,
+//                            HttpSession session, 
+//                            Model model,
+//                            @ModelAttribute("memberVO") MemberVO memberVO,
+//                            RedirectAttributes ra) {
+//      // 파일 업로드 디렉토리 설정
+//      String upDir = Member.getUploadDir();
+//      MultipartFile mf = memberVO.getPf_imgMF();
+//      String file1 = mf.getOriginalFilename();
+//      long size1 = mf.getSize();
+//  
+//      if (size1 > 0) {
+//          // 파일 저장 및 정보 설정
+//          String file1saved = Upload.saveFileSpring(mf, upDir);
+//          String thumb1 = "";
+//          if (Tool.isImage(file1saved)) {
+//              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+//          }
+//          memberVO.setPf_img(file1);
+//          memberVO.setFile1saved(file1saved);
+//          memberVO.setThumb1(thumb1);
+//          memberVO.setSize1(size1);
+//      } else {
+//          // 기본 이미지 설정
+//          memberVO.setPf_img("default.png");
+//          memberVO.setFile1saved("default.png");
+//          memberVO.setThumb1("default_thumb.png");
+//          memberVO.setSize1(0);
+//      }
+//      
+//      int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+//      if (checkID_cnt == 0) {
+//          if ("admin".equals(memberVO.getId())) {
+//              memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+//          } else {
+//              memberVO.setGrade(15); // 기본 회원 15
+//          }
+//          
+//          // 회원 등록
+//          int cnt = this.memberProc.create(memberVO);
+//          if (cnt == 1) {
+//              model.addAttribute("code", "create_success");
+//              model.addAttribute("name", memberVO.getName());
+//              model.addAttribute("id", memberVO.getId());
+//          } else {
+//              model.addAttribute("code", "create_fail");
+//          }
+//
+//          model.addAttribute("cnt", cnt);
+//      } else { // id 중복
+//          model.addAttribute("code", "duplicate_fail");
+//          model.addAttribute("cnt", 0);
+//      }
+//
+//      return "/member/msg"; // /templates/member/msg.html
+//  }
+  
+  /**
+   * 프로필 이미지 수정 폼
+   * @param session
+   * @param model
+   * @param memberno
+   * @param word
+   * @param now_page
+   * @return
+   */
+  @GetMapping(value = "/update_file")
+  public String update_file(HttpSession session, 
+      Model model, 
+      @RequestParam(name="memberno", defaultValue="0") int memberno) {
+      
+      MemberVO memberVO = this.memberProc.read(memberno);
+      model.addAttribute("memberVO", memberVO);
+
+      return "/member/update_file";
   }
   
+  /**
+   * 프로필 이미지 수정 처리
+   * @param session
+   * @param model
+   * @param ra
+   * @param memberVO
+   * @param word
+   * @param now_page
+   * @return
+   */
+  @PostMapping(value = "/update_file")
+  public String update_file(HttpSession session, 
+      Model model, 
+      RedirectAttributes ra,
+      @ModelAttribute MemberVO memberVO) {
+
+      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
+      MultipartFile mf = memberVO.getPf_imgMF();
+      String file1 = mf.getOriginalFilename();
+      long size1 = mf.getSize();
+
+      if (size1 > 0) { // 파일이 업로드된 경우
+          String file1saved = Upload.saveFileSpring(mf, upDir);
+          String thumb1 = "";
+          if (Tool.isImage(file1saved)) { // 이미지인지 검사
+              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+          }
+          memberVO.setPf_img(file1);
+          memberVO.setFile1saved(file1saved);
+          memberVO.setThumb1(thumb1);
+          memberVO.setSize1(size1);
+      } else { // 파일이 업로드되지 않은 경우
+          MemberVO oldMemberVO = this.memberProc.read(memberVO.getMemberno());
+          memberVO.setFile1saved(oldMemberVO.getFile1saved());
+          memberVO.setThumb1(oldMemberVO.getThumb1());
+          memberVO.setSize1(oldMemberVO.getSize1());
+      }
+
+      int cnt = this.memberProc.update(memberVO);
+      if (cnt == 1) {
+          ra.addFlashAttribute("code", "update_success");
+      } else {
+          ra.addFlashAttribute("code", "update_fail");
+      }
+      return "redirect:/member/list";
+  }
   
   @GetMapping(value="/list")
   public String list(HttpSession session, Model model) {
@@ -357,13 +472,13 @@ public class MemberCont {
    */
   @PostMapping(value="/login")
   public String login_proc(HttpSession session,
-                                     HttpServletRequest request,
-                                     HttpServletResponse response,
-                                     Model model, 
-                                     @RequestParam(value="id", defaultValue = "") String id, 
-                                     @RequestParam(value="passwd", defaultValue = "") String passwd,
-                                     @RequestParam(value="id_save", defaultValue = "") String id_save,
-                                     @RequestParam(value="passwd_save", defaultValue = "") String passwd_save) {
+                           HttpServletRequest request,
+                           HttpServletResponse response,
+                           Model model, 
+                           @RequestParam(value="id", defaultValue = "") String id, 
+                           @RequestParam(value="passwd", defaultValue = "") String passwd,
+                           @RequestParam(value="id_save", defaultValue = "") String id_save,
+                           @RequestParam(value="passwd_save", defaultValue = "") String passwd_save) {
     HashMap<String, Object> map = new HashMap<String, Object>();
     map.put("id", id);
     map.put("passwd", passwd);
@@ -375,16 +490,17 @@ public class MemberCont {
     
     if (cnt == 1) {
       // id를 이용하여 회원 정보 조회
-      MemberVO memverVO = this.memberProc.readById(id);
-      session.setAttribute("memberno", memverVO.getMemberno());
-      session.setAttribute("id", memverVO.getId());
-      session.setAttribute("name", memverVO.getName());
+      MemberVO memberVO = this.memberProc.readById(id);
+      session.setAttribute("memberno", memberVO.getMemberno());
+      session.setAttribute("id", memberVO.getId());
+      session.setAttribute("name", memberVO.getName());
+      session.setAttribute("file1saved", memberVO.getFile1saved()); // 프로필 이미지 파일 이름 저장
       
-      if (memverVO.getGrade() >= 1 && memverVO.getGrade() <= 10) {
+      if (memberVO.getGrade() >= 1 && memberVO.getGrade() <= 10) {
         session.setAttribute("grade", "admin");
-      } else if (memverVO.getGrade() >= 11 && memverVO.getGrade() <= 20) {
+      } else if (memberVO.getGrade() >= 11 && memberVO.getGrade() <= 20) {
         session.setAttribute("grade", "member");
-      } else if (memverVO.getGrade() >= 21) {
+      } else if (memberVO.getGrade() >= 21) {
         session.setAttribute("grade", "guest");
       }
 
