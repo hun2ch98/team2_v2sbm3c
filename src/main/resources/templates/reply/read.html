@@ -11,7 +11,7 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/reply/create?replyno=${replyVO.replyno}|}">등록</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/reply/update_text?replyno=${replyVO.replyno}&now_page=${now_page}&word=${word }|}">댓글 수정</a>
+    <a th:href="@{|/reply/update?replyno=${replyVO.replyno}&now_page=${now_page}&word=${word }|}">댓글 수정</a>
     <span class='menu_divide' >│</span>
     <a th:href="@{|./delete?replyno=${replyVO.replyno}&word=${word}&now_page=${now_page}&replyno=${replyVO.replyno}|}">삭제</a>  
  </aside> 
