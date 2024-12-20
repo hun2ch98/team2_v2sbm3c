@@ -121,7 +121,7 @@ public interface DiaryProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */
-  String pagingBox(int now_page, String title, String date, String list_file_name, int search_count, int record_per_page,
+  String pagingBox(int now_page, String title, String start_date, String end_date, String list_file_name, int search_count, int record_per_page,
       int page_per_block);
   
 
@@ -129,6 +129,8 @@ public interface DiaryProcInter {
 
   // 검색 및 날짜 필터링 목록 조회
   ArrayList<DiaryVO> listSearch(String title, String startDate, String endDate);
+
+  int countSearchResults(String title, String startDate, String endDate);
 
   
 }

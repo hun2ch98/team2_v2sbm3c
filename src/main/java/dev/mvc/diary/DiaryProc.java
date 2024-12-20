@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -136,7 +137,7 @@ public class DiaryProc implements DiaryProcInter {
    * @return 페이징 생성 문자열
    */ 
   @Override
-  public String pagingBox(int now_page, String title, String date, String list_file_name, int search_count, 
+  public String pagingBox(int now_page, String title, String start_date, String end_date, String list_file_name, int search_count, 
                                       int record_per_page, int page_per_block){    
     // 전체 페이지 수: (double)1/10 -> 0.1 -> 1 페이지, (double)12/10 -> 1.2 페이지 -> 2 페이지
     int total_page = (int)(Math.ceil((double)search_count / record_per_page));
@@ -191,7 +192,7 @@ public class DiaryProc implements DiaryProcInter {
     // 현재 3그룹일 경우: (3 - 1) * 10 = 2그룹의 마지막 페이지 20
     int _now_page = (now_grp - 1) * page_per_block;  
     if (now_grp >= 2){ // 현재 그룹번호가 2이상이면 페이지수가 11페이지 이상임으로 이전 그룹으로 갈수 있는 링크 생성 
-      str.append("<span class='span_box_1'><a href='"+list_file_name+"?&word="+title+"?&date="+date+"&now_page="+_now_page+"'>이전</a></span>"); 
+      str.append("<span class='span_box_1'><a href='"+list_file_name+"?&title="+title+"?&start_date="+start_date+"?&end_date="+end_date+"&now_page="+_now_page+"'>이전</a></span>"); 
     } 
  
     // 중앙의 페이지 목록
@@ -204,7 +205,7 @@ public class DiaryProc implements DiaryProcInter {
         str.append("<span class='span_box_2'>"+i+"</span>"); // 현재 페이지, 강조 
       }else{
         // 현재 페이지가 아닌 페이지는 이동이 가능하도록 링크를 설정
-        str.append("<span class='span_box_1'><a href='"+list_file_name+"?word="+title+"?&date="+date+"&now_page="+i+"'>"+i+"</a></span>");   
+        str.append("<span class='span_box_1'><a href='"+list_file_name+"?word="+title+"?&start_date="+start_date+"?&end_date="+end_date+"&now_page="+i+"'>"+i+"</a></span>");   
       } 
     } 
  
@@ -215,7 +216,7 @@ public class DiaryProc implements DiaryProcInter {
     // 현재 페이지 25일경우 -> 현재 3그룹: (3 * 10) + 1 = 4그룹의 시작페이지 31
     _now_page = (now_grp * page_per_block)+1; //  최대 페이지수 + 1 
     if (now_grp < total_grp){ 
-      str.append("<span class='span_box_1'><a href='"+list_file_name+"?&word="+title+"?&date="+date+"&now_page="+_now_page+"'>다음</a></span>"); 
+      str.append("<span class='span_box_1'><a href='"+list_file_name+"?&word="+title+"?&start_date="+start_date+"?&end_date="+end_date+"&now_page="+_now_page+"'>다음</a></span>"); 
     } 
     str.append("</div>"); 
      
@@ -235,6 +236,21 @@ public class DiaryProc implements DiaryProcInter {
       paramMap.put("end_date", endDate);
 
       return diaryDAO.listSearch(paramMap);
+  }
+
+  
+  //DiaryProc 클래스 내
+  @Autowired
+  private SqlSession sqlSession;
+  
+  @Override
+  public int countSearchResults(String title, String startDate, String endDate) {
+      Map<String, Object> paramMap = new HashMap<>();
+      paramMap.put("title", title != null ? "%" + title.trim() + "%" : null);
+      paramMap.put("start_date", startDate != null ? startDate.trim() : null);
+      paramMap.put("end_date", endDate != null ? endDate.trim() : null);
+
+      return sqlSession.selectOne("countSearchResults", paramMap);
   }
 
 

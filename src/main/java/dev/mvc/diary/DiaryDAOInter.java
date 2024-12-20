@@ -131,6 +131,7 @@ public interface DiaryDAOInter {
   ArrayList<DiaryVO> listSearch(Map<String, Object> paramMap);
 
   
+  
 }
 
 
