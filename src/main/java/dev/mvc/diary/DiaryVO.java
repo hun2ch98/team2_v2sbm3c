@@ -27,7 +27,8 @@ public class DiaryVO {
   @Size(min=1, max=20)
   private String title="";
   
-  /** 일기 날짜, 캘린더 API와 연동 */
+  /** 일기 날짜 (yyyy-MM-dd 형식) */
+  @NotEmpty(message="날짜는 필수 사항입니다.")
   private String ddate;
   
   /** 날씨 테이블과 연결 */
@@ -35,9 +36,6 @@ public class DiaryVO {
   
   /** 감정번호 */
   private int emno;
-  
-  /** 대화번호 */
-  private int conversationno;
   
   /** 요약일기  */
   private String summary;

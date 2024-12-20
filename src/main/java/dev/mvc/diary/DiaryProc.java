@@ -236,6 +236,17 @@ public class DiaryProc implements DiaryProcInter {
       return diaryDAO.cntcount(diaryno);
   }
 
+  @Override
+  public ArrayList<DiaryVO> listSearch(String title, String startDate, String endDate) {
+      Map<String, Object> paramMap = new HashMap<>();
+      paramMap.put("title", title != null ? "%" + title.trim() + "%" : null);
+      paramMap.put("startDate", startDate != null ? startDate.trim() : null);
+      paramMap.put("endDate", endDate != null ? endDate.trim() : null);
+
+      return diaryDAO.listSearch(paramMap);
+  }
+
+
   
 }
 

@@ -133,6 +133,9 @@ public interface DiaryProcInter {
 
   public int cntcount(int diaryno);
 
+  // 검색 및 날짜 필터링 목록 조회
+  ArrayList<DiaryVO> listSearch(String title, String startDate, String endDate);
+
   
 }
 

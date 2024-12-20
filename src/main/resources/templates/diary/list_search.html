@@ -1,51 +1,65 @@
 <!DOCTYPE html>
-
-<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<html layout:decorate="~{layout}">
 <div layout:fragment="content">
   <div class="title_line">
-    카테고리 <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
+    일기 목록 
+    <span th:if="${word != null and word != ''}" th:text="|검색어: '${word}'|"></span>
+    <span th:if="${start_date != null and end_date != null}" th:text="|날짜: ${start_date} ~ ${end_date}|"></span>
   </div>
+
   <aside class="aside_right">
-    <a href="javascript: location.reload();">새로 고침</a>
+    <a href="javascript:location.reload();">새로 고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/diary/create}">새 일기 등록</a>
   </aside>
-  
-  <!--/* '/cate/list_search_com.html' 파일의 list_search_fragment를 가져다 사용 */--> 
-  <div th:replace="~{cate/list_search_com::list_search_fragment}"></div> 
 
   <div class="menu_line"></div>
-  
-  <div class="flex_div_center" style="width: 90%; margin: 0px auto;">  
-    <form name="frm" method="post" action="/cate/create" th:object="${cateVO}">
-      <div style="margin-right: 2px; width: 22%; float: left;">
-        <input type="text" name="genre" value="" autofocus="autofocus"
-               class="form-control" style="width: 100%;" th:field="*{genre}" placeholder="카테고리 그룹">
-      </div>
-      <div style="margin-right: 2px; width: 32%; float: left;">
-        <input type="text" name="name" value="" autofocus="autofocus"
-               class="form-control" style="width: 100%;" th:field="*{name}" placeholder="카테고리">
-      </div>
-      <div style="margin-right: 2px; width: 15%; float: left;">
-        <input type="number" name="seqno" value="" min="1" max="1000000" step="1"
-               class="form-control" style="width: 100%;" th:field="*{seqno}" placeholder="출력 순서">
-      </div>
-      <div style="margin-right: 2px; width: 13%; float: left;">
-        <select id="visible" name="visible" class="form-control">
-          <option value="출력 모드" selected="selected">출력 모드</option>
-          <option value="Y">Y</option>
-          <option value="N">N</option>
-        </select>
-      </div>
-      <div style="margin-right: 2px; width: 13%; float: left; margin-top: 3px; margin-left: 5px;">
-        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
-        <button type="reset" class="btn btn-secondary btn-sm">취소</button>
-      </div>
-      
-    </form>
-  </div>  
 
-  <!--/* '/cate/list_all_com.html' 파일의 list_all_fragment를 가져다 사용 */--> 
-  <div th:replace="~{cate/list_all_com::list_all_fragment}"></div> 
-  
+  <!-- 검색 및 날짜 범위 설정 -->
+  <form name="searchForm" method="get" action="/diary/list_search" style="margin: 20px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <!-- 검색어 -->
+      <input type="text" name="word" th:value="${word}" class="form-control" placeholder="검색어 입력">
+
+      <!-- 시작 날짜 -->
+      <input type="date" name="start_date" th:value="${start_date}" class="form-control">
+
+      <!-- 종료 날짜 -->
+      <input type="date" name="end_date" th:value="${end_date}" class="form-control">
+
+      <!-- 검색 버튼 -->
+      <button type="submit" class="btn btn-secondary btn-sm">검색</button>
+    </div>
+  </form>
+
+  <!-- 목록 출력 -->
+  <div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>번호</th>
+          <th>제목</th>
+          <th>날짜</th>
+          <th>감정</th>
+          <th>일기</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="diary : ${diaryList}">
+          <td th:text="${diary.diaryno}"></td>
+          <td th:text="${diary.title}"></td>
+          <td th:text="${diary.ddate}"></td>
+          <td th:text="${diary.emno}"></td>
+          <td th:text="${diary.summary}"></td>
+          <td>
+            <a th:href="@{/diary/update/{diaryno}(diaryno=${diary.diaryno})}">수정</a>
+            <span class='menu_divide'>│</span>
+            <a th:href="@{/diary/delete/{diaryno}(diaryno=${diary.diaryno})}">삭제</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 </html>
-
