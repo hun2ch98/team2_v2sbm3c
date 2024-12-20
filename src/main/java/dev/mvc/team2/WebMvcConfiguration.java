@@ -1,12 +1,21 @@
 package dev.mvc.team2;
 
+<<<<<<< HEAD
 
+=======
+import org.springframework.context.annotation.Configuration;
+>>>>>>> main
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import dev.mvc.board.Board;
+<<<<<<< HEAD
 import dev.mvc.member.Member;
 
+=======
+
+@Configuration
+>>>>>>> main
 public class WebMvcConfiguration implements WebMvcConfigurer{
   
   @Override
