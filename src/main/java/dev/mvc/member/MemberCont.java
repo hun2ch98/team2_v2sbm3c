@@ -64,6 +64,12 @@ public class MemberCont {
     return "/member/create";    // /template/member/create.html
   }
   
+  /**
+   * 회원가입 처리
+   * @param model
+   * @param memberVO
+   * @return
+   */
   @PostMapping(value="/create")
   public String create_proc(Model model,
                                      @ModelAttribute("memberVO") MemberVO memberVO) {
@@ -94,6 +100,8 @@ public class MemberCont {
     
     return "/member/msg"; // /templates/member/msg.html
   }
+  
+  
   
   @GetMapping(value="/list")
   public String list(HttpSession session, Model model) {
