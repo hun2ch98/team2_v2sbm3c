@@ -1,9 +1,9 @@
 <div th:fragment="list_search_fragment"> <!-- <div th:replace=... -->
   <div style="text-align: right; clear: both;">
   <form name="frm_search" method="get" action="/board/list_by_boardno">
-    <input type="hidden" name="boardno" id="boardno" th:value="${boardVO.boardno}" >
+    <input type="hidden" name="memberno" id="memberno" th:value="${memberVO.memberno}" >
     
-    <input type="text" name="word" id="word" th:value="${board_cate}" >
+    <input type="text" name="board_cate" id="board_cate" th:value="${board_cate}" >
     <button type='submit' class='btn btn-secondary btn-sm' 
                  style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
     <span th:if="${board_cate != null and board_cate != ''}">
