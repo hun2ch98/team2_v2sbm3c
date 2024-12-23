@@ -23,7 +23,7 @@
              style="text-align: center; width: 50%; float: left;">
           <img th:src="@{|/member/storage/${memberVO.file1saved}|}" style="width: 90%;">
         </div>
-
+        <!-- 프로필 이미지 선택 안했을 시 기본 이미지 설정 -->
         <div th:if="${memberVO.file1saved == 'default.png' or memberVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
           <img src="/member/images/default.png" style="width: 90%;">
         </div>

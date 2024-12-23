@@ -104,7 +104,8 @@
         <input type='password' name='current_passwd' id='current_passwd' value='1234' required="required" 
                   placeholder="패스워드" autofocus="autofocus" 
                   class="form-control form-control-sm" style="width: 100%;">
-         <div id='current_passwd_msg' style='width: 100%; text-align: cnter;'></div>         
+        <div id='current_passwd_msg' style='width: 100%; text-align: center;'></div>
+        <input type="checkbox" id="showPassword" onclick="togglePasswordVisibility()"> 패스워드 보기
       </div>
       
       <div class="form-group">
@@ -128,6 +129,18 @@
 
     </form>
   </div>
-    
+  <!-- 현재 패스워드 보기, 안보기 기능 시작 -->
+  <script>
+    function togglePasswordVisibility() {
+        var passwordField = document.getElementById('current_passwd');
+        var showPasswordCheckbox = document.getElementById('showPassword');
+        if (showPasswordCheckbox.checked) {
+            passwordField.type = 'text';
+        } else {
+            passwordField.type = 'password';
+        }
+    }
+  </script>
+  <!-- 현재 패스워드 보기, 안보기 기능 끝 -->
 </div>
 </html>
