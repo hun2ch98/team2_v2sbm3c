@@ -31,7 +31,7 @@ public class DiaryVO {
   private String ddate;
   
   /** 날씨 테이블과 연결 */
-  private int weather_code;
+  private int weatherno;
   
   /** 감정번호 */
   private int emno;

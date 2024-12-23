@@ -6,13 +6,13 @@
 
   <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
   <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
-    INSERT INTO diary(diaryno, title, ddate, summary, weather_code, emno, memberno, illustno)
-    VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weather_code}, #{emno}, #{memberno}, #{illustno})
+    INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emno, memberno, illustno)
+    VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weatherno}, #{emno}, #{memberno}, #{illustno})
   </insert>
 
   <!-- 모든 카테고리의 등록된 글목록 -->
   <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, ddate, summary, weather_code, emno, illustno
+    SELECT diaryno, title, ddate, summary, weatherno, emno, illustno
     FROM diary
     ORDER BY diaryno DESC
   </select>
@@ -77,13 +77,13 @@
     UPDATE diary
     SET title = #{title},
         summary = #{summary},
-        weather_code = #{weather_code},
+        weatherno = #{weatherno},
         emno = #{emno}
     WHERE diaryno = #{diaryno}
   </update>
 
   <select id="read" parameterType="int" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, summary, weather_code, emno, ddate
+    SELECT diaryno, title, summary, weatherno, emno, ddate
     FROM diary
     WHERE diaryno = #{diaryno}
   </select>
