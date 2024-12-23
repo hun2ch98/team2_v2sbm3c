@@ -18,9 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
-import dev.mvc.diary.DiaryProcInter;
 import dev.mvc.board.BoardVOMenu;
-import dev.mvc.diary.DiaryVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -35,10 +33,6 @@ public class BoardCont {
   @Qualifier("dev.mvc.board.BoardProc")
   private BoardProcInter boardProc;
   
-//  @Autowired
-//  @Qualifier("dev.mvc.diary.DiaryProc") 
-//  private DiaryProcInter diaryProc;
-  
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") 
   private MemberProcInter memberProc;
@@ -50,7 +44,7 @@ public class BoardCont {
   public int page_per_block = 10;
 
   /** 페이징 목록 주소 */
-  private String list_file_name = "/board/list_by_boardno_search_paging";
+  private String list_file_name = "/board/list_by_boardno";
   
   public BoardCont() {
     System.out.println("-> BoardCont created.");
@@ -180,6 +174,45 @@ public class BoardCont {
 //    }
 
   }
+  
+  /**
+   * 게시글 목록(회원)
+   * @param model
+   * @param boardno
+   * @param now_page
+   * @return
+   */
+//  @GetMapping(value = "/list_by_boardno")
+//  public String list_by_boardno(
+//          Model model,
+//          @RequestParam(name = "boardno", defaultValue = "0") int boardno,
+//          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//
+////    if (this.memberProc.isMember(session)) {  // 회원 조회
+//        
+//        int record_per_page = 10; 
+//    
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("startRow", (now_page - 1) * record_per_page + 1);
+//        map.put("endRow", now_page * record_per_page);
+//        map.put("boardno", boardno);
+//        
+//        ArrayList<BoardVO> list = this.boardProc.list_by_boardno(boardno);
+//        if (list == null || list.isEmpty()) {
+//            model.addAttribute("message", "등록된 게시글이 없습니다.");
+//        } else {
+//            model.addAttribute("list", list);
+//        }
+//  
+//        model.addAttribute("now_page", now_page);
+//        return "/board/list_by_boardno";
+//
+//    //  } else {
+//    //  return "redirect:/member/login_cookie_need";
+//    //}
+//    }
+
+
   
   /**
    * 유형 3

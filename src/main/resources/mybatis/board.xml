@@ -28,6 +28,7 @@
   <select id="list_by_boardno" resultType="dev.mvc.board.BoardVO" parameterType="int">
     SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1
     FROM board
+    WHERE boardno = #{boardno}
     ORDER BY boardno DESC
   </select>
 
