@@ -83,10 +83,11 @@ public class DiaryCont {
    * @param bindingResult 폼에 에러가 있는지 검사 지원
    * @return
    */
+  // contentCont의 create 처리 과정보고 추가해야함. 
   @PostMapping(value = "/create")
-  public String create(Model model, 
+  public String create(Model model, HttpSession session,
                        @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
-                       BindingResult bindingResult) {
+                       BindingResult bindingResult, RedirectAttributes ra) {
       if (bindingResult.hasErrors()) { 
           // 에러 발생 시 폼으로 돌아가기
           return "/diary/create";
@@ -96,6 +97,8 @@ public class DiaryCont {
       diaryVO.setTitle(diaryVO.getTitle().trim());
       diaryVO.setSummary(diaryVO.getSummary().trim());
 
+      int memberno = (int) session.getAttribute("memberno");
+      diaryVO.setMemberno(memberno);
       // DB 저장 로직 호출
       int cnt = diaryProc.create(diaryVO);
       System.out.println("-> create_cnt: " + cnt);

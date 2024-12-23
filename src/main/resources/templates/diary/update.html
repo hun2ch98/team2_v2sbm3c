@@ -11,7 +11,7 @@
     <span class="menu_divide">│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class="menu_divide">│</span>
-    <a th:href="@{/diary/list_search}">목록</a>
+    <a th:href="@{/diary/list_by_diaryno_search_paging}">목록</a>
   </aside>
 
   <div class="menu_line"></div>
@@ -38,8 +38,8 @@
     </div>
 
     <div>
-      <label for="weather_code">날씨 코드</label>
-      <input id="weather_code" type="number" name="weather_code" th:value="${diaryVO.weather_code}" 
+      <label for="weatherno">날씨 코드</label>
+      <input id="weatherno" type="number" name="weatherno" th:value="${diaryVO.weatherno}" 
              class="form-control full-width" />
     </div>
 

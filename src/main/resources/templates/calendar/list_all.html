@@ -1,0 +1,86 @@
+<!-- 달력만 나타나는 페이지 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>달력</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-gap: 10px;
+            width: 100%;
+            max-width: 900px;
+        }
+        .calendar-cell {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 유지하는 정사각형 */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+        .cell-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .date {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .icons {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .image {
+            flex-grow: 1;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>달력</h1>
+    <div class="calendar">
+        <!-- 반복되는 달력 셀 -->
+        <div class="calendar-cell" th:each="calendar : ${calendarList}">
+            <div class="cell-content">
+                <!-- 날짜 출력 -->
+                <div class="date" th:text="${calendar.labeldate}">2024-12-01</div>
+                <!-- 날씨 및 감정 이모티콘 -->
+                <div class="icons">
+                    <span th:text="${calendar.diary.weatherIcon}">🌤</span>
+                    <span th:text="${calendar.diary.emotionIcon}">😊</span>
+                </div>
+                <!-- 그림 -->
+                <div class="image" th:style="'background-image: url(' + ${calendar.diary.pictureUrl} + ')'"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

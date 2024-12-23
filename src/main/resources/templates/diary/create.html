@@ -8,7 +8,7 @@
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/diary/list_search}">목록</a>
+    <a th:href="@{/diary/list_by_diaryno_search_paging}">목록</a>
   </aside>
 
   <div class="menu_line"></div>
@@ -29,13 +29,19 @@
     <!-- 날씨 코드 -->
     <div>
       <label>날씨 코드</label>
-      <input type="number" name="weather_code" th:value="*{weather_code}" required="required" class="form-control" style="width: 100%;">
+      <input type="number" name="weatherno" th:value="*{weatherno}" required="required" class="form-control" style="width: 100%;">
     </div>
 
     <!-- 감정 번호 -->
     <div>
       <label>감정 코드</label>
       <input type="number" name="emno" th:value="*{emno}" required="required" class="form-control" style="width: 100%;">
+    </div>
+    
+    <!-- 그림 번호 -->
+    <div>
+      <label>그림 코드</label>
+      <input type="number" name="illustno" th:value="*{illustno}" required="required" class="form-control" style="width: 100%;">
     </div>
 
     <!-- 요약 -->
@@ -47,7 +53,7 @@
     <!-- 등록 버튼 -->
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">등록</button>
-      <button type="button" onclick="location.href='./list_search'" class="btn btn-secondary btn-sm">목록</button>
+      <button type="button" onclick="location.href='./list_by_diaryno_search_paging'" class="btn btn-secondary btn-sm">목록</button>
     </div>
   </form>
 </div>
