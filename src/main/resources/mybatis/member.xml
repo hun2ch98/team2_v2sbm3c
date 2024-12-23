@@ -40,9 +40,9 @@
   <!-- 회원 정보 수정 -->
   <update id="update" parameterType="dev.mvc.member.MemberVO">
     UPDATE member 
-    SET name=#{name}, email=#{email}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, pf_img=#{pf_img}
+    SET name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}, passwd=#{passwd}
     WHERE memberno=#{memberno}
-  </update>
+</update>
   
   <!-- 회원 삭제 -->
   <delete id="delete" parameterType="int">
