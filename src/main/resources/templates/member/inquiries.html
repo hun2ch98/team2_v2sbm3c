@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/mypage.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <a th:href="@{/member/mypage}">개인정보 수정</a>
+            <a th:href="@{/member/inquiries}">문의글</a>
+            <a th:href="@{/member/delete_account}">회원 탈퇴</a>
+        </div>
+        <div class="content">
+            <div class='title_line'>
+                <span class="title_line_text">문의글</span>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="inquiry : ${inquiries}">
+                        <td th:text="${inquiry.boardno}"></td>
+                        <td th:text="${inquiry.title}"></td>
+                        <td th:text="${inquiry.rdate}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
