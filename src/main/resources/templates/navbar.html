@@ -106,7 +106,7 @@
                 
                 <li class="nav-item">
                   <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
-                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|로그아웃|}"></a>
+                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.id} 로그아웃|}"></a>
                 </li>
                 
                 <!-- 회원과 관리자 버튼 => 나중에 지울 부분 -->

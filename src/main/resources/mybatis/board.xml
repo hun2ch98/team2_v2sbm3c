@@ -79,10 +79,4 @@
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
-  
-  <!-- 회원이 작성한 게시글 목록 -->
-  <select id="getBoardsByMember" parameterType="int" resultType="dev.mvc.board.BoardVO">
-    SELECT * FROM board WHERE memberno = #{memberno}
-  </select>
-
 </mapper>
