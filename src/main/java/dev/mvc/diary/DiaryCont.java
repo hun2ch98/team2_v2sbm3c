@@ -111,35 +111,30 @@ public class DiaryCont {
 
   
   @GetMapping("/list_by_diaryno_search_paging")
-  public String listSearch(@RequestParam(value = "title", required = false, defaultValue="") String title,
-                                         @RequestParam(value = "start_date", required = false, defaultValue="") String startDate,
-                                         @RequestParam(value = "end_date", required = false, defaultValue="") String endDate, 
-                                         @RequestParam(value = "now_page", required = false, defaultValue = "1") int now_page,
-                                         Model model) {
+  public String listSearch(@RequestParam(value = "title", required = false, defaultValue = "") String title,
+                           @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+                           @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
+                           @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage,
+                           Model model) {
+      title = title.trim();
+      startDate = startDate.trim();
+      endDate = endDate.trim();
 
-    title = title.trim();
-    startDate = startDate.trim();
-    endDate = endDate.trim();
+      int startNum = (nowPage - 1) * record_per_page + 1;
+      int endNum = nowPage * record_per_page;
 
-    // 검색 결과 및 페이징 데이터 준비
-    ArrayList<DiaryVO> diaryList = diaryProc.listSearch(title, startDate, endDate);
-    int search_count = diaryProc.countSearchResults(title, startDate, endDate);
+      int searchCount = diaryProc.countSearchResults(title, startDate, endDate);
+      ArrayList<DiaryVO> diaryList = diaryProc.list_search_paging(title, startDate, endDate, startNum, endNum);
 
-    String list_file_name = "/diary/list_by_diaryno_search_paging"; // 목록 파일 이름
+      String paging = diaryProc.pagingBox(nowPage, title, startDate, endDate, list_file_name, searchCount, record_per_page, page_per_block);
 
-    // 페이징 HTML 생성
-    String paging = diaryProc.pagingBox(
-            now_page, title, startDate, endDate, list_file_name, search_count, record_per_page, page_per_block
-    );
-
-    // 모델에 데이터 추가
-    model.addAttribute("diaryList", diaryList);
-    model.addAttribute("title", title);
-    model.addAttribute("start_date", startDate);
-    model.addAttribute("end_date", endDate);
-    model.addAttribute("paging", paging);
-    model.addAttribute("search_count", search_count);
-    model.addAttribute("now_page", now_page);
+      model.addAttribute("diaryList", diaryList);
+      model.addAttribute("title", title);
+      model.addAttribute("start_date", startDate);
+      model.addAttribute("end_date", endDate);
+      model.addAttribute("paging", paging);
+      model.addAttribute("search_count", searchCount);
+      model.addAttribute("now_page", nowPage);
 
       return "/diary/list_by_diaryno_search_paging";
   }

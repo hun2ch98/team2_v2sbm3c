@@ -31,7 +31,7 @@
       <if test="end_date != null and end_date != ''">
         AND TRUNC(ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
       </if>
-    ORDER BY diaryno DESC
+    ORDER BY ddate DESC
   </select>
 
 
@@ -44,45 +44,30 @@
   
   <select id="list_search_paging" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
     SELECT * FROM (
-        SELECT A.*, ROWNUM rnum
+        SELECT A.*, ROWNUM AS rnum
         FROM (
             SELECT *
             FROM diary
-            WHERE title LIKE '%' || #{title} || '%'
-            ORDER BY diaryno DESC
+            WHERE 1=1
+            <if test="title != null and title != ''">
+                AND title LIKE '%' || #{title} || '%'
+            </if>
+            <if test="start_date != null and start_date != ''">
+                AND TRUNC(ddate) >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+            </if>
+            <if test="end_date != null and end_date != ''">
+                AND TRUNC(ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+            </if>
+            ORDER BY ddate DESC, diaryno DESC
         ) A
         WHERE ROWNUM &lt;= #{endNum}
     )
-    WHERE rnum > #{startNum}
+    WHERE rnum >= #{startNum}
   </select>
 
 
 
 
-  
-  <!-- 패스워드 검사
-  <select id="password_check" resultType="int" parameterType="HashMap">
-    SELECT COUNT(*) as cnt 
-    FROM contents
-    WHERE diaryno = #{diaryno} AND passwd=#{passwd}
-  </select> -->
-  
-  <!-- 글 수정
-  <update id="update_text" parameterType="dev.mvc.diary.DiaryVO">
-    UPDATE contents
-    SET title=#{title}, content=#{content},  word=#{word}
-    WHERE diaryno = #{diaryno}
-  </update> -->
-
-
-  <!-- 파일 수정
-  <update id="update_file" parameterType="dev.mvc.diary.DiaryVO">
-    UPDATE contents
-    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
-    WHERE diaryno = #{diaryno}
-  </update>   -->
-
-  <!-- 글 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM diary
     WHERE diaryno=#{diaryno}
