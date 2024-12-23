@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.survey.SurveyDAOInter">
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.survey.SurveyVO">
+    INSERT INTO survey(surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size)
+    VALUES (survey_seq.nextval, #{topic}, #{sdate}, #{edate}, #{s_number}, #{is_continue}, #{poster}, #{poster_saved}, #{poster_thumb}, #{poster_size})
+  </insert>
+  
+  <!-- 전체 조회 -->
+  <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
+    SELECT surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
+    FROM survey
+    ORDER BY surveyno DESC
+  </select>
+  
+  <!-- 일반적인 조회 -->
+  <select id="read" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
+    SELECT surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
+    FROM survey
+    WHERE surveyno = #{surveyno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id="update_text" parameterType="dev.mvc.survey.SurveyVO">
+    UPDATE survey
+    SET topic=#{topic}, sdate=#{sdate},  edate=#{edate},  s_number=#{s_number}, is_continue=#{is_continue}
+    WHERE surveyno = #{surveyno}
+  </update>
+  
+  <!-- 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.survey.SurveyVO">
+    UPDATE contents
+    SET poster=#{poster}, poster_saved=#{poster_saved}, poster_thumb=#{poster_thumb}, poster_size=#{poster_size}
+    WHERE surveyno = #{surveyno}
+  </update> 
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM survey WHERE surveyno=#{surveyno}
+  </delete>
+  
+  
+</mapper>
