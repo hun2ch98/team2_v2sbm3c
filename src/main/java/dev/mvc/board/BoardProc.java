@@ -124,6 +124,8 @@ public class BoardProc implements BoardProcInter {
 
     @Override
     public ArrayList<BoardVO> list_by_boardno(int boardno) {
+      HashMap<String, Object> map = new HashMap<>();
+      map.put("boardno", boardno);
       ArrayList<BoardVO> list = this.boardDAO.list_by_boardno(boardno);
       return list;
     }
