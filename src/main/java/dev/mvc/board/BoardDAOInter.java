@@ -73,5 +73,4 @@ public interface BoardDAOInter {
    * @return
    */
   public ArrayList<BoardVO> list_by_boardno_search_paging(HashMap<String, Object> map);
-
 }

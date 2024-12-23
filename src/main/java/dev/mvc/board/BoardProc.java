@@ -135,4 +135,5 @@ public class BoardProc implements BoardProcInter {
       ArrayList<BoardVO> list = this.boardDAO.list_by_boardno_search(hashMap);
       return list;
     }
+    
 }
