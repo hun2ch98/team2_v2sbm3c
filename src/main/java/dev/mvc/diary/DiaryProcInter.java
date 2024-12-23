@@ -107,7 +107,7 @@ public interface DiaryProcInter {
    * @param record_per_page 페이지당 출력할 레코드 수
    * @return
    */
-  public ArrayList<DiaryVO> list_search_paging(String title, String date, int now_page, int record_per_page);
+  public ArrayList<DiaryVO> list_search_paging(String title, String  now_page, String record_per_page, int start_num, int end_num);
 
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 
