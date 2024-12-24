@@ -241,17 +241,22 @@ public class BoardCont {
           memberVO.setMemberno(0);
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
+      board_cate = Tool.checkNull(board_cate).trim();
       model.addAttribute("memberVO", memberVO);
       model.addAttribute("boardno", boardno);
       model.addAttribute("board_cate", board_cate);
       model.addAttribute("now_page", now_page);
 
-      board_cate = Tool.checkNull(board_cate).trim();
+     
 
       HashMap<String, Object> map = new HashMap<>();
       map.put("memberno", memberno);
       map.put("board_cate", board_cate);
       map.put("now_page", now_page);
+      map.put("startRow", startRow);
+      map.put("endRow", endRow);
+
+      System.out.println("map: " + map);
 
       ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
       if (list == null || list.isEmpty()) {
@@ -264,8 +269,10 @@ public class BoardCont {
       String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
           Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
-
+      model.addAttribute("board_cate", board_cate);
+      model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
+
 
       int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
       model.addAttribute("no", no);

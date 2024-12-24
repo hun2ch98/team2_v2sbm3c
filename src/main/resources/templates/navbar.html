@@ -54,11 +54,7 @@
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="요청사항">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate}|}">요청사항 목록</a></li>
-
                         <li class="nav-item"><a class="nav-link"th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate ?: ''}|}">요청사항 목록</a></li>
-
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/create|}">요청사항 쓰기</a></li>
                     </ul>
                 </li>
