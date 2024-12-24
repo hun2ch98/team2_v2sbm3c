@@ -118,88 +118,128 @@ public class MemberCont {
       return "/member/msg"; // /templates/member/msg.html
   }
   
-//  /**
-//   * 프로필 이미지 수정 폼
-//   * @param session
-//   * @param model
-//   * @param memberno
-//   * @param word
-//   * @param now_page
-//   * @return
-//   */
-//  @GetMapping(value = "/update_file")
-//  public String update_file(HttpSession session, 
-//      Model model, 
-//      @RequestParam(name="memberno", defaultValue="0") int memberno) {
-//      
-//      MemberVO memberVO = this.memberProc.read(memberno);
-//      model.addAttribute("memberVO", memberVO);
-//
-//      return "/member/update_file";
-//  }
-//  
-//  /**
-//   * 프로필 이미지 수정 처리
-//   * @param session
-//   * @param model
-//   * @param ra
-//   * @param memberVO
-//   * @param word
-//   * @param now_page
-//   * @return
-//   */
-//  @PostMapping(value = "/update_file")
-//  public String update_file(HttpSession session, 
-//      Model model, 
-//      RedirectAttributes ra,
-//      @ModelAttribute MemberVO memberVO) {
-//
-//      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
-//      MultipartFile mf = memberVO.getPf_imgMF();
-//      String file1 = mf.getOriginalFilename();
-//      long size1 = mf.getSize();
-//
-//      if (size1 > 0) { // 파일이 업로드된 경우
-//          String file1saved = Upload.saveFileSpring(mf, upDir);
-//          String thumb1 = "";
-//          if (Tool.isImage(file1saved)) { // 이미지인지 검사
-//              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
-//          }
-//          memberVO.setPf_img(file1);
-//          memberVO.setFile1saved(file1saved);
-//          memberVO.setThumb1(thumb1);
-//          memberVO.setSize1(size1);
-//      } else { // 파일이 업로드되지 않은 경우
-//          MemberVO oldMemberVO = this.memberProc.read(memberVO.getMemberno());
-//          memberVO.setFile1saved(oldMemberVO.getFile1saved());
-//          memberVO.setThumb1(oldMemberVO.getThumb1());
-//          memberVO.setSize1(oldMemberVO.getSize1());
-//      }
-//
-//      int cnt = this.memberProc.update(memberVO);
-//      if (cnt == 1) {
-//          ra.addFlashAttribute("code", "update_success");
-//      } else {
-//          ra.addFlashAttribute("code", "update_fail");
-//      }
-//      return "redirect:/member/list";
-//  }
+  /**
+   * 프로필 이미지 수정 폼
+   * @param session
+   * @param model
+   * @param memberno
+   * @param word
+   * @param now_page
+   * @return
+   */
+  @GetMapping(value = "/update_file")
+  public String update_file(HttpSession session, 
+      Model model, 
+      @RequestParam(name="memberno", defaultValue="0") int memberno) {
+      
+      MemberVO memberVO = this.memberProc.read(memberno);
+      model.addAttribute("memberVO", memberVO);
+
+      return "/member/update_file";
+  }
   
-  @GetMapping(value="/list")
-  public String list(HttpSession session, Model model) {
-//    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
-//    model.addAttribute("menu", menu);
-    // 세션에서 등급 확인
-    String grade = (String) session.getAttribute("grade");
- 
-    // 관리자 등급만 접근 허용
-    if (grade != null && grade.equals("admin")) {
-      ArrayList<MemberVO> list = this.memberProc.list();
-      model.addAttribute("list", list);
-      return "/member/list"; // /templates/member/list.html
-    } else {
-      return "redirect:/member/login_cookie_need"; // redirect
-    }
+  /**
+   * 프로필 이미지 수정 처리
+   * @param session
+   * @param model
+   * @param ra
+   * @param memberVO
+   * @param word
+   * @param now_page
+   * @return
+   */
+  @PostMapping(value = "/update_file")
+  public String update_file(HttpSession session, 
+      Model model, 
+      RedirectAttributes ra,
+      @ModelAttribute MemberVO memberVO) {
+
+      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
+      MultipartFile mf = memberVO.getPf_imgMF();
+      String file1 = mf.getOriginalFilename();
+      long size1 = mf.getSize();
+
+      if (size1 > 0) { // 파일이 업로드된 경우
+          String file1saved = Upload.saveFileSpring(mf, upDir);
+          String thumb1 = "";
+          if (Tool.isImage(file1saved)) { // 이미지인지 검사
+              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+          }
+          memberVO.setPf_img(file1);
+          memberVO.setFile1saved(file1saved);
+          memberVO.setThumb1(thumb1);
+          memberVO.setSize1(size1);
+      } else { // 파일이 업로드되지 않은 경우
+          MemberVO oldMemberVO = this.memberProc.read(memberVO.getMemberno());
+          memberVO.setFile1saved(oldMemberVO.getFile1saved());
+          memberVO.setThumb1(oldMemberVO.getThumb1());
+          memberVO.setSize1(oldMemberVO.getSize1());
+      }
+
+      int cnt = this.memberProc.update(memberVO);
+      if (cnt == 1) {
+          ra.addFlashAttribute("code", "update_success");
+      } else {
+          ra.addFlashAttribute("code", "update_fail");
+      }
+      return "redirect:/member/list";
+  }
+  
+//  ------------------------ 백업
+//  @GetMapping(value="/list")
+//  public String list(HttpSession session, Model model) {
+////    ArrayList<DiaryVOMenu> menu = this.diaryProc.menu();
+////    model.addAttribute("menu", menu);
+//    // 세션에서 등급 확인
+//    String grade = (String) session.getAttribute("grade");
+// 
+//    // 관리자 등급만 접근 허용
+//    if (grade != null && grade.equals("admin")) {
+//      ArrayList<MemberVO> list = this.memberProc.list();
+//      model.addAttribute("list", list);
+//      return "/member/list"; // /templates/member/list.html
+//    } else {
+//      return "redirect:/member/login_cookie_need"; // redirect
+//    }
+//  }
+//  -------------------------백업
+  
+  @GetMapping(value = "/list")
+  public String list(HttpSession session, Model model, 
+                     @RequestParam(name = "word", defaultValue = "") String word,
+                     @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+      // 세션에서 등급 확인
+      String grade = (String) session.getAttribute("grade");
+
+      // 관리자 등급만 접근 허용
+      if (grade != null && grade.equals("admin")) {
+          word = Tool.checkNull(word).trim();
+
+          HashMap<String, Object> map = new HashMap<>();
+          map.put("word", word);
+          map.put("now_page", now_page);
+
+          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+          model.addAttribute("list", list);
+
+          model.addAttribute("word", word);
+
+          int search_count = this.memberProc.list_by_memberno_search_count(map);
+          String paging = this.memberProc.pagingBox(0, now_page, word, "/member/list", search_count,
+                  Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
+          model.addAttribute("paging", paging);
+          model.addAttribute("now_page", now_page);
+
+          model.addAttribute("search_count", search_count);
+
+          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+          model.addAttribute("no", no);
+
+          return "/member/list"; // /templates/member/list.html
+      } else {
+          return "redirect:/member/login_cookie_need"; // redirect
+      }
   }
   
   /**
@@ -217,40 +257,42 @@ public class MemberCont {
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
-    // System.out.println("-> memberno: " + memberno);
+      // 세션에서 등급 확인
+      String grade = (String) session.getAttribute("grade");
 
-//    ArrayList<MemberVOMenu> menu = this.memberProc.menu();
-//    model.addAttribute("menu", menu);
+      // 관리자 등급만 접근 허용
+      if (grade != null && grade.equals("admin")) {
+          MemberVO memberVO = this.memberProc.read(memberno);
+          model.addAttribute("memberVO", memberVO);
 
-    MemberVO memberVO = this.memberProc.read(memberno);
-    model.addAttribute("memberVO", memberVO);
+          word = Tool.checkNull(word).trim();
 
-    word = Tool.checkNull(word).trim();
+          HashMap<String, Object> map = new HashMap<>();
+          map.put("memberno", memberno);
+          map.put("word", word);
+          map.put("now_page", now_page);
 
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    map.put("word", word);
-    map.put("now_page", now_page);
+          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+          model.addAttribute("list", list);
 
-    ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-    model.addAttribute("list", list);
+          model.addAttribute("word", word);
 
-    // System.out.println("-> size: " + list.size());
-    model.addAttribute("word", word);
+          int search_count = this.memberProc.list_by_memberno_search_count(map);
+          String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno", search_count,
+              Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
+          model.addAttribute("paging", paging);
+          model.addAttribute("now_page", now_page);
 
-    int search_count = this.memberProc.list_by_memberno_search_count(map);
-    String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno", search_count,
-        Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-    model.addAttribute("paging", paging);
-    model.addAttribute("now_page", now_page);
+          model.addAttribute("search_count", search_count);
 
-    model.addAttribute("search_count", search_count);
+          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+          model.addAttribute("no", no);
 
-    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-    int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-    model.addAttribute("no", no);
-
-    return "/member/list_by_memberno_search_paging"; // /templates/member/list_by_memberno_search_paging.html
+          return "/member/list_by_memberno_search_paging"; // /templates/member/list_by_memberno_search_paging.html
+      } else {
+          return "redirect:/member/login_cookie_need"; // redirect
+      }
   }
 
   /**
@@ -263,45 +305,46 @@ public class MemberCont {
   @GetMapping(value = "/list_by_memberno_grid")
   public String list_by_memberno_search_paging_grid(HttpSession session, 
       Model model, 
-      @RequestParam(name="memberno", defaultValue="0") int memberno,
+      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
-    // System.out.println("-> memberno: " + memberno);
+      // 세션에서 등급 확인
+      String grade = (String) session.getAttribute("grade");
 
-//    ArrayList<MemberVOMenu> menu = this.memberProc.menu();
-//    model.addAttribute("menu", menu);
+      // 관리자 등급만 접근 허용
+      if (grade != null && grade.equals("admin")) {
+          MemberVO memberVO = this.memberProc.read(memberno);
+          model.addAttribute("memberVO", memberVO);
 
-    MemberVO memberVO = this.memberProc.read(memberno);
-    model.addAttribute("memberVO", memberVO);
+          word = Tool.checkNull(word).trim();
 
-    word = Tool.checkNull(word).trim();
+          HashMap<String, Object> map = new HashMap<>();
+          map.put("memberno", memberno);
+          map.put("word", word);
+          map.put("now_page", now_page);
 
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    map.put("word", word);
-    map.put("now_page", now_page);
+          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+          model.addAttribute("list", list);
 
-    ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-    model.addAttribute("list", list);
+          model.addAttribute("word", word);
 
-    // System.out.println("-> size: " + list.size());
-    model.addAttribute("word", word);
+          int search_count = this.memberProc.list_by_memberno_search_count(map);
+          String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno_grid", search_count,
+              Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
+          model.addAttribute("paging", paging);
+          model.addAttribute("now_page", now_page);
 
-    int search_count = this.memberProc.list_by_memberno_search_count(map);
-    String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno_grid", search_count,
-        Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-    model.addAttribute("paging", paging);
-    model.addAttribute("now_page", now_page);
+          model.addAttribute("search_count", search_count);
 
-    model.addAttribute("search_count", search_count);
+          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+          model.addAttribute("no", no);
 
-    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-    int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-    model.addAttribute("no", no);
-
-    // /templates/member/list_by_memberno_search_paging_grid.html
-    return "/member/list_by_memberno_search_paging_grid";
+          return "/member/list_by_memberno_search_paging_grid"; // /templates/member/list_by_memberno_search_paging_grid.html
+      } else {
+          return "redirect:/member/login_cookie_need"; // redirect
+      }
   }
 
   /**

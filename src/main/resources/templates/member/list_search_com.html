@@ -1,17 +1,15 @@
-<div th:fragment="list_search_fragment"> <!-- <div th:replace=... -->
+<div th:fragment="list_search_fragment">
   <div style="text-align: right; clear: both;">
-  <form name="frm_search" method="get" action="/board/list_by_boardno">
-    <input type="hidden" name="memberno" id="memberno" th:value="${memberVO.memberno}" >
-    
-    <input type="text" name="board_cate" id="board_cate" th:value="${board_cate}" >
-    <button type='submit' class='btn btn-secondary btn-sm' 
-                 style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
-    <span th:if="${board_cate != null and board_cate != ''}">
-      <button type='button' class='btn btn-secondary btn-sm' 
-                   style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
-                   th:onclick="|location.href='/board/list_by_boardno?boardno=${boardVO.boardno}'|">검색 취소</button>
-    </span>
-                  
-  </form>
-</div>
+    <form name="frm_search" method="get" action="/member/list">
+      <input type="hidden" name="now_page" th:value="${now_page}" >
+      <input type="text" name="word" id="word" th:value="${word}" >
+      <button type='submit' class='btn btn-secondary btn-sm' 
+              style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
+      <span th:if="${word != null and word != ''}">
+        <button type='button' class='btn btn-secondary btn-sm' 
+                style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
+                th:onclick="|location.href='/member/list'|">검색 취소</button>
+      </span>
+    </form>
+  </div>
 </div>
