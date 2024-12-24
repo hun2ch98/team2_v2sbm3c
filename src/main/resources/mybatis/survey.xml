@@ -6,20 +6,30 @@
 
   <!-- 등록 -->
   <insert id="create" parameterType="dev.mvc.survey.SurveyVO">
-    INSERT INTO survey(surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size)
-    VALUES (survey_seq.nextval, #{topic}, #{sdate}, #{edate}, #{s_number}, #{is_continue}, #{poster}, #{poster_saved}, #{poster_thumb}, #{poster_size})
+    INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue, 
+                        poster, poster_saved, poster_thumb, poster_size)
+    VALUES (survey_seq.nextval, #{memberno}, #{topic}, #{sdate}, #{edate}, #{s_number}, #{is_continue}, 
+            #{poster}, #{poster_saved}, #{poster_thumb}, #{poster_size})
   </insert>
   
   <!-- 전체 조회 -->
   <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
-    SELECT surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
+    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
     FROM survey
+    ORDER BY surveyno DESC
+  </select>
+  
+  <!-- 특정 카테고리의 등록된 글목록 -->
+  <select id="list_by_surveyno" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
+    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
+    FROM survey
+    WHERE memberno = #{memberno}
     ORDER BY surveyno DESC
   </select>
   
   <!-- 일반적인 조회 -->
   <select id="read" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
-    SELECT surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
+    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size
     FROM survey
     WHERE surveyno = #{surveyno}
   </select>

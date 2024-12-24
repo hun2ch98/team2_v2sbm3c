@@ -18,6 +18,13 @@ public interface SurveyDAOInter {
   public ArrayList<SurveyVO> list_all();
   
   /**
+   * 목록 조회
+   * @param memberno
+   * @return
+   */
+  public ArrayList<SurveyVO> list_by_surveyno(int memberno);
+  
+  /**
    * 조회
    * @param surveyno
    * @return

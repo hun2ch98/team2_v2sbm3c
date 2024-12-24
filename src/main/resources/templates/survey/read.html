@@ -1,0 +1,66 @@
+<!DOCTYPE html> 
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${surveyVO.topic }" class="title_line_text"></span > 
+     > 글 조회
+  </div>
+  
+  <aside class="aside_right" th:if="${session.grade == 'admin'}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>    
+    <a th:href="@{|./list_by_surveyno?cateno=${cateVO.cateno }&word=${word }&now_page=${now_page}|}">목록</a>    
+    <span class='menu_divide' >│</span>
+    <a href="./create?surveyno=${surveyno }">등록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/contents/update_text?contentsno=${surveyVO.contentsno}&now_page=${now_page}&word=${word }|}">글 수정</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./update_file?contentsno=${surveyVO.contentsno}&word=${word}&now_page=${now_page}|}">파일 수정</a>  
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./delete?surveyno=${surveyVO.contentsno}&word=${word}&now_page=${now_page}&cateno=${surveyVO.cateno}|}">삭제</a>  
+ </aside> 
+
+  <aside class="aside_right" th:if="${session.grade != 'admin'}">
+     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>    
+    <a th:href="@{|./list_by_surveyno?cateno=${cateVO.cateno }&word=${word }&now_page=${now_page}|}">목록형</a>    
+  </aside> 
+ 
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div style="width: 100%; word-break: break-all;">
+        
+          <div th:if="${surveyVO.poster.endsWith('jpg') or surveyVO.poster.endsWith('png')  or surveyVO.poster.endsWith('gif')}">
+            <img th:src="@{|/survey/storage/${surveyVO.poster_saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
+          </div>
+
+          <span style="font-size: 1.5em; font-weight: bold;" th:text="${surveyVO.topic}"></span>
+          <span style="font-size: 1em;" th:text="${surveyVO.sdate }"></span><br><br>
+          <span style="font-size: 1em;" th:text="${surveyVO.edate }"></span><br><br>
+          <div style="white-space: pre-wrap;"><span th:text="${surveyVO.is_continue}"></span></div>
+        </div>
+      </li>
+      
+      <li class="li_none" th:if="${surveyVO.poster > 0}">
+        <div>
+            첨부 파일: 
+            <a th:href='@{|/download?dir=/survey/storage&filename=${surveyVO.poster_saved}&downname=${surveyVO.poter}|}'
+               th:text='|${surveyVO.poster}|'></a> 
+            <span th:text="|(${surveyVO.size1_label})|"></span>  
+            <a th:href='@{|/download?dir=/contents/storage&filename=${surveyVO.poster_saved}&downname=${surveyVO.poter}|}'>
+                <img th:src="@{/survey/images/download.png}" class="icon" title="download">
+            </a>
+        </div>
+
+      </li>   
+    </ul>
+  </fieldset>
+
+</div>
+
+</html>
+

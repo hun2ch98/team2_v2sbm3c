@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.mvc.tool.Security;
+
 @Service("dev.mvc.survey.SurveyProc")
 public class SurveyProc implements SurveyProcInter {
+  @Autowired
+  Security security;
+  
   @Autowired
   private SurveyDAOInter surveyDAO;
   
@@ -25,6 +30,13 @@ public class SurveyProc implements SurveyProcInter {
     ArrayList<SurveyVO> list = this.surveyDAO.list_all();
     return list;
   }
+  
+  @Override
+  public ArrayList<SurveyVO> list_by_surveyno(int memberno){
+    ArrayList<SurveyVO> list = this.surveyDAO.list_by_surveyno(memberno);
+    return list;
+  }
+  
   
   @Override
   public SurveyVO read(int surveyno) {

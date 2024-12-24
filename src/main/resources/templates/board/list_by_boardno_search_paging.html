@@ -3,8 +3,7 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-    <span th:text="${boardVO?.board_cate ?: '요청사항'}" class="title_line_text"></span>
-    > 검색
+    목록 조회
     <span th:if="${board_cate != ''}" th:text="|> ${board_cate} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 
@@ -33,7 +32,7 @@
       <th class='th_bs'>제목</th>
     </tr>
    
-    <tr th:if="${list.size() > 0}" th:each="boardVO, status:${list}" 
+    <tr th:if="${list != null and list.size() > 0}" th:each="boardVO, status:${list}" 
          th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&board_cate=${board_cate}&now_page=${now_page}'|"
          style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
@@ -65,7 +64,7 @@
       </td>
     </tr>
 
-    <tr th:if="${list.size() == 0}">
+    <tr th:if="${list != null and list.size() == 0}">
       <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
     </tr> 
 

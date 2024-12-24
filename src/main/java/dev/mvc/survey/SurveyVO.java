@@ -16,6 +16,7 @@ public class SurveyVO {
 /**
  * CREATE TABLE survey (
   surveyno      NUMBER(10)    NOT NULL,
+  memberno        NUMBER(10)      NOT NULL,
   topic         VARCHAR(100)  NOT NULL,
   sdate         VARCHAR(10)       NULL,
   edate         VARCHAR(10)       NULL,
@@ -24,12 +25,16 @@ public class SurveyVO {
   poster          VARCHAR(100)    NULL,
   poster_saved  VARCHAR(100)    NULL,
   poster_size     NUMBER(10)        NULL,
-  poster_thumb  VARCHAR(100)    NULL
+  poster_thumb  VARCHAR(100)    NULL,
+  FOREIGN KEY (memberno)  REFERENCES member (memberno)
   );
  */
   
   /** 설문조사 번호 */
   private int surveyno;
+  
+  /** 회원 번호 */
+  private int memberno;
   
   /** 설문조사 주제 */
   @NotEmpty(message="주제 입력은 필수 사항입니다.")
