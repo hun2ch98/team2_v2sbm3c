@@ -527,6 +527,52 @@ public class MemberCont {
   }
   
   /**
+   * 개인정보수정 폼
+   * @param session
+   * @param model
+   * @return
+   */
+  @GetMapping(value = "/update_information")
+  public String update_information_form(HttpSession session, Model model) {
+      Integer memberno = (Integer) session.getAttribute("memberno");
+      if (memberno == null) {
+          return "redirect:/member/login";
+      }
+
+      MemberVO memberVO = this.memberProc.read(memberno);
+      if (memberVO == null) {
+          return "redirect:/member/login";
+      }
+      model.addAttribute("memberVO", memberVO);
+      return "/member/update_information"; // update_information.html로 이동
+  }
+  
+  /**
+   * 개인정보수정 수정 처리
+   * @param session
+   * @param model
+   * @param memberVO
+   * @param ra
+   * @return
+   */
+  @PostMapping(value = "/update_information")
+  public String update_information_proc(HttpSession session, 
+                                        Model model,
+                                        @ModelAttribute("memberVO") MemberVO memberVO,
+                                        RedirectAttributes ra) {
+      int memberno = (int) session.getAttribute("memberno");
+      memberVO.setMemberno(memberno);
+
+      int cnt = this.memberProc.update(memberVO);
+      if (cnt == 1) {
+          ra.addFlashAttribute("code", "update_success");
+      } else {
+          ra.addFlashAttribute("code", "update_fail");
+      }
+      return "redirect:/member/update_information";
+  }
+  
+  /**
    * 문의글 폼
    * @param session
    * @param model
