@@ -16,7 +16,7 @@
     
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>    
-    <a th:href="@{|./list_by_boardno?boardno=${boardVO?.boardno }&board_cate=${board_cate }&now_page=${now_page}|}">목록</a>    
+    <a th:href="@{|./list_by_boardno_search_paging?boardno=${boardVO?.boardno }&board_cate=${board_cate }&now_page=${now_page}|}">목록</a>    
   </aside> 
 
   <div th:replace="~{/board/list_search_com :: list_search_fragment}"></div>
