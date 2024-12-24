@@ -129,7 +129,7 @@ public class BoardCont {
         if (cnt == 1) {
             ra.addAttribute("boardno", boardVO.getBoardno()); 
             ra.addAttribute("now_page", 1); 
-            return "redirect:/board/list_by_boardno"; 
+            return "redirect:/board/list_by_boardno_search_paging"; 
         } else {
             ra.addFlashAttribute("code", "create_fail");
             return "redirect:/board/msg"; 
@@ -221,12 +221,12 @@ public class BoardCont {
    * 
    * @return
    */
-  @GetMapping(value = "/list_by_boardno")
+  @GetMapping(value = "/list_by_boardno_search_paging")
   public String list_by_boardno_search_paging(
       HttpSession session, 
       Model model, 
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "boardno", defaultValue = "1") int boardno,
+      @ModelAttribute("boardVO") BoardVO boardVO,
+      @RequestParam(name = "boardno", defaultValue = "0") int boardno,
       @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
@@ -234,6 +234,7 @@ public class BoardCont {
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
+      int memberno = (int) session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       if (memberVO == null) {
           memberVO = new MemberVO();
@@ -241,6 +242,9 @@ public class BoardCont {
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
       model.addAttribute("memberVO", memberVO);
+      model.addAttribute("boardno", boardno);
+      model.addAttribute("board_cate", board_cate);
+      model.addAttribute("now_page", now_page);
 
       board_cate = Tool.checkNull(board_cate).trim();
 
@@ -256,13 +260,10 @@ public class BoardCont {
           model.addAttribute("list", list);
       }
 
-      model.addAttribute("board_cate", board_cate);
-
       int search_count = this.boardProc.count_by_boardno_search(map);
       String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
           Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
-      model.addAttribute("now_page", now_page);
 
       model.addAttribute("search_count", search_count);
 
@@ -276,7 +277,7 @@ public class BoardCont {
    * 카테고리별 목록 + 검색 + 페이징 + Grid
    * @return
    */
-  @GetMapping(value = "/list_by_boardno_grid")
+  @GetMapping(value = "/list_by_boardno_search_paging_grid")
   public String list_by_boardno_search_paging_grid(HttpSession session, 
       Model model, 
       @RequestParam(name = "memberno", defaultValue = "0") int memberno,
@@ -303,7 +304,7 @@ public class BoardCont {
     model.addAttribute("board_cate", board_cate);
 
     int search_count = this.boardProc.count_by_boardno_search(map);
-    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno_grid", search_count,
+    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
         Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
     model.addAttribute("paging", paging);
     model.addAttribute("now_page", now_page);
@@ -637,7 +638,7 @@ public class BoardCont {
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
     
-    return "redirect:/board/list_by_boardno";    
+    return "redirect:/board/list_by_boardno_search_paging";    
     
   }   
 
