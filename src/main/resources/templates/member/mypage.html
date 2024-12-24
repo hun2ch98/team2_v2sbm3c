@@ -26,8 +26,10 @@
   <div class="title_line">마이페이지</div>
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span> 
+    <a href='./mypage'>프로필</a>
     <span class='menu_divide'>│</span> 
-    <a th:href="@{/member/mypage}">개인정보 수정</a>
+    <a th:href="@{/member/update_information}">개인정보 수정</a>
     <span class='menu_divide'>│</span> 
     <a th:href="@{/member/inquiries}">내 문의글</a>
     <span class='menu_divide'>│</span> 
@@ -43,23 +45,25 @@
     </div>
     
     <div class="profile-image-wrapper">
-      <div class="profile-image" th:if="${memberVO.file1saved != 'default.png' and (memberVO.file1saved.endsWith('jpg') or memberVO.file1saved.endsWith('png') or memberVO.file1saved.endsWith('gif'))}">
+      <div th:if="${memberVO.file1saved != 'default.png' and (memberVO.file1saved.endsWith('jpg') or memberVO.file1saved.endsWith('png') or memberVO.file1saved.endsWith('gif'))}">
         <img th:src="@{|/member/storage/${memberVO.file1saved}|}" class="profile-image">
       </div>
-      <div class="profile-image" th:if="${memberVO.file1saved == 'default.png' or memberVO.size1 == 0}">
+      <div th:if="${memberVO.file1saved == 'default.png' or memberVO.size1 == 0}">
         <img th:src="@{/images/default.png}" class="profile-image">
       </div>
     </div>
     
-    <div class="form-group">
-      <label for="pf_imgMF">프로필 이미지 변경</label>
-      <input type='file' name='pf_imgMF' id='pf_imgMF' class="form-control">
-    </div>
+    <form th:action="@{/member/mypage}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="pf_imgMF">프로필 이미지 변경</label>
+        <input type='file' name='pf_imgMF' id='pf_imgMF' class="form-control">
+      </div>
 
-    <div class="content_body_bottom">
-      <button type="submit" class="btn btn-primary btn-sm">프로필 수정</button>
-      <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
-    </div>
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-primary btn-sm">프로필 수정</button>
+        <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+      </div>
+    </form>
   </div>
 </div>
 </html>

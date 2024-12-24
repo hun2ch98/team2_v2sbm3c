@@ -88,9 +88,13 @@
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span> 
-    <a href='./create'>회원 가입</a>
-    <span class='menu_divide' >│</span> 
-    <a href='./list'>목록</a>
+    <a href='./mypage'>프로필</a>
+    <span class='menu_divide'>│</span> 
+    <a th:href="@{/member/update_information}">개인정보 수정</a>
+    <span class='menu_divide'>│</span> 
+    <a th:href="@{/member/inquiries}">내 문의글</a>
+    <span class='menu_divide'>│</span> 
+    <a th:href="@{/member/delete_account}">회원 탈퇴</a>
   </aside> 
 
   <div class='menu_line'></div>
@@ -122,7 +126,7 @@
       </div>
       
       <div class="content_body_bottom">
-        <button type="button" id='btn_send' class="btn btn-secondary btn-sm">저장</button>
+        <button type="button" id='btn_send' onclick="history.back();" class="btn btn-secondary btn-sm">저장</button>
         <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
       </div>
 
