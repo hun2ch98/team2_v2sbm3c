@@ -3,8 +3,7 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-    <span th:text="${boardVO?.board_cate ?: '요청사항'}" class="title_line_text"></span>
-    > 검색
+    검색
     <span th:if="${board_cate != ''}" th:text="|> ${board_cate} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 

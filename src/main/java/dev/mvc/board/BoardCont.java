@@ -256,8 +256,6 @@ public class BoardCont {
       map.put("startRow", startRow);
       map.put("endRow", endRow);
 
-      System.out.println("map: " + map);
-
       ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
       if (list == null || list.isEmpty()) {
           model.addAttribute("message", "게시물이 없습니다.");
