@@ -450,7 +450,7 @@ public class Tool {
     String path = "";
 
     if (osName.contains("win")) { // Windows
-      path = "C:\\kd\\deploy\\resort\\";
+      path = "C:\\kd\\deploy\\team2\\";
       // System.out.println("Windows: " + path);
     } else if (osName.contains("mac")) { // MacOS
       path = "/Users/yourusername/deploy/team2/";

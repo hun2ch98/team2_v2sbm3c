@@ -6,19 +6,22 @@ DROP TABLE survey;
 
 CREATE TABLE survey (
 	surveyno	    NUMBER(10)		NOT NULL,
+    memberno        NUMBER(10)      NOT NULL,
 	topic	        VARCHAR(100)	NOT NULL,
 	sdate	        VARCHAR(10)		    NULL,
 	edate	        VARCHAR(10)		    NULL,
 	s_number	    NUMBER(7)		NOT NULL,
-	is_continue	    CHAR(1)		    NOT NULL,
+	is_continue	    VARCHAR(100)	NOT NULL,
 	poster	        VARCHAR(100)		NULL,
 	poster_saved	VARCHAR(100)		NULL,
 	poster_size	    NUMBER(10)		    NULL,
-	poster_thumb	VARCHAR(100)		NULL
+	poster_thumb	VARCHAR(100)		NULL,
+    FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
 COMMENT ON TABLE SURVEY is '설문조사';
 COMMENT ON COLUMN SURVEY.SURVEYNO is '설문 조사 번호';
+COMMENT ON COLUMN BOARD.MEMBERNO is '회원 번호';
 COMMENT ON COLUMN SURVEY.TOPIC is '제목';
 COMMENT ON COLUMN SURVEY.SDATE is '시작 날짜';
 COMMENT ON COLUMN SURVEY.EDATE is '종료 날짜';
