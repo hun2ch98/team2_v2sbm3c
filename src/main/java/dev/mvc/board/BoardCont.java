@@ -256,8 +256,6 @@ public class BoardCont {
       map.put("startRow", startRow);
       map.put("endRow", endRow);
 
-      System.out.println("map: " + map);
-
       ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
       if (list == null || list.isEmpty()) {
           model.addAttribute("message", "게시물이 없습니다.");
@@ -266,7 +264,7 @@ public class BoardCont {
       }
 
       int search_count = this.boardProc.count_by_boardno_search(map);
-      String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
+      String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno_search_paging", search_count,
           Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
       model.addAttribute("board_cate", board_cate);
