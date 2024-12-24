@@ -10,7 +10,7 @@
   </div>
 
   <aside class="aside_right">
-    <span th:if="${session.grade == 'member'}">
+    <span th:if="${session.grade == 'admin'}">
       <a th:href="@{|/board/create?boardno=${boardVO.boardno}|}">등록</a>
       <span class="menu_devide">│</span>    
     </span>

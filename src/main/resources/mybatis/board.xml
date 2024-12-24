@@ -63,20 +63,32 @@
 
   <!-- 게시글 종류별 검색 레코드 갯수 -->
   <select id="count_by_boardno_search" resultType="int" parameterType="HashMap">
-      SELECT COUNT(*)
-      FROM board
-      WHERE board_cate = #{board_cate, jdbcType=VARCHAR}
+    SELECT COUNT(*)
+    FROM board
+    WHERE (#{board_cate} IS NULL OR #{board_cate} = '' OR board_cate = #{board_cate})
   </select>
+
+
 
   <!-- 게시글 종류별 검색 및 페이징 -->
   <select id="list_by_boardno_search_paging" resultType="dev.mvc.board.BoardVO" parameterType="HashMap">
-      SELECT *
-      FROM (
-          SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, 
-                 ROW_NUMBER() OVER (ORDER BY boardno DESC) AS rnum
-          FROM board
-          WHERE board_cate = #{board_cate, jdbcType=VARCHAR}
-      )
-      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+    SELECT *
+    FROM (
+        SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) AS file1, file1saved, thumb1, size1, 
+               ROW_NUMBER() OVER (ORDER BY boardno DESC) AS rnum
+        FROM board
+        WHERE (#{board_cate} IS NULL OR #{board_cate} = '' OR board_cate = #{board_cate})
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
+
+
+
+  
+  <!-- 회원이 작성한 게시글 목록 -->
+  <select id="getBoardsByMember" parameterType="int" resultType="dev.mvc.board.BoardVO">
+    SELECT * FROM board WHERE memberno = #{memberno}
+  </select>
+
+
 </mapper>

@@ -13,20 +13,7 @@
           
         <!-- 메뉴 시작 -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!--
-                <li class="nav-item dropdown" th:each="memberVOMenu:${menu}"> 
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                         role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${memberVOMenu.genre}">                                                            
-                    </a>           
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li th:each="memberVO:${memberVOMenu.list_name}">
-                            <a class="dropdown-item" th:href="@{|/board/list_by_boardno?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a>
-                        </li>
-                    </ul>
-                </li>
-                -->
-                
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="회원">                                                            
@@ -54,13 +41,13 @@
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="요청사항">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_boardno|}">요청사항 목록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate ?: ''}|}">요청사항 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/create|}">요청사항 쓰기</a></li>
                     </ul>
                 </li>
                 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" th:href="@{|/member/list_by_boardno|}" id="navbarDropdownMenuLink" 
+                    <a class="nav-link dropdown-toggle" th:href="@{|/member/list_by_memberno|}" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="프로필">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">

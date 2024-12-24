@@ -177,23 +177,58 @@ public class MemberProc implements MemberProcInter{
   @Override
   public String pagingBox(int memberno, int now_page, String word, String list_file, int search_count, int record_per_page,
         int page_per_block) {
-      int total_page = (int) (Math.ceil((double) search_count / record_per_page));
-      int total_grp = (int) (Math.ceil((double) total_page / page_per_block));
-      int now_grp = (int) (Math.ceil((double) now_page / page_per_block));
-
+    
+      // 전체 페이지 수 계산
+      int total_page = (int) Math.ceil((double) search_count / record_per_page);
+      // 전체 그룹 수 계산
+      int total_grp = (int) Math.ceil((double) total_page / page_per_block);
+      // 현재 그룹 계산
+      int now_grp = (int) Math.ceil((double) now_page / page_per_block);
+    
+      // 현재 그룹의 시작 페이지와 끝 페이지
       int start_page = ((now_grp - 1) * page_per_block) + 1;
-      int end_page = (now_grp * page_per_block);
+      int end_page = now_grp * page_per_block;
+    
+      // 마지막 페이지를 전체 페이지로 제한
+      end_page = Math.min(end_page, total_page);
 
-      StringBuffer str = new StringBuffer();
-
-      str.append("<style type='text/css'>");
+      StringBuffer pagingHtml = new StringBuffer();
+      pagingHtml.append("<style type='text/css'>");
+      pagingHtml.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}");
+      pagingHtml.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}");
+      pagingHtml.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}");
+      pagingHtml.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}");
+      pagingHtml.append("  .span_box_1{");
+      pagingHtml.append("    text-align: center;");
+      pagingHtml.append("    font-size: 1em;");
+      pagingHtml.append("    border: 1px;");
+      pagingHtml.append("    border-style: solid;");
+      pagingHtml.append("    border-color: #cccccc;");
+      pagingHtml.append("    padding:1px 6px 1px 6px;");
+      pagingHtml.append("    margin:1px 2px 1px 2px;");
+      pagingHtml.append("  }");
+      pagingHtml.append("  .span_box_2{");
+      pagingHtml.append("    text-align: center;");
+      pagingHtml.append("    background-color: #668db4;");
+      pagingHtml.append("    color: #FFFFFF;");
+      pagingHtml.append("    font-size: 1em;");
+      pagingHtml.append("    border: 1px;");
+      pagingHtml.append("    border-style: solid;");
+      pagingHtml.append("    border-color: #cccccc;");
+      pagingHtml.append("    padding:1px 6px 1px 6px;");
+      pagingHtml.append("    margin:1px 2px 1px 2px;");
+      pagingHtml.append("  }");
+      pagingHtml.append("</style>");
+      pagingHtml.append("<div id='paging'>");
+      
+      pagingHtml.append("<style type='text/css'>");
       // CSS 스타일 설정
-      str.append("</style>");
-      str.append("<DIV id='paging'>");
+      pagingHtml.append("</style>");
+      pagingHtml.append("<DIV id='paging'>");
 
       int _now_page = (now_grp - 1) * page_per_block;
       if (now_grp >= 2) {
-          str.append("<span class='span_box_1'><A href='" + list_file + "?word=" + word + "&now_page=" + _now_page
+        pagingHtml.append("<span class='span_box_1'><A href='" + list_file + "?word=" + word + "&now_page=" + _now_page
               + "'>이전</A></span>");
       }
 
@@ -203,21 +238,21 @@ public class MemberProc implements MemberProcInter{
           }
 
           if (now_page == i) {
-              str.append("<span class='span_box_2'>" + i + "</span>"); // 현재 페이지 강조
+            pagingHtml.append("<span class='span_box_2'>" + i + "</span>"); // 현재 페이지 강조
           } else {
-              str.append("<span class='span_box_1'><A href='" + list_file + "?word=" + word + "&now_page=" + i + "'>" + i
+            pagingHtml.append("<span class='span_box_1'><A href='" + list_file + "?word=" + word + "&now_page=" + i + "'>" + i
                   + "</A></span>");
           }
       }
 
       _now_page = (now_grp * page_per_block) + 1;
       if (now_grp < total_grp) {
-          str.append("<span class='span_box_1'><A href='" + list_file + "?word=" + word + "&now_page=" + _now_page
+        pagingHtml.append("<span class='span_box_1'><A href='" + list_file + "?word=" + word + "&now_page=" + _now_page
               + "'>다음</A></span>");
       }
-      str.append("</DIV>");
+      pagingHtml.append("</DIV>");
 
-      return str.toString();
+      return pagingHtml.toString();
   }
 
 
