@@ -42,7 +42,7 @@
     UPDATE member 
     SET name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}, passwd=#{passwd}
     WHERE memberno=#{memberno}
-</update>
+  </update>
   
   <!-- 회원 삭제 -->
   <delete id="delete" parameterType="int">
@@ -70,5 +70,24 @@
     SET passwd=#{passwd}
     WHERE memberno=#{memberno}
   </update>
+  
+  <!-- 회원 목록을 검색어로 페이징 처리하여 반환 -->
+  <select id="list_by_memberno_search_paging" parameterType="hashmap" resultType="dev.mvc.member.MemberVO">
+      SELECT *
+      FROM (
+          SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade,
+                 ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
+          FROM member
+          WHERE name LIKE '%' || #{word} || '%'
+      )
+      WHERE rnum BETWEEN #{start_num} AND #{end_num}
+  </select>
+  
+  <!-- 회원번호별 검색된 레코드 갯수 -->
+  <select id="list_by_memberno_search_count" parameterType="hashmap" resultType="int">
+      SELECT COUNT(*)
+      FROM member
+      WHERE name LIKE '%' || #{word} || '%'
+  </select>
   
 </mapper>
