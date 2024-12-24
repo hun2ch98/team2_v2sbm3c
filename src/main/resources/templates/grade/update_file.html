@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${memberVO?.member_cate ?: '게시글 종류'}" class="title_line_text"></span>
+    > 파일 수정
+  </div>
+  
+  <aside class="aside_right">
+    <a th:href="@{/member/create}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./list_by_memberno?memberno=${memberVO.memberno }&word=${word }&now_page=${now_page}|}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div th:if="${memberVO.pf_img.endsWith('jpg') or memberVO.pf_img.endsWith('png')  or memberVO.pf_img.endsWith('gif')}"
+               style="text-align: center; width: 50%; float: left;">
+          <img th:src="@{|/member/storage/${memberVO.pf_imgsaved}|}" style="width: 90%;">
+        </div>
+
+        <div th:if="${((memberVO.pf_img.endsWith('jpg') or memberVO.pf_img.endsWith('png')  or memberVO.pf_img.endsWith('gif')) == false) and (memberVO.size1 > 0)}"
+               class="display_table" style="float: left; width: 50%;">
+            <div class="display_table_cell">
+              <span th:text="${memberVO.pf_img}"></span>
+            </div>
+        </div>
+
+        <div th:if="${memberVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
+          <img src="/member/images/none1.png" style="width: 90%;">
+        </div>
+  
+        <div style='text-align: left; width: 47%; float: left;'>
+          <span style='font-size: 1.5em;' th:text="${memberVO.title}"></span>
+          <br>
+          <form name='frm' method='POST' action='./update_file' enctype="multipart/form-data">
+            <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
+            <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
+            <input type="hidden" name="now_page" th:value="${now_page}">
+            <input type="hidden" name="search_word" th:value="${word}">
+                
+            <br><br> 
+            변경 이미지 선택<br>  
+            <input type='file' name='pf_imgMF' id='pf_imgMF' value='' placeholder="파일 선택"><br>
+            <br>
+            <div style='margin-top: 20px; clear: both;'>  
+              <button type="submit" class="btn btn-secondary btn-sm">파일 변경 처리</button>
+              <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+            </div>  
+          </form>
+        </div>
+      </li>
+    </ul>
+  </fieldset>  
+
+</div>
+
+</html>
