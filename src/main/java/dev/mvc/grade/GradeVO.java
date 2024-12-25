@@ -6,23 +6,33 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GradeVO {
-  private int gradeno;                         // 등급 번호
+  /*
+  CREATE TABLE grade (
+      gradeno         NUMBER(5)       NOT NULL    PRIMARY KEY,   -- 등급 번호 
+      memberno        NUMBER(5)       NULL,                      -- 회원 번호
+      grade_name      VARCHAR2(20)    NOT NULL,                  -- 등급 이름
+      gdescription    VARCHAR2(255)   NULL,                      -- 등급 설명
+      min_points      NUMBER(10)      NOT NULL,                  -- 최소 포인트
+      max_points      NUMBER(10)      NOT NULL,                  -- 최대 포인트
+      rdate           DATE            NOT NULL,                  -- 생성 날짜
+      img_url         VARCHAR2(255)   NULL,                      -- 이미지 경로
+      FOREIGN KEY (memberno) REFERENCES member(memberno)
+  );
+  */
   
-  private String grade_name;                   // 등급 이름
+  private int gradeno;           // 등급 번호
   
-  private String grade_img;                    // 등급별 이미지 경로
+  private int memberno;          // 회원 번호
   
-  private String img_saved;                    // 실제 저장된 이미지 경로
+  private String grade_name;     // 등급 이름
   
-  private int img_size;                        // 이미지 크기
+  private String gdescription;   // 등급 설명
   
-  private String gdescription;                 // 등급 설명
+  private int min_points;        // 최소 포인트
   
-  private int min_points;                      // 최소 포인트
+  private int max_points;        // 최대 포인트
   
-  private int max_points;                      // 최대 포인트
+  private String created_at;     // 생성 날짜
   
-  private String created_at;                   // 생성 날짜
-  
-  private String update_at;                    // 수정 날짜
+  private String img_url;        // 이미지 경로
 }
