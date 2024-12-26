@@ -1,38 +1,59 @@
 package dev.mvc.grade;
 
+import java.util.Date;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter
-@Setter
+@Getter @Setter @ToString
 public class GradeVO {
-  /*
-  CREATE TABLE grade (
-      gradeno         NUMBER(5)       NOT NULL    PRIMARY KEY,   -- 등급 번호 
-      memberno        NUMBER(5)       NULL,                      -- 회원 번호
-      grade_name      VARCHAR2(20)    NOT NULL,                  -- 등급 이름
-      gdescription    VARCHAR2(255)   NULL,                      -- 등급 설명
-      min_points      NUMBER(10)      NOT NULL,                  -- 최소 포인트
-      max_points      NUMBER(10)      NOT NULL,                  -- 최대 포인트
-      rdate           DATE            NOT NULL,                  -- 생성 날짜
-      img_url         VARCHAR2(255)   NULL,                      -- 이미지 경로
-      FOREIGN KEY (memberno) REFERENCES member(memberno)
-  );
-  */
   
-  private int gradeno;           // 등급 번호
+//  CREATE TABLE grade (
+//      gradeno         NUMBER(5)       NOT NULL    PRIMARY KEY,   -- 등급 번호 
+//      grade_name      VARCHAR2(20)    NOT NULL,                  -- 등급 이름
+//      gdescription    VARCHAR2(255)   NULL,                      -- 등급 설명
+//      rdate           DATE            NOT NULL,                  -- 생성 날짜
+//      file1           VARCHAR(200)    NULL,                      -- 원본 파일 이름
+//      file1saved      VARCHAR2(100)   NULL,                      -- 서버에 저장된 파일 이름
+//      thumb1          VARCHAR2(100)   NULL,                      -- 썸네일 이미지 파일 이름
+//      size1           NUMBER(10)      NULL                       -- 파일 크기
+//  );
   
-  private int memberno;          // 회원 번호
+    /** 등급 번호, Sequence를 통해 자동 생성 */
+    private int gradeno;
   
-  private String grade_name;     // 등급 이름
+    /** 등급 이름 */
+    @NotEmpty(message="등급 이름은 필수 사항입니다.")
+    @Size(min=1, max=20)
+    private String grade_name = "";
   
-  private String gdescription;   // 등급 설명
+    /** 등급 내용 설명*/
+    private String gdescription;
   
-  private int min_points;        // 최소 포인트
+    /** 생성 날짜 */
+    private Date rdate;
   
-  private int max_points;        // 최대 포인트
-  
-  private String created_at;     // 생성 날짜
-  
-  private String img_url;        // 이미지 경로
+  //파일 업로드 관련
+    // -----------------------------------------------------------------------------------
+    /**
+    이미지 파일
+    <input type='file' class="form-control" name='file1MF' id='file1MF' 
+               value='' placeholder="파일 선택">
+    */
+    private MultipartFile file1MF = null;
+    /** 메인 이미지 크기 단위, 파일 크기 */
+    private String size1_label = "";
+    /** 메인 이미지 */
+    private String file1 = "";
+    /** 실제 저장된 메인 이미지 */
+    private String file1saved = "";
+    /** 메인 이미지 preview */
+    private String thumb1 = "";
+    /** 메인 이미지 크기 */
+    private long size1 = 0;
 }
