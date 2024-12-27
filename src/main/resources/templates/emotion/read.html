@@ -2,30 +2,29 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${boardVO?.board_cate ?: '요청사항'}" class="title_line_text"></span>
-    > 글 조회
+    > 감정 조회
   </div>
 
   <aside class="aside_right" th:if="${session?.gradle != 1}">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/board/list_all}">목록</a>
+    <a th:href="@{/emotion/list_all}">목록</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/board/create}">등록</a>
+    <a th:href="@{/emotion/create}">등록</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|/board/update_text?boardno=${boardVO.boardno}&now_page=${now_page}|}">글 수정</a>
+    <a th:href="@{|/emotion/update_text?emono=${emotionVO.emono}&now_page=${now_page}|}">글 수정</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|/board/update_file?boardno=${boardVO.boardno}&now_page=${now_page}|}">파일 수정</a>
+    <a th:href="@{|/emotion/update_file?emono=${emotionVO.emono}&now_page=${now_page}|}">파일 수정</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|/board/delete?boardno=${boardVO.boardno}&now_page=${now_page}|}">삭제</a>
+    <a th:href="@{|/emotion/delete?emono=${emotionVO.emono}&now_page=${now_page}|}">삭제</a>
   </aside>
 
   <aside class="aside_right" th:if="${session?.gradle != 1}">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/board/list_all}">목록</a>
+    <a th:href="@{/emotion/list_all}">목록</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/reply/read}">댓글보기</a>
+    <a th:href="@{/emotion/read}">감정보기</a>
   </aside>
 
   <div class='menu_line'></div>
@@ -35,31 +34,24 @@
       <li class="li_none">
         <div style="width: 100%; word-break: break-all;">
           <!-- 이미지 -->
-          <div th:if="${boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')}">
-            <img th:src="@{|/board/storage/${boardVO.file1saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
+          <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}">
+            <img th:src="@{|/emotion/storage/${emotionVO.file1saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
           </div>
 
-          <!-- 게시글 제목 -->
-          <span style="font-size: 1.5em; font-weight: bold;" th:text="${boardVO.title}"></span>
-          <span style="font-size: 1em;" th:text="${boardVO.rdate}"></span><br><br>
+          <!-- 감정 유형 -->
+          <span style="font-size: 1.5em; font-weight: bold;" th:text="${emotionVO.type}"></span>
 
-          <!-- 게시글 내용 -->
-          <div style="white-space: pre-wrap;"><span th:text="${boardVO.bcontent}"></span></div>
+          <!-- 감정 내용 -->
+          <div style="white-space: pre-wrap;"><span th:text="${emotionVO.explan}"></span></div>
         </div>
       </li>
 
-      <!-- 회원 정보 -->
-      <li class="li_none">
-        작성자: <span th:text="${memberVO?.nickname ?: '알 수 없음'}"></span> <br>
-        이메일: <span th:text="${memberVO?.email ?: '알 수 없음'}"></span> <br>
-      </li>
-
       <!-- 파일 -->
-      <li class="li_none" th:if="${boardVO.size1 > 0}">
+      <li class="li_none" th:if="${emotionVO.size1 > 0}">
         <div >
           <!-- ServletRegister.java: registrationBean.addUrlMappings("/download"); -->
-          첨부 파일: <a th:href='@{|/download?dir=/board/storage&filename=${boardVO.file1saved}&downname=${boardVO.file1}|}'
-                             th:text='|${boardVO.file1}|'></a> <span th:text="|(${boardVO.size1_label})|"></span>  
+          첨부 파일: <a th:href='@{|/download?dir=/emotion/storage&filename=${emotionVO.file1saved}&downname=${emotionVO.file1}|}'
+                             th:text='|${emotionVO.file1}|'></a> <span th:text="|(${emotionVO.size1_label})|"></span>  
         </div>
       </li>   
     </ul>

@@ -13,44 +13,46 @@
   <div class="menu_line"></div>
 
   <table class="table table-striped" style="width: 100%;">
-<colgroup>
-      <col style="width: 5%;"/> <!-- 번호 열 -->
-      <col style="width: 15%;"/> <!-- 이미지 열 -->
-      <col style="width: 80%;"/> <!-- 설명 열 -->
+    <colgroup>
+      <col style="width: 10%;"/>
+      <col style="width: 90%;"/>
     </colgroup>
     <thead>
       <tr>
-        <th class="th_bs">번호</th>
         <th class="th_bs">감정 이미지</th>
-        <th class="th_bs">설명</th>
+        <th class="th_bs">유형</th>
       </tr>
     </thead>
     <tbody>
 
-      <!--감정 종류 목록 출력 -->
+      <!-- 감정 목록 출력 -->
       <tr th:each="emotionVO, status:${list}" 
         th:attr="onclick=|location.href='/emotion/read?emono=${emotionVO.emono}'|"
         style="cursor: pointer; height: 90px;">
-        
-        <!-- 번호 출력 -->
-        <td class='td_basic' style="vertical-align: middle; text-align: center;">
-          <span th:text="${status.index + 1}"></span>
-        </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}">
+          <img th:src="@{|/emotion/storage/${emotionVO.thumb1}|}" style="width: 120px; height: 90px;">
+        </div>
 
-        <!-- 이미지 출력 -->
-        <td class='td_basic' style="vertical-align: middle; text-align: center;">
-          <img th:src="@{|/emotion/image/image${status.index + 1}.png|}" style="width: 120px; height: 90px;">
-        </td>
+        <div th:if="${((emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')) == false) and (emotionVO.size1 > 0)}">
+          <span th:text="${emotionVO.file1}"></span>
+        </div>
 
-        <!-- 설명 출력 -->
-        <td class='td_left'>
-          <span th:text="${emotionVO.type}" style="font-weight: bold;"></span><br>
-          <span th:if="${emotionVO.explan.length() > 160 }" 
-                    th:text="|${emotionVO.explan.substring(0, 160) }...|"></span>
-          <span th:if="${emotionVO.explan.length() <= 160 }" 
-                    th:text="|${emotionVO.explan}|"></span>
-        </td>
-      </tr>
+        <div th:if="${emotionVO.size1 == 0}">
+          <img src="/emotion/images/none1.png" style="width: 120px; height: 90px;">
+        </div>
+                
+      </td>
+      </td>
+      <td class='td_left'>
+        <span th:text="${emotionVO.type}" style="font-weight: bold;"></span><br>
+        <span th:if="${emotionVO.explan.length() > 160 }" 
+                  th:text="|${emotionVO.explan.substring(0, 160) }...|"></span>
+        <span th:if="${emotionVO.explan.length() <= 160 }" 
+                  th:text="|${emotionVO.explan}|"></span>
+
+      </td>
+    </tr>
     </tbody>
   </table>
 

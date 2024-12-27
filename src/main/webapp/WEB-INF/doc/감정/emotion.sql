@@ -5,14 +5,20 @@ CREATE TABLE emotion (
 	emono	NUMBER(10)		    NOT NULL,
 	type	VARCHAR(50)		    NOT NULL,
     explan  VARCHAR(500)        NOT NULL,
-	img	    VARCHAR(500)		NULL
+	file1           VARCHAR(200)        NULL,
+    file1saved      VARCHAR2(100)		 NULL,
+	thumb1          VARCHAR2(100)		 NULL,
+	size1           NUMBER(10)		     NULL
 );
 
 COMMENT ON TABLE emotion is '감정';
 COMMENT ON COLUMN emotion.emono is '감정 번호';
 COMMENT ON COLUMN emotion.type is '감정 유형';
 COMMENT ON COLUMN emotion.explan is '감정 내용';
-COMMENT ON COLUMN emotion.img is '감정 이미지';
+COMMENT ON COLUMN emotion.FILE1 is '파일 업로드';
+COMMENT ON COLUMN emotion.FILE1SAVED is '실제 저장된 메인 이미지';
+COMMENT ON COLUMN emotion.THUMB1 is '메인 이미지 Preview';
+COMMENT ON COLUMN emotion.SIZE1 is '메인 이미지 크기';
 
 DROP SEQUENCE emotion_seq;
 
