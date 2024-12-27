@@ -8,7 +8,7 @@ import dev.mvc.board.BoardVO;
 public interface GradeDAOInter {
   
     /**
-     * 등급 진화루트 추가
+     * 등급 추가
      * @param gradeVO
      * @return
      */
@@ -35,18 +35,19 @@ public interface GradeDAOInter {
     public ArrayList<GradeVO> list_by_gradeno(int gradeno);
     
     /**
-     * 등급설명 내용 수정
+     * 진화기준 내용 수정
      * @param gradeVO
      * @return
      */
     public int update_text(GradeVO gradeVO);
     
     /**
-     * 등급별 진화 파일 수정
-     * @param gradeVO
+     * 파일 수정
+     * @param boardVO
      * @return
      */
     public int update_file(GradeVO gradeVO);
+    
     
     /**
      * 등급 삭제

@@ -3,15 +3,16 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
+    <span th:text="${surveyVO?.topic ?: '설문조사'}" class="title_line_text"></span>
     > 파일 수정
   </div>
   
   <aside class="aside_right">
-    <a th:href="@{emotion/create}">등록</a>
+    <a th:href="@{/survey/create}">등록</a>
     <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_emono?emono=${emotionVO.emono }&word=${word }&now_page=${now_page}|}">목록</a>
+    <a th:href="@{|./list_by_surveyno_search_paging?surveyno=${surveyVO.surveyno }&is_continue=${is_continue }&now_page=${now_page}|}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -19,29 +20,30 @@
   <fieldset class="fieldset_basic">
     <ul>
       <li class="li_none">
-        <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}"
+        <div th:if="${surveyVO.file1.endsWith('jpg') or surveyVO.file1.endsWith('png')  or surveyVO.file1.endsWith('gif')}"
                style="text-align: center; width: 50%; float: left;">
-          <img th:src="@{|/emotion/storage/${emotionVO.file1saved}|}" style="width: 90%;">
+          <img th:src="@{|/survey/storage/${surveyVO.file1saved}|}" style="width: 90%;">
         </div>
 
-        <div th:if="${((emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')) == false) and (emotionVO.size1 > 0)}"
+        <div th:if="${((surveyVO.file1.endsWith('jpg') or surveyVO.file1.endsWith('png')  or surveyVO.file1.endsWith('gif')) == false) and (surveyVO.size1 > 0)}"
                class="display_table" style="float: left; width: 50%;">
             <div class="display_table_cell">
-              <span th:text="${emotionVO.file1}"></span>
+              <span th:text="${surveyVO.file1}"></span>
             </div>
         </div>
 
-        <div th:if="${emotionVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
-          <img src="/emotion/images/none1.png" style="width: 90%;">
+        <div th:if="${surveyVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
+          <img src="/survey/images/none1.png" style="width: 90%;">
         </div>
   
         <div style='text-align: left; width: 47%; float: left;'>
-          <span style='font-size: 1.5em;' th:text="${emotionVO.type}"></span>
+          <span style='font-size: 1.5em;' th:text="${surveyVO.topic}"></span>
           <br>
           <form name='frm' method='POST' action='./update_file' enctype="multipart/form-data">
-            <input type="hidden" name="emono" th:value="${emotionVO.emono }">
+            <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
+            <input type="hidden" name="surveyno" th:value="${surveyVO.surveyno }">
             <input type="hidden" name="now_page" th:value="${now_page}">
-            <input type="hidden" name="search_word" th:value="${word}">
+            <input type="hidden" name="is_continue" th:value="${is_continue}">
                 
             <br><br> 
             변경 이미지 선택<br>  

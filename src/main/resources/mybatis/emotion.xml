@@ -28,11 +28,18 @@
     FROM emotion
     ORDER BY emono
   </select>
-
-  <!-- 수정 -->
-  <update id="update" parameterType="dev.mvc.emotion.EmotionVO">
+  
+  <!-- 감정 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.emotion.EmotionVO">
     UPDATE emotion
-    SET type = #{type}, explan = #{explan},img = #{img}
+    SET type=#{type}, explan = #{explan}
+    WHERE emono = #{emono}
+  </update>
+  
+  <!-- 감정 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.emotion.EmotionVO">
+    UPDATE emotion
+    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
     WHERE emono = #{emono}
   </update>
 

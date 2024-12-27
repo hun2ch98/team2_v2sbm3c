@@ -3,8 +3,8 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-    설문조사 목록
-    > <span th:if="${is_continue != ''}" th:text="|> ${is_continue} (${search_count} 건)|" class="title_line_text"></span>
+    설문조사 목록 조회
+    <span th:if="${is_continue != ''}" th:text="|> ${is_continue} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 
   <aside class="aside_right">
