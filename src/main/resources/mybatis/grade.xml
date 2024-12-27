@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.grade.GradeDAOInter">
+    <insert id="create" parameterType="dev.mvc.grade.GradeVO">
+        INSERT INTO grade (gradeno, grade, grade_img, img_saved, img_size, gdescription, min_points, max_points, created_at, updated_at)
+        VALUES (#{gradeno}, #{grade}, #{grade_img}, #{img_saved}, #{img_size}, #{gdescription}, #{min_points}, #{max_points}, SYSDATE, SYSDATE)
+    </insert>
+    
+    <select id="list" resultType="dev.mvc.grade.GradeVO">
+        SELECT * FROM grade ORDER BY gradeno ASC
+    </select>
+    
+    <select id="read" parameterType="int" resultType="dev.mvc.grade.GradeVO">
+        SELECT * FROM grade WHERE gradeno = #{gradeno}
+    </select>
+    
+    <update id="update" parameterType="dev.mvc.grade.GradeVO">
+        UPDATE grade
+        SET grade = #{grade}, grade_img = #{grade_img}, img_saved = #{img_saved}, img_size = #{img_size},
+            gdescription = #{gdescription}, min_points = #{min_points}, max_points = #{max_points},
+            updated_at = SYSDATE
+        WHERE gradeno = #{gradeno}
+    </update>
+    
+    <delete id="delete" parameterType="int">
+        DELETE FROM grade WHERE gradeno = #{gradeno}
+    </delete>
+</mapper>

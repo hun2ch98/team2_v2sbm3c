@@ -21,7 +21,7 @@
     </tr>
    
     <tr th:each="surveyVO, status:${list}" 
-        th:attr="onclick=|location.href='/survey/read?surveyno=${surveyVO.surveyno}'|"
+        th:attr="onclick=|location.href='/survey/read?memberno=${surveyVO.memberno}'|"
         style="cursor: pointer;">
       <td class='td_basic' th:text="${surveyVO.poster}"></td>
       <td class='td_left'>

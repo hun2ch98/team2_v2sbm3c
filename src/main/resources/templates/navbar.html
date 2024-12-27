@@ -32,6 +32,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list|}">회원 등급</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=''|}">전체 글 목록</a></li>
                     </ul>
                 </li>
@@ -46,7 +47,7 @@
                     </ul>
                 </li>
                 
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="설문조사">                                                            
                     </a>
@@ -66,7 +67,6 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/mypage|}">MyPage</a>
-                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀 번호 변경</a>
                         </li>  
                     </ul>
                 </li>
