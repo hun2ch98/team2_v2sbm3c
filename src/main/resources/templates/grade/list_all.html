@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
 
-  <div class='title_line'>전체 회원 목록</div>
+  <div class='title_line'>전체 등급 목록</div>
 
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
@@ -16,20 +16,20 @@
       <col style='width: 90%;'/>
     </colgroup>
     <tr>
-      <th class='th_bs'>회원 번호</th>
-      <th class='th_bs'>이름</th>
+      <th class='th_bs'>등급</th>
+      <th class='th_bs'>등급설명</th>
     </tr>
    
-    <tr th:each="memberVO, status:${list}" 
-        th:attr="onclick=|location.href='/member/read?memberno=${memberVO.memberno}'|"
+    <tr th:each="gradeVO, status:${list}" 
+        th:attr="onclick=|location.href='/grade/read?gradeno=${gradeVO.gradeno}'|"
         style="cursor: pointer;">
-      <td class='td_basic' th:text="${memberVO.memberno}"></td>
+      <td class='td_basic' th:text="${gradeVO.gradeno}"></td>
       <td class='td_left'>
-        <span th:text="${memberVO.name}" style="font-weight: bold;"></span><br>
-        <span th:if="${memberVO.address1.length() > 160 }" 
-              th:text="|${memberVO.address1.substring(0, 160) }...|"></span>
-        <span th:if="${memberVO.address1.length() <= 160 }" 
-              th:text="|${memberVO.address1}|"></span>
+        <span th:text="${gradeVO.name}" style="font-weight: bold;"></span><br>
+        <span th:if="${gradeVO.address1.length() > 160 }" 
+              th:text="|${gradeVO.address1.substring(0, 160) }...|"></span>
+        <span th:if="${gradeVO.address1.length() <= 160 }" 
+              th:text="|${gradeVO.address1}|"></span>
       </td>
     </tr>
   </table>

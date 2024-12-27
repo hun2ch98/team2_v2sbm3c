@@ -3,28 +3,80 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="dev.mvc.grade.GradeDAOInter">
-    <insert id="create" parameterType="dev.mvc.grade.GradeVO">
-        INSERT INTO grade (gradeno, grade, grade_img, img_saved, img_size, gdescription, min_points, max_points, created_at, updated_at)
-        VALUES (#{gradeno}, #{grade}, #{grade_img}, #{img_saved}, #{img_size}, #{gdescription}, #{min_points}, #{max_points}, SYSDATE, SYSDATE)
-    </insert>
-    
-    <select id="list" resultType="dev.mvc.grade.GradeVO">
-        SELECT * FROM grade ORDER BY gradeno ASC
-    </select>
-    
-    <select id="read" parameterType="int" resultType="dev.mvc.grade.GradeVO">
-        SELECT * FROM grade WHERE gradeno = #{gradeno}
-    </select>
-    
-    <update id="update" parameterType="dev.mvc.grade.GradeVO">
-        UPDATE grade
-        SET grade = #{grade}, grade_img = #{grade_img}, img_saved = #{img_saved}, img_size = #{img_size},
-            gdescription = #{gdescription}, min_points = #{min_points}, max_points = #{max_points},
-            updated_at = SYSDATE
-        WHERE gradeno = #{gradeno}
-    </update>
-    
-    <delete id="delete" parameterType="int">
-        DELETE FROM grade WHERE gradeno = #{gradeno}
-    </delete>
+
+  <!-- 등급 글 추가 -->
+  <insert id="create" parameterType="dev.mvc.grade.GradeVO">
+    INSERT INTO grade (gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1)
+    VALUES (grade_seq.nextval, #{gradeno}, #{grade_name}, #{gdescription}, sysdate, #{file1}, #{file1saved}, #{thumb1}, #{size1})
+  </insert>
+  
+  <!-- 등급 조회 -->
+  <select id="read" parameterType="dev.mvc.grade.GradeVO">
+    SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+    FROM grade
+    WHERE gradeno = #{gradeno}
+  </select>
+  
+  <!-- 모든 목록 -->
+  <select id="list_all" parameterType="dev.mvc.grade.GradeVO">
+    SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+    FROM grade
+    ORDER BY gradeno DESC
+  </select>
+  
+  <!-- 등급 등록된 목록 -->
+  <select id="list_by_gradeno" resultType="dev.mvc.grade.GradeVO" parameterType="int">
+    SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+    FROM grade
+    WHERE gradeno = #{gradeno}
+    ORDER BY gradeno DESC
+  </select>
+  
+  <!-- 등급 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.grade.GradeVO">
+    UPDATE grade
+    SET grade_name=#{grade_name}, gdescription=#{gdescription}
+    WHERE gradeno = #{gradeno}
+  </update>
+  
+  <!-- 등급 진화 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.grade.GradeVO">
+    UPDATE grade
+    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
+    WHERE gradeno = #{gradeno}
+  </update>
+  
+  <!-- 등급 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM grade
+    WHERE gradeno = #{gradeno}
+  </delete>
+  
+  <!-- 등급 종류별 검색 목록 -->
+  <select id="list_by_gradeno_search" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
+    SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) as file1, file1saved, thumb1, size1
+    FROM grade
+    WHERE gdescription = #{gdescription, jdbcType=VARCHAR}
+    ORDER BY gradeno DESC
+    OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+  </select>
+  
+  <!-- 등급 종류별 검색 레코드 갯수 -->
+  <select id="count_by_gradeno_search" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*)
+    FROM grade
+    WHERE (#{gdescription} IS NULL OR #{gdescription} = '' OR gdescription = #{gdescription})
+  </select>
+  
+  <!-- 등급 종류별 검색 및 페이징 -->
+  <select id="list_by_gradeno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
+    SELECT * 
+    FROM (
+        SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) AS file1, file1saved, thumb1, size1, 
+               ROW_NUMBER() OVER (ORDER BY gradeno DESC) AS rnum
+        FROM grade
+        WHERE (#{gdescription} IS NULL OR #{gdescription} = '' OR gdescription = #{gdescription}
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
 </mapper>
