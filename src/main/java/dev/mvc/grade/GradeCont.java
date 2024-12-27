@@ -131,7 +131,7 @@ public class GradeCont {
   public String list_all(HttpSession session, Model model) {
     ArrayList<GradeVO> list = this.gradeProc.list_all(); // 등급 모든 목록
     model.addAttribute("list", list);
-    return "/grade/list_all";
+    return "grade/list_all";
   }
   
   /**
@@ -265,7 +265,7 @@ public class GradeCont {
   @GetMapping(value = "/update_text")
   public String update_text(HttpSession session,
       Model model,
-      @RequestParam(name = "gradeno", defaultValue = "") int gradeno,
+      @RequestParam(name = "gradeno", defaultValue = "0") int gradeno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page,
       RedirectAttributes ra) {
@@ -450,13 +450,14 @@ public class GradeCont {
          @RequestParam(name = "word", defaultValue = "") String word,
          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
+    model.addAttribute("gradeno", gradeno);
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
     
     GradeVO gradeVO = this.gradeProc.read(gradeno);
     model.addAttribute("gradeVO", gradeVO);
     
-    return "/grade/delete"; // forward
+    return "grade/delete"; // forward
   }
   
   
@@ -474,7 +475,7 @@ public class GradeCont {
     String file1saved = gradeVO_read.getFile1saved();
     String thumb1 = gradeVO_read.getThumb1();
     
-    String uploadDir = Board.getUploadDir();
+    String uploadDir = Grade.getUploadDir();
     Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
     Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
     // -------------------------------------------------------------------

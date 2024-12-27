@@ -3,70 +3,68 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-    <span th:text="${memberVO?.name ?: '회원'}" class="title_line_text"></span>
-    > 검색 그리드 페이징
-    <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+    <span th:text="${gradeVO?.grade_name ?: '등급이름'}" class="title_line_text"></span>
+    > 검색
+    <span th:if="${grade_name != ''}" th:text="|> ${grade_name} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 
   <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{|/grade/create?gradeno=${gradeVO.gradeno}|}">등록</a>
+      <span class="menu_devide">|</span>
+    </span>
+    
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{|./list_by_memberno?memberno=${memberVO?.memberno}&now_page=${now_page}|}">목록</a>    
+    <span class='menu_divide' >|</span>
+    <a th:href="@{|./list_by_gradeno?gradeno=${gradeVO.gradeno}&grade_name=${grade_name}&now_page=${now_page}|}">목록</a>"
   </aside>
 
   <!-- 검색 프래그먼트 -->
-  <div th:replace="~{/member/list_search_com :: list_search_fragment}"></div>
+  <div th:replace="~{/grade/list_search_com :: list_search_fragment}"></div>
      
   <div class='menu_line'></div>
        
-  <table class="table table-striped table-hover" style='width: 100%;'>
-    <colgroup>
-      <col style='width: 5%;'/>
-      <col style='width: 10%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 30%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 10%;'/>
-    </colgroup>
-    <tr>
-      <th class='th_bs'> </th>
-      <th class='th_bs'>ID</th>
-      <th class='th_bs'>성명</th>
-      <th class='th_bs'>이메일</th>
-      <th class='th_bs'>주소</th>
-      <th class='th_bs'>등록일</th>
-      <th class='th_bs'> </th>
-    </tr>
+  <div style='width: 100%;'> <!-- 갤러리 Layout  시작 -->
+    <div th:if="${list.size() > 0}" th:each="gradeVO, status:${list}" th:attr="onclick=|location.href='/grade/read?gradeno=${gradeVO.gradeno}&grade_name=${grade_name}&now_page=${now_page}'|"
+    style='width: 19.0%; height: 200px; float: left; margin: 0.5%; padding: 0.5%; background-color: #EEEFFF; text-align: left; cursor: pointer;'>
+    
+    <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')}"
+             style="width: 100%; height: 100px;">
+        <img th:src="@{|/grade/storage/${gradeVO.thumb1}|}" style="width: 100%; height: 100%;">
+      </div>
 
-    <tr th:each="memberVO, status:${list}">
-      <td class='td_basic'>
-        <div>
-          <div th:if="${memberVO.grade >= 1 and memberVO.grade <= 10}"><img src='/member/images/admin.png' title="관리자" class="icon"></div>
-          <div th:if="${memberVO.grade >= 11 and memberVO.grade <= 20}"><img src='/member/images/user.png' title="회원" class="icon"></div>
-          <div th:if="${memberVO.grade >= 30 and memberVO.grade <= 39}"><img src='/member/images/pause.png' title="정지 회원" class="icon"></div>
-          <div th:if="${memberVO.grade >= 40 and memberVO.grade <= 49}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
-        </div>
-      </td>
-      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
-      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
-      <td class='td_basic' th:text="${memberVO.email}"></td>
-      <td class='td_left'>
-        <span th:if="${memberVO.address1.length() > 15 }" th:text="|${memberVO.address1.substring(0, 15) }...|"></span>
-        <span th:unless="${memberVO.address1.length() > 15 }" th:text="${memberVO.address1}"></span>
-      </td>
-      <td class='td_basic' th:text="${memberVO.mdate.substring(0, 10)}"></td>
-      <td class='td_basic'>
-        <a th:href="@{|./read?memberno=${memberVO.memberno}|}"><img src='/member/images/update.png' title='수정' class="icon"></a>
-        <a th:href="@{|./delete?memberno=${memberVO.memberno}|}"><img src='/member/images/delete.png' title='삭제' class="icon"></a>
-      </td>
-    </tr>
+      <div th:if="${((gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')) == false) and (gradeVO.size1 > 0)}"
+             style="width: 100%; height: 100px;">
+        <span th:text="${gradeVO.file1}"></span>
+      </div>
 
-    <tr th:if="${list == null || list.size() == 0}">
-      <td colspan="7" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
-    </tr>
-  </table>
+      <div th:if="${gradeVO.size1 == 0}" style="width: 100%; height: 100px;">
+        <img src="/grade/images/seed.png" style="width: 100%; height: 100%;">
+      </div>
+      <div>
+        <span th:if="${gradeVO.grade_name.length() > 16 }" 
+                  th:text="|${gradeVO.grade_name.substring(0, 16) }...|" style="font-weight: bold;"></span>
+        <span th:if="${gradeVO.grade_name.length() <= 16 }" 
+                  th:text="|${gradeVO.grade_name}|" style="font-weight: bold;"></span>
+        <br>
+        
+        <span th:if="${gradeVO.gdescription.length() > 25 }" 
+                  th:text="|${gradeVO.gdescription.substring(0, 25) }...|"></span>
+        <span th:if="${gradeVO.gdescription.length() <= 25 }" 
+                  th:text="|${gradeVO.gdescription}|"></span>
+      </div>
+      
+      <div style="width: 100%; text-align: right;">♡</div>
+      
+  </div> 
+  
+  <div th:if="${list.size() == 0}" style="text-align: center; padding: 50px 0px;">
+      <span>관련 등급 글이 등록되지 않았습니다.</span>
+    </div> 
+  </div>  <!-- 갤러리 Layout  종료 -->
    
-  <div class="bottom_menu" th:if="${paging != null}" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
 </div>
 </html>

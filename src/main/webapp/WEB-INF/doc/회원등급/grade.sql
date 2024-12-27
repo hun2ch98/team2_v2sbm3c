@@ -34,7 +34,7 @@ CREATE TABLE grade (
     file1saved      VARCHAR2(100)   NULL,                      -- 서버에 저장된 파일 이름
     thumb1          VARCHAR2(100)   NULL,                      -- 썸네일 이미지 파일 이름
     size1           NUMBER(10)      NULL                       -- 파일 크기
-);
+);s
 
 COMMENT ON TABLE grade is '회원등급 테이블';
 COMMENT ON COLUMN grade.gradeno is '회원 등급 번호';
@@ -56,3 +56,7 @@ CREATE SEQUENCE grade_seq
   MAXVALUE 9999999999 -- 최대값: 9999999 --> NUMBER(7) 대응
   CACHE 2                       -- 2번은 메모리에서만 계산
   NOCYCLE;                     -- 다시 1부터 생성되는 것을 방지
+  
+SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+FROM grade
+ORDER BY gradeno ASC, grade_name ASC;

@@ -3,14 +3,14 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${gradeVO?.gdescription ?: '등급설명'}" class="title_line_text"></span>
+    <span th:text="${gradeVO?.grade_name ?: '등급이름'}" class="title_line_text"></span>
     > 등급글 수정
   </div>
   
   <aside class="aside_right">
-    <a th:href="@{/grade/create}">등록</a>
-    <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{/grade/create}">등록</a>
     <span class='menu_divide' >│</span>
     <a th:href="@{|./list_by_gradeno?gradeno=${gradeVO.gradeno }&word=${word }&now_page=${now_page}|}">목록</a>
   </aside>
