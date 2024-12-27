@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import dev.mvc.board.Board;
+import dev.mvc.emotion.Emotion;
 import dev.mvc.grade.Grade;
 import dev.mvc.member.Member;
 import dev.mvc.survey.Survey;
@@ -29,6 +30,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
       // C:/kd/deploy/team2/grade/storage ->  /grade/storage -> http://localhost:9093/grade/storage;
       registry.addResourceHandler("/grade/storage/**").addResourceLocations("file:///" +  Grade.getUploadDir());
 
+      // C:/kd/deploy/team2/grade/storage ->  /grade/storage -> http://localhost:9093/grade/storage;
+      registry.addResourceHandler("/emotion/storage/**").addResourceLocations("file:///" +  Emotion.getUploadDir());
   }
 
 }

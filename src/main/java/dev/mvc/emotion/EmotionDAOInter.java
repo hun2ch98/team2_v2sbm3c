@@ -28,14 +28,14 @@ public interface EmotionDAOInter {
   public ArrayList<EmotionVO> list_all();
   
   /**
-   * 게시글 등록된 목록
+   * 감정 등록된 목록
    * @param emono
    * @return
    */
   public ArrayList<EmotionVO> list_by_emono(int emono);
   
   /**
-   * 게시글 내용 수정
+   * 감정 내용 수정
    * @param emotionVO
    * @return
    */

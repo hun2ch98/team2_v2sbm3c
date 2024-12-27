@@ -18,8 +18,8 @@ public class Emotion {
 	      path = "C:\\kd\\deploy\\team2\\emotion\\storage\\";
 	      // System.out.println("Windows: " + path);
 	    } else if (osName.contains("mac")) { // MacOS
-	      path = "/Users/yourusername/deploy/team2/emotion/storage/";
-	      // System.out.println("MacOS: " + path);
+	      path = "/Users/hy/emotion/storage/";
+	     // System.out.println("MacOS: " + path);
 	    } else { // Linux
 	      path = "/home/ubuntu/deploy/team2/emotion/storage/";
 	      // System.out.println("Linux: " + path);

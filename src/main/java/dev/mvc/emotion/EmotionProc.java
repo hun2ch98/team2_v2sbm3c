@@ -76,7 +76,7 @@ public class EmotionProc implements EmotionProcInter{
     }
 
     @Override
-    public String pagingBox(int diaryno, int now_page, String emotion_cate, String list_file, int search_count,
+    public String pagingBox(int memberno, int now_page, String board_cate, String list_file, int search_count,
             int record_per_page, int page_per_block) {
         int total_page = (int) Math.ceil((double) search_count / record_per_page);
         int total_grp = (int) Math.ceil((double) total_page / page_per_block);
@@ -96,8 +96,8 @@ public class EmotionProc implements EmotionProcInter{
         // 이전 그룹 링크
         int _now_page = (now_grp - 1) * page_per_block;
         if (now_grp > 1) {
-            str.append("<span class='span_box_1'><a href='" + list_file + "diaryno=" + diaryno +
-                    "&emotion_cate=" + emotion_cate + "&now_page=" + _now_page + "'>이전</a></span>");
+            str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
+                    "&board_cate=" + board_cate + "&now_page=" + _now_page + "'>이전</a></span>");
         }
 
         // 현재 그룹의 페이지 링크
@@ -106,16 +106,16 @@ public class EmotionProc implements EmotionProcInter{
             if (i == now_page) {
                 str.append("<span class='span_box_2'>" + i + "</span>");
             } else {
-                str.append("<span class='span_box_1'><a href='" + list_file + "?diaryno=" + diaryno +
-                        "&emotion_cate=" + emotion_cate + "&now_page=" + i + "'>" + i + "</a></span>");
+                str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
+                        "&board_cate=" + board_cate + "&now_page=" + i + "'>" + i + "</a></span>");
             }
         }
 
         // 다음 그룹 링크
         _now_page = now_grp * page_per_block + 1;
         if (now_grp < total_grp) {
-            str.append("<span class='span_box_1'><a href='" + list_file + "?diaryno=" + diaryno +
-                    "&emotion_cate=" + emotion_cate + "&now_page=" + _now_page + "'>다음</a></span>");
+            str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
+                    "&board_cate=" + board_cate + "&now_page=" + _now_page + "'>다음</a></span>");
         }
 
         str.append("</div>");
