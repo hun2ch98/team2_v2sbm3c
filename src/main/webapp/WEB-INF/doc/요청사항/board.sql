@@ -12,6 +12,8 @@ CREATE TABLE board(
     file1saved      VARCHAR2(100)		 NULL,
 	thumb1          VARCHAR2(100)		 NULL,
 	size1           NUMBER(10)		     NULL,
+    goodcnt         NUMBER(10)          NULL,
+    badcnt         NUMBER(10)          NULL,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
@@ -26,6 +28,8 @@ COMMENT ON COLUMN BOARD.FILE1 is '파일 업로드';
 COMMENT ON COLUMN BOARD.FILE1SAVED is '실제 저장된 메인 이미지';
 COMMENT ON COLUMN BOARD.THUMB1 is '메인 이미지 Preview';
 COMMENT ON COLUMN BOARD.SIZE1 is '메인 이미지 크기';
+COMMENT ON COLUMN BOARD.GOODCNT is '추천수';
+COMMENT ON COLUMN BOARD.BADCNT is '비추천';
 
 DROP SEQUENCE board_seq;
 

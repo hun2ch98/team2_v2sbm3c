@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+
+  <div class='title_line'>검색목록</div>
+
+  <!-- 여기서 부터 -->
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|./list_by_gradeno?memberno=${gradeVO?.gradeno}&now_page=${now_page}|}">목록</a>    
+  </aside>
+
+  <!-- 검색 프래그먼트 -->
+  <div th:replace="~{/member/list_search_com :: list_search_fragment}"></div>
+     
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 5%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 30%;'/>
+      <col style='width: 50%;'/>
+      <col style='width: 10%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>등급</th>
+      <th class='th_bs'>등급이름</th>
+      <th class='th_bs'>등급설명</th>
+      <th class='th_bs'>등록일</th>
+      <th class='th_bs'>작업</th>
+    </tr>
+
+    <tr th:if="${list != null and list.size() > 0}" th:each="gradeVO, status:${list}" 
+         th:attr="onclick=|location.href='/grade/read?gradeno=${gradeVO.gradeno}&grade_cate=${grade_cate}&now_page=${now_page}'|"
+         style="cursor: pointer; height: 90px;">
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')}">
+          <img th:src="@{|/grade/storage/${gradeVO.thumb1}|}" style="width: 120px; height: 90px;">
+        </div>
+        
+        <!--% 이미지가 이닌 파일은 파일명만 출력 %-->
+        <div th:if="${((gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')) == false) and (gradeVO.size1 > 0)}">
+          <span th:text="${gradeVO.file1}"></span>
+        </div>
+
+        <!--% 파일이 없는 경우 기본 이미지 출력 %-->
+        <div th:if="${gradeVO.size1 == 0}">
+          <img src="/grade/images/seed.png" style="width: 120px; height: 90px;">
+        </div>
+        
+      </td>
+      </td>
+      <td class='td_left'>
+        <span th:text="${gradeVO.grade_name}" style="font-weight: bold;"></span>
+        <span th:text="| ${gradeVO.rdate.substring(0, 10)}|"></span><br>
+
+        <span th:if="${gradeVO.gdescription.length() > 160 }" 
+                  th:text="|${gradeVO.gdescription.substring(0, 160) }...|"></span>
+        <span th:if="${gradeVO.gdescription.length() <= 160 }" 
+                  th:text="|${gradeVO.gdescription}|"></span>
+        
+      </td>
+    </tr>
+
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    </tr>
+    
+  </table>
+   
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> <div class="bottom_menu" th:if="${paging != null}" th:utext="${paging}"></div>
+</div>
+</html>

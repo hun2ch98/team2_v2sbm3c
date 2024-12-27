@@ -1,51 +1,40 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
-  <div class='title_line'>
-    <span th:text="${GradeVO?.grade_name ?: '등급 이름'}" class="title_line_text"></span>
-  </div>
-  
-  <aside class="aside_right">
-    <a th:href="@{.|/create?gradeno=${gradeVO.gradeno}|}">등록</a>
-    <span class='menu_divide'>│</span>
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{/grade/list}">목록</a>
-  </aside>
-  
-  <div class='menu_line'></div>
-  
-  <form name="frm" method="post" th:object="${GradeVO}" th:action="@{/grade/create}" enctype="multipart/form-data">
-    <div>
-        <label>등급 이름</label>
-        <input type="text" name="grade_name" th:value="${GradeVO?.grade_name ?: ''}" required="required"
-               autofocus="autofocus" class="form-control" style="width: 100%;">
-    </div>
-    <div>
-        <label>등급 설명</label>
-        <textarea name="gdescription" th:text="${GradeVO?.gdescription ?: ''}" required="required"
-                  class="form-control" rows="4" style="width: 100%;"></textarea>
-    </div>
-    <div>
-        <label>최소 포인트</label>
-        <input type="number" name="min_points" th:value="${GradeVO?.min_points ?: 0}" required="required"
-               class="form-control" style="width: 100%;">
-    </div>
-    <div>
-        <label>최대 포인트</label>
-        <input type="number" name="max_points" th:value="${GradeVO?.max_points ?: 100}" required="required"
-               class="form-control" style="width: 100%;">
-    </div>
-    <div>
-        <label>등급 이미지</label>
-        <input type="file" class="form-control" name="grade_img" id="grade_img" required="required">
+    <div class='title_line'>
+        <span th:text="${GradeVO != null ? GradeVO.grade_name : '새로운 등급 추가'}" class="title_line_text"></span>
     </div>
 
-    <div th:if="${#fields.hasErrors('grade_name')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
-        <div th:each="err: ${#lists.sort(#fields.errors('grade_name'))}" th:text="${err}"></div>
-    </div>
+    <aside class="aside_right">
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>|</span>
+      <a href='./create'>등록</a>
+      <span class='menu_divide'>|</span>
+      <a href='./list_all'>목록</a>
+    </aside> 
 
-    <button type="submit" class="btn btn-primary">등록</button>
-  </form>
+    <div class='menu_line'></div>
+
+    <form name="frm" method="post" th:object="${GradeVO}" th:action="@{/grade/create}" enctype="multipart/form-data">
+        <div>
+            <label for="grade_name">등급 이름</label>
+            <input type="text" id="grade_name" name="grade_name" th:value="${GradeVO != null ? GradeVO.grade_name : ''}" required
+                   autofocus class="form-control" style="width: 100%;">
+        </div>
+        <div>
+            <label>등급 설명</label>
+            <textarea id="gdescription" name="gdescription" th:text="${GradeVO != null ? GradeVO.gdescription : ''}" required 
+                      class="form-control" rows="4" style="width: 100%;"></textarea>
+        </div>
+        <div>
+            <label>등급 아이콘</label>
+            <input type="file" class="form-control" name="file1MF" id="file1MF" placeholder="파일 선택">
+        </div>
+
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+          <button type="button" th:attr="onclick=|location.href='/grade/list_all'|" class="btn btn-secondary btn-sm">목록</button>
+        </div>
+    </form>
 </div>
 </html>

@@ -67,13 +67,13 @@ public class SurveyVO {
   /** 메인 이미지 크기 단위, 파일 크기 */
   private String size1_label = "";
   /** 메인 이미지 */
-  private String poster = "";
+  private String file1 = "";
   /** 실제 저장된 메인 이미지 */
-  private String poster_saved = "";
+  private String file1saved = "";
   /** 메인 이미지 preview */
-  private String poster_thumb = "";
+  private String thumb1 = "";
   /** 메인 이미지 크기 */
-  private long poster_size = 0;
+  private long size1 = 0;
 
   
 }

@@ -2,38 +2,52 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
 
-  <div class='title_line'>전체 회원 목록</div>
+  <div class='title_line'>회원 등급 목록(관리자 전용)</div>
 
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a href='./create'>등록</a>
+    <span class='menu_divide' >│</span>
+    <a href='./list_all'>목록</a>
   </aside> 
    
   <div class='menu_line'></div>
        
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
+      <col style='width: 5%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 30%;'/>
+      <col style='width: 40%;'/>
       <col style='width: 10%;'/>
-      <col style='width: 90%;'/>
     </colgroup>
     <tr>
-      <th class='th_bs'>회원 번호</th>
-      <th class='th_bs'>이름</th>
+      <th class='th_bs'>등급</th>
+      <th class='th_bs'>등급이름</th>
+      <th class='th_bs'>등급설명</th>
+      <th class='th_bs'>등록일</th>
+      <th class='th_bs'>작업</th>
     </tr>
    
-    <tr th:each="memberVO, status:${list}" 
-        th:attr="onclick=|location.href='/member/read?memberno=${memberVO.memberno}'|"
-        style="cursor: pointer;">
-      <td class='td_basic' th:text="${memberVO.memberno}"></td>
+    <tr th:each="gradeVO, status:${list}">
       <td class='td_left'>
-        <span th:text="${memberVO.name}" style="font-weight: bold;"></span><br>
-        <span th:if="${memberVO.address1.length() > 160 }" 
-              th:text="|${memberVO.address1.substring(0, 160) }...|"></span>
-        <span th:if="${memberVO.address1.length() <= 160 }" 
-              th:text="|${memberVO.address1}|"></span>
+        <a th:href="@{|./read?gradeno=${gradeVO.gradeno}|}">
+          <img th:src="@{${gradeVO.file1}}" alt="등급 이미지" class="icon" style="width: 50px; height: auto;"> <!-- 이미지 표시 -->
+        </a>
+      </td>
+      <td class='td_left'><a th:href="@{|./read?gradeno=${gradeVO.gradeno}|}" th:text="${gradeVO.grade_name}"></a></td>
+      <td class='td_left'><a th:href="@{|./read?gradeno=${gradeVO.gradeno}|}" th:text="${gradeVO.gdescription}"></a></td>
+      <td class='td_basic' th:text="${gradeVO.rdate.substring(0, 10)}"></td>
+      <td class='td_basic'>
+        <a th:href="@{|./read?gradeno=${gradeVO.gradeno}|}"><img src='/grade/images/update.png' title='수정' class="icon"></a>
+        <a th:href="@{|./delete?gradeno=${gradeVO.gradeno}|}"><img src='/grade/images/delete.png' title='삭제' class="icon"></a>
       </td>
     </tr>
   </table>
    
+  <!-- 페이징 -->
+  <div class="bottom_menu" th:if="${paging != null}" th:utext="${paging}"></div>
   <div class='bottom_menu'>
     <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
   </div>

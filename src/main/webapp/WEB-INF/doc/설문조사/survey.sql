@@ -5,17 +5,17 @@
 DROP TABLE survey;
 
 CREATE TABLE survey (
-	surveyno	    NUMBER(10)		NOT NULL,
+	surveyno	    NUMBER(10)		NOT NULL    PRIMARY KEY,
     memberno        NUMBER(10)      NOT NULL,
 	topic	        VARCHAR(100)	NOT NULL,
 	sdate	        VARCHAR(10)		    NULL,
 	edate	        VARCHAR(10)		    NULL,
 	s_number	    NUMBER(7)		NOT NULL,
 	is_continue	    VARCHAR(100)	NOT NULL,
-	poster	        VARCHAR(100)		NULL,
-	poster_saved	VARCHAR(100)		NULL,
-	poster_size	    NUMBER(10)		    NULL,
-	poster_thumb	VARCHAR(100)		NULL,
+    file1           VARCHAR(200)        NULL,
+    file1saved      VARCHAR2(100)		 NULL,
+	thumb1          VARCHAR2(100)		 NULL,
+	size1           NUMBER(10)		     NULL,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
@@ -25,10 +25,10 @@ COMMENT ON COLUMN BOARD.MEMBERNO is '회원 번호';
 COMMENT ON COLUMN SURVEY.TOPIC is '제목';
 COMMENT ON COLUMN SURVEY.SDATE is '시작 날짜';
 COMMENT ON COLUMN SURVEY.EDATE is '종료 날짜';
-COMMENT ON COLUMN SURVEY.POSTER is '포스터 파일';
-COMMENT ON COLUMN SURVEY.POSTER_SAVED is '포스터 저장된 파일명';
-COMMENT ON COLUMN SURVEY.POSTER_THUMB is '포스터 썸네일';
-COMMENT ON COLUMN SURVEY.POSTER_SIZE is '포스터 이미지 크기';
+COMMENT ON COLUMN SURVEY.FILE1 is '파일 업로드';
+COMMENT ON COLUMN SURVEY.FILE1SAVED is '실제 저장된 메인 이미지';
+COMMENT ON COLUMN SURVEY.THUMB1 is '메인 이미지 Preview';
+COMMENT ON COLUMN SURVEY.SIZE1 is '메인 이미지 크기';
 COMMENT ON COLUMN SURVEY.S_NUMBER is '참여 인원';
 COMMENT ON COLUMN SURVEY.IS_CONTINUE is '진행 여부';
 
@@ -63,3 +63,56 @@ UPDATE survey SET topic = 'test2' WHERE surveyno = 1;
 DELETE FROM survey;
 
 COMMIT;
+
+-- ----------------------------------------------------------------------------------------------------
+-- 검색, topic 검색 목록
+-- ----------------------------------------------------------------------------------------------------
+
+-- 1) 검색
+SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
+FROM survey
+WHERE is_continue = 'Y'
+ORDER BY surveyno DESC;
+
+SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
+FROM survey
+WHERE is_continue = 'N'
+ORDER BY surveyno DESC;
+
+-----------------------------------------------------
+레코드 수
+-----------------------------------------------------
+SELECT COUNT(*)
+FROM survey
+WHERE is_continue='N';
+
+  COUNT(*)
+----------
+         2
+         
+SELECT COUNT(*)
+FROM survey
+WHERE is_continue='Y';
+
+ COUNT(*)
+----------
+         3
+
+-- ----------------------------------------------------------------------------------------------------
+-- 검색 + 페이징 + 메인 이미지
+-- ----------------------------------------------------------------------------------------------------
+SELECT *
+FROM (
+    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, ROWNUM AS rnum
+    FROM (
+        SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
+        FROM survey
+        WHERE is_continue = 'Y'
+        ORDER BY surveyno DESC
+    )
+    WHERE ROWNUM <= 5 -- 여기서 상위 2개까지 가져옴
+)
+WHERE rnum >= 1; -- 여기서 1~10번 행만 가져옴
+
+COMMIT;
+

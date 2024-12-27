@@ -1,6 +1,6 @@
 <div th:fragment="list_search_fragment">
   <div style="text-align: right; clear: both;">
-    <form name="frm_search" method="get" action="/member/list">
+    <form name="frm_search" method="get" action="/grade/list_all">
       <input type="hidden" name="now_page" th:value="${now_page}" >
       <input type="text" name="word" id="word" th:value="${word}" >
       <button type='submit' class='btn btn-secondary btn-sm' 
@@ -8,7 +8,7 @@
       <span th:if="${word != null and word != ''}">
         <button type='button' class='btn btn-secondary btn-sm' 
                 style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
-                th:onclick="|location.href='/member/list'|">검색 취소</button>
+                th:onclick="|location.href='/grade/list_all'|">검색 취소</button>
       </span>
     </form>
   </div>
