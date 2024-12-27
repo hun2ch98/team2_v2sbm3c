@@ -20,24 +20,13 @@
   <fieldset class="fieldset_basic">
     <ul>
       <li class="li_none">
-        <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')}"
-               style="text-align: center; width: 50%; float: left;">
-          <img th:src="@{|/grade/storage/${gradeVO.file1saved}|}" style="width: 90%;">
-        </div>
-
-        <div th:if="${((gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')) == false) and (gradeVO.size1 > 0)}"
-               class="display_table" style="float: left; width: 50%;">
-            <div class="display_table_cell">
-              <span th:text="${gradeVO.file1}"></span>
-            </div>
-        </div>
-
-        <div th:if="${gradeVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
+        <div style="text-align: center; width: 50%; float: left;">
           <img src="/grade/images/seed.png" style="width: 40%;">
         </div>
   
         <div style='text-align: left; width: 47%; float: left;'>
           <span style='font-size: 1.5em;' th:text="${gradeVO.grade_name}"></span>
+          <span style='font-size: 1.5em;' th:text="${gradeVO.evolution}"></span>
           <br>
           <form name='frm' method='POST' action='./delete'>
             <input type="hidden" name="gradeno" th:value="${gradeVO.gradeno }">

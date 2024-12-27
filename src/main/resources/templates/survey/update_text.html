@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${surveyVO?.topic ?: '설문조사'}" class="title_line_text"></span>
+    > 글 수정
+  </div>
+  
+  <aside class="aside_right">
+    <a th:href="@{/survey/create}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./list_by_surveyno_search_paging?surveyno=${surveyVO.surveyno }&is_continue=${is_continue }&now_page=${now_page}|}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <form name='frm' method='post' th:object="${surveyVO}" action='./update_text'>
+    <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
+    <input type="hidden" name="surveyno" th:value="${surveyVO.surveyno }">
+    <input type="hidden" name="now_page" th:value="${now_page}">
+    <input type="hidden" name="is_continue" th:value="${is_continue}">
+    
+    <div>
+       <label>주제</label>
+       <input type='text' name='topic' value='' required="required" 
+                 autofocus="autofocus" class="form-control" style='width: 100%;'>
+    </div>
+    
+    <div>
+      <label>시작 날짜</label>
+      <input type="date" name="sdate" th:value="*{sdate}" required="required" class="form-control" style="width: 100%;">
+    </div>
+    
+    <div>
+      <label>종료 날짜</label>
+      <input type="date" name="edate" th:value="*{edate}" required="required" class="form-control" style="width: 100%;">
+    </div>
+    
+    <div>
+      <label>참여 인원</label>
+      <input type="intger" name="s_number" th:value="*{s_number}" required="required" class="form-control" style="width: 100%;">
+    </div>
+    
+    <div>
+        <label>진행 여부(Y/N)</label>
+        <select id="is_continue" name="is_continue" class="form-control">
+          <option value="진행 여부" selected="selected">진행 여부</option>
+          <option value="Y">Y</option>
+          <option value="N">N</option>
+        </select>
+        <div th:if="${#fields.hasErrors('is_continue')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('is_continue'))}" th:text="${err}"></div>
+        </div>  
+    </div>
+    
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+      <button type="button" th:attr="onclick=|location.href='./list_by_surveyno_search_paging?surveyno=${surveyno}'|" class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  
+  </form>
+
+</div>
