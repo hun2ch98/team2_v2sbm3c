@@ -6,19 +6,25 @@
 
   <!-- 감정 추가 -->
   <insert id="create" parameterType="dev.mvc.emotion.EmotionVO">
-    INSERT INTO emotion (emono, type, explan, img)
-    VALUES (emotion_seq.nextval, #{type}, #{explan}, #{img})
+   INSERT INTO emotion (emono, type, explan, file1, file1saved, thumb1, size1)
+    VALUES (emotion_seq.nextval, #{type}, #{explan}, #{file1}, #{file1saved}, #{thumb1}, #{size1})
   </insert>
 
   <!-- 감정 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.emotion.EmotionVO">
-    SELECT emono, type, explan, img
+    SELECT emono, type, explan, file1, file1saved, thumb1, size1
     FROM emotion
     WHERE emono = #{emono}
   </select>
 
   <select id="list_all" resultType="dev.mvc.emotion.EmotionVO">
-    SELECT emono, type, explan, img
+    SELECT emono, type, explan, file1, file1saved, thumb1, size1
+    FROM emotion
+    ORDER BY emono
+  </select>
+  
+  <select id="list_by_emono" resultType="dev.mvc.emotion.EmotionVO">
+    SELECT emono, type, explan, file1, file1saved, thumb1, size1
     FROM emotion
     ORDER BY emono
   </select>
