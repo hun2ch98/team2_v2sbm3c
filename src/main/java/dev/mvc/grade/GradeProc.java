@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.mvc.board.BoardVO;
+
 // 알고리즘 구현
 @Service("dev.mvc.grade.GradeProc")
 public class GradeProc implements GradeProcInter {
@@ -81,7 +83,7 @@ public class GradeProc implements GradeProcInter {
     }
     
     @Override
-    public String pagingBox(int now_page, String gdescription, String list_file, int search_count,
+    public String pagingBox(int now_page, String evo_criteria, String list_file, int search_count,
             int record_per_page, int page_per_block) {
         int total_page = (int) Math.ceil((double) search_count / record_per_page);
         int total_grp = (int) Math.ceil((double) total_page / page_per_block);
@@ -101,7 +103,7 @@ public class GradeProc implements GradeProcInter {
         // 이전 그룹 링크
         int _now_page = (now_grp - 1) * page_per_block;
         if (now_grp > 1) {
-            str.append("<span class='span_box_1'><a href='" + list_file + "&gdescription=" + gdescription + "&now_page=" + _now_page + "'>이전</a></span>");
+            str.append("<span class='span_box_1'><a href='" + list_file + "&evo_criteria=" + evo_criteria + "&now_page=" + _now_page + "'>이전</a></span>");
         }
 
         // 현재 그룹의 페이지 링크
@@ -110,14 +112,14 @@ public class GradeProc implements GradeProcInter {
             if (i == now_page) {
                 str.append("<span class='span_box_2'>" + i + "</span>");
             } else {
-                str.append("<span class='span_box_1'><a href='" + list_file +  "&gdescription=" + gdescription + "&now_page=" + i + "'>" + i + "</a></span>");
+                str.append("<span class='span_box_1'><a href='" + list_file +  "&evo_criteria=" + evo_criteria + "&now_page=" + i + "'>" + i + "</a></span>");
             }
         }
 
         // 다음 그룹 링크
         _now_page = now_grp * page_per_block + 1;
         if (now_grp < total_grp) {
-            str.append("<span class='span_box_1'><a href='" + list_file + "&gdescription=" + gdescription + "&now_page=" + _now_page + "'>다음</a></span>");
+            str.append("<span class='span_box_1'><a href='" + list_file + "&evo_criteria=" + evo_criteria + "&now_page=" + _now_page + "'>다음</a></span>");
         }
 
         str.append("</div>");
