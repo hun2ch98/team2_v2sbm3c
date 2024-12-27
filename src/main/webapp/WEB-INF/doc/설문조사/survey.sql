@@ -5,7 +5,7 @@
 DROP TABLE survey;
 
 CREATE TABLE survey (
-	surveyno	    NUMBER(10)		NOT NULL,
+	surveyno	    NUMBER(10)		NOT NULL    PRIMARY KEY,
     memberno        NUMBER(10)      NOT NULL,
 	topic	        VARCHAR(100)	NOT NULL,
 	sdate	        VARCHAR(10)		    NULL,
