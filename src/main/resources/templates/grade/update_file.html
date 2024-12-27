@@ -3,14 +3,14 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${gradeVO?.gdescription ?: '게시글 종류'}" class="title_line_text"></span>
+    <span th:text="${gradeVO?.grade_name ?: '등급이름'}" class="title_line_text"></span>
     > 진화 아이콘 수정
   </div>
   
   <aside class="aside_right">
-    <a th:href="@{/grade/create}">등록</a>
-    <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{/grade/create}">등록</a>
     <span class='menu_divide' >│</span>
     <a th:href="@{|./list_by_gradeno?gradeno=${gradeVO.gradeno }&word=${word }&now_page=${now_page}|}">목록</a>
   </aside>
@@ -33,15 +33,14 @@
         </div>
 
         <div th:if="${gradeVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
-          <img src="/grade/images/none1.png" style="width: 90%;">
+          <img src="/grade/images/seed.png" style="width: 90%;">
         </div>
   
         <div style='text-align: left; width: 47%; float: left;'>
-          <span style='font-size: 1.5em;' th:text="${boardVO.title}"></span>
+          <span style='font-size: 1.5em;' th:text="${gradeVO.grade_name}"></span>
           <br>
           <form name='frm' method='POST' action='./update_file' enctype="multipart/form-data">
-            <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
-            <input type="hidden" name="boardno" th:value="${boardVO.boardno }">
+            <input type="hidden" name="gradeno" th:value="${gradeVO.gradeno }">
             <input type="hidden" name="now_page" th:value="${now_page}">
             <input type="hidden" name="search_word" th:value="${word}">
                 

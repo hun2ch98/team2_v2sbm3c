@@ -1,44 +1,62 @@
 <!DOCTYPE html>
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
-
 <div layout:fragment="content">
-  <script>
-    window.onload = () => {
-      
-    }
-    
-    function send() { // 회원 가입 처리
-      document.getElementById('frm').submit(); // required="required" 작동 안됨.
-    }    
-  </script>
-
-  <div class="title_line">회원 정보 조회 및 수정(*: 필수) > <span th:text="@{|${memberVO.name} (${memberVO.id})|}"></span></div>
+  <div class='title_line'>
+    <span th:text="${gradeVO?.grade_name ?: ''}" class="title_line_text"></span>
+    > 등급 삭제
+  </div>
+  
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' >│</span> 
-    <a href='./create'>회원 가입</a>
-    <span class='menu_divide' >│</span> 
-    <a href='./list'>목록</a>
-  </aside> 
-
+    <span class='menu_divide' >│</span>
+    <a th:href="@{/grade/create}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./list_by_gradeno?gradeno=${gradeVO.gradeno }&word=${word }&now_page=${now_page}|}">목록</a>
+  </aside>
+  
   <div class='menu_line'></div>
   
-  <div style="width: 60%; margin: 0px auto ">
-    <form name="frm" id="frm" th:object="${memberVO}" method="post" action="/member/delete">
-      <input type="hidden" name="memberno" th:value="${memberVO.memberno}">
-      
-      <div class="msg_warning">회원 정보는 삭제하면 복구 할 수 없습니다.<br>그래도 사제하시겠습니까?</div>
-      <div style='text-align: center;'>회원 이름: <span th:text="${memberVO.name}"></span></div>
-      
-      <div class="content_body_bottom">
-        <button type="button" onclick="send();" class="btn btn-secondary btn-sm">삭제</button>
-        <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
-      </div>
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')}"
+               style="text-align: center; width: 50%; float: left;">
+          <img th:src="@{|/grade/storage/${gradeVO.file1saved}|}" style="width: 90%;">
+        </div>
 
-    </form>
-  </div>
-    
+        <div th:if="${((gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')) == false) and (gradeVO.size1 > 0)}"
+               class="display_table" style="float: left; width: 50%;">
+            <div class="display_table_cell">
+              <span th:text="${gradeVO.file1}"></span>
+            </div>
+        </div>
+
+        <div th:if="${gradeVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
+          <img src="/grade/images/seed.png" style="width: 40%;">
+        </div>
+  
+        <div style='text-align: left; width: 47%; float: left;'>
+          <span style='font-size: 1.5em;' th:text="${gradeVO.grade_name}"></span>
+          <br>
+          <form name='frm' method='POST' action='./delete'>
+            <input type="hidden" name="gradeno" th:value="${gradeVO.gradeno }">
+            <input type="hidden" name="now_page" th:value="${now_page}">
+            <input type="hidden" name="search_word" th:value="${word}">
+                
+            <br> 
+            <div style='margin-top: 20px; clear: both;'>
+              <span style="color: #FF0000; font-weight: bold;">삭제를 진행 하시겠습니까? 삭제하시면 복구 할 수 없습니다.</span>
+              <br><br><br>  
+              <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+              <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+            </div>  
+          </form>
+        </div>
+      </li>
+    </ul>
+  </fieldset>  
+
 </div>
-</html>
 
+</html>

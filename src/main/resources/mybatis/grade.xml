@@ -7,7 +7,7 @@
   <!-- 등급 글 추가 -->
   <insert id="create" parameterType="dev.mvc.grade.GradeVO">
     INSERT INTO grade (gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1)
-    VALUES (grade_seq.nextval, #{gradeno}, #{grade_name}, #{gdescription}, sysdate, #{file1}, #{file1saved}, #{thumb1}, #{size1})
+    VALUES (grade_seq.nextval, #{grade_name}, #{gdescription}, sysdate, #{file1}, #{file1saved}, #{thumb1}, #{size1})
   </insert>
   
   <!-- 등급 조회 -->
@@ -54,7 +54,7 @@
   
   <!-- 등급 종류별 검색 목록 -->
   <select id="list_by_gradeno_search" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
-    SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) as file1, file1saved, thumb1, size1
+    SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) AS file1, file1saved, thumb1, size1
     FROM grade
     WHERE gdescription = #{gdescription, jdbcType=VARCHAR}
     ORDER BY gradeno DESC
@@ -75,8 +75,9 @@
         SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) AS file1, file1saved, thumb1, size1, 
                ROW_NUMBER() OVER (ORDER BY gradeno DESC) AS rnum
         FROM grade
-        WHERE (#{gdescription} IS NULL OR #{gdescription} = '' OR gdescription = #{gdescription}
-    )
+        WHERE (#{gdescription} IS NULL OR #{gdescription} = '' OR gdescription = #{gdescription})
+    ) t
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
+
 </mapper>

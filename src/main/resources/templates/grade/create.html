@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
     <div class='title_line'>
-        <span th:text="${GradeVO?.grade_name ?: '새로운 등급 추가'}" class="title_line_text"></span>
+        <span th:text="${GradeVO != null ? GradeVO.grade_name : '새로운 등급 추가'}" class="title_line_text"></span>
     </div>
 
     <aside class="aside_right">
       <a href="javascript:location.reload();">새로고침</a>
-      <span class='menu_divide' >|</span>
+      <span class='menu_divide'>|</span>
       <a href='./create'>등록</a>
-      <span class='menu_divide' >|</span>
+      <span class='menu_divide'>|</span>
       <a href='./list_all'>목록</a>
     </aside> 
 
@@ -18,23 +18,23 @@
     <form name="frm" method="post" th:object="${GradeVO}" th:action="@{/grade/create}" enctype="multipart/form-data">
         <div>
             <label for="grade_name">등급 이름</label>
-            <input type="text" id="grade_name" name="grade_name" th:value="${GradeVO?.grade_name ?: ''}" required="required"
-                   autofocus="autofocus" class="form-control" style="width: 100%;">
+            <input type="text" id="grade_name" name="grade_name" th:value="${GradeVO != null ? GradeVO.grade_name : ''}" required
+                   autofocus class="form-control" style="width: 100%;">
         </div>
         <div>
             <label>등급 설명</label>
-            <textarea id="gdescription" name="gdescription" th:text="${GradeVO?.gdescription ?: ''}" required="required" 
+            <textarea id="gdescription" name="gdescription" th:text="${GradeVO != null ? GradeVO.gdescription : ''}" required 
                       class="form-control" rows="4" style="width: 100%;"></textarea>
         </div>
         <div>
             <label>등급 아이콘</label>
-            <input type="file" class="form-control" name="file1MF" id="file1MF" th:value="${GradeVO?.file1 ?: ''}" placeholder="파일 선택">
+            <input type="file" class="form-control" name="file1MF" id="file1MF" placeholder="파일 선택">
         </div>
 
         <div class="content_body_bottom">
           <button type="submit" class="btn btn-secondary btn-sm">등록</button>
           <button type="button" th:attr="onclick=|location.href='/grade/list_all'|" class="btn btn-secondary btn-sm">목록</button>
-         </div>
+        </div>
     </form>
 </div>
 </html>
