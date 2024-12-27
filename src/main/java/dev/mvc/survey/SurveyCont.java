@@ -353,5 +353,270 @@ public class SurveyCont {
 
   }
   
+  /**
+   * 글 수정 폼
+   *
+   */
+  @GetMapping(value = "/update_text")
+  public String update_text(HttpSession session, 
+      Model model, 
+      @RequestParam(name="surveyno", defaultValue="") int surveyno, 
+      RedirectAttributes ra, 
+      @RequestParam(name="is_continue", defaultValue="") String is_continue,
+      @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
+    model.addAttribute("is_continue", is_continue);
+    model.addAttribute("now_page", now_page);
+
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
+
+      MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
+
+      return "/survey/update_text"; // /templates/contents/update_text.html
+      // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
+      // model.addAttribute("content", content);
+
+    } else {
+//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+//      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
+      return "member/login_cookie_need";
+    }
+
+  }
+
+  /**
+   * 글 수정 처리 
+   * 
+   * @return
+   */
+  @PostMapping(value = "/update_text")
+  public String update_text(HttpSession session, 
+      Model model, 
+      @ModelAttribute("surveyVO") SurveyVO surveyVO, 
+      RedirectAttributes ra,
+      @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
+      @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
+
+      // Redirect 시 검색어 및 현재 페이지 유지
+      ra.addAttribute("is_continue", is_continue);
+      ra.addAttribute("now_page", now_page);
+
+      if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
+          HashMap<String, Object> map = new HashMap<>();
+          map.put("surveyno", surveyVO.getSurveyno());
+
+          this.surveyProc.update_text(surveyVO); // 글 수정 처리
+
+          // Redirect 시 필요한 데이터 추가
+          ra.addAttribute("surveyno", surveyVO.getSurveyno());
+          ra.addAttribute("memberno", surveyVO.getMemberno());
+          return "redirect:/survey/read"; // @GetMapping(value = "/read")
+
+      } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+          ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+          return "redirect:/survey/post2get"; // @GetMapping(value = "/msg")
+      }
+  }
+
+
+  /**
+   * 파일 수정 폼 
+   * @return
+   */
+  @GetMapping(value = "/update_file")
+  public String update_file(HttpSession session, Model model, 
+         @RequestParam(name="surveyno", defaultValue="0") int surveyno,
+         @RequestParam(name="is_continue", defaultValue="") String is_continue, 
+         @RequestParam(name="now_page", defaultValue="1") int now_page) {
+    
+    model.addAttribute("is_continue", is_continue);
+    model.addAttribute("now_page", now_page);
+    
+    SurveyVO surveyVO = this.surveyProc.read(surveyno);
+    model.addAttribute("surveyVO", surveyVO);
+
+    MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
+    model.addAttribute("memberVO", memberVO);
+
+    return "/survey/update_file";
+
+  }
+
+  /**
+   * 파일 수정 처리 
+   * @return
+   */
+  @PostMapping(value = "/update_file")
+  public String update_file(HttpSession session, Model model, RedirectAttributes ra,
+                            @ModelAttribute("surveyVO") SurveyVO surveyVO,
+                            @RequestParam(name="is_continue", defaultValue="") String is_continue, 
+                            @RequestParam(name="now_page", defaultValue="1") int now_page) {
+
+    if (this.memberProc.isMemberAdmin(session)) {
+      // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
+      SurveyVO surveyVO_old = surveyProc.read(surveyVO.getSurveyno());
+
+      // -------------------------------------------------------------------
+      // 파일 삭제 시작
+      // -------------------------------------------------------------------
+      String file1saved = surveyVO_old.getFile1saved(); // 실제 저장된 파일명
+      String thumb1 = surveyVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
+      long size1 = 0;
+
+      String upDir = Survey.getUploadDir(); // C:/kd/deploy/resort_v4sbm3c/contents/storage/
+
+      Tool.deleteFile(upDir, file1saved); // 실제 저장된 파일삭제
+      Tool.deleteFile(upDir, thumb1); // preview 이미지 삭제
+      // -------------------------------------------------------------------
+      // 파일 삭제 종료
+      // -------------------------------------------------------------------
+
+      // -------------------------------------------------------------------
+      // 파일 전송 시작
+      // -------------------------------------------------------------------
+      String file1 = ""; // 원본 파일명 image
+
+      // 전송 파일이 없어도 file1MF 객체가 생성됨.
+      // <input type='file' class="form-control" name='file1MF' id='file1MF'
+      // value='' placeholder="파일 선택">
+      MultipartFile mf = surveyVO.getFile1MF();
+
+      file1 = mf.getOriginalFilename(); // 원본 파일명
+      size1 = mf.getSize(); // 파일 크기
+
+      if (size1 > 0) { // 폼에서 새롭게 올리는 파일이 있는지 파일 크기로 체크 ★
+        // 파일 저장 후 업로드된 파일명이 리턴됨, spring.jsp, spring_1.jpg...
+        file1saved = Upload.saveFileSpring(mf, upDir);
+
+        if (Tool.isImage(file1saved)) { // 이미지인지 검사
+          // thumb 이미지 생성후 파일명 리턴됨, width: 250, height: 200
+          thumb1 = Tool.preview(upDir, file1saved, 250, 200);
+        }
+
+      } else { // 파일이 삭제만 되고 새로 올리지 않는 경우
+        file1 = "";
+        file1saved = "";
+        thumb1 = "";
+        size1 = 0;
+      }
+
+      surveyVO.setFile1(file1);
+      surveyVO.setFile1saved(file1saved);
+      surveyVO.setThumb1(thumb1);
+      surveyVO.setSize1(size1);
+      // -------------------------------------------------------------------
+      // 파일 전송 코드 종료
+      // -------------------------------------------------------------------
+
+      this.surveyProc.update_file(surveyVO); // Oracle 처리
+      ra.addAttribute ("surveyno", surveyVO.getSurveyno());
+      ra.addAttribute("memberno", surveyVO.getMemberno());
+      ra.addAttribute("is_continue", is_continue);
+      ra.addAttribute("now_page", now_page);
+      
+      return "redirect:/survey/read";
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); 
+      return "redirect:/survey/post2get"; // GET
+    }
+  }
+
+  /**
+   * 파일 삭제 폼
+   * http://localhost:9091/contents/delete?contentsno=1
+   * 
+   * @return
+   */
+  @GetMapping(value = "/delete")
+  public String delete(HttpSession session, Model model, RedirectAttributes ra,
+                               @RequestParam(name="memberno", defaultValue="1") int memberno, 
+                               @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
+                               @RequestParam(name="is_continue", defaultValue="") String is_continue, 
+                               @RequestParam(name="now_page", defaultValue="1") int now_page) {
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+      model.addAttribute("memberno", memberno);
+      model.addAttribute("is_continue", is_continue);
+      model.addAttribute("now_page", now_page);
+      
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
+      
+      MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
+      
+      return "/survey/delete"; // forward
+      
+    } else {
+      ra.addAttribute("url", "/admin/login_cookie_need");
+      return "redirect:/survey/msg"; 
+    }
+
+  }
+  
+  /**
+   * 삭제 처리 http://localhost:9091/contents/delete
+   * 
+   * @return
+   */
+  @PostMapping(value = "/delete")
+  public String delete(HttpSession session, RedirectAttributes ra,
+      @RequestParam(name="memberno", defaultValue="1") int memberno, 
+      @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
+      @RequestParam(name="is_continue", defaultValue="") String is_continue, 
+      @RequestParam(name="now_page", defaultValue="1") int now_page) {
+    
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+      // -------------------------------------------------------------------
+      // 파일 삭제 시작
+      // -------------------------------------------------------------------
+      // 삭제할 파일 정보를 읽어옴.
+      SurveyVO surveyVO_read = surveyProc.read(surveyno);
+          
+      String file1saved = surveyVO_read.getFile1saved();
+      String thumb1 = surveyVO_read.getThumb1();
+      
+      String uploadDir = Survey.getUploadDir();
+      Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
+      Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
+      // -------------------------------------------------------------------
+      // 파일 삭제 종료
+      // -------------------------------------------------------------------
+          
+      this.surveyProc.delete(surveyno); // DBMS 삭제
+          
+      // -------------------------------------------------------------------------------------
+      // 마지막 페이지의 마지막 레코드 삭제시의 페이지 번호 -1 처리
+      // -------------------------------------------------------------------------------------    
+      // 마지막 페이지의 마지막 10번째 레코드를 삭제후
+      // 하나의 페이지가 3개의 레코드로 구성되는 경우 현재 9개의 레코드가 남아 있으면
+      // 페이지수를 4 -> 3으로 감소 시켜야함, 마지막 페이지의 마지막 레코드 삭제시 나머지는 0 발생
+      
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("memberno", memberno);
+      map.put("is_continue", is_continue);
+      
+      if (this.surveyProc.count_by_surveyno_search(map) % Survey.RECORD_PER_PAGE == 0) {
+        now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
+        if (now_page < 1) {
+          now_page = 1; // 시작 페이지
+        }
+      }
+      // -------------------------------------------------------------------------------------
+  
+      ra.addAttribute("memberno", memberno);
+      ra.addAttribute("is_continue", is_continue);
+      ra.addAttribute("now_page", now_page);
+      
+      return "redirect:/survey/list_by_surveyno_search_paging";    
+      
+    }else {
+      ra.addAttribute("url", "/admin/login_cookie_need");
+      return "redirect:/survey/msg"; 
+    }   
+  
+  } 
 }
+
