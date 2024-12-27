@@ -3,6 +3,8 @@ package dev.mvc.grade;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dev.mvc.board.BoardVO;
+
 public interface GradeProcInter {
   
     /**
@@ -33,15 +35,15 @@ public interface GradeProcInter {
     public ArrayList<GradeVO> list_by_gradeno(int gradeno);
   
     /**
-     * 등급설명 내용 수정
+     * 진화기준 내용 수정
      * @param gradeVO
      * @return
      */
     public int update_text(GradeVO gradeVO);
     
     /**
-     * 등급별 진화 파일 수정
-     * @param gradeVO
+     * 파일 수정
+     * @param boardVO
      * @return
      */
     public int update_file(GradeVO gradeVO);
@@ -87,5 +89,5 @@ public interface GradeProcInter {
      * @param page_per_block 블럭당 페이지 수
      * @return 페이징 생성 문자열
      */
-    public String pagingBox(int now_page, String word, String gdescription, int search_count, int record_per_page, int page_per_block);
+    public String pagingBox(int now_page, String word, String evo_criteria, int search_count, int record_per_page, int page_per_block);
 }

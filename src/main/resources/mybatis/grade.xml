@@ -6,27 +6,27 @@
 
   <!-- 등급 글 추가 -->
   <insert id="create" parameterType="dev.mvc.grade.GradeVO">
-    INSERT INTO grade (gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1)
-    VALUES (grade_seq.nextval, #{grade_name}, #{gdescription}, sysdate, #{file1}, #{file1saved}, #{thumb1}, #{size1})
+    INSERT INTO grade (gradeno, grade_name, evo_criteria, evolution, file1, file1saved, thumb1, size1, rdate)
+    VALUES (grade_seq.nextval, #{grade_name}, #{evo_criteria}, #{evolution}, #{file1}, #{file1saved}, #{thumb1}, #{size1}, sysdate)
   </insert>
   
   <!-- 등급 조회 -->
   <select id="read" parameterType="dev.mvc.grade.GradeVO">
-    SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+    SELECT gradeno, grade_name, evo_criteria, rdate, evolution, file1, file1saved, thumb1, size1
     FROM grade
     WHERE gradeno = #{gradeno}
   </select>
   
   <!-- 모든 목록 -->
   <select id="list_all" parameterType="dev.mvc.grade.GradeVO">
-    SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+    SELECT gradeno, grade_name, evo_criteria, rdate, evolution, file1, file1saved, thumb1, size1
     FROM grade
     ORDER BY gradeno DESC
   </select>
   
   <!-- 등급 등록된 목록 -->
   <select id="list_by_gradeno" resultType="dev.mvc.grade.GradeVO" parameterType="int">
-    SELECT gradeno, grade_name, gdescription, rdate, file1, file1saved, thumb1, size1
+    SELECT gradeno, grade_name, evo_criteria, rdate, evolution, file1, file1saved, thumb1, size1
     FROM grade
     WHERE gradeno = #{gradeno}
     ORDER BY gradeno DESC
@@ -35,7 +35,7 @@
   <!-- 등급 내용 수정 -->
   <update id="update_text" parameterType="dev.mvc.grade.GradeVO">
     UPDATE grade
-    SET grade_name=#{grade_name}, gdescription=#{gdescription}
+    SET grade_name=#{grade_name}, evo_criteria=#{evo_criteria}, evolution=#{evolution}
     WHERE gradeno = #{gradeno}
   </update>
   
@@ -54,9 +54,9 @@
   
   <!-- 등급 종류별 검색 목록 -->
   <select id="list_by_gradeno_search" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
-    SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) AS file1, file1saved, thumb1, size1
+    SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1
     FROM grade
-    WHERE gdescription = #{gdescription, jdbcType=VARCHAR}
+    WHERE evo_criteria = #{evo_criteria, jdbcType=VARCHAR}
     ORDER BY gradeno DESC
     OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
   </select>
@@ -65,17 +65,17 @@
   <select id="count_by_gradeno_search" resultType="int" parameterType="HashMap">
     SELECT COUNT(*)
     FROM grade
-    WHERE (#{gdescription} IS NULL OR #{gdescription} = '' OR gdescription = #{gdescription})
+    WHERE (#{evo_criteria} IS NULL OR #{evo_criteria} = '' OR evo_criteria = #{evo_criteria})
   </select>
   
   <!-- 등급 종류별 검색 및 페이징 -->
   <select id="list_by_gradeno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
     SELECT * 
     FROM (
-        SELECT gradeno, grade_name, gdescription, rdate, LOWER(file1) AS file1, file1saved, thumb1, size1, 
+        SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1, 
                ROW_NUMBER() OVER (ORDER BY gradeno DESC) AS rnum
         FROM grade
-        WHERE (#{gdescription} IS NULL OR #{gdescription} = '' OR gdescription = #{gdescription})
+        WHERE (#{evo_criteria} IS NULL OR #{evo_criteria} = '' OR evo_criteria = #{evo_criteria})
     ) t
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
