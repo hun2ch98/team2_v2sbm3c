@@ -92,7 +92,7 @@ public class BoardCont {
                        @ModelAttribute("boardVO") BoardVO boardVO,
                        RedirectAttributes ra) {
     
-//    if (memberProc.isMember(session)) { // 회원 로그인한경우
+    if (memberProc.isMember(session)) { // 회원 로그인한경우
 
         String file1 = ""; 
         String file1saved = ""; 
@@ -134,9 +134,9 @@ public class BoardCont {
             ra.addFlashAttribute("code", "create_fail");
             return "redirect:/board/msg"; 
         }
-//    } else { // 로그인 실패 한 경우
-//      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-//    }
+    } else { // 로그인 실패 한 경우
+      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
+    }
   }
   
   /**
@@ -149,7 +149,7 @@ public class BoardCont {
 //    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
-//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
       ArrayList<BoardVO> list = this.boardProc.list_all(); // 모든 목록
 
       // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
@@ -169,9 +169,9 @@ public class BoardCont {
       model.addAttribute("list", list);
       return "/board/list_all";
 
-//    } else {
-//      return "redirect:/member/login_cookie_need";
-//    }
+    } else {
+      return "redirect:/member/login_cookie_need";
+    }
 
   }
   
@@ -384,7 +384,7 @@ public class BoardCont {
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
 
-//    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
+    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
     
       BoardVO boardVO = this.boardProc.read(boardno);
       model.addAttribute("boardVO", boardVO);
@@ -396,11 +396,11 @@ public class BoardCont {
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
-//    } else {
-////      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-////      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
-//      return "member/login_cookie_need";
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+//      return "redirect:/board/msg"; // @GetMapping(value = "/read")
+      return "member/login_cookie_need";
+    }
 
   }
 
@@ -487,7 +487,7 @@ public class BoardCont {
                             @RequestParam(name="word", defaultValue="") String word, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
-//    if (this.memberProc.isMember(session)) {
+    if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       BoardVO boardVO_old = boardProc.read(boardVO.getBoardno());
 
@@ -550,10 +550,10 @@ public class BoardCont {
       ra.addAttribute("now_page", now_page);
       
       return "redirect:/board/read";
-//    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); 
-//      return "redirect:/board/post2get"; // GET
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); 
+      return "redirect:/board/post2get"; // GET
+    }
   }
   
   /**
@@ -568,7 +568,7 @@ public class BoardCont {
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-//    if (this.memberProc.isMember(session)) { // 로그인한경우
+    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
@@ -584,10 +584,10 @@ public class BoardCont {
       
       return "/board/delete"; // forward
       
-//    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need");
-//      return "redirect:/board/msg"; 
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/board/msg"; 
+    }
 
   }
   
