@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
-import dev.mvc.board.BoardVOMenu;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -216,9 +215,7 @@ public class BoardCont {
   
   /**
    * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9091/contents/list_by_cateno?cateno=5
-   * http://localhost:9091/contents/list_by_cateno?cateno=6
-   * 
+   * 카테고리별 목록 + 검색 + 페이징 
    * @return
    */
   @GetMapping(value = "/list_by_boardno_search_paging")
@@ -282,47 +279,47 @@ public class BoardCont {
    * 카테고리별 목록 + 검색 + 페이징 + Grid
    * @return
    */
-  @GetMapping(value = "/list_by_boardno_search_paging_grid")
-  public String list_by_boardno_search_paging_grid(HttpSession session, 
-      Model model, 
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "board_cate", defaultValue = "1") String board_cate,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-
-//  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
-//  model.addAttribute("menu", menu);
-
-    MemberVO memberVO = this.memberProc.read(memberno);
-    model.addAttribute("memberVO", memberVO);
-
-    board_cate = Tool.checkNull(board_cate).trim();
-
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    map.put("board_cate", board_cate);
-    map.put("now_page", now_page);
-
-    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
-    model.addAttribute("list", list);
-    
-    model.addAttribute("board_cate", board_cate);
-
-    int search_count = this.boardProc.count_by_boardno_search(map);
-    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
-        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
-    model.addAttribute("paging", paging);
-    model.addAttribute("now_page", now_page);
-
-    model.addAttribute("search_count", search_count);
-
-    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
-    model.addAttribute("no", no);
-
-    // /templates/contents/list_by_cateno_search_paging_grid.html
-    return "/board/list_by_boardno_search_paging_grid";
-  }
+//  @GetMapping(value = "/list_by_boardno_search_paging_grid")
+//  public String list_by_boardno_search_paging_grid(HttpSession session, 
+//      Model model, 
+//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+//      @RequestParam(name = "board_cate", defaultValue = "1") String board_cate,
+//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//
+//
+////  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
+////  model.addAttribute("menu", menu);
+//
+//    MemberVO memberVO = this.memberProc.read(memberno);
+//    model.addAttribute("memberVO", memberVO);
+//
+//    board_cate = Tool.checkNull(board_cate).trim();
+//
+//    HashMap<String, Object> map = new HashMap<>();
+//    map.put("memberno", memberno);
+//    map.put("board_cate", board_cate);
+//    map.put("now_page", now_page);
+//
+//    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
+//    model.addAttribute("list", list);
+//    
+//    model.addAttribute("board_cate", board_cate);
+//
+//    int search_count = this.boardProc.count_by_boardno_search(map);
+//    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno_search_paging", search_count,
+//        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
+//    model.addAttribute("paging", paging);
+//    model.addAttribute("now_page", now_page);
+//
+//    model.addAttribute("search_count", search_count);
+//
+//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
+//    model.addAttribute("no", no);
+//
+//    // /templates/contents/list_by_cateno_search_paging_grid.html
+//    return "/board/list_by_boardno_search_paging_grid";
+//  }
 
   
   /**
@@ -339,7 +336,8 @@ public class BoardCont {
 //    model.addAttribute("menu", menu);
 
     BoardVO boardVO = this.boardProc.read(boardno);
-
+    model.addAttribute("boardVO", boardVO);
+    
 //    String title = contentsVO.getTitle();
 //    String content = contentsVO.getContent();
 //    
@@ -352,8 +350,6 @@ public class BoardCont {
     long size1 = boardVO.getSize1();
     String size1_label = Tool.unit(size1);
     boardVO.setSize1_label(size1_label);
-
-    model.addAttribute("boardVO", boardVO);
 
     MemberVO memberVO = this.memberProc.read(boardVO.getMemberno());
     model.addAttribute("memberVO", memberVO);

@@ -87,6 +87,6 @@ public interface BoardProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */
-  public String pagingBox(int memberno, int now_page, String word, String list_file, int search_count, 
+  public String pagingBox(int memberno, int now_page, String board_cate, String list_file, int search_count, 
       int record_per_page, int page_per_block);
 }

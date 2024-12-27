@@ -17,13 +17,14 @@
       <col style='width: 90%;'/>
     </colgroup>
     <tr>
+      <th class='th_bs'>파일</th>
       <th class='th_bs'>주제</th>
     </tr>
    
     <tr th:each="surveyVO, status:${list}" 
         th:attr="onclick=|location.href='/survey/read?memberno=${surveyVO.memberno}'|"
         style="cursor: pointer;">
-      <td class='td_basic' th:text="${surveyVO.poster}"></td>
+      <td class='td_basic' th:text="${surveyVO.file1}"></td>
       <td class='td_left'>
         <span th:text="${surveyVO.topic}" style="font-weight: bold;"></span>
 

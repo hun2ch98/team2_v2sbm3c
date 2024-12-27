@@ -41,7 +41,8 @@
           <span style="font-size: 1.5em; font-weight: bold;" th:text="${surveyVO.topic}">[주제]</span>
           <span style="font-size: 1em;" th:text="${surveyVO.sdate }">[시작일]</span><br><br>
           <span style="font-size: 1em;" th:text="${surveyVO.edate }">[종료일]</span><br><br>
-          <div style="white-space: pre-wrap;"><span th:text="${surveyVO.is_continue}">[참여인원]</span></div>
+          <span style="white-space: pre-wrap;"><span th:text="${surveyVO.s_number}">[참여 인원]</span><br><br>
+          <span style="white-space: pre-wrap;"><span th:text="${surveyVO.is_continue}">[진행 여부]</span>
         </div>
       </li>
       
