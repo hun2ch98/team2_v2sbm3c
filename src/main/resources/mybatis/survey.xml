@@ -76,7 +76,7 @@
   
   <!-- 파일 수정 -->
   <update id="update_file" parameterType="dev.mvc.survey.SurveyVO">
-    UPDATE contents
+    UPDATE survey
     SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
     WHERE surveyno = #{surveyno}
   </update> 
