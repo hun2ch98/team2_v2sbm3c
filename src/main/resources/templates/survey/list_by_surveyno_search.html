@@ -3,14 +3,20 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
 
-  <div class='title_line'>설문조사 목록</div>
+  <div class='title_line'>검색목록</div>
 
   <aside class="aside_right">
-    <a th:href="@{|/survey/create}">등록</a>
-    <span class="menu_divide">|</span>    
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{/survey/create}">등록</a>
+      <span class="menu_devide">│</span>    
+    </span>
+    
     <a href="javascript:location.reload();">새로고침</a>
   </aside> 
-   
+
+  <!-- /survey/list_search_com.html 파일의 list_search_fragment import -->
+  <div th:replace="~{survey/list_search_com::list_search_fragment}"></div>
+     
   <div class='menu_line'></div>
        
   <table class="table table-striped" style='width: 100%;'>
@@ -32,8 +38,8 @@
     </tr>
    
     <tr th:each="surveyVO, status:${list}" 
-        th:attr="onclick=|location.href='/survey/read?surveyno=${surveyVO.surveyno}'|"
-        style="cursor: pointer; height: 90px;">
+         th:attr="onclick=|location.href='/survey/read?surveyno=${surveyVO.surveyno}&is_continue=${is_continue}'|"
+         style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
         <div th:if="${surveyVO.file1.endsWith('jpg') or surveyVO.file1.endsWith('png')  or surveyVO.file1.endsWith('gif')}">
           <img th:src="@{|/survey/storage/${surveyVO.thumb1}|}" style="width: 120px; height: 90px;">
@@ -63,4 +69,3 @@
 </div>
 </html>
 
- 

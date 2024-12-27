@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
-import dev.mvc.board.BoardVOMenu;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -92,7 +91,7 @@ public class BoardCont {
                        @ModelAttribute("boardVO") BoardVO boardVO,
                        RedirectAttributes ra) {
     
-//    if (memberProc.isMember(session)) { // 회원 로그인한경우
+    if (memberProc.isMember(session)) { // 회원 로그인한경우
 
         String file1 = ""; 
         String file1saved = ""; 
@@ -134,9 +133,9 @@ public class BoardCont {
             ra.addFlashAttribute("code", "create_fail");
             return "redirect:/board/msg"; 
         }
-//    } else { // 로그인 실패 한 경우
-//      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-//    }
+    } else { // 로그인 실패 한 경우
+      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
+    }
   }
   
   /**
@@ -149,7 +148,7 @@ public class BoardCont {
 //    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
-//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
       ArrayList<BoardVO> list = this.boardProc.list_all(); // 모든 목록
 
       // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
@@ -169,9 +168,9 @@ public class BoardCont {
       model.addAttribute("list", list);
       return "/board/list_all";
 
-//    } else {
-//      return "redirect:/member/login_cookie_need";
-//    }
+    } else {
+      return "redirect:/member/login_cookie_need";
+    }
 
   }
   
@@ -216,9 +215,7 @@ public class BoardCont {
   
   /**
    * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9091/contents/list_by_cateno?cateno=5
-   * http://localhost:9091/contents/list_by_cateno?cateno=6
-   * 
+   * 카테고리별 목록 + 검색 + 페이징 
    * @return
    */
   @GetMapping(value = "/list_by_boardno_search_paging")
@@ -282,47 +279,47 @@ public class BoardCont {
    * 카테고리별 목록 + 검색 + 페이징 + Grid
    * @return
    */
-  @GetMapping(value = "/list_by_boardno_search_paging_grid")
-  public String list_by_boardno_search_paging_grid(HttpSession session, 
-      Model model, 
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "board_cate", defaultValue = "1") String board_cate,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-
-//  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
-//  model.addAttribute("menu", menu);
-
-    MemberVO memberVO = this.memberProc.read(memberno);
-    model.addAttribute("memberVO", memberVO);
-
-    board_cate = Tool.checkNull(board_cate).trim();
-
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    map.put("board_cate", board_cate);
-    map.put("now_page", now_page);
-
-    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
-    model.addAttribute("list", list);
-    
-    model.addAttribute("board_cate", board_cate);
-
-    int search_count = this.boardProc.count_by_boardno_search(map);
-    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
-        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
-    model.addAttribute("paging", paging);
-    model.addAttribute("now_page", now_page);
-
-    model.addAttribute("search_count", search_count);
-
-    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
-    model.addAttribute("no", no);
-
-    // /templates/contents/list_by_cateno_search_paging_grid.html
-    return "/board/list_by_boardno_search_paging_grid";
-  }
+//  @GetMapping(value = "/list_by_boardno_search_paging_grid")
+//  public String list_by_boardno_search_paging_grid(HttpSession session, 
+//      Model model, 
+//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+//      @RequestParam(name = "board_cate", defaultValue = "1") String board_cate,
+//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//
+//
+////  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
+////  model.addAttribute("menu", menu);
+//
+//    MemberVO memberVO = this.memberProc.read(memberno);
+//    model.addAttribute("memberVO", memberVO);
+//
+//    board_cate = Tool.checkNull(board_cate).trim();
+//
+//    HashMap<String, Object> map = new HashMap<>();
+//    map.put("memberno", memberno);
+//    map.put("board_cate", board_cate);
+//    map.put("now_page", now_page);
+//
+//    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
+//    model.addAttribute("list", list);
+//    
+//    model.addAttribute("board_cate", board_cate);
+//
+//    int search_count = this.boardProc.count_by_boardno_search(map);
+//    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno_search_paging", search_count,
+//        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
+//    model.addAttribute("paging", paging);
+//    model.addAttribute("now_page", now_page);
+//
+//    model.addAttribute("search_count", search_count);
+//
+//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
+//    model.addAttribute("no", no);
+//
+//    // /templates/contents/list_by_cateno_search_paging_grid.html
+//    return "/board/list_by_boardno_search_paging_grid";
+//  }
 
   
   /**
@@ -339,7 +336,8 @@ public class BoardCont {
 //    model.addAttribute("menu", menu);
 
     BoardVO boardVO = this.boardProc.read(boardno);
-
+    model.addAttribute("boardVO", boardVO);
+    
 //    String title = contentsVO.getTitle();
 //    String content = contentsVO.getContent();
 //    
@@ -352,8 +350,6 @@ public class BoardCont {
     long size1 = boardVO.getSize1();
     String size1_label = Tool.unit(size1);
     boardVO.setSize1_label(size1_label);
-
-    model.addAttribute("boardVO", boardVO);
 
     MemberVO memberVO = this.memberProc.read(boardVO.getMemberno());
     model.addAttribute("memberVO", memberVO);
@@ -384,7 +380,7 @@ public class BoardCont {
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
 
-//    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
+    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
     
       BoardVO boardVO = this.boardProc.read(boardno);
       model.addAttribute("boardVO", boardVO);
@@ -396,11 +392,11 @@ public class BoardCont {
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
-//    } else {
-////      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-////      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
-//      return "member/login_cookie_need";
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+//      return "redirect:/board/msg"; // @GetMapping(value = "/read")
+      return "member/login_cookie_need";
+    }
 
   }
 
@@ -487,7 +483,7 @@ public class BoardCont {
                             @RequestParam(name="word", defaultValue="") String word, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
-//    if (this.memberProc.isMember(session)) {
+    if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       BoardVO boardVO_old = boardProc.read(boardVO.getBoardno());
 
@@ -550,10 +546,10 @@ public class BoardCont {
       ra.addAttribute("now_page", now_page);
       
       return "redirect:/board/read";
-//    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); 
-//      return "redirect:/board/post2get"; // GET
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); 
+      return "redirect:/board/post2get"; // GET
+    }
   }
   
   /**
@@ -568,7 +564,7 @@ public class BoardCont {
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-//    if (this.memberProc.isMember(session)) { // 로그인한경우
+    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
@@ -584,10 +580,10 @@ public class BoardCont {
       
       return "/board/delete"; // forward
       
-//    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need");
-//      return "redirect:/board/msg"; 
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/board/msg"; 
+    }
 
   }
   
