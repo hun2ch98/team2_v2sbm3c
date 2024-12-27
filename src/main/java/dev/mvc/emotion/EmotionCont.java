@@ -395,29 +395,29 @@ public class EmotionCont {
       RedirectAttributes ra, 
       @RequestParam(name="word", defaultValue="") String word,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
+//    ArrayList<EmotionVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
 
-//    if (this.diaryProc.isdiary(session)) { // 회원 로그인한경우
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
     
       EmotionVO emotionVO = this.emotionProc.read(emono);
       model.addAttribute("emotionVO", emotionVO);
 
-      DiaryVO diaryVO = this.diaryProc.read(emotionVO.getDiaryno());
-      model.addAttribute("diaryVO", diaryVO);
+      MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
 
       return "/emotion/update_text"; // /templates/contents/update_text.html
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
-//    } else {
-////      ra.addAttribute("url", "/diary/login_cookie_need"); // /templates/diary/login_cookie_need.html
-////      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
-//      return "diary/login_cookie_need";
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/diary/login_cookie_need.html
+//      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
+      return "member/login_cookie_need";
+    }
 
   }
 
@@ -438,9 +438,9 @@ public class EmotionCont {
       ra.addAttribute("word", search_word);
       ra.addAttribute("now_page", now_page);
 
-      // bcontent 값 검증
+      //explan 값 검증
       if (emotionVO.getExplan() == null || emotionVO.getExplan().trim().isEmpty()) {
-          ra.addFlashAttribute("message", "내용은 필수 입력 사항입니다.");
+          ra.addFlashAttribute("message", "설명은 필수 입력 사항입니다.");
           ra.addFlashAttribute("code", "update_fail");
           return "redirect:/emotion/msg"; // 실패 시 msg 페이지로 이동
       }
@@ -484,10 +484,12 @@ public class EmotionCont {
     
     EmotionVO emotionVO = this.emotionProc.read(emono);
     model.addAttribute("emotionVO", emotionVO);
-
+    
+    MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
+    model.addAttribute("memberVO", memberVO);
+    
     DiaryVO diaryVO = this.diaryProc.read(emotionVO.getDiaryno());
     model.addAttribute("diaryVO", diaryVO);
-
 
     return "/emotion/update_file";
 
@@ -511,14 +513,14 @@ public class EmotionCont {
       // -------------------------------------------------------------------
       // 파일 삭제 시작
       // -------------------------------------------------------------------
-//      String file1saved = emotionVO_old.getFile1saved(); // 실제 저장된 파일명
-//      String thumb1 = emotionVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
-//      long size1 = 0;
-//
-//      String upDir = emotion.getUploadDir(); // C:/kd/deploy/resort_v4sbm3c/contents/storage/
-//
-//      Tool.deleteFile(upDir, file1saved); // 실제 저장된 파일삭제
-//      Tool.deleteFile(upDir, thumb1); // preview 이미지 삭제
+      String file1saved = emotionVO_old.getFile1saved(); // 실제 저장된 파일명
+      String thumb1 = emotionVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
+      long size1 = 0;
+
+      String upDir = Emotion.getUploadDir(); // C:/kd/deploy/resort_v4sbm3c/contents/storage/
+
+      Tool.deleteFile(upDir, file1saved); // 실제 저장된 파일삭제
+      Tool.deleteFile(upDir, thumb1); // preview 이미지 삭제
       // -------------------------------------------------------------------
       // 파일 삭제 종료
       // -------------------------------------------------------------------
@@ -526,36 +528,36 @@ public class EmotionCont {
       // -------------------------------------------------------------------
       // 파일 전송 시작
       // -------------------------------------------------------------------
-//      String file1 = ""; // 원본 파일명 image
-//
-//      // 전송 파일이 없어도 file1MF 객체가 생성됨.
-//      // <input type='file' class="form-control" name='file1MF' id='file1MF'
-//      // value='' placeholder="파일 선택">
-//      MultipartFile mf = emotionVO.getFile1MF();
-//
-//      file1 = mf.getOriginalFilename(); // 원본 파일명
-//      size1 = mf.getSize(); // 파일 크기
-//
-//      if (size1 > 0) { // 폼에서 새롭게 올리는 파일이 있는지 파일 크기로 체크 ★
-//        // 파일 저장 후 업로드된 파일명이 리턴됨, spring.jsp, spring_1.jpg...
-//        file1saved = Upload.saveFileSpring(mf, upDir);
-//
-//        if (Tool.isImage(file1saved)) { // 이미지인지 검사
-//          // thumb 이미지 생성후 파일명 리턴됨, width: 250, height: 200
-//          thumb1 = Tool.preview(upDir, file1saved, 250, 200);
-//        }
-//
-//      } else { // 파일이 삭제만 되고 새로 올리지 않는 경우
-//        file1 = "";
-//        file1saved = "";
-//        thumb1 = "";
-//        size1 = 0;
-//      }
-//
-//      emotionVO.setFile1(file1);
-//      emotionVO.setFile1saved(file1saved);
-//      emotionVO.setThumb1(thumb1);
-//      emotionVO.setSize1(size1);
+      String file1 = ""; // 원본 파일명 image
+
+      // 전송 파일이 없어도 file1MF 객체가 생성됨.
+      // <input type='file' class="form-control" name='file1MF' id='file1MF'
+      // value='' placeholder="파일 선택">
+      MultipartFile mf = emotionVO.getFile1MF();
+
+      file1 = mf.getOriginalFilename(); // 원본 파일명
+      size1 = mf.getSize(); // 파일 크기
+
+      if (size1 > 0) { // 폼에서 새롭게 올리는 파일이 있는지 파일 크기로 체크 ★
+        // 파일 저장 후 업로드된 파일명이 리턴됨, spring.jsp, spring_1.jpg...
+        file1saved = Upload.saveFileSpring(mf, upDir);
+
+        if (Tool.isImage(file1saved)) { // 이미지인지 검사
+          // thumb 이미지 생성후 파일명 리턴됨, width: 250, height: 200
+          thumb1 = Tool.preview(upDir, file1saved, 250, 200);
+        }
+
+      } else { // 파일이 삭제만 되고 새로 올리지 않는 경우
+        file1 = "";
+        file1saved = "";
+        thumb1 = "";
+        size1 = 0;
+      }
+
+      emotionVO.setFile1(file1);
+      emotionVO.setFile1saved(file1saved);
+      emotionVO.setThumb1(thumb1);
+      emotionVO.setSize1(size1);
       // -------------------------------------------------------------------
       // 파일 전송 코드 종료
       // -------------------------------------------------------------------

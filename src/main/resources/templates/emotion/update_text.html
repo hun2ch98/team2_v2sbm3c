@@ -3,53 +3,38 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${boardVO?.board_cate ?: '게시글'}" class="title_line_text"></span>
-    > 글 수정
+    > 감정 내용 수정
   </div>
   
   <aside class="aside_right">
-    <a th:href="@{/board/create}">등록</a>
+    <a th:href="@{/emotion/create}">등록</a>
     <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_boardno?boardno=${boardVO.boardno }&word=${word }&now_page=${now_page}|}">목록</a>
+    <a th:href="@{|./list_by_emono?emono=${emotionVO.emono }&word=${word }&now_page=${now_page}|}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
   
-  <form name='frm' method='post' th:object="${boardVO}" action='./update_text'>
-    <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
-    <input type="hidden" name="boardno" th:value="${boardVO.boardno }">
+  <form name='frm' method='post' th:object="${emotionVO}" action='./update_text'>
+    <input type="hidden" name="emono" th:value="${emotionVO.emono }">
     <input type="hidden" name="now_page" th:value="${now_page}">
     <input type="hidden" name="search_word" th:value="${word}">
     
     <div>
-       <label>제목</label>
-       <input type='text' name='title' th:value='${boardVO.title}' required="required" 
+       <label>유형</label>
+       <input type='text' name='type' th:value='${emotionVO.type}' required="required" 
                  autofocus="autofocus" class="form-control" style='width: 100%;'>
     </div>
     <div>
        <label>내용</label>
-       <textarea name='bcontent' required="required" class="form-control" rows="12" style='width: 100%;' 
-                      th:text='${boardVO.bcontent}'></textarea>
-    </div>
-    
-    <div>
-      <label>게시글 종류</label>
-      <select id="board_cate" name="board_cate" class="form-control" required="required">
-          <option value="" selected="selected">게시글 종류</option>
-          <option th:value="금지단어" th:selected="*{board_cate=='금지단어'}">금지단어</option>
-          <option th:value="문의사항" th:selected="*{board_cate=='문의사항'}">문의사항</option>
-      </select>
-      
-      <div th:if="${#fields.hasErrors('board_cate')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
-        <div th:each="err: ${#lists.sort(#fields.errors('board_cate'))}" th:text="${err}"></div>
-      </div>
+       <textarea name='explan' required="required" class="form-control" rows="12" style='width: 100%;' 
+                      th:text='${emotionVO.explan}'></textarea>
     </div>
     
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">저장</button>
-      <button type="button" th:attr="onclick=|location.href='./list_by_board?boardno=${boardno}'|" class="btn btn-secondary btn-sm">목록</button>
+      <button type="button" th:attr="onclick=|location.href='./list_by_emono?emono=${emono}'|" class="btn btn-secondary btn-sm">목록</button>
     </div>
   
   </form>
