@@ -5,21 +5,28 @@ import lombok.Setter;
 import lombok.ToString;
 
 //CREATE TABLE emotion (
-//    emno      NUMBER(10)    NOT NULL    PRIMARY KEY,
-//    em_type     VARCHAR(100)    NOT NULL,
-//    em_image  VARCHAR(100)  NOT NULL
+//    	emono	NUMBER(10)		    NOT NULL,
+//		type	VARCHAR(50)		    NOT NULL,
+//		explan  VARCHAR(500)        NOT NULL,
+//		img	    VARCHAR(500)		NULL
 //  );
 
 @Getter @Setter @ToString
 public class EmotionVO {
   
   /** 감정 번호 */
-  private int emno;
+  private int emono;
+  
+  /** 일기 번호*/
+  private int diaryno;
   
   /** 감정 종류 */
-  private String em_type="";
+  private String type="";
+  
+  /** 감정 설명*/
+  private String explan="";
   
   /** 감정 이미지 */
-  private String em_image="";
+  private String img="";
 
 }
