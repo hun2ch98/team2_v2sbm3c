@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dev.mvc.board.Board;
-import dev.mvc.board.BoardVO;
-import dev.mvc.member.MemberVO;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
 import jakarta.servlet.http.HttpServletRequest;
@@ -132,9 +129,9 @@ public class GradeCont {
   public String list_all(HttpSession session, Model model) {
     
     ArrayList<GradeVO> list = this.gradeProc.list_all(); // 등급 모든 목록
-    model.addAttribute("list", list);
     
-    return "grade/list_all";
+    model.addAttribute("list", list);
+    return "/grade/list_all";
   }
   
   /**
@@ -150,20 +147,20 @@ public class GradeCont {
       Model model,
       @ModelAttribute("gradeVO") GradeVO gradeVO,
       @RequestParam(name = "gradeno", defaultValue = "0") int gradeno,
-      @RequestParam(name = "evo_criteria", defaultValue = "") String evo_criteria,
+      @RequestParam(name = "grade_name", defaultValue = "") String grade_name,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
     int record_per_page = 10;
     int startRow = (now_page - 1) * record_per_page + 1;
     int endRow = now_page * record_per_page;
     
-    evo_criteria = Tool.checkNull(evo_criteria).trim();
+    grade_name = Tool.checkNull(grade_name).trim();
     model.addAttribute("gradeno", gradeno);
-    model.addAttribute("evo_criteria", evo_criteria);
+    model.addAttribute("grade_name", grade_name);
     model.addAttribute("now_page", now_page);
     
     HashMap<String, Object> map = new HashMap<>();
-    map.put("evo_criteria", evo_criteria);
+    map.put("grade_name", grade_name);
     map.put("now_page", now_page);
     map.put("startRow", startRow);
     map.put("endRow", endRow);
@@ -176,9 +173,9 @@ public class GradeCont {
     }
     
     int search_count = this.gradeProc.count_by_gradeno_search(map);
-    String paging = this.gradeProc.pagingBox(now_page, evo_criteria, "/grade/list_by_gradeno_search_paging", search_count, Grade.RECORD_PER_PAGE, Grade.PAGE_PER_BLOCK);
+    String paging = this.gradeProc.pagingBox(now_page, grade_name, "/grade/list_by_gradeno_search_paging", search_count, Grade.RECORD_PER_PAGE, Grade.PAGE_PER_BLOCK);
     model.addAttribute("paging", paging);
-    model.addAttribute("evo_criteria", evo_criteria);
+    model.addAttribute("grade_name", grade_name);
     model.addAttribute("now_page", now_page);
     model.addAttribute("search_count", search_count);
     
@@ -186,7 +183,7 @@ public class GradeCont {
     model.addAttribute("no", no);
     
     // /templates/grade/list_by_gradeno_search_paging.html
-    return "garde/list_by_gradeno_search_paging"; 
+    return "/grade/list_by_gradeno_search_paging"; 
   }
   
 //  /**
@@ -376,7 +373,7 @@ public class GradeCont {
     GradeVO gradeVO = this.gradeProc.read(gradeno);
     model.addAttribute("gradeVO", gradeVO);
     
-    return "grade/delete"; // forward
+    return "/grade/delete"; // forward
   }
   
   /**

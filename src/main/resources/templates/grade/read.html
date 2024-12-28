@@ -7,6 +7,11 @@
   </div>
 
   <aside class="aside_right" th:if="${session?.gradle != 1}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name ?:''}|}">목록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/grade/create}">등록</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{|/grade/update_text?gradeno=${gradeVO.gradeno}&now_page=${now_page}|}">등급 수정</a>
     <span class='menu_divide'>│</span>
@@ -15,37 +20,35 @@
     <a th:href="@{|/grade/delete?gradeno=${gradeVO.gradeno}&now_page=${now_page}|}">삭제</a>
   </aside>
 
-  <aside class="aside_right" th:if="${session?.gradle != 1}">
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{/grade/list_all}">목록</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{/grade/read}">등급보기</a>
-  </aside>
-
   <div class='menu_line'></div>
 
   <fieldset class="fieldset_basic">
     <ul>
       <li class="li_none">
-        <div style="width: 100%; word-break: break-all;">
+        <div style="width: 100%; word-break: break-all; text-align: center;">
           <!-- 이미지 -->
           <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png')  or gradeVO.file1.endsWith('gif')}">
-            <img th:src="@{|/grade/storage/${gradeVO.file1saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
-          </div>
+            <img th:src="@{|/grade/storage/${gradeVO.file1saved}|}" style='width: 20%; margin-top: 0.5%; margin-right: 5%; border: 2px solid black; border-radius: 10px;'>
+          </div><br>
 
           <!-- 등급 이름 -->
-          <span style="font-size: 1.5em; font-weight: bold;" th:text="${gradeVO.grade_name}"></span>
-          <!--<span style="font-size: 1em;" th:text="${gradeVO.rdate}"></span><br><br>-->
-
-          <!-- 등급 설명 -->
-          <div style="white-space: pre-wrap;"><span th:text="${gradeVO.gdescription}"></span></div>
+          <span style="font-size: 2em; font-weight: bold;" th:text="${gradeVO.grade_name}"></span><br>
+          
+          <!-- 생성 날짜 -->
+          <span style="font-size: 1em;" th:text="${#dates.format(gradeVO.rdate, 'yyyy-MM-dd')}"></span><br><br>
+          
+          <!-- 진화 기준 -->
+          <div style="font-size: 1.5em; white-space: pre-wrap;">&lt;진화 기준&gt;<br><span th:text="${gradeVO.evo_criteria}"></span>
+</div><br>
+          
+          <!-- 진화 과정 -->
+          <div style="font-size: 1.5em; white-space: pre-wrap;">&lt;진화 과정&gt;<br><span th:text="${gradeVO.evolution}"></span></div><br>
         </div>
       </li>
 
       <!-- 파일 -->
       <li class="li_none" th:if="${gradeVO.size1 > 0}">
-        <div >
+        <div style="text-align: center;">
           첨부 파일: <a th:href='@{|/download?dir=/grade/storage&filename=${gradeVO.file1saved}&downname=${gradeVO.file1}|}'
                              th:text='|${gradeVO.file1}|'></a> <span th:text="|(${gradeVO.size1_label})|"></span>  
         </div>
