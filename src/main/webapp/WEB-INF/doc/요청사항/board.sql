@@ -4,7 +4,7 @@ DROP TABLE board CASCADE CONSTRAINTS; -- 자식 무시하고 삭제 가능
 CREATE TABLE board(
     boardno         NUMBER(10)      NOT NULL    PRIMARY KEY,
     memberno        NUMBER(10)      NOT NULL,
-    title           VARCHAR(50)     NOT NULL,
+    title           VARCHAR(100)     NOT NULL,
     bcontent        CLOB            NOT NULL,
     rdate           DATE            NOT NULL,
     board_cate      VARCHAR(50)     NOT NULL,
@@ -16,6 +16,8 @@ CREATE TABLE board(
     badcnt         NUMBER(10)          NULL,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
+
+ALTER TABLE BOARD MODIFY TITLE VARCHAR(100);
 
 COMMENT ON TABLE  BOARD is '게시판';
 COMMENT ON COLUMN BOARD.BOARDNO is '게시판 번호';
@@ -51,7 +53,7 @@ ORDER BY boardno ASC;
 
 DELETE FROM board;
 
-DELETE FROM board WHERE boardno!=61;
+DELETE FROM board WHERE boardno=74;
 
 -- ----------------------------------------------------------------------------------------------------
 -- 검색, board_cate 검색 목록
@@ -105,7 +107,10 @@ WHERE rnum >= 1; -- 여기서 1~10번 행만 가져옴
 
 COMMIT;
 
-
+SELECT * FROM board;
+-- 출력 우선순위 낮춤
+UPDATE board SET goodcnt=goodcnt+1 WHERE boardno=78;
+UPDATE board SET badcnt=badcnt+1 WHERE boardno=79;
 
 
 

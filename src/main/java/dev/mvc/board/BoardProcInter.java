@@ -33,27 +33,6 @@ public interface BoardProcInter {
   public ArrayList<BoardVO> list_by_boardno(int boardno);
   
   /**
-   * 게시글 내용 수정
-   * @param boardVO
-   * @return
-   */
-  public int update_text(BoardVO boardVO);
-  
-  /**
-   * 파일 수정
-   * @param boardVO
-   * @return
-   */
-  public int update_file(BoardVO boardVO);
-  
-  /**
-   * 게시글 삭제
-   * @param boardno
-   * @return
-   */
-  public int delete(int boardno);
-  
-  /**
    * 게시글 종류별 검색 목록
    * @param hashMap
    * @return
@@ -89,4 +68,40 @@ public interface BoardProcInter {
    */
   public String pagingBox(int memberno, int now_page, String board_cate, String list_file, int search_count, 
       int record_per_page, int page_per_block);
+  
+  /**
+   * 게시글 내용 수정
+   * @param boardVO
+   * @return
+   */
+  public int update_text(BoardVO boardVO);
+  
+  /**
+   * 파일 수정
+   * @param boardVO
+   * @return
+   */
+  public int update_file(BoardVO boardVO);
+  
+  /**
+   * 게시글 삭제
+   * @param boardno
+   * @return
+   */
+  public int delete(int boardno);
+  
+  /**
+   * 추천수
+   * @param boardno
+   * @return
+   */
+  public int update_goodcnt(int boardno);
+  
+  /**
+   * 비추천수
+   * @param boardno
+   * @return
+   */
+  public int update_badcnt(int boardno);
+  
 }

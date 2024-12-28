@@ -29,11 +29,15 @@
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
       <col style='width: 10%;'/>
-      <col style='width: 90%;'/>
+      <col style='width: 70%;'/>
+      <col style='width: 7%;'/>
+      <col style='width: 7%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
       <th class='th_bs'>제목</th>
+      <th class='th_bs'>추천수</th>
+      <th class='th_bs'>비추천</th>
     </tr>
    
     <tr th:if="${list != null and list.size() > 0}" th:each="boardVO, status:${list}" 
@@ -64,7 +68,12 @@
                   th:text="|${boardVO.bcontent.substring(0, 160) }...|"></span>
         <span th:if="${boardVO.bcontent.length() <= 160 }" 
                   th:text="|${boardVO.bcontent}|"></span>
-        
+      </td>
+      <td class='td_left'>
+        <span th:text="${boardVO.goodcnt}"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="${boardVO.badcnt}"></span>
       </td>
     </tr>
 
