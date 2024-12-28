@@ -12,11 +12,8 @@
   </div>
 
   <aside class="aside_right">
-    <span th:if="${session.grade == 'admin'}">
-      <a th:href="@{|/board/create?boardno=${boardVO?.boardno}|}">등록</a>
-      <span class="menu_devide">│</span>    
-    </span>
-    
+    <a th:href="@{|/board/create?boardno=${boardVO?.boardno}|}">등록</a>
+    <span class="menu_devide">│</span>   
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>    
     <a th:href="@{|./list_by_boardno_search_paging?boardno=${boardVO?.boardno }&board_cate=${board_cate }&now_page=${now_page}|}">목록</a>    
