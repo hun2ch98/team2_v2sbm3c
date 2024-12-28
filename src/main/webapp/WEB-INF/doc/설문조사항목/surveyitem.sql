@@ -10,7 +10,7 @@ CREATE TABLE surveyitem (
     surveyno    NUMBER(10)      NOT NULL,
     item_seq    NUMBER(5)       NOT NULL,
     item        VARCHAR2(200)   NOT NULL,
-    item_cnt    NUMBER(7)       NULL,
+    item_cnt    NUMBER(7)           NULL,
     FOREIGN KEY (surveyno) REFERENCES survey (surveyno)
 );
 
