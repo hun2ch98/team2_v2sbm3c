@@ -1,20 +1,18 @@
 <div th:fragment="list_search_fragment">
   <div style="text-align: right; clear: both;">
-    <form name="frm_search" method="get" action="/grade/list_by_gradeno_search_paging">
+    <form name="frm_search" method="get" th:action="@{/grade/list_by_gradeno_search_paging}">
     
-      <input type="hidden" name="now_page" th:value="${now_page}" >
-      
-      <input type="text" name="word" id="word" th:value="${word}" >
-      
-      <button type='submit' class='btn btn-secondary btn-sm' 
-              style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
-              
-      <span th:if="${grade_name != null and grade_name != ''}">
-        <button type='button' class='btn btn-secondary btn-sm' 
-                style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
+    <input type="hidden" name="gradeno" id="gradeno" th:value="${gradeVO.gradeno}">
+    
+    <input type="text" name="grade_name" id="grade_name" th:value="${grade_name != null ? grade_name : ''}" placeholder="검색어를 입력하세요">
+    
+    <button type='submit' class='btn btn-secondary btn-sm' style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
+    
+    <span th:if="${grade_name != null and grade_name != ''}">
+        <button type='button' class='btn btn-secondary btn-sm' style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
                 th:onclick="|location.href='/grade/list_by_gradeno_search_paging?gradeno=${gradeVO.gradeno}'|">검색 취소</button>
-      </span>
-      
-    </form>
+    </span>
+</form>
+
   </div>
 </div>
