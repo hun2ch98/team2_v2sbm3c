@@ -186,50 +186,8 @@ public class GradeCont {
     return "/grade/list_by_gradeno_search_paging"; 
   }
   
-//  /**
-//   * 등급별 목록 + 검색 + 페이징 + Grid
-//   * @param session
-//   * @param model
-//   * @param evo_criteria
-//   * @param now_page
-//   * @return
-//   */
-//  @GetMapping(value = "/list_by_gradeno_search_paging_grid")
-//  public String list_by_gradeno_search_paging_grid(HttpSession session,
-//      Model model,
-//      @RequestParam(name = "evo_criteria", defaultValue = "1") String evo_criteria,
-//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-//    
-//    evo_criteria = Tool.checkNull(evo_criteria).trim();
-//    
-//    HashMap<String, Object> map = new HashMap<>();
-//    map.put("evo_criteria", evo_criteria);
-//    map.put("now_page", now_page);
-//    
-//    ArrayList<GradeVO> list = this.gradeProc.list_by_gradeno_search_paging(map);
-//    model.addAttribute("list", list);
-//    model.addAttribute("evo_criteria", evo_criteria);
-//    
-//    int search_count = this.gradeProc.count_by_gradeno_search(map);
-//    String paging = this.gradeProc.pagingBox(now_page, evo_criteria, "/grade/list_by_gradeno", search_count, Grade.RECORD_PER_PAGE, Grade.PAGE_PER_BLOCK);
-//    model.addAttribute("paging", paging);
-//    model.addAttribute("now_page", now_page);
-//    model.addAttribute("search_count", search_count);
-//    
-//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-//    int no = search_count - ((now_page - 1) * Grade.RECORD_PER_PAGE);
-//    model.addAttribute("no", no);
-//
-//    // /templates/grade/list_by_gradeno_search_paging_grid.html
-//    return "/board/list_by_gradeno_search_paging_grid";
-//  }
-  
   /**
    * 등급 조회
-   * @param model
-   * @param gradeno
-   * @param word
-   * @param now_page
    * @return
    */
   @GetMapping(value = "/read")
@@ -253,12 +211,6 @@ public class GradeCont {
   
   /**
    * 등급 수정 폼
-   * @param session
-   * @param model
-   * @param gradeno
-   * @param word
-   * @param now_page
-   * @param ra
    * @return
    */
   @GetMapping(value = "/update_text")
@@ -281,12 +233,6 @@ public class GradeCont {
   
   /**
    * 등급 수정 처리
-   * @param session
-   * @param model
-   * @param gradeVO
-   * @param ra
-   * @param search_word
-   * @param now_page
    * @return
    */
   @PostMapping(value = "/update_text")
