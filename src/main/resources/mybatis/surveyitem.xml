@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.surveyitem.SurveyitemDAOInter">
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.surveyitem.ItemVO">
+    INSERT INTO surveyitem(itemno, surveyno, item_seq, item, item_cnt)
+    VALUES (surveyitem_seq.nextval, #{surveyno}, #{item_seq}, #{item}, #{item_cnt})
+  </insert>
+
+  <!-- 일반적인 조회 -->
+  <select id="read" resultType="dev.mvc.surveyitem.ItemVO" parameterType="int">
+    SELECT itemno, surveyno, item_seq, item, item_cnt
+    FROM surveyitem
+    WHERE itemno = #{itemno}
+  </select>
+  
+  <!-- 수정 -->
+  <update id="update" parameterType="dev.mvc.surveyitem.ItemVO">
+    UPDATE surveyitem
+    SET surveyno = #{surveyno}, item_seq = #{item_seq}, item = #{item}, item_cnt = #{item_cnt}
+    WHERE itemno = #{itemno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM surveyitem WHERE itemno=#{itemno}
+  </delete>
+  
+</mapper>
