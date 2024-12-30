@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+
+    목록 조회
+
+    검색
+
+  </div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{|/weather/create?weatherno=${weatherVO?.weatherno}|}">등록</a>
+      <span class="menu_devide">│</span>    
+    </span>
+    
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>    
+    <a th:href="@{|./list_by_weatherno_search_paging?weatherno=${weatherVO?.weatherno }&now_page=${now_page}|}">목록</a>    
+  </aside> 
+
+  <div th:replace="~{/weather/list_search_com :: list_search_fragment}"></div>
+     
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 90%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>파일</th>
+      <th class='th_bs'>제목</th>
+    </tr>
+   
+    <tr th:if="${list != null and list.size() > 0}" th:each="weatherVO, status:${list}" 
+         th:attr="onclick=|location.href='/weather/read?weatherno=${weatherVO.weatherno}&now_page=${now_page}'|"
+         style="cursor: pointer; height: 90px;">
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <div th:if="${weatherVO.file1.endsWith('jpg') or weatherVO.file1.endsWith('png')  or weatherVO.file1.endsWith('gif')}">
+          <img th:src="@{|/weather/storage/${weatherVO.thumb1}|}" style="width: 120px; height: 90px;">
+        </div>
+        
+        <!--% 이미지가 이닌 파일은 파일명만 출력 %-->
+        <div th:if="${((weatherVO.file1.endsWith('jpg') or weatherVO.file1.endsWith('png')  or weatherVO.file1.endsWith('gif')) == false) and (weatherVO.size1 > 0)}">
+          <span th:text="${weatherVO.file1}"></span>
+        </div>
+
+        <!--% 파일이 없는 경우 기본 이미지 출력 %-->
+        <div th:if="${weatherVO.size1 == 0}">
+          <img src="/weather/images/none1.png" style="width: 120px; height: 90px;">
+        </div>
+        
+      </td>
+      </td>
+      <td class='td_left'>
+        <span th:text="${weatherVO.type}" style="font-weight: bold;"></span><br>
+
+        <span th:if="${weatherVO.explan.length() > 160 }" 
+                  th:text="|${weatherVO.explan.substring(0, 160) }...|"></span>
+        <span th:if="${weatherVO.explan.length() <= 160 }" 
+                  th:text="|${weatherVO.explan}|"></span>
+        
+      </td>
+    </tr>
+
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    </tr> 
+
+  </table>
+   
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+  
+</div>
+</html>
