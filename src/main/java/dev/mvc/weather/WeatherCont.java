@@ -68,7 +68,7 @@ public class WeatherCont {
   }
   
   /**
-   * 감정 생성
+   * 날씨 생성
    * @param WeatherVO
    * @param emono
    * @return
@@ -188,7 +188,7 @@ public class WeatherCont {
   }
   
 //  /**
-//   * 감정 목록(회원)
+//   * 날씨 목록(회원)
 //   * @param model
 //   * @param emono
 //   * @param now_page
@@ -211,7 +211,7 @@ public class WeatherCont {
 //        
 //        ArrayList<WeatherVO> list = this.WeatherProc.list_by_emono(emono);
 //        if (list == null || list.isEmpty()) {
-//            model.addAttribute("message", "등록된 감정이 없습니다.");
+//            model.addAttribute("message", "등록된 날씨이 없습니다.");
 //        } else {
 //            model.addAttribute("list", list);
 //        }
@@ -342,7 +342,7 @@ public class WeatherCont {
 
   
   /**
-   * 감정 조회 
+   * 날씨 조회 
    * @return
    */
   @GetMapping(value = "/read")
@@ -388,7 +388,7 @@ public class WeatherCont {
   }
   
   /**
-   * 감정 수정 폼 
+   * 날씨 수정 폼 
    */
   @GetMapping(value = "/update_text")
   public String update_text(HttpSession session, 
@@ -424,7 +424,7 @@ public class WeatherCont {
   }
 
   /**
-   * 감정 수정 처리
+   * 날씨 수정 처리
    * @return
    */
   @PostMapping(value = "/update_text")
@@ -452,9 +452,9 @@ public class WeatherCont {
           int cnt = this.weatherProc.update_text(weatherVO); // 글 수정
           if (cnt > 0) { // 수정 성공
               ra.addAttribute("weatherno", weatherVO.getWeatherno());
-              return "redirect:/weather/read"; // 성공 시 감정 조회 페이지로 이동
+              return "redirect:/weather/read"; // 성공 시 날씨 조회 페이지로 이동
           } else { // 수정 실패
-              ra.addFlashAttribute("message", "감정 수정에 실패했습니다.");
+              ra.addFlashAttribute("message", "날씨 수정에 실패했습니다.");
               ra.addFlashAttribute("code", "update_fail");
               return "redirect:/weather/msg"; // 실패 시 msg 페이지로 이동
           }
