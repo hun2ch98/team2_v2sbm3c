@@ -3,7 +3,10 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
 
-  <div class='title_line'>회원(관리자 전용)</div>
+  <div class='title_line'>
+    회원(관리자 전용)
+    <span th:text="|>(${search_count} 건)|" class="title_line_text"></span>
+  </div>
 
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
