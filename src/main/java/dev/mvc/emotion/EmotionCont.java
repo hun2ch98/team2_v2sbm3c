@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dev.mvc.board.Board;
 import dev.mvc.diary.DiaryProcInter;
 import dev.mvc.diary.DiaryVO;
 import dev.mvc.member.MemberProcInter;
@@ -188,109 +187,112 @@ public class EmotionCont {
 
   }
   
-  /**
-   * 감정 목록(회원)
-   * @param model
-   * @param emono
-   * @param now_page
-   * @return
-   */
-  @GetMapping(value = "/list_by_emono")
-  public String list_by_emono(
-          Model model,
-          @RequestParam(name = "emono", defaultValue = "0") int emono,
-          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-//    if (this.diaryProc.isdiary(session)) {  // 회원 조회
-        
-        int record_per_page = 10; 
-    
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("startRow", (now_page - 1) * record_per_page + 1);
-        map.put("endRow", now_page * record_per_page);
-        map.put("emono", emono);
-        
-        ArrayList<EmotionVO> list = this.emotionProc.list_by_emono(emono);
-        if (list == null || list.isEmpty()) {
-            model.addAttribute("message", "등록된 감정이 없습니다.");
-        } else {
-            model.addAttribute("list", list);
-        }
-  
-        model.addAttribute("now_page", now_page);
-        return "/emotion/list_by_emono";
-
-    //  } else {
-    //  return "redirect:/diary/login_cookie_need";
-    //}
-    }
-
-
-//  
 //  /**
-//   * 유형 3
-//   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9091/contents/list_by_cateno?cateno=5
-//   * http://localhost:9091/contents/list_by_cateno?cateno=6
-//   * 
+//   * 감정 목록(회원)
+//   * @param model
+//   * @param emono
+//   * @param now_page
 //   * @return
 //   */
-//  @GetMapping(value = "/list_by_emono_search_paging")
-//  public String list_by_emono_search_paging(
-//      HttpSession session, 
-//      Model model, 
-//      @ModelAttribute("emotionVO") EmotionVO emotionVO,
-//      @RequestParam(name = "emono", defaultValue = "0") int emono,
-//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//  @GetMapping(value = "/list_by_emono")
+//  public String list_by_emono(
+//          Model model,
+//          @RequestParam(name = "emono", defaultValue = "0") int emono,
+//          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 //
-//      int record_per_page = 10;
-//      int startRow = (now_page - 1) * record_per_page + 1;
-//      int endRow = now_page * record_per_page;
+////    if (this.diaryProc.isdiary(session)) {  // 회원 조회
+//        
+//        int record_per_page = 10; 
+//    
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("startRow", (now_page - 1) * record_per_page + 1);
+//        map.put("endRow", now_page * record_per_page);
+//        map.put("emono", emono);
+//        
+//        ArrayList<EmotionVO> list = this.emotionProc.list_by_emono(emono);
+//        if (list == null || list.isEmpty()) {
+//            model.addAttribute("message", "등록된 감정이 없습니다.");
+//        } else {
+//            model.addAttribute("list", list);
+//        }
+//  
+//        model.addAttribute("now_page", now_page);
+//        return "/emotion/list_by_emono";
 //
+//    //  } else {
+//    //  return "redirect:/diary/login_cookie_need";
+//    //}
+//    }
+//
+
+  
+  /**
+   * 유형 3
+   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9091/contents/list_by_cateno?cateno=5
+   * http://localhost:9091/contents/list_by_cateno?cateno=6
+   * 
+   * @return
+   */
+  @GetMapping(value = "/list_by_emono_search_paging")
+  public String list_by_emono_search_paging(
+      HttpSession session, 
+      Model model, 
+      @ModelAttribute("emotionVO") EmotionVO emotionVO,
+      @RequestParam(name = "emono", defaultValue = "0") int emono,
+      @RequestParam(name = "type", defaultValue = "") String type,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+
+      int record_per_page = 10;
+      int startRow = (now_page - 1) * record_per_page + 1;
+      int endRow = now_page * record_per_page;
+
 //      int diaryno = (int) session.getAttribute("diaryno");
 //      DiaryVO diaryVO = this.diaryProc.read(diaryno);
-////      if (diaryVO == null) {
-////          diaryVO = new DiaryVO();
-////          diaryVO.setDiaryno(0);
-////          model.addAttribute("message", "일기 정보가 없습니다.");
-////      }
-//      int memberno = (int) session.getAttribute("memberno");
-//      MemberVO memberVO = this.memberProc.read(memberno);
-//      if (memberVO == null) {
-//          memberVO = new MemberVO();
-//          memberVO.setMemberno(0);
-//          model.addAttribute("message", "회원 정보가 없습니다.");
+//      if (diaryVO == null) {
+//          diaryVO = new DiaryVO();
+//          diaryVO.setDiaryno(0);
+//          model.addAttribute("message", "일기 정보가 없습니다.");
 //      }
-////      model.addAttribute("diaryVO", diaryVO);
-//      model.addAttribute("memberVO", memberVO);
-//      model.addAttribute("emono", emono);
-//      model.addAttribute("now_page", now_page);
-//
-//      HashMap<String, Object> map = new HashMap<>();
-////      map.put("diaryno", diaryno);
-//      map.put("now_page", now_page);
-//      map.put("startRow", startRow);
-//      map.put("endRow", endRow);
-//
-//      ArrayList<EmotionVO> list = this.emotionProc.list_by_emono_search_paging(map);
-//      if (list == null || list.isEmpty()) {
-//          model.addAttribute("message", "게시물이 없습니다.");
-//      } else {
-//          model.addAttribute("list", list);
-//      }
-//
-////      int search_count = this.emotionProc.count_by_emono_search(map);
-////      String paging = this.emotionProc.pagingBox(diaryno, b, now_page, "/emotion/list_by_emono_search_paging", search_count,
-////    		  Emotion.RECORD_PER_PAGE, Emotion.PAGE_PER_BLOCK);
-////      model.addAttribute("paging", paging);
-////      model.addAttribute("now_page", now_page);
-////      model.addAttribute("search_count", search_count);
-//
-//
-////      int no = search_count - ((now_page - 1) * Emotion.RECORD_PER_PAGE);
-////      model.addAttribute("no", no);
-//
-//      return "/emotion/list_by_emono_search_paging"; // /templates/emotion/list_by_emono_search_paging.html
-//  }
+      int memberno = (int) session.getAttribute("memberno");
+      MemberVO memberVO = this.memberProc.read(memberno);
+      if (memberVO == null) {
+          memberVO = new MemberVO();
+          memberVO.setMemberno(0);
+          model.addAttribute("message", "회원 정보가 없습니다.");
+      }
+//      model.addAttribute("diaryVO", diaryVO);
+      model.addAttribute("memberVO", memberVO);
+      model.addAttribute("emono", emono);
+      model.addAttribute("now_page", now_page);
+
+      HashMap<String, Object> map = new HashMap<>();
+//      map.put("diaryno", diaryno);
+      map.put("memberno", memberno);
+      map.put("now_page", now_page);
+      map.put("startRow", startRow);
+      map.put("endRow", endRow);
+
+      ArrayList<EmotionVO> list = this.emotionProc.list_by_emono_search_paging(map);
+      if (list == null || list.isEmpty()) {
+          model.addAttribute("message", "게시물이 없습니다.");
+      } else {
+          model.addAttribute("list", list);
+      }
+
+      int search_count = this.emotionProc.count_by_emono_search(map);
+//      String type = emotionVO.getType(); // EmotionVO에서 type 값을 가져옴
+      String paging = this.emotionProc.pagingBox(memberno, now_page, type, "/emotion/list_by_emono_search_paging", search_count,
+    		  Emotion.RECORD_PER_PAGE, Emotion.PAGE_PER_BLOCK);
+      model.addAttribute("paging", paging);
+      model.addAttribute("now_page", now_page);
+      model.addAttribute("search_count", search_count);
+
+
+      int no = search_count - ((now_page - 1) * Emotion.RECORD_PER_PAGE);
+      model.addAttribute("no", no);
+
+      return "/emotion/list_by_emono_search_paging"; // /templates/emotion/list_by_emono_search_paging.html
+  }
 
 //  /**
 //   * 카테고리별 목록 + 검색 + 페이징 + Grid
@@ -583,12 +585,12 @@ public class EmotionCont {
    */
   @GetMapping(value = "/delete")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
-                               @RequestParam(name="diaryno", defaultValue="0") int diaryno, 
+                               @RequestParam(name="memberno", defaultValue="0") int memberno, 
                                @RequestParam(name="emono", defaultValue="0") int emono, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-//    if (this.diaryProc.isdiary(session)) { // 로그인한경우
-      model.addAttribute("diaryno", diaryno);
+    if (this.memberProc.isMember(session)) { // 로그인한경우
+      model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
       
@@ -598,15 +600,15 @@ public class EmotionCont {
       EmotionVO emotionVO = this.emotionProc.read(emono);
       model.addAttribute("emotionVO", emotionVO);
 
-      DiaryVO diaryVO = this.diaryProc.read(emotionVO.getDiaryno());
-      model.addAttribute("diaryVO", diaryVO);
+      MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
       
       return "/emotion/delete"; // forward
       
-//    } else {
-//      ra.addAttribute("url", "/diary/login_cookie_need");
-//      return "redirect:/emotion/msg"; 
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/emotion/msg"; 
+    }
 
   }
   
@@ -617,7 +619,7 @@ public class EmotionCont {
    */
   @PostMapping(value = "/delete")
   public String delete(RedirectAttributes ra,
-      @RequestParam(name="diaryno", defaultValue="0") int diaryno, 
+      @RequestParam(name="memberno", defaultValue="0") int memberno, 
       @RequestParam(name="emono", defaultValue="0") int emono, 
       @RequestParam(name="word", defaultValue="") String word, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
@@ -625,14 +627,14 @@ public class EmotionCont {
     // 파일 삭제 시작
     // -------------------------------------------------------------------
     // 삭제할 파일 정보를 읽어옴.
-//	EmotionVO emotionVO_read = emotionProc.read(emono);
-//        
-//    String file1saved = emotionVO_read.getFile1saved();
-//    String thumb1 = emotionVO_read.getThumb1();
-//    
-//    String uploadDir = emotion.getUploadDir();
-//    Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
-//    Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
+    EmotionVO emotionVO_read = emotionProc.read(emono);
+        
+    String file1saved = emotionVO_read.getFile1saved();
+    String thumb1 = emotionVO_read.getThumb1();
+    
+    String uploadDir = Emotion.getUploadDir();
+    Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
+    Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
     // -------------------------------------------------------------------
     // 파일 삭제 종료
     // -------------------------------------------------------------------
@@ -647,10 +649,10 @@ public class EmotionCont {
     // 페이지수를 4 -> 3으로 감소 시켜야함, 마지막 페이지의 마지막 레코드 삭제시 나머지는 0 발생
     
     HashMap<String, Object> map = new HashMap<String, Object>();
-    map.put("diaryno", diaryno);
+    map.put("memberno", memberno);
     map.put("word", word);
     
-//    if (this.emotionProc.list_by_cateno_search_count(map) % emotion.RECORD_PER_PAGE == 0) {
+//    if (this.boardProc.list_by_cateno_search_count(map) % Board.RECORD_PER_PAGE == 0) {
 //      now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
 //      if (now_page < 1) {
 //        now_page = 1; // 시작 페이지
@@ -658,14 +660,13 @@ public class EmotionCont {
 //    }
     // -------------------------------------------------------------------------------------
 
-    ra.addAttribute("diaryno", diaryno);
+    ra.addAttribute("memberno", memberno);
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
     
-    return "redirect:/emotion/list_by_emono_search_paging";    
+    return "redirect:/emotion/list_by_emono";    
     
   }   
 
 
 }
-

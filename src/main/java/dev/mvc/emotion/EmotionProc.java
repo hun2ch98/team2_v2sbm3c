@@ -76,7 +76,7 @@ public class EmotionProc implements EmotionProcInter{
     }
 
     @Override
-    public String pagingBox(int memberno, int now_page, String board_cate, String list_file, int search_count,
+    public String pagingBox(int memberno, int now_page, String type, String list_file, int search_count,
             int record_per_page, int page_per_block) {
         int total_page = (int) Math.ceil((double) search_count / record_per_page);
         int total_grp = (int) Math.ceil((double) total_page / page_per_block);
@@ -97,7 +97,7 @@ public class EmotionProc implements EmotionProcInter{
         int _now_page = (now_grp - 1) * page_per_block;
         if (now_grp > 1) {
             str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
-                    "&board_cate=" + board_cate + "&now_page=" + _now_page + "'>이전</a></span>");
+                    "&type=" + type + "&now_page=" + _now_page + "'>이전</a></span>");
         }
 
         // 현재 그룹의 페이지 링크
@@ -107,7 +107,7 @@ public class EmotionProc implements EmotionProcInter{
                 str.append("<span class='span_box_2'>" + i + "</span>");
             } else {
                 str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
-                        "&board_cate=" + board_cate + "&now_page=" + i + "'>" + i + "</a></span>");
+                        "&type=" + type + "&now_page=" + i + "'>" + i + "</a></span>");
             }
         }
 
@@ -115,7 +115,7 @@ public class EmotionProc implements EmotionProcInter{
         _now_page = now_grp * page_per_block + 1;
         if (now_grp < total_grp) {
             str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
-                    "&board_cate=" + board_cate + "&now_page=" + _now_page + "'>다음</a></span>");
+                    "&type=" + type + "&now_page=" + _now_page + "'>다음</a></span>");
         }
 
         str.append("</div>");
