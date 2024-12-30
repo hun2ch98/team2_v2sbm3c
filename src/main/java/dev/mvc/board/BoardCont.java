@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
-import dev.mvc.board.BoardVOMenu;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -38,10 +38,10 @@ public class BoardCont {
   private MemberProcInter memberProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
-  public int record_per_page = 10;
+  public int record_per_page = 8;
 
   /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
-  public int page_per_block = 10;
+  public int page_per_block = 8;
 
   /** 페이징 목록 주소 */
   private String list_file_name = "/board/list_by_boardno";
@@ -92,7 +92,7 @@ public class BoardCont {
                        @ModelAttribute("boardVO") BoardVO boardVO,
                        RedirectAttributes ra) {
     
-//    if (memberProc.isMember(session)) { // 회원 로그인한경우
+    if (memberProc.isMember(session)) { // 회원 로그인한경우
 
         String file1 = ""; 
         String file1saved = ""; 
@@ -134,9 +134,9 @@ public class BoardCont {
             ra.addFlashAttribute("code", "create_fail");
             return "redirect:/board/msg"; 
         }
-//    } else { // 로그인 실패 한 경우
-//      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-//    }
+    } else { // 로그인 실패 한 경우
+      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
+    }
   }
   
   /**
@@ -149,7 +149,7 @@ public class BoardCont {
 //    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
-//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
       ArrayList<BoardVO> list = this.boardProc.list_all(); // 모든 목록
 
       // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
@@ -169,9 +169,9 @@ public class BoardCont {
       model.addAttribute("list", list);
       return "/board/list_all";
 
-//    } else {
-//      return "redirect:/member/login_cookie_need";
-//    }
+    } else {
+      return "redirect:/member/login_cookie_need";
+    }
 
   }
   
@@ -216,9 +216,7 @@ public class BoardCont {
   
   /**
    * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9091/contents/list_by_cateno?cateno=5
-   * http://localhost:9091/contents/list_by_cateno?cateno=6
-   * 
+   * 카테고리별 목록 + 검색 + 페이징 
    * @return
    */
   @GetMapping(value = "/list_by_boardno_search_paging")
@@ -264,7 +262,7 @@ public class BoardCont {
       }
 
       int search_count = this.boardProc.count_by_boardno_search(map);
-      String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
+      String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno_search_paging", search_count,
           Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
       model.addAttribute("board_cate", board_cate);
@@ -282,47 +280,47 @@ public class BoardCont {
    * 카테고리별 목록 + 검색 + 페이징 + Grid
    * @return
    */
-  @GetMapping(value = "/list_by_boardno_search_paging_grid")
-  public String list_by_boardno_search_paging_grid(HttpSession session, 
-      Model model, 
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "board_cate", defaultValue = "1") String board_cate,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-
-//  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
-//  model.addAttribute("menu", menu);
-
-    MemberVO memberVO = this.memberProc.read(memberno);
-    model.addAttribute("memberVO", memberVO);
-
-    board_cate = Tool.checkNull(board_cate).trim();
-
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    map.put("board_cate", board_cate);
-    map.put("now_page", now_page);
-
-    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
-    model.addAttribute("list", list);
-    
-    model.addAttribute("board_cate", board_cate);
-
-    int search_count = this.boardProc.count_by_boardno_search(map);
-    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno", search_count,
-        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
-    model.addAttribute("paging", paging);
-    model.addAttribute("now_page", now_page);
-
-    model.addAttribute("search_count", search_count);
-
-    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
-    model.addAttribute("no", no);
-
-    // /templates/contents/list_by_cateno_search_paging_grid.html
-    return "/board/list_by_boardno_search_paging_grid";
-  }
+//  @GetMapping(value = "/list_by_boardno_search_paging_grid")
+//  public String list_by_boardno_search_paging_grid(HttpSession session, 
+//      Model model, 
+//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+//      @RequestParam(name = "board_cate", defaultValue = "1") String board_cate,
+//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//
+//
+////  ArrayList<BoardVOMenu> menu = this.boardProc.menu();
+////  model.addAttribute("menu", menu);
+//
+//    MemberVO memberVO = this.memberProc.read(memberno);
+//    model.addAttribute("memberVO", memberVO);
+//
+//    board_cate = Tool.checkNull(board_cate).trim();
+//
+//    HashMap<String, Object> map = new HashMap<>();
+//    map.put("memberno", memberno);
+//    map.put("board_cate", board_cate);
+//    map.put("now_page", now_page);
+//
+//    ArrayList<BoardVO> list = this.boardProc.list_by_boardno_search_paging(map);
+//    model.addAttribute("list", list);
+//    
+//    model.addAttribute("board_cate", board_cate);
+//
+//    int search_count = this.boardProc.count_by_boardno_search(map);
+//    String paging = this.boardProc.pagingBox(memberno, now_page, board_cate, "/board/list_by_boardno_search_paging", search_count,
+//        Board.RECORD_PER_PAGE, Board.PAGE_PER_BLOCK);
+//    model.addAttribute("paging", paging);
+//    model.addAttribute("now_page", now_page);
+//
+//    model.addAttribute("search_count", search_count);
+//
+//    // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//    int no = search_count - ((now_page - 1) * Board.RECORD_PER_PAGE);
+//    model.addAttribute("no", no);
+//
+//    // /templates/contents/list_by_cateno_search_paging_grid.html
+//    return "/board/list_by_boardno_search_paging_grid";
+//  }
 
   
   /**
@@ -331,42 +329,29 @@ public class BoardCont {
    */
   @GetMapping(value = "/read")
   public String read(Model model, 
-      @RequestParam(name="boardno", defaultValue = "0") int boardno, 
-      @RequestParam(name="word", defaultValue = "") String word, 
-      @RequestParam(name="now_page", defaultValue = "1") int now_page) {
-    
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
+                     @RequestParam(name = "boardno", defaultValue = "0") int boardno, 
+                     @RequestParam(name = "board_cate", defaultValue = "") String board_cate, 
+                     @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+      BoardVO boardVO = this.boardProc.read(boardno);
+      if (boardVO == null) {
+          model.addAttribute("errorMessage", "해당 게시글을 찾을 수 없습니다.");
+          return "errorPage"; // 적절한 에러 페이지
+      }
 
-    BoardVO boardVO = this.boardProc.read(boardno);
+      long size1 = boardVO.getSize1();
+      String size1_label = Tool.unit(size1);
+      boardVO.setSize1_label(size1_label);
 
-//    String title = contentsVO.getTitle();
-//    String content = contentsVO.getContent();
-//    
-//    title = Tool.convertChar(title);  // 특수 문자 처리
-//    content = Tool.convertChar(content); 
-//    
-//    contentsVO.setTitle(title);
-//    contentsVO.setContent(content);  
+      MemberVO memberVO = this.memberProc.read(boardVO.getMemberno());
+      model.addAttribute("boardVO", boardVO);
+      model.addAttribute("memberVO", memberVO);
 
-    long size1 = boardVO.getSize1();
-    String size1_label = Tool.unit(size1);
-    boardVO.setSize1_label(size1_label);
+      model.addAttribute("board_cate", board_cate);
+      model.addAttribute("now_page", now_page);
 
-    model.addAttribute("boardVO", boardVO);
-
-    MemberVO memberVO = this.memberProc.read(boardVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
-
-    // 조회에서 화면 하단에 출력
-    // ArrayList<ReplyVO> reply_list = this.replyProc.list_contents(contentsno);
-    // mav.addObject("reply_list", reply_list);
-
-    model.addAttribute("word", word);
-    model.addAttribute("now_page", now_page);
-
-    return "/board/read";
+      return "/board/read";
   }
+
 
   /**
    * 게시글 수정 폼 
@@ -376,15 +361,15 @@ public class BoardCont {
       Model model, 
       @RequestParam(name="boardno", defaultValue="") int boardno, 
       RedirectAttributes ra, 
-      @RequestParam(name="word", defaultValue="") String word,
+      @RequestParam(name="board_cate", defaultValue="") String board_cate,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
 //    ArrayList<CateVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
 
-    model.addAttribute("word", word);
+    model.addAttribute("board_cate", board_cate);
     model.addAttribute("now_page", now_page);
 
-//    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
+    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
     
       BoardVO boardVO = this.boardProc.read(boardno);
       model.addAttribute("boardVO", boardVO);
@@ -396,11 +381,11 @@ public class BoardCont {
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
-//    } else {
-////      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-////      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
-//      return "member/login_cookie_need";
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+//      return "redirect:/board/msg"; // @GetMapping(value = "/read")
+      return "member/login_cookie_need";
+    }
 
   }
 
@@ -414,11 +399,11 @@ public class BoardCont {
           Model model, 
           @ModelAttribute("boardVO") BoardVO boardVO, 
           RedirectAttributes ra,
-          @RequestParam(name = "search_word", defaultValue = "") String search_word, 
+          @RequestParam(name = "board_cate", defaultValue = "") String board_cate, 
           @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
 
       // Redirect 시 검색어 및 현재 페이지를 유지하기 위한 파라미터 추가
-      ra.addAttribute("word", search_word);
+      ra.addAttribute("board_cate", board_cate);
       ra.addAttribute("now_page", now_page);
 
       // bcontent 값 검증
@@ -457,12 +442,12 @@ public class BoardCont {
   @GetMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, 
          @RequestParam(name="boardno", defaultValue="0") int boardno,
-         @RequestParam(name="word", defaultValue="") String word, 
+         @RequestParam(name="board_cate", defaultValue="") String board_cate, 
          @RequestParam(name="now_page", defaultValue="1") int now_page) {
 //    ArrayList<CateVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
     
-    model.addAttribute("word", word);
+    model.addAttribute("board_cate", board_cate);
     model.addAttribute("now_page", now_page);
     
     BoardVO boardVO = this.boardProc.read(boardno);
@@ -484,10 +469,10 @@ public class BoardCont {
   @PostMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,
                             @ModelAttribute("boardVO") BoardVO boardVO,
-                            @RequestParam(name="word", defaultValue="") String word, 
+                            @RequestParam(name="board_cate", defaultValue="") String board_cate, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
-//    if (this.memberProc.isMember(session)) {
+    if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       BoardVO boardVO_old = boardProc.read(boardVO.getBoardno());
 
@@ -546,14 +531,14 @@ public class BoardCont {
       this.boardProc.update_file(boardVO); // Oracle 처리
       ra.addAttribute ("boardno", boardVO.getBoardno());
       ra.addAttribute("memberno", boardVO.getMemberno());
-      ra.addAttribute("word", word);
+      ra.addAttribute("board_cate", board_cate);
       ra.addAttribute("now_page", now_page);
       
       return "redirect:/board/read";
-//    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); 
-//      return "redirect:/board/post2get"; // GET
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need"); 
+      return "redirect:/board/post2get"; // GET
+    }
   }
   
   /**
@@ -566,11 +551,11 @@ public class BoardCont {
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
                                @RequestParam(name="memberno", defaultValue="0") int memberno, 
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
-                               @RequestParam(name="word", defaultValue="") String word, 
+                               @RequestParam(name="board_cate", defaultValue="") String board_cate, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-//    if (this.memberProc.isMember(session)) { // 로그인한경우
+    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
-      model.addAttribute("word", word);
+      model.addAttribute("board_cate", board_cate);
       model.addAttribute("now_page", now_page);
       
 //      ArrayList<CateVOMenu> menu = this.cateProc.menu();
@@ -584,10 +569,10 @@ public class BoardCont {
       
       return "/board/delete"; // forward
       
-//    } else {
-//      ra.addAttribute("url", "/member/login_cookie_need");
-//      return "redirect:/board/msg"; 
-//    }
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/board/msg"; 
+    }
 
   }
   
@@ -600,7 +585,7 @@ public class BoardCont {
   public String delete(RedirectAttributes ra,
       @RequestParam(name="memberno", defaultValue="0") int memberno, 
       @RequestParam(name="boardno", defaultValue="0") int boardno, 
-      @RequestParam(name="word", defaultValue="") String word, 
+      @RequestParam(name="board_cate", defaultValue="") String board_cate, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
     // -------------------------------------------------------------------
     // 파일 삭제 시작
@@ -629,7 +614,7 @@ public class BoardCont {
     
     HashMap<String, Object> map = new HashMap<String, Object>();
     map.put("memberno", memberno);
-    map.put("word", word);
+    map.put("board_cate", board_cate);
     
 //    if (this.boardProc.list_by_cateno_search_count(map) % Board.RECORD_PER_PAGE == 0) {
 //      now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
@@ -640,12 +625,40 @@ public class BoardCont {
     // -------------------------------------------------------------------------------------
 
     ra.addAttribute("memberno", memberno);
-    ra.addAttribute("word", word);
+    ra.addAttribute("board_cate", board_cate);
     ra.addAttribute("now_page", now_page);
     
     return "redirect:/board/list_by_boardno_search_paging";    
     
   }   
+  
+  @GetMapping(value = "/update_goodcnt/{boardno}")
+  public String update_goodcnt(Model model, @PathVariable("boardno") int boardno,
+      @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page, RedirectAttributes ra) {
+    this.boardProc.update_goodcnt(boardno);
+
+    ra.addAttribute("boardno", boardno);
+    ra.addAttribute("board_cate", board_cate); // redirect로 데이터 전송
+    ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
+
+    return "redirect:/board/read"; 
+  }
+
+  
+  @GetMapping(value = "/update_badcnt/{boardno}")
+  public String update_badcnt(Model model, @PathVariable("boardno") int boardno,
+      @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page, RedirectAttributes ra) {
+    this.boardProc.update_badcnt(boardno);
+
+    ra.addAttribute("boardno", boardno);
+    ra.addAttribute("board_cate", board_cate); // redirect로 데이터 전송
+    ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
+
+    return "redirect:/board/read"; 
+  }
+
 
 
 }

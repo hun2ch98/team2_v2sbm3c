@@ -16,6 +16,7 @@ public class SurveyVO {
 /**
  * CREATE TABLE survey (
   surveyno      NUMBER(10)    NOT NULL,
+  memberno        NUMBER(10)      NOT NULL,
   topic         VARCHAR(100)  NOT NULL,
   sdate         VARCHAR(10)       NULL,
   edate         VARCHAR(10)       NULL,
@@ -24,12 +25,16 @@ public class SurveyVO {
   poster          VARCHAR(100)    NULL,
   poster_saved  VARCHAR(100)    NULL,
   poster_size     NUMBER(10)        NULL,
-  poster_thumb  VARCHAR(100)    NULL
+  poster_thumb  VARCHAR(100)    NULL,
+  FOREIGN KEY (memberno)  REFERENCES member (memberno)
   );
  */
   
   /** 설문조사 번호 */
   private int surveyno;
+  
+  /** 회원 번호 */
+  private int memberno;
   
   /** 설문조사 주제 */
   @NotEmpty(message="주제 입력은 필수 사항입니다.")
@@ -62,13 +67,13 @@ public class SurveyVO {
   /** 메인 이미지 크기 단위, 파일 크기 */
   private String size1_label = "";
   /** 메인 이미지 */
-  private String poster = "";
+  private String file1 = "";
   /** 실제 저장된 메인 이미지 */
-  private String poster_saved = "";
+  private String file1saved = "";
   /** 메인 이미지 preview */
-  private String poster_thumb = "";
+  private String thumb1 = "";
   /** 메인 이미지 크기 */
-  private long poster_size = 0;
+  private long size1 = 0;
 
   
 }

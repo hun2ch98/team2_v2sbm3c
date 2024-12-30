@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${gradeVO?.grade_name ?: '등급이름'}" class="title_line_text"></span>
+    > 등급 수정
+  </div>
+  
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/grade/create?gradeno=${gradeVO?.gradeno}|}">등록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name ?:''}|}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <form name='frm' method='post' th:object="${gradeVO}" action='./update_text'>
+    <input type="hidden" name="gradeno" th:value="${gradeVO.gradeno}">
+    <input type="hidden" name="now_page" th:value="${now_page}">
+    <input type="hidden" name="search_word" th:value="${word}">
+    
+    <div>
+      <label>등급 이름</label>
+      <input type='text' name='grade_name' th:value='${gradeVO.grade_name}' required="required" autofocus="autofocus" class="form-control" style='width: 100%;'>
+    </div>
+    
+    <div>
+      <label>진화 기준</label>
+      <textarea name='evo_criteria' required="required" class="form-control" rows="12" style='width: 100%;' th:text='${gradeVO.evo_criteria}'></textarea>
+    </div>
+    
+    <div>
+      <label>진화 과정</label>
+      <textarea name='evolution' required="required" class="form-control" rows="12" style='width: 100%;' th:text='${gradeVO.evolution}'></textarea>
+    </div>
+    
+    <div> 
+      <div th:if="${#fields.hasErrors('evo_criteria')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+        <div th:each="err: ${#lists.sort(#fields.errors('evo_criteria'))}" th:text="${err}"></div>
+      </div>
+    </div>
+    
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+      <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+    </div>
+  
+  </form>
+</div>

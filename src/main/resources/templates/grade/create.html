@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+    <div class='title_line'>
+        <span th:text="${GradeVO != null ? GradeVO.grade_name : '새로운 등급'}" class="title_line_text"></span>
+    </div>
+
+    <aside class="aside_right">
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>|</span>
+      <a th:href="@{.|/create?gradeno=${gradeVO.gradeno}|}">등록</a>
+      <span class='menu_divide'>|</span>
+      <a th:href="@{/grade/list_by_gradeno_search_paging}">목록</a>
+    </aside> 
+
+    <div class='menu_line'></div>
+
+    <form name="frm" method="post" th:object="${GradeVO}" th:action="@{/grade/create}" enctype="multipart/form-data">
+        <div>
+            <label for="grade_name">등급 이름</label>
+            <input type="text" id="grade_name" name="grade_name" th:value="${GradeVO != null ? GradeVO.grade_name : ''}" required="required"
+               autofocus="autofocus" class="form-control" style="width: 100%;">
+        </div>
+        <div>
+            <label>진화 기준</label>
+            <textarea id="evo_criteria" name="evo_criteria" value="첫 회원가입 시 씨앗단계가 됩니다." th:text="${GradeVO != null ? GradeVO.evo_criteria : ''}" required="required"
+               autofocus="autofocus" class="form-control" rows="12" style="width: 100%;"></textarea>
+        </div>
+        <div>
+            <label>진화 과정</label>
+            <textarea id="evolution" name="evolution" th:text="${GradeVO != null ? GradeVO.evolution : ''}" required="required"
+               autofocus="autofocus" class="form-control" rows="12" style="width: 100%;"></textarea>
+        </div>
+        
+        <div>
+          <label>파일 선택</label>
+          <input type="file" class="form-control" name="file1MF" id="file1MF"
+                 th:value="${GradeVO?.file1 ?: ''}" placeholder="파일 선택">
+        </div>
+
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+          <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+        </div>
+    </form>
+</div>
+</html>

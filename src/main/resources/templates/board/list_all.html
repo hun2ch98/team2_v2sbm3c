@@ -14,10 +14,10 @@
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
       <col style='width: 10%;'/>
-      <col style='width: 90%;'/>
+      <col style='width: 50%;'/>
     </colgroup>
     <tr>
-      <th class='th_bs'>파일</TH>
+      <th class='th_bs'>파일</th>
       <th class='th_bs'>제목</th>
     </tr>
    
@@ -31,7 +31,6 @@
               th:text="|${boardVO.bcontent.substring(0, 160) }...|"></span>
         <span th:if="${boardVO.bcontent.length() <= 160 }" 
               th:text="|${boardVO.bcontent}|"></span>
-
       </td>
     </tr>
   </table>

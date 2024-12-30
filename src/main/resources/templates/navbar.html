@@ -13,20 +13,7 @@
           
         <!-- 메뉴 시작 -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!--
-                <li class="nav-item dropdown" th:each="memberVOMenu:${menu}"> 
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                         role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${memberVOMenu.genre}">                                                            
-                    </a>           
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li th:each="memberVO:${memberVOMenu.list_name}">
-                            <a class="dropdown-item" th:href="@{|/board/list_by_boardno?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a>
-                        </li>
-                    </ul>
-                </li>
-                -->
-                
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="회원">                                                            
@@ -45,7 +32,9 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=''|}">전체 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name != null ? grade_name : ''}|}">등급 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
                     </ul>
                 </li>
                 
@@ -54,8 +43,18 @@
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="요청사항">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate ?: ''}|}">요청사항 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/create|}">요청사항 쓰기</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate ?: ''}|}">요청사항 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="설문조사">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
                     </ul>
                 </li>
                 
@@ -66,7 +65,6 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/mypage|}">MyPage</a>
-                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀 번호 변경</a>
                         </li>  
                     </ul>
                 </li>
@@ -135,7 +133,7 @@
       const passwdInput = document.createElement('input');
       passwdInput.type = 'hidden';
       passwdInput.name = 'passwd';
-      passwdInput.value = '1234'; // 회원 비밀번호 설정
+      passwdInput.value = '1109'; // 회원 비밀번호 설정
 
       form.appendChild(idInput);
       form.appendChild(passwdInput);

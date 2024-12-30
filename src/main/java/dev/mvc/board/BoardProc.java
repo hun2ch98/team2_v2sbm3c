@@ -32,23 +32,13 @@ public class BoardProc implements BoardProcInter {
         ArrayList<BoardVO> list = this.boardDAO.list_all();
         return list;
     }
-
+    
     @Override
-    public int update_text(BoardVO boardVO) {
-        int cnt = this.boardDAO.update_text(boardVO);
-        return cnt;
-    }
-
-    @Override
-    public int update_file(BoardVO boardVO) {
-        int cnt = this.boardDAO.update_file(boardVO);
-        return cnt;
-    }
-
-    @Override
-    public int delete(int boardno) {
-        int cnt = this.boardDAO.delete(boardno);
-        return cnt;
+    public ArrayList<BoardVO> list_by_boardno(int boardno) {
+      HashMap<String, Object> map = new HashMap<>();
+      map.put("boardno", boardno);
+      ArrayList<BoardVO> list = this.boardDAO.list_by_boardno(boardno);
+      return list;
     }
 
     @Override
@@ -67,12 +57,6 @@ public class BoardProc implements BoardProcInter {
         // 데이터베이스 쿼리 실행
         ArrayList<BoardVO> list = this.boardDAO.list_by_boardno_search_paging(map);
         return list;
-    }
-
-    @Override
-    public int count_by_boardno_search(HashMap<String, Object> map) {
-        int cnt = this.boardDAO.count_by_boardno_search(map);
-        return cnt;
     }
 
     @Override
@@ -121,13 +105,11 @@ public class BoardProc implements BoardProcInter {
         str.append("</div>");
         return str.toString();
     }
-
+    
     @Override
-    public ArrayList<BoardVO> list_by_boardno(int boardno) {
-      HashMap<String, Object> map = new HashMap<>();
-      map.put("boardno", boardno);
-      ArrayList<BoardVO> list = this.boardDAO.list_by_boardno(boardno);
-      return list;
+    public int count_by_boardno_search(HashMap<String, Object> map) {
+        int cnt = this.boardDAO.count_by_boardno_search(map);
+        return cnt;
     }
 
     @Override
@@ -135,5 +117,36 @@ public class BoardProc implements BoardProcInter {
       ArrayList<BoardVO> list = this.boardDAO.list_by_boardno_search(hashMap);
       return list;
     }
+    
+    @Override
+    public int update_text(BoardVO boardVO) {
+        int cnt = this.boardDAO.update_text(boardVO);
+        return cnt;
+    }
+
+    @Override
+    public int update_file(BoardVO boardVO) {
+        int cnt = this.boardDAO.update_file(boardVO);
+        return cnt;
+    }
+
+    @Override
+    public int delete(int boardno) {
+        int cnt = this.boardDAO.delete(boardno);
+        return cnt;
+    }
+    
+    @Override
+    public int update_goodcnt(int boardno) {
+        int cnt = this.boardDAO.update_goodcnt(boardno);
+        return cnt;
+    }
+    
+    @Override
+    public int update_badcnt(int boardno) {
+        int cnt = this.boardDAO.update_badcnt(boardno);
+        return cnt;
+    }
+
     
 }

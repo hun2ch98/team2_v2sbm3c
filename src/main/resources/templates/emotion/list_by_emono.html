@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" layout:decorate="~{layout}">
+<div layout:fragment="content">
+
+  <div class="title_line">목록</div>
+
+  <aside class="aside_right">
+    <a th:href="@{/emotion/create}">등록</a>
+    <span class="menu_divide">|</span>
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside>
+
+  <div class="menu_line"></div>
+
+  <table class="table table-striped" style="width: 100%;">
+    <colgroup>
+      <col style="width: 10%;"/>
+      <col style="width: 90%;"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">감정 이미지</th>
+        <th class="th_bs">유형</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- 감정 목록 출력 -->
+      <tr th:each="emotionVO, status:${list}" 
+        th:attr="onclick=|location.href='/emotion/read?emono=${emotionVO.emono}'|"
+        style="cursor: pointer; height: 90px;">
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}">
+          <img th:src="@{|/emotion/storage/${emotionVO.thumb1}|}" style="width: 120px; height: 90px;">
+        </div>
+
+        <div th:if="${((emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')) == false) and (emotionVO.size1 > 0)}">
+          <span th:text="${emotionVO.file1}"></span>
+        </div>
+
+        <div th:if="${emotionVO.size1 == 0}">
+          <img src="/emotion/images/none1.png" style="width: 120px; height: 90px;">
+        </div>
+                
+      </td>
+      </td>
+      <td class='td_left'>
+        <span th:text="${emotionVO.type}" style="font-weight: bold;"></span><br>
+        <span th:if="${emotionVO.explan.length() > 160 }" 
+                  th:text="|${emotionVO.explan.substring(0, 160) }...|"></span>
+        <span th:if="${emotionVO.explan.length() <= 160 }" 
+                  th:text="|${emotionVO.explan}|"></span>
+
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="bottom_menu">
+    <button type="button" onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+  </div>
+
+</div>
+</html>

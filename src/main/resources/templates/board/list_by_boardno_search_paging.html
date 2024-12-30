@@ -3,16 +3,17 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
+
+    목록 조회
+
     검색
+
     <span th:if="${board_cate != ''}" th:text="|> ${board_cate} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 
   <aside class="aside_right">
-    <span th:if="${session.grade == 'member'}">
-      <a th:href="@{|/board/create?boardno=${boardVO?.boardno}|}">등록</a>
-      <span class="menu_devide">│</span>    
-    </span>
-    
+    <a th:href="@{|/board/create?boardno=${boardVO?.boardno}|}">등록</a>
+    <span class="menu_devide">│</span>   
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>    
     <a th:href="@{|./list_by_boardno_search_paging?boardno=${boardVO?.boardno }&board_cate=${board_cate }&now_page=${now_page}|}">목록</a>    
@@ -25,41 +26,63 @@
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
       <col style='width: 10%;'/>
-      <col style='width: 90%;'/>
+      <col style='width: 70%;'/>
+      <col style='width: 7%;'/>
+      <col style='width: 7%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
       <th class='th_bs'>제목</th>
+      <th class='th_bs'>추천수</th>
+      <th class='th_bs'>비추천</th>
     </tr>
    
-    <tr th:if="${list != null && list.size() > 0}" th:each="boardVO, status:${list}" 
-         th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}'|"
+    <tr th:if="${list != null and list.size() > 0}" th:each="boardVO, status:${list}" 
+         th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&board_cate=${board_cate}&now_page=${now_page}'|"
          style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
-        <div th:if="${boardVO.file1 != null && (boardVO.file1.endsWith('jpg') || boardVO.file1.endsWith('png') || boardVO.file1.endsWith('gif'))}">
-          <img th:src="@{/board/storage/{file}(file=${boardVO.thumb1})}" style="width: 120px; height: 90px;">
+        <div th:if="${boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')}">
+          <img th:src="@{|/board/storage/${boardVO.thumb1}|}" style="width: 120px; height: 90px;">
         </div>
         
-        <div th:if="${boardVO.file1 == null || boardVO.size1 == 0}">
+        <!--% 이미지가 이닌 파일은 파일명만 출력 %-->
+        <div th:if="${((boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')) == false) and (boardVO.size1 > 0)}">
+          <span th:text="${boardVO.file1}"></span>
+        </div>
+
+        <!--% 파일이 없는 경우 기본 이미지 출력 %-->
+        <div th:if="${boardVO.size1 == 0}">
           <img src="/board/images/none1.png" style="width: 120px; height: 90px;">
         </div>
+        
+      </td>
       </td>
       <td class='td_left'>
         <span th:text="${boardVO.title}" style="font-weight: bold;"></span>
         <span th:text="| ${boardVO.rdate.substring(0, 10)}|"></span><br>
 
-        <span th:if="${boardVO.bcontent.length() > 160}" 
-              th:text="|${boardVO.bcontent.substring(0, 160)}...|"></span>
-        <span th:if="${boardVO.bcontent.length() <= 160}" 
-              th:text="|${boardVO.bcontent}|"></span>
+        <span th:if="${boardVO.bcontent.length() > 160 }" 
+                  th:text="|${boardVO.bcontent.substring(0, 160) }...|"></span>
+        <span th:if="${boardVO.bcontent.length() <= 160 }" 
+                  th:text="|${boardVO.bcontent}|"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="${boardVO.goodcnt}"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="${boardVO.badcnt}"></span>
       </td>
     </tr>
 
-    <tr th:if="${list == null || list.size() == 0}">
+    <tr th:if="${list != null and list.size() == 0}">
       <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
     </tr> 
+
   </table>
    
-  <div class="bottom_menu" th:if="${paging != null}" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+  
 </div>
 </html>

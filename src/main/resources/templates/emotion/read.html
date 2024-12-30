@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+  <div class='title_line'>
+    > 감정 조회
+  </div>
+
+  <aside class="aside_right" th:if="${session?.gradle != 1}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/emotion/list_by_emono}">목록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/emotion/create}">등록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/emotion/update_text?emono=${emotionVO.emono}&now_page=${now_page}|}">글 수정</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/emotion/update_file?emono=${emotionVO.emono}&now_page=${now_page}|}">파일 수정</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/emotion/delete?emono=${emotionVO.emono}&now_page=${now_page}|}">삭제</a>
+  </aside>
+
+  <aside class="aside_right" th:if="${session?.gradle != 1}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/emotion/read}">감정보기</a>
+  </aside>
+
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div style="width: 100%; word-break: break-all;">
+          <!-- 이미지 -->
+          <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}">
+            <img th:src="@{|/emotion/storage/${emotionVO.file1saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
+          </div>
+
+          <!-- 감정 유형 -->
+          <span style="font-size: 1.5em; font-weight: bold;" th:text="${emotionVO.type}"></span>
+
+          <!-- 감정 내용 -->
+          <div style="white-space: pre-wrap;"><span th:text="${emotionVO.explan}"></span></div>
+        </div>
+      </li>
+
+      <!-- 파일 -->
+      <li class="li_none" th:if="${emotionVO.size1 > 0}">
+        <div >
+          <!-- ServletRegister.java: registrationBean.addUrlMappings("/download"); -->
+          첨부 파일: <a th:href='@{|/download?dir=/emotion/storage&filename=${emotionVO.file1saved}&downname=${emotionVO.file1}|}'
+                             th:text='|${emotionVO.file1}|'></a> <span th:text="|(${emotionVO.size1_label})|"></span>  
+        </div>
+      </li>   
+    </ul>
+  </fieldset>
+</div>
+</html>

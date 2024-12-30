@@ -6,34 +6,47 @@
 
   <!-- 감정 추가 -->
   <insert id="create" parameterType="dev.mvc.emotion.EmotionVO">
-    INSERT INTO emotion (emno, em_type, em_image)
-    VALUES (emotion_seq.nextval, #{em_type}, #{em_image})
+   INSERT INTO emotion (emono, type, explan, file1, file1saved, thumb1, size1)
+    VALUES (emotion_seq.nextval, #{type}, #{explan}, #{file1}, #{file1saved}, #{thumb1}, #{size1})
   </insert>
 
   <!-- 감정 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.emotion.EmotionVO">
-    SELECT emno, em_type, em_image
+    SELECT emono, type, explan, file1, file1saved, thumb1, size1
     FROM emotion
-    WHERE emno = #{emno}
+    WHERE emono = #{emono}
   </select>
 
   <select id="list_all" resultType="dev.mvc.emotion.EmotionVO">
-    SELECT emno, em_type, em_image
+    SELECT emono, type, explan, file1, file1saved, thumb1, size1
     FROM emotion
-    ORDER BY emno
+    ORDER BY emono
   </select>
-
-  <!-- 수정 -->
-  <update id="update" parameterType="dev.mvc.emotion.EmotionVO">
+  
+  <select id="list_by_emono" resultType="dev.mvc.emotion.EmotionVO">
+    SELECT emono, type, explan, file1, file1saved, thumb1, size1
+    FROM emotion
+    ORDER BY emono
+  </select>
+  
+  <!-- 감정 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.emotion.EmotionVO">
     UPDATE emotion
-    SET em_type = #{em_type}, em_image = #{em_image}
-    WHERE emno = #{emno}
+    SET type=#{type}, explan = #{explan}
+    WHERE emono = #{emono}
+  </update>
+  
+  <!-- 감정 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.emotion.EmotionVO">
+    UPDATE emotion
+    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
+    WHERE emono = #{emono}
   </update>
 
   <!-- 감정 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM emotion
-    WHERE emno = #{emno}
+    WHERE emono = #{emono}
   </delete>
 
 </mapper>
