@@ -29,17 +29,10 @@
     FROM member
     WHERE memberno = #{memberno}
   </select>
-  
-  <!-- greadno로 회원 정보 조회 
-  <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
-    FROM member
-    WHERE gradeno = #{gradeno}
-  </select>-->
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
     FROM member
     WHERE id = #{id}
   </select>
@@ -78,23 +71,32 @@
     WHERE memberno=#{memberno}
   </update>
   
-  <!-- 회원 목록을 검색어로 페이징 처리하여 반환 -->
-  <select id="list_by_memberno_search_paging" parameterType="hashmap" resultType="dev.mvc.member.MemberVO">
-      SELECT *
-      FROM (
-          SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade,
-                 ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
-          FROM member
-          WHERE name LIKE '%' || #{word} || '%'
-      )
-      WHERE rnum BETWEEN #{start_num} AND #{end_num}
+  <!-- 검색 목록 -->
+  <select id="list_by_memberno_search" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
+      SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade
+      FROM grade
+      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+      ORDER BY gradeno DESC
+      OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
   </select>
   
-  <!-- 회원번호별 검색된 레코드 갯수 -->
-  <select id="list_by_memberno_search_count" parameterType="hashmap" resultType="int">
+  <!-- 검색된 레코드 갯수 -->
+  <select id="list_by_memberno_search_count" resultType="int" parameterType="HashMap">
       SELECT COUNT(*)
       FROM member
-      WHERE name LIKE '%' || #{word} || '%'
+      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+  </select>
+  
+  <!-- 등급별 검색 + 페이징 목록 -->
+  <select id="list_by_memberno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
+      SELECT *
+      FROM (
+          SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade,
+                 ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
+          FROM grade
+          WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
   
 </mapper>
