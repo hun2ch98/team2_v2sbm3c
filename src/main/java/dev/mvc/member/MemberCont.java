@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import dev.mvc.board.Board;
 import dev.mvc.board.BoardProcInter;
 import dev.mvc.board.BoardVO;
 import dev.mvc.diary.DiaryProcInter;
+import dev.mvc.grade.Grade;
+import dev.mvc.grade.GradeProcInter;
+import dev.mvc.grade.GradeVO;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
 import jakarta.servlet.http.Cookie;
@@ -36,12 +40,18 @@ public class MemberCont {
   private MemberProcInter memberProc;
   
   @Autowired
-  @Qualifier("dev.mvc.diary.DiaryProc")
-  private DiaryProcInter diaryProc;
+  @Qualifier("dev.mvc.grade.GradeProc")
+  private GradeProcInter gradeProc;
   
-  @Autowired
-  @Qualifier("dev.mvc.board.BoardProc")
-  private BoardProcInter boardProc;
+  /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
+  public int record_per_page = 10;
+
+  /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
+  public int page_per_block = 10;
+
+  /** 페이징 목록 주소 */
+  private String list_file_name = "/grade/list_by_memberno_search_paging";
+  
   
   public MemberCont() {
     System.out.println("-> MemberCont created.");
@@ -107,6 +117,7 @@ public class MemberCont {
               model.addAttribute("code", "create_success");
               model.addAttribute("name", memberVO.getName());
               model.addAttribute("id", memberVO.getId());
+              model.addAttribute("gradeno", memberVO.getGradeno());
           } else {
               model.addAttribute("code", "create_fail");
           }
@@ -121,71 +132,79 @@ public class MemberCont {
   }
   
   /**
-   * 프로필 이미지 수정 폼
-   * @param session
-   * @param model
-   * @param memberno
-   * @param word
-   * @param now_page
+   * 유형 3
+   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
+   * http://localhost:9093/member/list_by_memberno?memberno=6
+   * 
    * @return
    */
-  @GetMapping(value = "/update_file")
-  public String update_file(HttpSession session, 
-      Model model, 
-      @RequestParam(name="memberno", defaultValue="0") int memberno) {
+  @GetMapping(value = "/list_by_memberno_search_paging")
+  public String list_by_memberno_search_paging(
+      HttpSession session, 
+      Model model,
+      @ModelAttribute("memberVO") MemberVO memberVO,
+      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+      @RequestParam(name = "name", defaultValue = "") String name,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
       
-      MemberVO memberVO = this.memberProc.read(memberno);
-      model.addAttribute("memberVO", memberVO);
-
-      return "/member/update_file";
+    int startRow = (now_page - 1) * record_per_page + 1;
+    int endRow = now_page * record_per_page;
+    
+    name = Tool.checkNull(name).trim();
+    if (name.isEmpty()) {
+      name = "";
+    }
+    
+    if (memberno < 0) {
+      memberno = 0;
+    }
+    
+    model.addAttribute("memberno", memberno);
+    model.addAttribute("name", name);
+    model.addAttribute("now_page", now_page);
+    
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("memberno", memberno);
+    map.put("name", name);
+    map.put("now_page", now_page);
+    map.put("startRow", startRow);
+    map.put("endRow", endRow);
+    
+    ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+    if (list == null || list.isEmpty()) {
+      model.addAttribute("message", "회원이 없습니다.");
+    } else {
+      model.addAttribute("list", list);
+    }
+    
+    int search_count = this.memberProc.list_by_memberno_search_count(map);
+    String paging = this.memberProc.pagingBox(memberno, now_page, name, "/member/list_by_memberno_search_paging", search_count, Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK); // pageSize 사용
+    model.addAttribute("paging", paging);
+    model.addAttribute("name", name);
+    model.addAttribute("now_page", now_page);
+    model.addAttribute("search_count", search_count);
+    
+    int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+    model.addAttribute("no", no);
+    
+    return "/member/list_by_memberno_search_paging";
   }
   
-  /**
-   * 프로필 이미지 수정 처리
-   * @param session
-   * @param model
-   * @param ra
-   * @param memberVO
-   * @param word
-   * @param now_page
-   * @return
-   */
-  @PostMapping(value = "/update_file")
-  public String update_file(HttpSession session, 
-      Model model, 
-      RedirectAttributes ra,
-      @ModelAttribute MemberVO memberVO) {
-
-      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
-      MultipartFile mf = memberVO.getPf_imgMF();
-      String file1 = mf.getOriginalFilename();
-      long size1 = mf.getSize();
-
-      if (size1 > 0) { // 파일이 업로드된 경우
-          String file1saved = Upload.saveFileSpring(mf, upDir);
-          String thumb1 = "";
-          if (Tool.isImage(file1saved)) { // 이미지인지 검사
-              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
-          }
-          memberVO.setPf_img(file1);
-          memberVO.setFile1saved(file1saved);
-          memberVO.setThumb1(thumb1);
-          memberVO.setSize1(size1);
-      } else { // 파일이 업로드되지 않은 경우
-          MemberVO oldMemberVO = this.memberProc.read(memberVO.getMemberno());
-          memberVO.setFile1saved(oldMemberVO.getFile1saved());
-          memberVO.setThumb1(oldMemberVO.getThumb1());
-          memberVO.setSize1(oldMemberVO.getSize1());
-      }
-
-      int cnt = this.memberProc.update(memberVO);
-      if (cnt == 1) {
-          ra.addFlashAttribute("code", "update_success");
-      } else {
-          ra.addFlashAttribute("code", "update_fail");
-      }
-      return "redirect:/member/list";
-  }
+//  @GetMapping(value = "/list_all")
+//  public String list_all(HttpSession session, Model model) {
+//    
+//    // 세션에서 등급 확인
+//    String grade = (String) session.getAttribute("grade");
+//    
+//    // 관리자 등급만 접근 허용
+//    if (grade != null && grade.equals("admin")) {
+//      ArrayList<MemberVO> list = this.memberProc.list_all();
+//      model.addAttribute("list", list);
+//      return "/member/list_all"; // /templates/member/list.html
+//    } else {
+//      return "redirect:/member/login_cookie_need"; // redirect
+//    }
+//  }
   
 //  ------------------------ 백업
 //  @GetMapping(value="/list")
@@ -195,7 +214,7 @@ public class MemberCont {
 //    // 세션에서 등급 확인
 //    String grade = (String) session.getAttribute("grade");
 // 
-//    // 관리자 등급만 접근 허용
+    // 관리자 등급만 접근 허용
 //    if (grade != null && grade.equals("admin")) {
 //      ArrayList<MemberVO> list = this.memberProc.list();
 //      model.addAttribute("list", list);
@@ -206,241 +225,256 @@ public class MemberCont {
 //  }
 //  -------------------------백업
   
-  @GetMapping(value = "/list")
-  public String list(HttpSession session, Model model, 
-                     @RequestParam(name = "word", defaultValue = "") String word,
-                     @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-      // 세션에서 등급 확인
-      String grade = (String) session.getAttribute("grade");
+//  @GetMapping(value = "/list")
+//  public String list(HttpSession session, Model model, 
+//                     @RequestParam(name = "word", defaultValue = "") String word,
+//                     @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//      // 세션에서 등급 확인
+//      String grade = (String) session.getAttribute("grade");
+//
+//      // 관리자 등급만 접근 허용
+//      if (grade != null && grade.equals("admin")) {
+//          word = Tool.checkNull(word).trim();
+//
+//          HashMap<String, Object> map = new HashMap<>();
+//          map.put("word", word);
+//          map.put("now_page", now_page);
+//
+//          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+//          model.addAttribute("list", list);
+//
+//          model.addAttribute("word", word);
+//
+//          int search_count = this.memberProc.list_by_memberno_search_count(map);
+//          String paging = this.memberProc.pagingBox(0, now_page, "/member/list", search_count,
+//                  Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
+//          model.addAttribute("paging", paging);
+//          model.addAttribute("now_page", now_page);
+//          model.addAttribute("search_count", search_count);
+//
+//          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+//          model.addAttribute("no", no);
+//
+//          return "/member/list"; // /templates/member/list.html
+//      } else {
+//          return "redirect:/member/login_cookie_need"; // redirect
+//      }
+//  }
+//  
+//  /**
+//   * 유형 3
+//   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
+//   * http://localhost:9093/member/list_by_memberno?memberno=6
+//   * 
+//   * @return
+//   */
+//  @GetMapping(value = "/list_by_memberno_search_paging")
+//  public String list_by_memberno_search_paging(
+//      HttpSession session, 
+//      Model model, 
+//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+//      @RequestParam(name = "word", defaultValue = "") String word,
+//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//
+//      // 세션에서 등급 확인
+//      String grade = (String) session.getAttribute("grade");
+//
+//      // 관리자 등급만 접근 허용
+//      if (grade != null && grade.equals("admin")) {
+//          MemberVO memberVO = this.memberProc.read(memberno);
+//          model.addAttribute("memberVO", memberVO);
+//
+//          word = Tool.checkNull(word).trim();
+//
+//          HashMap<String, Object> map = new HashMap<>();
+//          map.put("memberno", memberno);
+//          map.put("word", word);
+//          map.put("now_page", now_page);
+//
+//          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+//          model.addAttribute("list", list);
+//
+//          model.addAttribute("word", word);
+//
+//          int search_count = this.memberProc.list_by_memberno_search_count(map);
+//          String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno", search_count,
+//              Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
+//          model.addAttribute("paging", paging);
+//          model.addAttribute("now_page", now_page);
+//
+//          model.addAttribute("search_count", search_count);
+//
+//          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
+//          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+//          model.addAttribute("no", no);
+//
+//          return "/member/list_by_memberno_search_paging"; // /templates/member/list_by_memberno_search_paging.html
+//      } else {
+//          return "redirect:/member/login_cookie_need"; // redirect
+//      }
+//  }
+  
+  
 
-      // 관리자 등급만 접근 허용
-      if (grade != null && grade.equals("admin")) {
-          word = Tool.checkNull(word).trim();
-
-          HashMap<String, Object> map = new HashMap<>();
-          map.put("word", word);
-          map.put("now_page", now_page);
-
-          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-          model.addAttribute("list", list);
-
-          model.addAttribute("word", word);
-
-          int search_count = this.memberProc.list_by_memberno_search_count(map);
-          String paging = this.memberProc.pagingBox(0, now_page, word, "/member/list", search_count,
-                  Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-          model.addAttribute("paging", paging);
-          model.addAttribute("now_page", now_page);
-
-          model.addAttribute("search_count", search_count);
-
-          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-          model.addAttribute("no", no);
-
-          return "/member/list"; // /templates/member/list.html
-      } else {
-          return "redirect:/member/login_cookie_need"; // redirect
-      }
-  }
+//  /**
+//   * 조회
+//   * @param model
+//   * @param memberno 회원 번호
+//   * @return 회원 정보
+//   */
+//  @GetMapping(value="/read")
+//  public String read(HttpSession session, Model model,
+//                     @RequestParam(name="memberno", defaultValue = "") int memberno) {
+//    // 회원은 회원 등급만 처리, 관리자: 1 ~ 10, 사용자: 11 ~ 20
+//    // int gradeno = this.memberProc.read(memberno).getGrade(); // 등급 번호
+//    String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
+//    
+//    // 사용자: member && 11 ~ 20
+//    // if (grade.equals("member") && (gradeno >= 11 && gradeno <= 20) && memberno == (int)session.getAttribute("memberno")) {
+//    if (grade.equals("member") &&  memberno == (int)session.getAttribute("memberno")) {
+//      System.out.println("-> read memberno: " + memberno);
+//      
+//      MemberVO memberVO = this.memberProc.read(memberno);
+//      model.addAttribute("memberVO", memberVO);
+//      return "member/read";  // templates/member/read.html
+//    } else if (grade.equals("admin")) {
+//      System.out.println("-> read memberno: " + memberno);
+//      
+//      MemberVO memberVO = this.memberProc.read(memberno);
+//      model.addAttribute("memberVO", memberVO);
+//      
+//      return "member/read";  // templates/member/read.html
+//    } else {
+//      return "redirect:/member/login_cookie_need";  // redirect
+//    }
+//    
+//  }
+//  
+//  /**
+//   * 수정 처리
+//   * @param model
+//   * @param memberVO
+//   * @return
+//   */
+//  @PostMapping(value="/update")
+//  public String update_proc(HttpSession session,
+//                                       Model model, 
+//                                       @ModelAttribute("memberVO") MemberVO memberVO) {
+//    String grade = (String)session.getAttribute("grade"); // 등급: admin, member, guest
+//
+//    // 회원 본인이거나 관리자인경우 처리
+//    if ((grade.equals("member") &&  memberVO.getMemberno() == (int)session.getAttribute("memberno")) ||  grade.equals("admin")) {
+//      int cnt = this.memberProc.update(memberVO); // 수정
+//      
+//      if (cnt == 1) {
+//        model.addAttribute("code", "update_success");
+//        model.addAttribute("name", memberVO.getName());
+//        model.addAttribute("id", memberVO.getId());
+//      } else {
+//        model.addAttribute("code", "update_fail");
+//      }
+//      
+//      model.addAttribute("cnt", cnt);
+//      
+//      return "/member/msg"; // /templates/member/msg.html
+//    } else {
+//      return "redirect:/member/login_cookie_need";  // redirect
+//    }
+//    
+//  }
+//  
+//  /**
+//   * 삭제
+//   * @param model
+//   * @param memberno 회원 번호
+//   * @return 회원 정보
+//   */
+//  @GetMapping(value="/delete")
+//  public String delete(HttpSession session,
+//                              Model model,
+//                              @RequestParam(name="memberno", defaultValue = "") int memberno) {
+//    if (this.memberProc.isMemberAdmin(session)) {
+//      System.out.println("-> delete memberno: " + memberno);
+//      
+//      MemberVO memberVO = this.memberProc.read(memberno);
+//      model.addAttribute("memberVO", memberVO);
+//      
+//      return "/member/delete";  // templates/member/delete.html
+//    } else {
+//      return "redirect:/member/login_cookie_need";  // redirect
+//    }
+//    
+//  }
+//  
+//  /**
+//   * 프로필 이미지 수정 폼
+//   * @param session
+//   * @param model
+//   * @param memberno
+//   * @param word
+//   * @param now_page
+//   * @return
+//   */
+//  @GetMapping(value = "/update_file")
+//  public String update_file(HttpSession session, Model model, 
+//      @RequestParam(name="memberno", defaultValue="0") int memberno) {
+//      
+//      MemberVO memberVO = this.memberProc.read(memberno);
+//      model.addAttribute("memberVO", memberVO);
+//
+//      return "/member/update_file";
+//  }
+//  
+//  /**
+//   * 프로필 이미지 수정 처리
+//   * @param session
+//   * @param model
+//   * @param ra
+//   * @param memberVO
+//   * @param word
+//   * @param now_page
+//   * @return
+//   */
+//  @PostMapping(value = "/update_file")
+//  public String update_file(HttpSession session, 
+//      Model model, 
+//      RedirectAttributes ra,
+//      @ModelAttribute MemberVO memberVO) {
+//
+//      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
+//      MultipartFile mf = memberVO.getFile1MF();
+//      String file1 = mf.getOriginalFilename();
+//      long size1 = mf.getSize();
+//
+//      if (size1 > 0) { // 파일이 업로드된 경우
+//          String file1saved = Upload.saveFileSpring(mf, upDir);
+//          String thumb1 = "";
+//          if (Tool.isImage(file1saved)) { // 이미지인지 검사
+//              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+//          }
+//          memberVO.setPf_img(file1);
+//          memberVO.setFile1saved(file1saved);
+//          memberVO.setThumb1(thumb1);
+//          memberVO.setSize1(size1);
+//      } else { // 파일이 업로드되지 않은 경우
+//          MemberVO oldMemberVO = this.memberProc.read(memberVO.getMemberno());
+//          memberVO.setFile1saved(oldMemberVO.getFile1saved());
+//          memberVO.setThumb1(oldMemberVO.getThumb1());
+//          memberVO.setSize1(oldMemberVO.getSize1());
+//      }
+//
+//      int cnt = this.memberProc.update(memberVO);
+//      if (cnt == 1) {
+//          ra.addFlashAttribute("code", "update_success");
+//      } else {
+//          ra.addFlashAttribute("code", "update_fail");
+//      }
+//      return "redirect:/member/list";
+//  }
   
   /**
-   * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
-   * http://localhost:9093/member/list_by_memberno?memberno=6
-   * 
-   * @return
-   */
-  @GetMapping(value = "/list_by_memberno")
-  public String list_by_memberno_search_paging(
-      HttpSession session, 
-      Model model, 
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-      // 세션에서 등급 확인
-      String grade = (String) session.getAttribute("grade");
-
-      // 관리자 등급만 접근 허용
-      if (grade != null && grade.equals("admin")) {
-          MemberVO memberVO = this.memberProc.read(memberno);
-          model.addAttribute("memberVO", memberVO);
-
-          word = Tool.checkNull(word).trim();
-
-          HashMap<String, Object> map = new HashMap<>();
-          map.put("memberno", memberno);
-          map.put("word", word);
-          map.put("now_page", now_page);
-
-          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-          model.addAttribute("list", list);
-
-          model.addAttribute("word", word);
-
-          int search_count = this.memberProc.list_by_memberno_search_count(map);
-          String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno", search_count,
-              Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-          model.addAttribute("paging", paging);
-          model.addAttribute("now_page", now_page);
-
-          model.addAttribute("search_count", search_count);
-
-          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-          model.addAttribute("no", no);
-
-          return "/member/list_by_memberno_search_paging"; // /templates/member/list_by_memberno_search_paging.html
-      } else {
-          return "redirect:/member/login_cookie_need"; // redirect
-      }
-  }
-
-  /**
-   * 카테고리별 목록 + 검색 + 페이징 + Grid
-   * http://localhost:9093/member/list_by_memberno?memberno=5
-   * http://localhost:9093/member/list_by_memberno?memberno=6
-   * 
-   * @return
-   */
-  @GetMapping(value = "/list_by_memberno_grid")
-  public String list_by_memberno_search_paging_grid(HttpSession session, 
-      Model model, 
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-      // 세션에서 등급 확인
-      String grade = (String) session.getAttribute("grade");
-
-      // 관리자 등급만 접근 허용
-      if (grade != null && grade.equals("admin")) {
-          MemberVO memberVO = this.memberProc.read(memberno);
-          model.addAttribute("memberVO", memberVO);
-
-          word = Tool.checkNull(word).trim();
-
-          HashMap<String, Object> map = new HashMap<>();
-          map.put("memberno", memberno);
-          map.put("word", word);
-          map.put("now_page", now_page);
-
-          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-          model.addAttribute("list", list);
-
-          model.addAttribute("word", word);
-
-          int search_count = this.memberProc.list_by_memberno_search_count(map);
-          String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno_grid", search_count,
-              Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-          model.addAttribute("paging", paging);
-          model.addAttribute("now_page", now_page);
-
-          model.addAttribute("search_count", search_count);
-
-          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-          model.addAttribute("no", no);
-
-          return "/member/list_by_memberno_search_paging_grid"; // /templates/member/list_by_memberno_search_paging_grid.html
-      } else {
-          return "redirect:/member/login_cookie_need"; // redirect
-      }
-  }
-
-  /**
-   * 조회
-   * @param model
-   * @param memberno 회원 번호
-   * @return 회원 정보
-   */
-  @GetMapping(value="/read")
-  public String read(HttpSession session, Model model,
-                     @RequestParam(name="memberno", defaultValue = "") int memberno) {
-    // 회원은 회원 등급만 처리, 관리자: 1 ~ 10, 사용자: 11 ~ 20
-    // int gradeno = this.memberProc.read(memberno).getGrade(); // 등급 번호
-    String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
-    
-    // 사용자: member && 11 ~ 20
-    // if (grade.equals("member") && (gradeno >= 11 && gradeno <= 20) && memberno == (int)session.getAttribute("memberno")) {
-    if (grade.equals("member") &&  memberno == (int)session.getAttribute("memberno")) {
-      System.out.println("-> read memberno: " + memberno);
-      
-      MemberVO memberVO = this.memberProc.read(memberno);
-      model.addAttribute("memberVO", memberVO);
-      return "member/read";  // templates/member/read.html
-    } else if (grade.equals("admin")) {
-      System.out.println("-> read memberno: " + memberno);
-      
-      MemberVO memberVO = this.memberProc.read(memberno);
-      model.addAttribute("memberVO", memberVO);
-      
-      return "member/read";  // templates/member/read.html
-    } else {
-      return "redirect:/member/login_cookie_need";  // redirect
-    }
-    
-  }
-  
-  /**
-   * 수정 처리
-   * @param model
-   * @param memberVO
-   * @return
-   */
-  @PostMapping(value="/update")
-  public String update_proc(HttpSession session,
-                                       Model model, 
-                                       @ModelAttribute("memberVO") MemberVO memberVO) {
-    String grade = (String)session.getAttribute("grade"); // 등급: admin, member, guest
-
-    // 회원 본인이거나 관리자인경우 처리
-    if ((grade.equals("member") &&  memberVO.getMemberno() == (int)session.getAttribute("memberno")) ||  grade.equals("admin")) {
-      int cnt = this.memberProc.update(memberVO); // 수정
-      
-      if (cnt == 1) {
-        model.addAttribute("code", "update_success");
-        model.addAttribute("name", memberVO.getName());
-        model.addAttribute("id", memberVO.getId());
-      } else {
-        model.addAttribute("code", "update_fail");
-      }
-      
-      model.addAttribute("cnt", cnt);
-      
-      return "/member/msg"; // /templates/member/msg.html
-    } else {
-      return "redirect:/member/login_cookie_need";  // redirect
-    }
-    
-  }
-  
-  /**
-   * 삭제
-   * @param model
-   * @param memberno 회원 번호
-   * @return 회원 정보
-   */
-  @GetMapping(value="/delete")
-  public String delete(HttpSession session,
-                              Model model,
-                              @RequestParam(name="memberno", defaultValue = "") int memberno) {
-    if (this.memberProc.isMemberAdmin(session)) {
-      System.out.println("-> delete memberno: " + memberno);
-      
-      MemberVO memberVO = this.memberProc.read(memberno);
-      model.addAttribute("memberVO", memberVO);
-      
-      return "/member/delete";  // templates/member/delete.html
-    } else {
-      return "redirect:/member/login_cookie_need";  // redirect
-    }
-    
-  }
-  
-  /**
-   * 프로필 및 개인정보 수정 폼
+   * 프로필 폼
    * @param session
    * @param model
    * @return
@@ -461,7 +495,7 @@ public class MemberCont {
   }
 
   /**
-   * 프로필 및 개인정보 수정 처리
+   * 프로필 처리
    * @param session
    * @param model
    * @param memberVO
@@ -489,7 +523,7 @@ public class MemberCont {
     }
 
     String upDir = Member.getUploadDir();
-    MultipartFile mf = memberVO.getPf_imgMF();
+    MultipartFile mf = memberVO.getFile1MF();
     String file1 = mf.getOriginalFilename();
     long size1 = mf.getSize();
 
@@ -550,7 +584,7 @@ public class MemberCont {
   }
   
   /**
-   * 개인정보수정 수정 처리
+   * 개인정보수정 처리
    * @param session
    * @param model
    * @param memberVO
@@ -574,72 +608,72 @@ public class MemberCont {
       return "redirect:/member/update_information";
   }
   
-  /**
-   * 문의글 폼
-   * @param session
-   * @param model
-   * @return
-   */
-  @GetMapping(value = "/inquiries")
-  public String inquiriesForm(HttpSession session, Model model) {
-    int memberno = (int) session.getAttribute("memberno");
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    ArrayList<BoardVO> inquiries = this.boardProc.list_by_boardno_search(map);
-    model.addAttribute("inquiries", inquiries);
-    return "/member/inquiries"; // inquiries.html로 이동
-  }
+//  /**
+//   * 문의글 폼
+//   * @param session
+//   * @param model
+//   * @return
+//   */
+//  @GetMapping(value = "/inquiries")
+//  public String inquiriesForm(HttpSession session, Model model) {
+//    int memberno = (int) session.getAttribute("memberno");
+//    HashMap<String, Object> map = new HashMap<>();
+//    map.put("memberno", memberno);
+//    ArrayList<BoardVO> inquiries = this.boardProc.list_by_boardno_search(map);
+//    model.addAttribute("inquiries", inquiries);
+//    return "/member/inquiries"; // inquiries.html로 이동
+//  }
   
-  /**
-   * 회원 탈퇴 폼
-   * @param session
-   * @param model
-   * @return
-   */
-  @GetMapping(value = "/delete_account")
-  public String deleteAccountForm(HttpSession session, Model model) {
-    return "/member/delete_account"; // delete_account.html로 이동
-  }
-
-  /**
-   * 회원 탈퇴 처리
-   * @param session
-   * @param model
-   * @return
-   */
-  @PostMapping(value = "/delete_account")
-  public String deleteAccount(HttpSession session, Model model) {
-    int memberno = (int) session.getAttribute("memberno"); // 현재 로그인한 회원의 번호를 가져옴
-    this.memberProc.delete(memberno); // 회원 탈퇴 처리
-    session.invalidate(); // 세션 무효화
-    
-    return "redirect:/"; // 메인 페이지로 리다이렉트
-  }
-
-  
-  /**
-   * 회원 Delete process
-   * @param model
-   * @param memberno 삭제할 레코드 번호
-   * @return
-   */
-  @PostMapping(value="/delete")
-  public String delete_process(HttpSession session,
-                                          Model model,
-                                          @RequestParam(name="memberno", defaultValue = "") int memberno) {
-    if (this.memberProc.isMemberAdmin(session)) {
-      int cnt = this.memberProc.delete(memberno);
-      
-      if (cnt == 1) {
-        return "redirect:/member/list";
-      } else {
-        model.addAttribute("code", "delete_fail");
-        return "/member/msg"; // /templates/member/msg.html
-      }
-    } else {
-      return "redirect:/member/login_cookie_need";  // redirect
-    }
-  }
+//  /**
+//   * 회원 탈퇴 폼
+//   * @param session
+//   * @param model
+//   * @return
+//   */
+//  @GetMapping(value = "/delete_account")
+//  public String deleteAccountForm(HttpSession session, Model model) {
+//    return "/member/delete_account"; // delete_account.html로 이동
+//  }
+//
+//  /**
+//   * 회원 탈퇴 처리
+//   * @param session
+//   * @param model
+//   * @return
+//   */
+//  @PostMapping(value = "/delete_account")
+//  public String deleteAccount(HttpSession session, Model model) {
+//    int memberno = (int) session.getAttribute("memberno"); // 현재 로그인한 회원의 번호를 가져옴
+//    this.memberProc.delete(memberno); // 회원 탈퇴 처리
+//    session.invalidate(); // 세션 무효화
+//    
+//    return "redirect:/"; // 메인 페이지로 리다이렉트
+//  }
+//
+//  
+//  /**
+//   * 회원 Delete process
+//   * @param model
+//   * @param memberno 삭제할 레코드 번호
+//   * @return
+//   */
+//  @PostMapping(value="/delete")
+//  public String delete_process(HttpSession session,
+//                                          Model model,
+//                                          @RequestParam(name="memberno", defaultValue = "") int memberno) {
+//    if (this.memberProc.isMemberAdmin(session)) {
+//      int cnt = this.memberProc.delete(memberno);
+//      
+//      if (cnt == 1) {
+//        return "redirect:/member/list";
+//      } else {
+//        model.addAttribute("code", "delete_fail");
+//        return "/member/msg"; // /templates/member/msg.html
+//      }
+//    } else {
+//      return "redirect:/member/login_cookie_need";  // redirect
+//    }
+//  }
   
   /**
    * 로그아웃

@@ -4,9 +4,9 @@
 
   <div class='title_line'>
 
-    목록 조회
-
-    검색
+    목록 조회 검색
+    
+    <span th:if="${type != ''}" th:text="|> ${type} (${search_count} 건)|" class="title_line_text"></span>
 
   </div>
 
@@ -14,13 +14,11 @@
     <span th:if="${session.grade == 'admin'}">
       <a th:href="@{|/emotion/create?emono=${emotionVO?.emono}|}">등록</a>
       <span class="menu_devide">│</span>    
-    </span>
-    
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>    
-    <a th:href="@{|./list_by_emono_search_paging?emono=${emotionVO?.emono }&now_page=${now_page}|}">목록</a>    
-  </aside> 
-
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>│</span>    
+      <a th:href="@{|./list_by_emono_search_paging?emono=${emotionVO?.emono }&type=${type }&now_page=${now_page}|}">목록</a>    
+    </aside> 
+  
   <div th:replace="~{/emotion/list_search_com :: list_search_fragment}"></div>
      
   <div class='menu_line'></div>
