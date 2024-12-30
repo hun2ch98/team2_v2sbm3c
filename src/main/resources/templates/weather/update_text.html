@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    > 감정 내용 수정
+  </div>
+  
+  <aside class="aside_right">
+    <a th:href="@{/weather/create}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{/weather/list_by_weatherno_search_paging}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <form name='frm' method='post' th:object="${weatherVO}" action='./update_text'>
+    <input type="hidden" name="weatherno" th:value="${weatherVO.weatherno }">
+    <input type="hidden" name="now_page" th:value="${now_page}">
+    <input type="hidden" name="search_word" th:value="${word}">
+    
+    <div>
+       <label>유형</label>
+       <input type='text' name='type' th:value='${weatherVO.type}' required="required" 
+                 autofocus="autofocus" class="form-control" style='width: 100%;'>
+    </div>
+    <div>
+       <label>내용</label>
+       <textarea name='explan' required="required" class="form-control" rows="12" style='width: 100%;' 
+                      th:text='${weatherVO.explan}'></textarea>
+    </div>
+    
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+      <button type="button" th:attr="onclick=|location.href='./list_by_weatherno_search_paging'|" class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  
+  </form>
+
+</div>
