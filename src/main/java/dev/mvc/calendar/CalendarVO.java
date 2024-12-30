@@ -22,4 +22,8 @@ public class CalendarVO {
   /** 일기 고유 번호 */
   private int diaryno;
 
+  //추가 필드
+  private int illustno; // 일기에서 가져올 그림
+  private int weatherno; // 날씨
+  private int emno; // 감정
 }

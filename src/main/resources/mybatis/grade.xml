@@ -54,30 +54,32 @@
   
   <!-- 검색 목록 -->
   <select id="list_by_gradeno_search" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
-    SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1
-    FROM grade
-    WHERE (#{grade_name} IS NULL OR #{grade_name} = '' OR grade_name = #{grade_name})
-    ORDER BY gradeno DESC
-    OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+      SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1
+      FROM grade
+      WHERE (#{grade_name} IS NULL OR #{grade_name} = '' OR LOWER(grade_name) LIKE LOWER('%' || #{grade_name} || '%'))
+      ORDER BY gradeno DESC
+      OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
   </select>
   
   <!-- 검색 레코드 갯수 -->
   <select id="count_by_gradeno_search" resultType="int" parameterType="HashMap">
-    SELECT COUNT(*)
-    FROM grade
-    WHERE (#{grade_name} IS NULL OR #{grade_name} = '' OR grade_name = #{grade_name})
+      SELECT COUNT(*)
+      FROM grade
+      WHERE (#{grade_name} IS NULL OR #{grade_name} = '' OR LOWER(grade_name) LIKE LOWER('%' || #{grade_name} || '%'))
   </select>
   
-  <!-- 검색 및 페이징 -->
+  <!-- 등급별 검색 + 페이징 목록 -->
   <select id="list_by_gradeno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
-    SELECT * 
-    FROM (
-        SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1, 
-               ROW_NUMBER() OVER (ORDER BY gradeno DESC) AS rnum
-        FROM grade
-        WHERE (#{grade_name} IS NULL OR #{grade_name} = '' OR grade_name = #{grade_name})
-    ) t
-    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+      SELECT *
+      FROM (
+          SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1,
+                 ROW_NUMBER() OVER (ORDER BY gradeno DESC) AS rnum
+          FROM grade
+          WHERE (#{grade_name} IS NULL OR #{grade_name} = '' OR LOWER(grade_name) LIKE LOWER('%' || #{grade_name} || '%'))
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
+
+
 
 </mapper>

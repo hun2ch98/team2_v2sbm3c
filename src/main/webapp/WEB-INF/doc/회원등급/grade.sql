@@ -37,3 +37,7 @@ CREATE SEQUENCE grade_seq
 SELECT gradeno, grade_name, evo_criteria, rdate, evolution
 FROM grade
 ORDER BY gradeno ASC, grade_name ASC;
+
+ALTER TABLE grade MODIFY grade_name VARCHAR2(50);
+
+

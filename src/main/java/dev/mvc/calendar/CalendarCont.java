@@ -1,25 +1,33 @@
 package dev.mvc.calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping("/calendar")
+@RestController
 public class CalendarCont {
 
     @Autowired
     private CalendarProcInter calendarProc;
 
-    // 월간 캘린더 조회
-    @GetMapping("/list")
-    public String list(Model model) {
-        List<CalendarVO> list = calendarProc.list();
-        model.addAttribute("calendarList", list);
-        return "calendar/list"; // Thymeleaf 파일 경로
+    @GetMapping("/calendar/data")
+    public List<Map<String, Object>> getCalendarData() {
+        // SQL 결과를 JSON으로 변환
+        return calendarProc.list().stream()
+                .map(calendar -> {
+                    // 명시적으로 Map 생성
+                    Map<String, Object> map = Map.of(
+                        "date", calendar.getLabel_date(),
+                        "illustration", calendar.getIllustno(),
+                        "weather", calendar.getWeatherno(),
+                        "emotion", calendar.getEmno()
+                    );
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 }

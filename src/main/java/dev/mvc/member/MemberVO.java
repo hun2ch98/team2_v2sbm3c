@@ -9,6 +9,8 @@ import lombok.Setter;
 public class MemberVO {
     /** 회원 번호 */
     private int memberno;
+    /** 등급 번호 */
+    private int gradeno;
     /** 아이디(이메일) */
     private String id = "";
     /** 패스워드 */

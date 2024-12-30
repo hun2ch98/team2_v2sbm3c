@@ -32,8 +32,9 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name ?:''}|}">등급 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name != null ? grade_name : ''}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
                     </ul>
                 </li>
                 
@@ -54,6 +55,26 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="감정">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/emotion/create|}">감정 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/emotion/list_by_emono_search_paging?is_continue=${is_continue ?: ''}|}">감정 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="날씨">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/weather/create|}">날씨 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/weather/list_by_weatherno_search_paging?is_continue=${is_continue ?: ''}|}">날씨 목록</a></li>
                     </ul>
                 </li>
                 
@@ -127,12 +148,12 @@
       const idInput = document.createElement('input');
       idInput.type = 'hidden';
       idInput.name = 'id';
-      idInput.value = 'member'; // 회원 ID 설정
+      idInput.value = 'member1'; // 회원 ID 설정
 
       const passwdInput = document.createElement('input');
       passwdInput.type = 'hidden';
       passwdInput.name = 'passwd';
-      passwdInput.value = '1109'; // 회원 비밀번호 설정
+      passwdInput.value = '1234'; // 회원 비밀번호 설정
 
       form.appendChild(idInput);
       form.appendChild(passwdInput);

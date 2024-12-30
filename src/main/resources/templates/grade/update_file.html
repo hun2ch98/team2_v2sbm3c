@@ -4,7 +4,7 @@
 <div layout:fragment="content">
   <div class='title_line'>
     <span th:text="${gradeVO?.grade_name ?: '등급이름'}" class="title_line_text"></span>
-    > 진화 아이콘 수정
+    > 진화 수정
   </div>
   
   <aside class="aside_right">
@@ -12,7 +12,7 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{/grade/create}">등록</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_gradeno?gradeno=${gradeVO.gradeno }&word=${word }&now_page=${now_page}|}">목록</a>
+    <a th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name ?:''}|}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -33,7 +33,7 @@
         </div>
 
         <div th:if="${gradeVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
-          <img src="/grade/images/seed.png" style="width: 90%;">
+          <img src="/grade/images/none1.png" style="width: 90%;">
         </div>
   
         <div style='text-align: left; width: 47%; float: left;'>

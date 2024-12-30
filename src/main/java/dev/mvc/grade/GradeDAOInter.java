@@ -15,17 +15,10 @@ public interface GradeDAOInter {
     public int create(GradeVO gradeVO);
     
     /**
-     * 등급 조회
-     * @param gradeno
-     * @return
-     */
-    public GradeVO read(Integer gradeno);
-    
-    /**
      * 등급 전체 목록
      * @return
      */
-    public ArrayList<GradeVO> list_all();  
+    public ArrayList<GradeVO> list_all(); 
     
     /**
      * 등급별 등록된 목록
@@ -35,14 +28,42 @@ public interface GradeDAOInter {
     public ArrayList<GradeVO> list_by_gradeno(int gradeno);
     
     /**
-     * 진화기준 내용 수정
+     * 등급 조회
+     * @param gradeno
+     * @return
+     */
+    public GradeVO read(int gradeno);
+    
+    /**
+     * 등급종류별 검색 목록
+     * @param hashMap
+     * @return
+     */
+    public ArrayList<GradeVO> list_by_gradeno_search(HashMap<String, Object> hashMap);
+    
+    /**
+     * 등급종류별 검색 레코드 갯수
+     * @param hashMap
+     * @return
+     */
+    public int count_by_gradeno_search(HashMap<String, Object> hashMap);
+    
+    /**
+     * 등급종류별 검색 및 페이징
+     * @param map
+     * @return
+     */
+    public ArrayList<GradeVO> list_by_gradeno_search_paging(HashMap<String, Object> map);
+    
+    /**
+     * 등급설명글 내용 수정
      * @param gradeVO
      * @return
      */
     public int update_text(GradeVO gradeVO);
     
     /**
-     * 파일 수정
+     * 파일 정보 수정
      * @param boardVO
      * @return
      */
@@ -55,25 +76,4 @@ public interface GradeDAOInter {
      * @return 삭제된 레코드 갯수
      */
     public int delete(int gradeno);
-    
-    /**
-     * 등급 종류별 검색 목록
-     * @param hashMap
-     * @return
-     */
-    public ArrayList<GradeVO> list_by_gradeno_search(HashMap<String, Object> hashMap);
-    
-    /**
-     * 등급 종류별 검색 레코드 갯수
-     * @param hashMap
-     * @return
-     */
-    public int count_by_gradeno_search(HashMap<String, Object> hashMap);
-    
-    /**
-     * 등급 종류별 검색 및 페이징
-     * @param map
-     * @return
-     */
-    public ArrayList<GradeVO> list_by_gradeno_search_paging(HashMap<String, Object> map);
 }

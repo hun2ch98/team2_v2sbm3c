@@ -33,6 +33,27 @@ public interface BoardDAOInter {
   public ArrayList<BoardVO> list_by_boardno(int boardno);
   
   /**
+   * 게시글 종류별 검색 목록
+   * @param hashMap
+   * @return
+   */
+  public ArrayList<BoardVO> list_by_boardno_search(HashMap<String, Object> hashMap);
+  
+  /**
+   * 게시글 종류별 검색 레코드 갯수
+   * @param hashMap
+   * @return
+   */
+  public int count_by_boardno_search(HashMap<String, Object> hashMap);
+  
+  /**
+   * 게시글 종류별 검색 및 페이징
+   * @param map
+   * @return
+   */
+  public ArrayList<BoardVO> list_by_boardno_search_paging(HashMap<String, Object> map);
+  
+  /**
    * 게시글 내용 수정
    * @param boardVO
    * @return
@@ -54,23 +75,17 @@ public interface BoardDAOInter {
   public int delete(int boardno);
   
   /**
-   * 게시글 종류별 검색 목록
-   * @param hashMap
+   * 추천수
+   * @param boardno
    * @return
    */
-  public ArrayList<BoardVO> list_by_boardno_search(HashMap<String, Object> hashMap);
+  public int update_goodcnt(int boardno);
   
   /**
-   * 게시글 종류별 검색 레코드 갯수
-   * @param hashMap
+   * 비추천수
+   * @param boardno
    * @return
    */
-  public int count_by_boardno_search(HashMap<String, Object> hashMap);
+  public int update_badcnt(int boardno);
   
-  /**
-   * 게시글 종류별 검색 및 페이징
-   * @param map
-   * @return
-   */
-  public ArrayList<BoardVO> list_by_boardno_search_paging(HashMap<String, Object> map);
 }
