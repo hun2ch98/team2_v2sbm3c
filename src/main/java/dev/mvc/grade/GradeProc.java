@@ -52,7 +52,7 @@ public class GradeProc implements GradeProcInter {
     public ArrayList<GradeVO> list_by_gradeno_search_paging(HashMap<String, Object> map) {
       // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
       int now_page = (int) map.get("now_page");
-      int record_per_page = 10; // 페이지당 레코드 수
+      int record_per_page = 5; // 페이지당 레코드 수
 
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
