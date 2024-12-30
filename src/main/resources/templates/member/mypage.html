@@ -40,7 +40,7 @@
 
   <div style="width: 60%; margin: 0px auto">
     <div class="info-box">
-      <div>등급: <span th:text="${memberVO.grade}">등급</span></div>
+      <div>등급: <img th:src="/images/${memberVO.grade}.png" style='width: 30px;'></div>
       <div>닉네임: <span th:text="${memberVO.nickname}">닉네임</span></div>
     </div>
     
