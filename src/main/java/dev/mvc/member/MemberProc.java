@@ -145,7 +145,7 @@ public class MemberProc implements MemberProcInter{
   }
 
   @Override
-  public String pagingBox(int memberno, int now_page, String name, String list_file, int search_count, int record_per_page,
+  public String pagingBox(int now_page, String name, String list_file, int search_count, int record_per_page,
         int page_per_block) {
     
       // 전체 페이지 수 계산

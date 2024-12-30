@@ -37,19 +37,6 @@
     WHERE id = #{id}
   </select>
   
-  <!-- 회원 정보 수정 -->
-  <update id="update" parameterType="dev.mvc.member.MemberVO">
-    UPDATE member 
-    SET name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}, passwd=#{passwd}
-    WHERE memberno=#{memberno}
-  </update>
-  
-  <!-- 회원 삭제 -->
-  <delete id="delete" parameterType="int">
-    DELETE FROM member
-    WHERE memberno=#{memberno}
-  </delete>
-
   <!-- 로그인 처리 (1: 성공, 0: 실패) -->
   <select id="login" resultType="int" parameterType="HashMap">
     SELECT COUNT(memberno) as cnt
@@ -57,37 +44,51 @@
     WHERE id=#{id} AND passwd=#{passwd}
   </select>
   
-  <!-- 현재 패스워드 검사 -->
+  
+  <!-- 회원 정보 수정 
+  <update id="update" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member 
+    SET name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}, passwd=#{passwd}
+    WHERE memberno=#{memberno}
+  </update> -->
+  
+  <!-- 회원 삭제 
+  <delete id="delete" parameterType="int">
+    DELETE FROM member
+    WHERE memberno=#{memberno}
+  </delete> -->
+  
+  <!-- 현재 패스워드 검사 
   <select id="passwd_check" parameterType="HashMap" resultType="int">
     SELECT COUNT(memberno) as cnt
     FROM member
     WHERE memberno=#{memberno} AND passwd=#{passwd}
-  </select>
+  </select> -->
    
-  <!-- 패스워드 변경 -->
+  <!-- 패스워드 변경 
   <update id="passwd_update" parameterType="HashMap">
     UPDATE member
     SET passwd=#{passwd}
     WHERE memberno=#{memberno}
-  </update>
+  </update> -->
   
-  <!-- 검색 목록 -->
+  <!-- 검색 목록 
   <select id="list_by_memberno_search" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
       SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade
       FROM grade
       WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
       ORDER BY gradeno DESC
       OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-  </select>
+  </select> -->
   
-  <!-- 검색된 레코드 갯수 -->
+  <!-- 검색된 레코드 갯수 
   <select id="list_by_memberno_search_count" resultType="int" parameterType="HashMap">
       SELECT COUNT(*)
       FROM member
       WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
-  </select>
+  </select> -->
   
-  <!-- 등급별 검색 + 페이징 목록 -->
+  <!-- 등급별 검색 + 페이징 목록 
   <select id="list_by_memberno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
       SELECT *
       FROM (
@@ -97,6 +98,6 @@
           WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
-  </select>
+  </select> -->
   
 </mapper>
