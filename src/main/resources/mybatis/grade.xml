@@ -24,7 +24,7 @@
     ORDER BY gradeno DESC
   </select>
   
-  <!-- 등급 등록된 목록 -->
+  <!-- 등록된 목록 -->
   <select id="list_by_gradeno" resultType="dev.mvc.grade.GradeVO" parameterType="int">
     SELECT gradeno, grade_name, evo_criteria, rdate, evolution, file1, file1saved, thumb1, size1
     FROM grade
@@ -32,50 +32,54 @@
     ORDER BY gradeno DESC
   </select>
   
-  <!-- 등급 내용 수정 -->
+  <!-- 내용 수정 -->
   <update id="update_text" parameterType="dev.mvc.grade.GradeVO">
     UPDATE grade
     SET grade_name=#{grade_name}, evo_criteria=#{evo_criteria}, evolution=#{evolution}
     WHERE gradeno = #{gradeno}
   </update>
   
-  <!-- 등급 진화 파일 수정 -->
+  <!-- 파일 수정 -->
   <update id="update_file" parameterType="dev.mvc.grade.GradeVO">
     UPDATE grade
     SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
     WHERE gradeno = #{gradeno}
   </update>
   
-  <!-- 등급 삭제 -->
+  <!-- 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM grade
     WHERE gradeno = #{gradeno}
   </delete>
   
-  <!-- 등급 종류별 검색 목록 -->
+  <!-- 검색 목록 -->
   <select id="list_by_gradeno_search" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
-    SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1
-    FROM grade
-    WHERE evo_criteria = #{evo_criteria, jdbcType=VARCHAR}
-    ORDER BY gradeno DESC
-    OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+      SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1
+      FROM grade
+      WHERE (#{grade_name, jdbcType=VARCHAR} IS NULL OR #{grade_name, jdbcType=VARCHAR} = '' OR LOWER(grade_name) LIKE LOWER('%' || #{grade_name, jdbcType=VARCHAR} || '%'))
+      ORDER BY gradeno DESC
+      OFFSET #{startRow} ROWS FETCH NEXT #{endRow - startRow + 1} ROWS ONLY
   </select>
   
-  <!-- 등급 종류별 검색 레코드 갯수 -->
+  <!-- 검색 레코드 갯수 -->
   <select id="count_by_gradeno_search" resultType="int" parameterType="HashMap">
-    SELECT COUNT(*)
-    FROM grade
-    WHERE (#{evo_criteria} IS NULL OR #{evo_criteria} = '' OR evo_criteria = #{evo_criteria})
+      SELECT COUNT(*)
+      FROM grade
+      WHERE (LOWER(grade_name) LIKE LOWER('%' || #{grade_name, jdbcType=VARCHAR} || '%')
+       OR #{grade_name, jdbcType=VARCHAR} IS NULL OR #{grade_name, jdbcType=VARCHAR} = '')
   </select>
+
   
-  <!-- 등급 종류별 검색 및 페이징 -->
+  <!-- 검색 및 페이징 -->
   <select id="list_by_gradeno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
     SELECT * 
     FROM (
-        SELECT gradeno, grade_name, evo_criteria, rdate, evolution, LOWER(file1) AS file1, file1saved, thumb1, size1, 
+        SELECT gradeno, grade_name, evo_criteria, rdate, evolution, 
+               LOWER(file1) AS file1, file1saved, thumb1, size1, 
                ROW_NUMBER() OVER (ORDER BY gradeno DESC) AS rnum
         FROM grade
-        WHERE (#{evo_criteria} IS NULL OR #{evo_criteria} = '' OR evo_criteria = #{evo_criteria})
+        WHERE (LOWER(grade_name) LIKE LOWER('%' || #{grade_name, jdbcType=VARCHAR} || '%')
+       OR #{grade_name, jdbcType=VARCHAR} IS NULL OR #{grade_name, jdbcType=VARCHAR} = '')
     ) t
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>

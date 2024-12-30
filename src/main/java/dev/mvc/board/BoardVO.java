@@ -14,13 +14,16 @@ public class BoardVO {
    * CREATE TABLE board(
     boardno         NUMBER(10)      NOT NULL    PRIMARY KEY,
     memberno        NUMBER(10)      NOT NULL,
+    title           VARCHAR(50)     NOT NULL,
     bcontent        CLOB            NOT NULL,
     rdate           DATE            NOT NULL,
-    board_cate      NUMBER(10)      NOT NULL,
+    board_cate      VARCHAR(50)     NOT NULL,
     file1           VARCHAR(200)        NULL,
     file1saved      VARCHAR2(100)    NULL,
     thumb1          VARCHAR2(100)    NULL,
     size1           NUMBER(10)         NULL,
+    goodcnt         NUMBER(10)          NULL,
+    badcnt          NUMBER(10)          NULL,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
     );
    */
@@ -45,6 +48,12 @@ public class BoardVO {
   
   /** 게시글 종류 */
   private String board_cate="";
+  
+  /** 추천수 */
+  private int goodcnt;
+  
+  /** 비추천수 */
+  private int badcnt;
   
   //파일 업로드 관련
   // -----------------------------------------------------------------------------------

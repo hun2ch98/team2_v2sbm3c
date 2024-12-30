@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.weather.WeatherDAOInter">
+
+  <!-- 날씨 추가 -->
+  <insert id="create" parameterType="dev.mvc.weather.WeatherVO">
+   INSERT INTO weather (weatherno, type, explan, file1, file1saved, thumb1, size1)
+    VALUES (weather_seq.nextval, #{type}, #{explan}, #{file1}, #{file1saved}, #{thumb1}, #{size1})
+  </insert>
+
+  <!-- 날씨 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.weather.WeatherVO">
+    SELECT weatherno, type, explan, file1, file1saved, thumb1, size1
+    FROM weather
+    WHERE weatherno = #{weatherno}
+  </select>
+
+  <select id="list_all" resultType="dev.mvc.weather.WeatherVO">
+    SELECT weatherno, type, explan, file1, file1saved, thumb1, size1
+    FROM weather
+    ORDER BY weatherno
+  </select>
+  
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM weather
+  </select>
+  
+  <select id="list_by_weatherno" resultType="dev.mvc.weather.WeatherVO">
+    SELECT weatherno, type, explan, file1, file1saved, thumb1, size1
+    FROM weather
+    ORDER BY weatherno
+  </select>
+  
+  <!-- 날씨 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.weather.WeatherVO">
+    UPDATE weather
+    SET type=#{type}, explan = #{explan}
+    WHERE weatherno = #{weatherno}
+  </update>
+  
+  <!-- 날씨 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.weather.WeatherVO">
+    UPDATE weather
+    SET file1=#{file1}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
+    WHERE weatherno = #{weatherno}
+  </update>
+
+  <!-- 날씨 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM weather
+    WHERE weatherno = #{weatherno}
+  </delete>
+  
+  <!-- 검색 레코드 갯수 -->
+  <select id="count_by_weatherno_search" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*)
+    FROM weather
+  </select>
+  
+  <!-- 검색 및 페이징 -->
+  <select id="list_by_weatherno_search_paging" resultType="dev.mvc.weather.WeatherVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+        SELECT weatherno, type, explan, file1, file1saved, thumb1, size1, 
+               ROW_NUMBER() OVER (ORDER BY weatherno DESC) AS rnum
+        FROM weather
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 회원이 작성한 게시글 목록 -->
+  <select id="getweathersByMember" parameterType="int" resultType="dev.mvc.weather.WeatherVO">
+    SELECT * FROM weather WHERE memberno = #{memberno}
+  </select>
+
+</mapper>

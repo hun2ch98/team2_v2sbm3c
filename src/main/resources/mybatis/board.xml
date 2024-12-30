@@ -6,27 +6,27 @@
 
   <!-- 게시글 추가 -->
   <insert id="create" parameterType="dev.mvc.board.BoardVO">
-    INSERT INTO board (boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1)
-    VALUES (board_seq.nextval, #{memberno}, #{title}, #{bcontent}, sysdate, #{board_cate}, #{file1}, #{file1saved}, #{thumb1}, #{size1})
+    INSERT INTO board (boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1, goodcnt, badcnt)
+    VALUES (board_seq.nextval, #{memberno}, #{title}, #{bcontent}, sysdate, #{board_cate}, #{file1}, #{file1saved}, #{thumb1}, #{size1}, #{goodcnt}, #{badcnt})
   </insert>
 
   <!-- 게시글 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.board.BoardVO">
-    SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1, goodcnt, badcnt
     FROM board
     WHERE boardno = #{boardno}
   </select>
 
   <!-- 모든 목록 -->
   <select id="list_all" resultType="dev.mvc.board.BoardVO">
-    SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1, goodcnt, badcnt
     FROM board
     ORDER BY boardno DESC
   </select>
   
   <!-- 게시글 등록된 목록 -->
   <select id="list_by_boardno" resultType="dev.mvc.board.BoardVO" parameterType="int">
-    SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1
+    SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt, badcnt
     FROM board
     WHERE boardno = #{boardno}
     ORDER BY boardno DESC
@@ -54,7 +54,7 @@
   
   <!-- 게시글 종류별 검색 목록 -->
   <select id="list_by_boardno_search" resultType="dev.mvc.board.BoardVO" parameterType="HashMap">
-      SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1
+      SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt, badcnt
       FROM board
       WHERE board_cate = #{board_cate, jdbcType=VARCHAR}
       ORDER BY boardno DESC
@@ -74,21 +74,31 @@
   <select id="list_by_boardno_search_paging" resultType="dev.mvc.board.BoardVO" parameterType="HashMap">
     SELECT *
     FROM (
-        SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) AS file1, file1saved, thumb1, size1, 
+        SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) AS file1, file1saved, thumb1, size1, goodcnt, badcnt, 
                ROW_NUMBER() OVER (ORDER BY boardno DESC) AS rnum
         FROM board
         WHERE (#{board_cate} IS NULL OR #{board_cate} = '' OR board_cate = #{board_cate})
     )
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
-
-
-
   
   <!-- 회원이 작성한 게시글 목록 -->
   <select id="getBoardsByMember" parameterType="int" resultType="dev.mvc.board.BoardVO">
     SELECT * FROM board WHERE memberno = #{memberno}
   </select>
-
+  
+  <!-- 추천수 -->
+  <update id="update_goodcnt" parameterType="Integer">
+    UPDATE board
+    SET goodcnt = goodcnt+1
+    WHERE boardno = #{boardno}
+  </update>
+  
+  <!-- 비추천수 -->
+  <update id="update_badcnt" parameterType="Integer">
+    UPDATE board
+    SET badcnt = badcnt+1
+    WHERE boardno = #{boardno}
+  </update>
 
 </mapper>
