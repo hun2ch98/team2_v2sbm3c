@@ -13,11 +13,11 @@
   <!-- 회원 등록 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
     INSERT INTO member(memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade)
-    VALUES (member_seq.nextval, #{gradeno, jdbcType=INTEGER}, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade})
+    VALUES (member_seq.nextval, #{gradeno}, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade})
   </insert>
   
   <!-- 회원 목록 -->
-  <select id="list" resultType="dev.mvc.member.MemberVO">
+  <select id="list_all" resultType="dev.mvc.member.MemberVO">
     SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
     FROM member
     ORDER BY grade ASC, id ASC
@@ -25,10 +25,17 @@
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
     FROM member
     WHERE memberno = #{memberno}
   </select>
+  
+  <!-- greadno로 회원 정보 조회 
+  <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    FROM member
+    WHERE gradeno = #{gradeno}
+  </select>-->
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
