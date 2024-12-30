@@ -89,6 +89,8 @@ public class MemberCont {
           } else {
               memberVO.setGrade(15); // 기본 회원 15
           }
+          
+          memberVO.setGradeno(15);
 
           // 기본 이미지 설정
           memberVO.setPf_img("default.png");
