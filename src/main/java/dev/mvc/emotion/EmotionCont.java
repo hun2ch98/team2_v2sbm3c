@@ -198,6 +198,7 @@ public class EmotionCont {
 //  public String list_by_emono(
 //          Model model,
 //          @RequestParam(name = "emono", defaultValue = "0") int emono,
+//          @RequestParam(name = "type", defaultValue = "") String type,
 //          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 //
 ////    if (this.diaryProc.isdiary(session)) {  // 회원 조회
@@ -223,7 +224,6 @@ public class EmotionCont {
 //    //  return "redirect:/diary/login_cookie_need";
 //    //}
 //    }
-//
 
   
   /**
@@ -239,7 +239,7 @@ public class EmotionCont {
       Model model, 
       @ModelAttribute("emotionVO") EmotionVO emotionVO,
       @RequestParam(name = "emono", defaultValue = "0") int emono,
-      @RequestParam(name = "type", defaultValue = "") String type,
+      @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
       int record_per_page = 10;
@@ -261,13 +261,16 @@ public class EmotionCont {
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
 //      model.addAttribute("diaryVO", diaryVO);
+      word = Tool.checkNull(word).trim();
       model.addAttribute("memberVO", memberVO);
       model.addAttribute("emono", emono);
+      model.addAttribute("type", word);
       model.addAttribute("now_page", now_page);
 
       HashMap<String, Object> map = new HashMap<>();
 //      map.put("diaryno", diaryno);
       map.put("memberno", memberno);
+      map.put("word",word);
       map.put("now_page", now_page);
       map.put("startRow", startRow);
       map.put("endRow", endRow);
@@ -277,16 +280,16 @@ public class EmotionCont {
           model.addAttribute("message", "게시물이 없습니다.");
       } else {
           model.addAttribute("list", list);
+          model.addAttribute("word", word);
       }
 
       int search_count = this.emotionProc.count_by_emono_search(map);
 //      String type = emotionVO.getType(); // EmotionVO에서 type 값을 가져옴
-      String paging = this.emotionProc.pagingBox(memberno, now_page, type, "/emotion/list_by_emono_search_paging", search_count,
+      String paging = this.emotionProc.pagingBox(memberno, now_page, word, "/emotion/list_by_emono_search_paging", search_count,
     		  Emotion.RECORD_PER_PAGE, Emotion.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
-
 
       int no = search_count - ((now_page - 1) * Emotion.RECORD_PER_PAGE);
       model.addAttribute("no", no);
