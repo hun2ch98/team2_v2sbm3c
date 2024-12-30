@@ -7,7 +7,7 @@
 
   <aside class="aside_right">
     <span th:if="${session.grade == 'member'}">
-      <a th:href="@{/board/create}">등록</a>
+      <a th:href="@{/emotion/create}">등록</a>
       <span class="menu_devide">│</span>    
     </span>
     
@@ -15,7 +15,7 @@
   </aside> 
 
   <!-- /contents/list_search_com.html 파일의 list_search_fragment import -->
-  <div th:replace="~{board/list_search_com::list_search_fragment}"></div>
+  <div th:replace="~{emotion/list_search_com::list_search_fragment}"></div>
      
   <div class='menu_line'></div>
        
@@ -29,30 +29,30 @@
       <th class='th_bs'>제목</th>
     </tr>
    
-    <tr th:each="boardVO, status:${list}" 
-         th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&board_cate=${board_cate}'|"
+    <tr th:each="emotionVO, status:${list}" 
+         th:attr="onclick=|location.href='/emotion/read?emono=${emotionVO.emono}}'|"
          style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
-        <div th:if="${boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')}">
-          <img th:src="@{|/board/storage/${boardVO.thumb1}|}" style="width: 120px; height: 90px;">
+        <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}">
+          <img th:src="@{|/emotion/storage/${emotionVO.thumb1}|}" style="width: 120px; height: 90px;">
         </div>
 
-        <div th:if="${((boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')) == false) and (boardVO.size1 > 0)}">
-          <span th:text="${boardVO.file1}"></span>
+        <div th:if="${((emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')) == false) and (emotionVO.size1 > 0)}">
+          <span th:text="${emotionVO.file1}"></span>
         </div>
 
-        <div th:if="${boardVO.size1 == 0}">
-          <img src="/board/images/none1.png" style="width: 120px; height: 90px;">
+        <div th:if="${emotionVO.size1 == 0}">
+          <img src="/emotion/images/none1.png" style="width: 120px; height: 90px;">
         </div>
                 
       </td>
       </td>
       <td class='td_left'>
-        <span th:text="${boardVO.title}" style="font-weight: bold;"></span><br>
-        <span th:if="${boardVO.bcontent.length() > 160 }" 
-                  th:text="|${boardVO.bcontent.substring(0, 160) }...|"></span>
-        <span th:if="${boardVO.bcontent.length() <= 160 }" 
-                  th:text="|${boardVO.bcontent}|"></span>
+        <span th:text="${emotionVO.type}" style="font-weight: bold;"></span><br>
+        <span th:if="${emotionVO.explan.length() > 160 }" 
+                  th:text="|${emotionVO.explan.substring(0, 160) }...|"></span>
+        <span th:if="${emotionVO.explan.length() <= 160 }" 
+                  th:text="|${emotionVO.explan}|"></span>
 
       </td>
     </tr>

@@ -4,57 +4,55 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-    <span th:text="${boardVO?.board_cate ?: '요청사항'}" class="title_line_text"></span>
     > 검색
-    <span th:if="${board_cate != ''}" th:text="|> ${board_cate} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 
   <aside class="aside_right">
     <span th:if="${session.grade == 'admin'}">
-      <a th:href="@{|/board/create?boardno=${boardVO.boardno}|}">등록</a>
+      <a th:href="@{|/emotion/create?emono=${emotionVO.emono}|}">등록</a>
       <span class="menu_devide">│</span>    
     </span>
     
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>    
-    <a th:href="@{|./list_by_boardno?boardno=${boardVO.boardno }&board_cate=${board_cate }&now_page=${now_page}|}">목록</a>  
+    <a th:href="@{|./list_by_emono?emono=${emotionVO.emono }&now_page=${now_page}|}">목록</a>  
     
   </aside> 
 
-  <!-- /board/list_search_com.html 파일의 list_search_fragment import -->
-  <div th:replace="~{board/list_search_com::list_search_fragment}"></div>
+  <!-- /emotion/list_search_com.html 파일의 list_search_fragment import -->
+  <div th:replace="~{emotion/list_search_com::list_search_fragment}"></div>
      
   <div class='menu_line'></div>
        
   <div style='width: 100%;'> <!-- 갤러리 Layout  시작 -->
-    <div th:if="${list.size() > 0}"  th:each="boardVO, status:${list}" 
-         th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&board_cate=${board_cate}&now_page=${now_page}'|"
+    <div th:if="${list.size() > 0}"  th:each="emotionVO, status:${list}" 
+         th:attr="onclick=|location.href='/emotion/read?emono=${emotionVO.emono}&now_page=${now_page}'|"
          style='width: 19.0%; height: 200px; float: left; margin: 0.5%; padding: 0.5%; background-color: #EEEFFF; text-align: left; cursor: pointer;'>
 
-      <div th:if="${boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')}"
+      <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}"
              style="width: 100%; height: 100px;">
-        <img th:src="@{|/board/storage/${boardVO.thumb1}|}" style="width: 100%; height: 100%;">
+        <img th:src="@{|/emotion/storage/${emotionVO.thumb1}|}" style="width: 100%; height: 100%;">
       </div>
 
-      <div th:if="${((boardVO.file1.endsWith('jpg') or boardVO.file1.endsWith('png')  or boardVO.file1.endsWith('gif')) == false) and (boardVO.size1 > 0)}"
+      <div th:if="${((emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')) == false) and (emotionVO.size1 > 0)}"
              style="width: 100%; height: 100px;">
-        <span th:text="${boardVO.file1}"></span>
+        <span th:text="${emotionVO.file1}"></span>
       </div>
 
-      <div th:if="${boardVO.size1 == 0}" style="width: 100%; height: 100px;">
-        <img src="/board/images/none1.png" style="width: 100%; height: 100%;">
+      <div th:if="${emotionVO.size1 == 0}" style="width: 100%; height: 100px;">
+        <img src="/emotion/images/none1.png" style="width: 100%; height: 100%;">
       </div>
       <div>
-        <span th:if="${boardVO.title.length() > 16 }" 
-                  th:text="|${boardVO.title.substring(0, 16) }...|" style="font-weight: bold;"></span>
-        <span th:if="${boardVO.title.length() <= 16 }" 
-                  th:text="|${boardVO.title}|" style="font-weight: bold;"></span>
+        <span th:if="${emotionVO.title.length() > 16 }" 
+                  th:text="|${emotionVO.title.substring(0, 16) }...|" style="font-weight: bold;"></span>
+        <span th:if="${emotionVO.title.length() <= 16 }" 
+                  th:text="|${emotionVO.title}|" style="font-weight: bold;"></span>
         <br>
         
-        <span th:if="${boardVO.bcontent.length() > 25 }" 
-                  th:text="|${boardVO.bcontent.substring(0, 25) }...|"></span>
-        <span th:if="${boardVO.bcontent.length() <= 25 }" 
-                  th:text="|${boardVO.bcontent}|"></span>
+        <span th:if="${emotionVO.explan.length() > 25 }" 
+                  th:text="|${emotionVO.explan.substring(0, 25) }...|"></span>
+        <span th:if="${emotionVO.explan.length() <= 25 }" 
+                  th:text="|${emotionVO.explan}|"></span>
       </div>
       
       <div style="width: 100%; text-align: right;">♡</div>
@@ -62,7 +60,7 @@
     </div>
     
     <div th:if="${list.size() == 0}" style="text-align: center; padding: 50px 0px;">
-      <span>관련 글이 등록되지 않았습니다.</span>
+      <span>관련 감정이 등록되지 않았습니다.</span>
     </div> 
   </div>  <!-- 갤러리 Layout  종료 -->
    
