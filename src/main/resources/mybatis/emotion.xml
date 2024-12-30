@@ -23,6 +23,10 @@
     ORDER BY emono
   </select>
   
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM emotion
+  </select>
+  
   <select id="list_by_emono" resultType="dev.mvc.emotion.EmotionVO">
     SELECT emono, type, explan, file1, file1saved, thumb1, size1
     FROM emotion
@@ -48,5 +52,27 @@
     DELETE FROM emotion
     WHERE emono = #{emono}
   </delete>
+  
+  <!-- 검색 레코드 갯수 -->
+  <select id="count_by_emono_search" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*)
+    FROM emotion
+  </select>
+  
+  <!-- 검색 및 페이징 -->
+  <select id="list_by_emono_search_paging" resultType="dev.mvc.emotion.EmotionVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+        SELECT emono, type, explan, file1, file1saved, thumb1, size1, 
+               ROW_NUMBER() OVER (ORDER BY emono DESC) AS rnum
+        FROM emotion
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 회원이 작성한 게시글 목록 -->
+  <select id="getEmotionsByMember" parameterType="int" resultType="dev.mvc.emotion.EmotionVO">
+    SELECT * FROM emotion WHERE memberno = #{memberno}
+  </select>
 
 </mapper>

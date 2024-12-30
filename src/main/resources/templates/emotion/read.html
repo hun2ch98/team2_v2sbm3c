@@ -8,7 +8,7 @@
   <aside class="aside_right" th:if="${session?.gradle != 1}">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/emotion/list_by_emono}">목록</a>
+    <a th:href="@{/emotion/list_by_emono_search_paging}">목록</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{/emotion/create}">등록</a>
     <span class='menu_divide'>│</span>
@@ -22,7 +22,8 @@
   <aside class="aside_right" th:if="${session?.gradle != 1}">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/emotion/read}">감정보기</a>
+    <a th:href="@{/emotion/list_by_emono_search_paging}">감정보기</a>
+    <span class='menu_divide'>│</span>
   </aside>
 
   <div class='menu_line'></div>

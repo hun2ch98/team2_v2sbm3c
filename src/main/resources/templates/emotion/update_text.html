@@ -11,7 +11,7 @@
     <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_emono?emono=${emotionVO.emono }&word=${word }&now_page=${now_page}|}">목록</a>
+    <a th:href="@{/emotion/list_by_emono_search_paging}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -34,7 +34,7 @@
     
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">저장</button>
-      <button type="button" th:attr="onclick=|location.href='./list_by_emono?emono=${emono}'|" class="btn btn-secondary btn-sm">목록</button>
+      <button type="button" th:attr="onclick=|location.href='./list_by_emono_search_paging'|" class="btn btn-secondary btn-sm">목록</button>
     </div>
   
   </form>
