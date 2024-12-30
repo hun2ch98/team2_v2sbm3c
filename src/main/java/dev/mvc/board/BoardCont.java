@@ -139,80 +139,27 @@ public class BoardCont {
     }
   }
   
-  /**
-   * 전체 목록(관리자)
-   * @return
-   */
-  @GetMapping(value = "/list_all")
-  public String list_all(HttpSession session, Model model) {
-    // System.out.println("-> list_all");
-//    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
-
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
-      ArrayList<BoardVO> list = this.boardProc.list_all(); // 모든 목록
-
-      // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
-      // for문을 사용하여 객체를 추출, Call By Reference 기반의 원본 객체 값 변경
-//      for (ContentsVO contentsVO : list) {
-//        String title = contentsVO.getTitle();
-//        String content = contentsVO.getContent();
-//        
-//        title = Tool.convertChar(title);  // 특수 문자 처리
-//        content = Tool.convertChar(content); 
-//        
-//        contentsVO.setTitle(title);
-//        contentsVO.setContent(content);  
+//  /**
+//   * 전체 목록(관리자)
+//   * @return
+//   */
+//  @GetMapping(value = "/list_all")
+//  public String list_all(HttpSession session, Model model) {
+//    // System.out.println("-> list_all");
+////    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
+////    model.addAttribute("menu", menu);
 //
-//      }
-
-      model.addAttribute("list", list);
-      return "/board/list_all";
-
-    } else {
-      return "redirect:/member/login_cookie_need";
-    }
-
-  }
-  
-  /**
-   * 게시글 목록(회원)
-   * @param model
-   * @param boardno
-   * @param now_page
-   * @return
-   */
-//  @GetMapping(value = "/list_by_boardno")
-//  public String list_by_boardno(
-//          Model model,
-//          @RequestParam(name = "boardno", defaultValue = "0") int boardno,
-//          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+//      ArrayList<BoardVO> list = this.boardProc.list_all(); // 모든 목록
 //
-////    if (this.memberProc.isMember(session)) {  // 회원 조회
-//        
-//        int record_per_page = 10; 
-//    
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("startRow", (now_page - 1) * record_per_page + 1);
-//        map.put("endRow", now_page * record_per_page);
-//        map.put("boardno", boardno);
-//        
-//        ArrayList<BoardVO> list = this.boardProc.list_by_boardno(boardno);
-//        if (list == null || list.isEmpty()) {
-//            model.addAttribute("message", "등록된 게시글이 없습니다.");
-//        } else {
-//            model.addAttribute("list", list);
-//        }
-//  
-//        model.addAttribute("now_page", now_page);
-//        return "/board/list_by_boardno";
+//      model.addAttribute("list", list);
+//      return "/board/list_all";
 //
-//    //  } else {
-//    //  return "redirect:/member/login_cookie_need";
-//    //}
+//    } else {
+//      return "redirect:/member/login_cookie_need";
 //    }
-
-
+//
+//  }
   
   /**
    * 유형 3

@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import dev.mvc.board.Board;
 import dev.mvc.board.BoardProcInter;
 import dev.mvc.board.BoardVO;
 import dev.mvc.diary.DiaryProcInter;
+import dev.mvc.grade.Grade;
 import dev.mvc.grade.GradeProcInter;
 import dev.mvc.grade.GradeVO;
 import dev.mvc.tool.Tool;
@@ -129,21 +131,80 @@ public class MemberCont {
       return "/member/msg"; // /templates/member/msg.html
   }
   
-  @GetMapping(value = "/list_all")
-  public String list_all(HttpSession session, Model model) {
+  /**
+   * 유형 3
+   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
+   * http://localhost:9093/member/list_by_memberno?memberno=6
+   * 
+   * @return
+   */
+  @GetMapping(value = "/list_by_memberno_search_paging")
+  public String list_by_memberno_search_paging(
+      HttpSession session, 
+      Model model,
+      @ModelAttribute("memberVO") MemberVO memberVO,
+      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+      @RequestParam(name = "name", defaultValue = "") String name,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+      
+    int startRow = (now_page - 1) * record_per_page + 1;
+    int endRow = now_page * record_per_page;
     
-    // 세션에서 등급 확인
-    String grade = (String) session.getAttribute("grade");
-    
-    // 관리자 등급만 접근 허용
-    if (grade != null && grade.equals("admin")) {
-      ArrayList<MemberVO> list = this.memberProc.list_all();
-      model.addAttribute("list", list);
-      return "/member/list_all"; // /templates/member/list.html
-    } else {
-      return "redirect:/member/login_cookie_need"; // redirect
+    name = Tool.checkNull(name).trim();
+    if (name.isEmpty()) {
+      name = "";
     }
+    
+    if (memberno < 0) {
+      memberno = 0;
+    }
+    
+    model.addAttribute("memberno", memberno);
+    model.addAttribute("name", name);
+    model.addAttribute("now_page", now_page);
+    
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("memberno", memberno);
+    map.put("name", name);
+    map.put("now_page", now_page);
+    map.put("startRow", startRow);
+    map.put("endRow", endRow);
+    
+    ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
+    if (list == null || list.isEmpty()) {
+      model.addAttribute("message", "회원이 없습니다.");
+    } else {
+      model.addAttribute("list", list);
+    }
+    
+    int search_count = this.memberProc.list_by_memberno_search_count(map);
+    String paging = this.memberProc.pagingBox(memberno, now_page, name, "/member/list_by_memberno_search_paging", search_count, Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK); // pageSize 사용
+    model.addAttribute("paging", paging);
+    model.addAttribute("name", name);
+    model.addAttribute("now_page", now_page);
+    model.addAttribute("search_count", search_count);
+    
+    int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
+    model.addAttribute("no", no);
+    
+    return "/member/list_by_memberno_search_paging";
   }
+  
+//  @GetMapping(value = "/list_all")
+//  public String list_all(HttpSession session, Model model) {
+//    
+//    // 세션에서 등급 확인
+//    String grade = (String) session.getAttribute("grade");
+//    
+//    // 관리자 등급만 접근 허용
+//    if (grade != null && grade.equals("admin")) {
+//      ArrayList<MemberVO> list = this.memberProc.list_all();
+//      model.addAttribute("list", list);
+//      return "/member/list_all"; // /templates/member/list.html
+//    } else {
+//      return "redirect:/member/login_cookie_need"; // redirect
+//    }
+//  }
   
 //  ------------------------ 백업
 //  @GetMapping(value="/list")
@@ -254,55 +315,7 @@ public class MemberCont {
 //      }
 //  }
   
-  /**
-   * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
-   * http://localhost:9093/member/list_by_memberno?memberno=6
-   * 
-   * @return
-   */
-  @GetMapping(value = "/list_by_memberno_search_paging")
-  public String list_by_memberno_search_paging(
-      HttpSession session, 
-      Model model,
-      @ModelAttribute("memberVO") MemberVO memberVO,
-      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "name", defaultValue = "") String name,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-      
-    int startRow = (now_page - 1) * record_per_page + 1;
-    int endRow = now_page * record_per_page;
-    
-    int gradeno = (int) session.getAttribute("gradeno");
-    GradeVO gradeVO = this.gradeProc.read(gradeno);
-    if (gradeVO == null) {
-      gradeVO = new GradeVO();
-      gradeVO.setGradeno(0);
-      model.addAttribute("message", "등급 정보가 없습니다.");
-    }
-    name = Tool.checkNull(name).trim();
-    model.addAttribute("gradeVO", gradeVO);
-    model.addAttribute("memberno", memberno);
-    model.addAttribute("name", name);
-    model.addAttribute("now_page", now_page);
-    
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("gradeno", gradeno);
-    map.put("name", name);
-    map.put("now_page", now_page);
-    map.put("startRow", startRow);
-    map.put("endRow", endRow);
-    
-    ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-    if (list == null || list.isEmpty()) {
-      model.addAttribute("message", "회원이 없습니다.");
-    } else {
-      model.addAttribute("list", list);
-    }
-    
-    int search_count = this.memberProc.list_by_memberno_search_count(map);
-    String paging = this.memberProc.pagingBox(memberno, now_page, name, name, search_count, now_page, search_count)
-  }
+  
 
 //  /**
 //   * 조회
