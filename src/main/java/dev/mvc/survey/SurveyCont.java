@@ -320,38 +320,38 @@ public class SurveyCont {
    * @param now_page
    * @return
    */
-  @GetMapping(value = "/read")
-  public String read(HttpSession session, Model model, 
-      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-      @RequestParam(name = "is_continue", defaultValue = "0") String is_continue,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
-    
-      SurveyVO surveyVO = this.surveyProc.read(surveyno);
-      model.addAttribute("surveyVO", surveyVO);
-  
-      long size1 = surveyVO.getSize1();
-      String size1_label = Tool.unit(size1);
-      surveyVO.setSize1_label(size1_label);
-      
-      MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
-      model.addAttribute("memberVO", memberVO);
-      
-      // 조회에서 화면 하단에 출력
-      // ArrayList<ReplyVO> reply_list = this.replyProc.list_contents(contentsno);
-      // mav.addObject("reply_list", reply_list);
-      
-      model.addAttribute("now_page", now_page);
-  
-  
-      return "/survey/read";
-    } else {
-      return "redirect:/member/login_cookie_need";
-
-    }
-
-  }
+//  @GetMapping(value = "/read")
+//  public String read(HttpSession session, Model model, 
+//      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+//      @RequestParam(name = "is_continue", defaultValue = "0") String is_continue,
+//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+//    
+//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+//    
+//      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+//      model.addAttribute("surveyVO", surveyVO);
+//  
+//      long size1 = surveyVO.getSize1();
+//      String size1_label = Tool.unit(size1);
+//      surveyVO.setSize1_label(size1_label);
+//      
+//      MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
+//      model.addAttribute("memberVO", memberVO);
+//      
+//      // 조회에서 화면 하단에 출력
+//      // ArrayList<ReplyVO> reply_list = this.replyProc.list_contents(contentsno);
+//      // mav.addObject("reply_list", reply_list);
+//      
+//      model.addAttribute("now_page", now_page);
+//  
+//  
+//      return "/survey/read";
+//    } else {
+//      return "redirect:/member/login_cookie_need";
+//
+//    }
+//
+//  }
   
   /**
    * 글 수정 폼
