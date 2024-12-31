@@ -53,7 +53,7 @@ CREATE SEQUENCE member_seq
 
 commit;
 
-ALTER TABLE member MODIFY gradeno DEFAULT 15;
+SELECT * FROM member;
 
 --1. 등록
 -- 회원 관리용 계정
