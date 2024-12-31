@@ -82,19 +82,20 @@ public class ItemCont {
     int cnt = this.itemProc.create(itemVO);
     if (cnt == 1) {
       ra.addAttribute("surveyno", itemVO.getSurveyno());
-      return "redirect:/surveyitem/list_all";
+      return "redirect:/surveyitem/list_all_com";
     } else {
       ra.addFlashAttribute("code", "create_fail");
       return "redirect:/surveyitem/msg";
     }
   }
+  
   /**
    * 목록
    * @param model
    * @return
    */
-  @GetMapping(value = "/list_all")
-  public String list_all(@RequestParam("surveyno") int surveyno,
+  @GetMapping(value = "/surveyitem")
+  public String list_all_com(@RequestParam("surveyno") int surveyno,
                     Model model) {
     ItemVO itemVO = new ItemVO();
     model.addAttribute("itemVO", itemVO);
@@ -103,7 +104,7 @@ public class ItemCont {
     model.addAttribute("list", list);
     model.addAttribute("surveyno", surveyno);
 
-    return "/surveyitem/list_all"; // /templates/cate/list_all.html
+    return "/surveyitem/list_all_com"; // /templates/cate/list_all.html
   }
 
 }

@@ -1,47 +1,69 @@
-<!--/* 
-<div th:replace="~{cate/list_all_com::list_all_fragment}"></div> 
-'/cate/list_all_com.html' 파일의 list_all_fragment를 가져다 사용
-*/-->
-<div th:fragment="list_all_fragment"> 
-  <table class="table table-hover" style="width: 100%;">
-    <colgroup>
-      <col style='width: 10%;'/>
-      <col style='width: 20%;'/>
-      <col style='width: 20%;'/>
-      <col style='width: 10%;'/>    
-      <col style='width: 20%;'/>
-    </colgroup>
-    <thead>
-      <tr>
-        <th class="th_bs">항목 번호</th>
-        <th class="th_bs">설문 조사 번호</th>
-        <th class="th_bs">설문 조사 항목</th>
-        <th class="th_bs">출력 순서</th>
-        <th class="th_bs">선택 인원</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="itemVO, status:${list}">
-        <td class="td_bs" th:text="${no-status.index}"></td>
-      </tr>
-      <tr th:each="itemVO, status:${list}">
-        <td class="td_bs" th:text="${itemVO.itemno}"></td>
-      </tr>
-      <tr th:each="itemVO, status:${list}">
-        <td class="td_bs" th:text="${itemVO.item}"></td>
-      </tr>
-      <tr th:each="itemVO, status:${list}">
-        <td class="td_bs" th:text="${itemVO.item_seq}"></td>
-      </tr>
-      <tr th:each="itemVO, status:${list}">
-        <td class="td_bs" th:text="${itemVO.item_cnt}"></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  <!-- 페이지 버튼 목록 출력 시작 -->
-  <div class="Bottom_menu" th:utext="${paging}"></div> 
-  <!-- 페이지 버튼 목록 출력 종료 -->
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    설문조사 항목 조회
+  </div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{/surveyitem/list_all}">항목 추가</a>
+      <span class="menu_divide">│</span>    
+    </span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>    
+    <a th:href="@{/surveyitem/list_all}">항목 추가</a> 
+    <span class='menu_divide'>│</span> 
+    <a th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
+  </aside> 
+
+  <div class='menu_line'></div>
+
+  <!--/* 
+  <div th:replace="~{cate/list_all_com::list_all_fragment}"></div> 
+  '/cate/list_all_com.html' 파일의 list_all_fragment를 가져다 사용
+  */-->
+  <div th:fragment="list_all_fragment"> 
+    <table class="table table-hover" style="width: 100%;">
+      <colgroup>
+        <col style='width: 10%;'/>
+        <col style='width: 20%;'/>
+        <col style='width: 20%;'/>
+        <col style='width: 10%;'/>    
+        <col style='width: 20%;'/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="th_bs">항목 번호</th>
+          <th class="th_bs">설문 조사 번호</th>
+          <th class="th_bs">설문 조사 항목</th>
+          <th class="th_bs">출력 순서</th>
+          <th class="th_bs">선택 인원</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="itemVO, status:${list}">
+          <td class="td_bs" th:text="${no-status.index}"></td>
+        </tr>
+        <tr th:each="itemVO, status:${list}">
+          <td class="td_bs" th:text="${itemVO.itemno}"></td>
+        </tr>
+        <tr th:each="itemVO, status:${list}">
+          <td class="td_bs" th:text="${itemVO.item}"></td>
+        </tr>
+        <tr th:each="itemVO, status:${list}">
+          <td class="td_bs" th:text="${itemVO.item_seq}"></td>
+        </tr>
+        <tr th:each="itemVO, status:${list}">
+          <td class="td_bs" th:text="${itemVO.item_cnt}"></td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- 페이지 버튼 목록 출력 시작 -->
+    <div class="Bottom_menu" th:utext="${paging}"></div> 
+    <!-- 페이지 버튼 목록 출력 종료 -->
 
 </div>
 
