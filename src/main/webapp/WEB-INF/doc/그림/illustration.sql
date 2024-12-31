@@ -5,7 +5,10 @@ CREATE TABLE illustration (
     illust_saved        VARCHAR(100)  NOT NULL,
     illust_size         NUMBER(10)    NULL,
     illust_thumb        VARCHAR(100)  NULL,
-    conversationno      NUMBER(10)
+    conversationno      NUMBER(10),  
+    memberno            NUMBER(10),
+    FOREIGN KEY (conversationno) REFERENCES AICONVERSATION(conversationno),
+    FOREIGN KEY (memberno) REFERENCES MEMBER(memberno)
 );
 
 DROP SEQUENCE ILLUSTRATION_SEQ;
@@ -18,3 +21,7 @@ CREATE SEQUENCE illustration_seq
 
 INSERT INTO illustration(illustno, illust, illust_saved, illust_size, illust_thumb, conversationno)
 VALUES (0, 'test', 'test', '1', 'test', 0);
+
+INSERT INTO illustration(illustno, illust, illust_saved, illust_size, illust_thumb, conversationno)
+VALUES (1, 'test', 'test', '1', 'test', 0);
+commit;

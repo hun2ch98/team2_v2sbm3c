@@ -10,9 +10,9 @@
           <div th:case="create_success">
             <span class="span_success" th:text="|${name}(${id})님 회원 가입을 축하합니다.|"></span><br>
             <!-- gradeno에 따라 아이콘 표시 -->
-            <div style="width: 30px;">
-              <img th:if="${memberVO.gradeno >= 1 and memberVO.gradeno <= 10}" src="/images/1.png" alt="Admin Icon" />
-              <img th:if="${memberVO.gradeno >= 11 and memberVO.gradeno <= 20}" src="/images/15.png" alt="User Icon" />
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img th:if="${memberVO.gradeno == null}" src="/images/grade/1.png" alt="관리자" style="width: 30px; height: auto;" />
+                <img th:if="${memberVO.gradeno != null and memberVO.gradeno == 3}" src="/images/grade/2.png" alt="회원" style="width: 30px; height: auto;" />
             </div>
             <button type='button'
                          th:attr="onclick=|location.href='./login?id=${id}'|" 

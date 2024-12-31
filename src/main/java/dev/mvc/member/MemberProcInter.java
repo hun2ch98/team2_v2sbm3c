@@ -139,4 +139,10 @@ public interface MemberProcInter {
                                         int record_per_page, int page_per_block);
 
 
+  /**
+   * Member의 nickname 가져오기
+   * @param memberno
+   * @return nickname
+   */
+  String getNickname(int memberno);
 }

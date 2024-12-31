@@ -257,4 +257,9 @@ public class MemberProc implements MemberProcInter{
     int cnt = this.memberDAO.delete(memberno); // 회원 삭제
     return cnt;
   }
+  
+  @Override
+  public String getNickname(int memberno) {
+      return memberDAO.getNickname(memberno); // DAO에서 nickname 가져옴
+  }
 }
