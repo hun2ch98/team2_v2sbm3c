@@ -54,6 +54,8 @@ public class MemberProc implements MemberProcInter{
     MemberVO memberVO = this.memberDAO.readById(id); // ID로 회원 정보 조회
     return memberVO;
   }
+  
+  
 
   /**
    * 회원인지 검사
