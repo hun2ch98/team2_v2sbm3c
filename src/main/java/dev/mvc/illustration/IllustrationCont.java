@@ -1,5 +1,7 @@
 package dev.mvc.illustration;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +38,15 @@ public class IllustrationCont {
   @Autowired
   @Qualifier("dev.mvc.illustration.IllustrationProc")
   private IllustrationProcInter illustrationProc;
+  
+  /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
+  public int record_per_page = 10;
+
+  /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
+  public int page_per_block = 10;
+
+  /** 페이징 목록 주소 */
+  private String list_file_name = "/diary/list_by_illustno_search_paging_grid";
 
     /**
      * 등록 폼
@@ -177,46 +188,84 @@ public class IllustrationCont {
       return "redirect:/illustration/read";
   }
     
-    @GetMapping("/list_by_illustno_search_paging_grid")
-    public String listByIllustNoSearchPagingGrid(@RequestParam(name = "illustno", defaultValue = "1") int illustno,
-                                                 @RequestParam(name = "now_page", defaultValue = "1") int nowPage, 
-                                                 @RequestParam(name = "word", defaultValue = "") String word, 
-                                                 HttpSession session, Model model) {
-        // 별명 조회
-      session.setAttribute("illustno", illustno);
-      int memberno = (int) session.getAttribute("memberno");
-      String nickname = memberProc.getNickname(memberno);
-      model.addAttribute("nickname", nickname);
+//  @GetMapping("/list_by_illustno_search_paging_grid")
+//  public String listByIllustNoSearchPagingGrid(HttpSession session, Model model,
+//                                               @RequestParam(name = "start_date", required = false) String startDate,
+//                                               @RequestParam(name = "end_date", required = false) String endDate,
+//                                               @RequestParam(name = "now_page", defaultValue = "1") int nowPage) {
+//    int memberno = (int) session.getAttribute("memberno");
+//    String nickname = memberProc.getNickname(memberno);
+//    model.addAttribute("nickname", nickname);
+//
+//    // 기본 날짜 설정
+//    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//    if (startDate == null || startDate.trim().isEmpty()) {
+//        startDate = "2015-01-01";
+//    }
+//    if (endDate == null || endDate.trim().isEmpty()) {
+//        endDate = LocalDate.now().format(formatter); // 오늘 날짜로 설정
+//    }
+//
+//    // 페이징 처리
+//    int startNum = (nowPage - 1) * record_per_page + 1;
+//    int endNum = nowPage * record_per_page;
+//
+//    HashMap<String, Object> paramMap = new HashMap<>();
+//    paramMap.put("start_date", startDate);
+//    paramMap.put("end_date", endDate);
+//    paramMap.put("startNum", startNum);
+//    paramMap.put("endNum", endNum);
+//
+//    ArrayList<IllustrationVO> list = illustrationProc.listByIllustNoSearchPaging(paramMap);
+//    model.addAttribute("list", list);
+//
+//    int searchCount = illustrationProc.countByDateRange(paramMap);
+//    String paging = illustrationProc.pagingBox(nowPage, startDate, endDate, list_file_name, searchCount, record_per_page, page_per_block);
+//
+//    model.addAttribute("list", list);
+//    model.addAttribute("paging", paging);
+//
+//    model.addAttribute("start_date", startDate);
+//    model.addAttribute("end_date", endDate);
+//    model.addAttribute("search_count", searchCount);
+//    model.addAttribute("now_page", nowPage);
+//    
+//    IllustrationVO illustrationVO = new IllustrationVO();
+//    model.addAttribute("illustrationVO", illustrationVO);
+//
+//    return "/illustration/list_by_illustno_search_paging_grid";
+//  }
+  
+  @GetMapping("/list_by_illustno_search_paging_grid")
+  public String listByIllustNoSearchPagingGrid(HttpSession session, Model model,
+                                                                    @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+                                                                    @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
+                                                                    @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage) {
+    if (this.memberProc.isMemberAdmin(session)) {
+      startDate = startDate.trim();
+      endDate = endDate.trim();
+      int startNum = (nowPage - 1) * record_per_page + 1;
+      int endNum = nowPage * record_per_page;
+      
+      int searchCount = illustrationProc.countSearchResults(startDate, endDate);
+      ArrayList<IllustrationVO> illustList = illustrationProc.list_search_paging(startDate, endDate, startNum, endNum);
 
-      Date ddate = illustrationProc.getDiaryDateByIllustNo(illustno);
-      model.addAttribute("ddate", ddate);
+      String paging = illustrationProc.pagingBox(nowPage, startDate, endDate, list_file_name, searchCount, record_per_page, page_per_block);
 
-      // 일러스트 목록 조회
-      ArrayList<IllustrationVO> list = illustrationProc.listByIllustNoSearchPaging(illustno, word, nowPage);
-      model.addAttribute("list", list);
-
-      // 페이징 처리
-      int searchCount = illustrationProc.searchCount(illustno, word);
-      String paging = illustrationProc.pagingBox(illustno, searchCount, nowPage, word);
+      model.addAttribute("illustList", illustList);
+      model.addAttribute("start_date", startDate);
+      model.addAttribute("end_date", endDate);
       model.addAttribute("paging", paging);
-
-      model.addAttribute("illustno", illustno);
-      model.addAttribute("word", word);
+      model.addAttribute("search_count", searchCount);
       model.addAttribute("now_page", nowPage);
-
-      return "/illustration/list_by_illustno_search_paging_grid";
-  }
+      
+      
+      
+      return "redirect:/diary/list_by_diaryno_search_paging_grid";
+    } else {
+      return "redirect:/member/login_cookie_need";
+    }
     
-  @GetMapping("/diary/list_by_date_range")
-  public String listByDateRange( Model model,
-          @RequestParam(value = "start_date", required = false) String start_date,
-          @RequestParam(value = "end_date", required = false) String end_date) {
-      List<DiaryVO> diaryList = illustrationProc.listByDateRange(start_date, end_date);
-      model.addAttribute("diaryList", diaryList);
-      model.addAttribute("start_date", start_date);
-      model.addAttribute("end_date", end_date);
-      return "/diary/list_by_date_range"; // Thymeleaf view name
   }
-
     
 }
