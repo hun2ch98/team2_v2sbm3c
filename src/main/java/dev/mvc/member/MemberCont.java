@@ -473,140 +473,140 @@ public String list_all(HttpSession session, Model model) {
 //      return "redirect:/member/list";
 //  }
   
-  /**
-   * 프로필 폼
-   * @param session
-   * @param model
-   * @return
-   */
-  @GetMapping(value = "/mypage")
-  public String mypageForm(HttpSession session, Model model) {
-    Integer memberno = (Integer) session.getAttribute("memberno");
-    if (memberno == null) {
-      return "redirect:/member/login";
-    }
-
-    MemberVO memberVO = this.memberProc.read(memberno);
-    if (memberVO == null) {
-      return "redirect:/member/login";
-    }
-    model.addAttribute("memberVO", memberVO);
-    return "/member/mypage"; // mypage.html로 이동
-  }
-
-  /**
-   * 프로필 처리
-   * @param session
-   * @param model
-   * @param memberVO
-   * @param currentPasswd
-   * @param newPasswd
-   * @param ra
-   * @return
-   */
-  @PostMapping(value = "/mypage")
-  public String mypageProc(HttpSession session,
-                           Model model,
-                           @ModelAttribute("memberVO") MemberVO memberVO,
-                           @RequestParam(value="current_passwd", defaultValue="") String currentPasswd,
-                           @RequestParam(value="new_passwd", defaultValue="") String newPasswd,
-                           RedirectAttributes ra) {
-    int memberno = (int) session.getAttribute("memberno");
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("memberno", memberno);
-    map.put("passwd", currentPasswd);
-
-    int passwdCheck = this.memberProc.passwd_check(map);
-    if (passwdCheck == 0) {
-      ra.addFlashAttribute("code", "passwd_not_equal");
-      return "redirect:/member/mypage";
-    }
-
-    String upDir = Member.getUploadDir();
-    MultipartFile mf = memberVO.getFile1MF();
-    String file1 = mf.getOriginalFilename();
-    long size1 = mf.getSize();
-
-    if (size1 > 0) {
-      String file1saved = Upload.saveFileSpring(mf, upDir);
-      String thumb1 = "";
-      if (Tool.isImage(file1saved)) {
-        thumb1 = Tool.preview(upDir, file1saved, 200, 150);
-      }
-      memberVO.setPf_img(file1);
-      memberVO.setFile1saved(file1saved);
-      memberVO.setThumb1(thumb1);
-      memberVO.setSize1(size1);
-      session.setAttribute("file1saved", file1saved);
-    } else {
-      MemberVO oldMemberVO = this.memberProc.read(memberno);
-      memberVO.setPf_img(oldMemberVO.getPf_img());
-      memberVO.setFile1saved(oldMemberVO.getFile1saved());
-      memberVO.setThumb1(oldMemberVO.getThumb1());
-      memberVO.setSize1(oldMemberVO.getSize1());
-      session.setAttribute("file1saved", oldMemberVO.getFile1saved());
-    }
-
-    if (!newPasswd.isEmpty()) {
-      memberVO.setPasswd(newPasswd);
-    } else {
-      memberVO.setPasswd(currentPasswd);
-    }
-
-    int cnt = this.memberProc.update(memberVO);
-    if (cnt == 1) {
-      ra.addFlashAttribute("code", "update_success");
-    } else {
-      ra.addFlashAttribute("code", "update_fail");
-    }
-    return "redirect:/member/mypage";
-  }
-  
-  /**
-   * 개인정보수정 폼
-   * @param session
-   * @param model
-   * @return
-   */
-  @GetMapping(value = "/update_information")
-  public String update_information_form(HttpSession session, Model model) {
-      Integer memberno = (Integer) session.getAttribute("memberno");
-      if (memberno == null) {
-          return "redirect:/member/login";
-      }
-
-      MemberVO memberVO = this.memberProc.read(memberno);
-      if (memberVO == null) {
-          return "redirect:/member/login";
-      }
-      model.addAttribute("memberVO", memberVO);
-      return "/member/update_information"; // update_information.html로 이동
-  }
-  
-  /**
-   * 개인정보수정 처리
-   * @param session
-   * @param model
-   * @param memberVO
-   * @param ra
-   * @return
-   */
-  @PostMapping(value = "/update_information")
-  public String update_information_proc(HttpSession session, 
-                                        Model model,
-                                        @ModelAttribute("memberVO") MemberVO memberVO,
-                                        RedirectAttributes ra) {
-      int memberno = (int) session.getAttribute("memberno");
-      memberVO.setMemberno(memberno);
-
-      int cnt = this.memberProc.update(memberVO);
-      if (cnt == 1) {
-          ra.addFlashAttribute("code", "update_success");
-      } else {
-          ra.addFlashAttribute("code", "update_fail");
-      }
-      return "redirect:/member/update_information";
-  }
+//  /**
+//   * 프로필 폼
+//   * @param session
+//   * @param model
+//   * @return
+//   */
+//  @GetMapping(value = "/mypage")
+//  public String mypageForm(HttpSession session, Model model) {
+//    Integer memberno = (Integer) session.getAttribute("memberno");
+//    if (memberno == null) {
+//      return "redirect:/member/login";
+//    }
+//
+//    MemberVO memberVO = this.memberProc.read(memberno);
+//    if (memberVO == null) {
+//      return "redirect:/member/login";
+//    }
+//    model.addAttribute("memberVO", memberVO);
+//    return "/member/mypage"; // mypage.html로 이동
+//  }
+//
+//  /**
+//   * 프로필 처리
+//   * @param session
+//   * @param model
+//   * @param memberVO
+//   * @param currentPasswd
+//   * @param newPasswd
+//   * @param ra
+//   * @return
+//   */
+//  @PostMapping(value = "/mypage")
+//  public String mypageProc(HttpSession session,
+//                           Model model,
+//                           @ModelAttribute("memberVO") MemberVO memberVO,
+//                           @RequestParam(value="current_passwd", defaultValue="") String currentPasswd,
+//                           @RequestParam(value="new_passwd", defaultValue="") String newPasswd,
+//                           RedirectAttributes ra) {
+//    int memberno = (int) session.getAttribute("memberno");
+//    HashMap<String, Object> map = new HashMap<>();
+//    map.put("memberno", memberno);
+//    map.put("passwd", currentPasswd);
+//
+//    int passwdCheck = this.memberProc.passwd_check(map);
+//    if (passwdCheck == 0) {
+//      ra.addFlashAttribute("code", "passwd_not_equal");
+//      return "redirect:/member/mypage";
+//    }
+//
+//    String upDir = Member.getUploadDir();
+//    MultipartFile mf = memberVO.getFile1MF();
+//    String file1 = mf.getOriginalFilename();
+//    long size1 = mf.getSize();
+//
+//    if (size1 > 0) {
+//      String file1saved = Upload.saveFileSpring(mf, upDir);
+//      String thumb1 = "";
+//      if (Tool.isImage(file1saved)) {
+//        thumb1 = Tool.preview(upDir, file1saved, 200, 150);
+//      }
+//      memberVO.setPf_img(file1);
+//      memberVO.setFile1saved(file1saved);
+//      memberVO.setThumb1(thumb1);
+//      memberVO.setSize1(size1);
+//      session.setAttribute("file1saved", file1saved);
+//    } else {
+//      MemberVO oldMemberVO = this.memberProc.read(memberno);
+//      memberVO.setPf_img(oldMemberVO.getPf_img());
+//      memberVO.setFile1saved(oldMemberVO.getFile1saved());
+//      memberVO.setThumb1(oldMemberVO.getThumb1());
+//      memberVO.setSize1(oldMemberVO.getSize1());
+//      session.setAttribute("file1saved", oldMemberVO.getFile1saved());
+//    }
+//
+//    if (!newPasswd.isEmpty()) {
+//      memberVO.setPasswd(newPasswd);
+//    } else {
+//      memberVO.setPasswd(currentPasswd);
+//    }
+//
+//    int cnt = this.memberProc.update(memberVO);
+//    if (cnt == 1) {
+//      ra.addFlashAttribute("code", "update_success");
+//    } else {
+//      ra.addFlashAttribute("code", "update_fail");
+//    }
+//    return "redirect:/member/mypage";
+//  }
+//  
+//  /**
+//   * 개인정보수정 폼
+//   * @param session
+//   * @param model
+//   * @return
+//   */
+//  @GetMapping(value = "/update_information")
+//  public String update_information_form(HttpSession session, Model model) {
+//      Integer memberno = (Integer) session.getAttribute("memberno");
+//      if (memberno == null) {
+//          return "redirect:/member/login";
+//      }
+//
+//      MemberVO memberVO = this.memberProc.read(memberno);
+//      if (memberVO == null) {
+//          return "redirect:/member/login";
+//      }
+//      model.addAttribute("memberVO", memberVO);
+//      return "/member/update_information"; // update_information.html로 이동
+//  }
+//  
+//  /**
+//   * 개인정보수정 처리
+//   * @param session
+//   * @param model
+//   * @param memberVO
+//   * @param ra
+//   * @return
+//   */
+//  @PostMapping(value = "/update_information")
+//  public String update_information_proc(HttpSession session, 
+//                                        Model model,
+//                                        @ModelAttribute("memberVO") MemberVO memberVO,
+//                                        RedirectAttributes ra) {
+//      int memberno = (int) session.getAttribute("memberno");
+//      memberVO.setMemberno(memberno);
+//
+//      int cnt = this.memberProc.update(memberVO);
+//      if (cnt == 1) {
+//          ra.addFlashAttribute("code", "update_success");
+//      } else {
+//          ra.addFlashAttribute("code", "update_fail");
+//      }
+//      return "redirect:/member/update_information";
+//  }
   
 //  /**
 //   * 문의글 폼
@@ -770,13 +770,20 @@ public String list_all(HttpSession session, Model model) {
       session.setAttribute("name", memberVO.getName());
       session.setAttribute("file1saved", memberVO.getFile1saved()); // 프로필 이미지 파일 이름 저장
       
-      if (memberVO.getGrade() >= 1 && memberVO.getGrade() <= 10) {
+      if (memberVO.getGradeno() == null) {
         session.setAttribute("grade", "admin");
-      } else if (memberVO.getGrade() >= 11 && memberVO.getGrade() <= 20) {
-        session.setAttribute("grade", "member");
+      } else if (memberVO.getGradeno() >= 3 && memberVO.getGradeno() <= 16) {
+        session.setAttribute("grade", "member"); // 기본 회원
       } else if (memberVO.getGrade() >= 21) {
         session.setAttribute("grade", "guest");
       }
+//      if (memberVO.getGrade() >= 1 && memberVO.getGrade() <= 10) {
+//        session.setAttribute("grade", "admin");
+//      } else if (memberVO.getGrade() >= 11 && memberVO.getGrade() <= 20) {
+//        session.setAttribute("grade", "member");
+//      } else if (memberVO.getGrade() >= 21) {
+//        session.setAttribute("grade", "guest");
+//      }
 
       
       // Cookie 관련 코드---------------------------------------------------------
