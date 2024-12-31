@@ -30,52 +30,46 @@ public interface IllustrationProcInter {
     int count_by_illustno(int illustno);
 
     /**
-     * 페이징 박스 생성 메서드
-     * @param now_page 현재 페이지
-     * @param list_file_name 목록 파일 이름
-     * @param search_count 검색된 레코드 수
-     * @param record_per_page 페이지당 레코드 수
-     * @param page_per_block 블럭당 페이지 수
-     * @return 페이징 HTML 문자열
-     */
-    String pagingBox(int now_page, String list_file_name, int search_count, int record_per_page, int page_per_block);
-
-    
-    /**
      * Diary의 ddate를 가져오는 메서드
      * @param illustno
-     * @return ddate와 관련된 정보
+     * @return Diary의 ddate
      */
     Date getDiaryDateByIllustNo(int illustno);
 
     /**
-     * illustno와 검색어를 기반으로 검색된 레코드 수 반환
-     * @param illustno
-     * @param word
-     * @return 검색된 레코드 수
+     * 기간 기반 일러스트 검색
+     * @param startDate
+     * @param endDate
+     * @param startNum
+     * @param endNum
+     * @return 검색 결과 리스트
      */
-    int searchCount(int illustno, String word);
+    ArrayList<IllustrationVO> listByIllustNoSearchPaging(HashMap<String, Object> paramMap);
+
 
     /**
-     * 페이징 박스 생성
-     * @param illustno
-     * @param searchCount
-     * @param nowPage
-     * @param word
+     * 기간 기반 검색 결과 수 반환
+     * @param startDate
+     * @param endDate
+     * @return 검색 결과 수
+     */
+    int searchCount(String startDate, String endDate);
+
+
+    /**
+     * 페이징 HTML 생성
+     * @param now_page
+     * @param start_date
+     * @param end_date
+     * @param list_file_name
+     * @param search_count
+     * @param record_per_page
+     * @param page_per_block
      * @return 페이징 HTML 문자열
      */
-    String pagingBox(int illustno, int searchCount, int nowPage, String word);
-    
-    /**
-     * 검색어와 페이지 번호에 따라 일러스트 목록을 가져옴
-     * @param illustno
-     * @param word
-     * @param nowPage
-     * @return 일러스트 목록
-     */
-    ArrayList<IllustrationVO> listByIllustNoSearchPaging(int illustno, String word, int nowPage);
+    String pagingBox(int now_page, String start_date, String end_date, String list_file_name, int search_count, int record_per_page, int page_per_block);
 
-    public List<DiaryVO> listByDateRange(String start_date, String end_date);
+    int countByDateRange(HashMap<String, Object> paramMap);
 
     
 }

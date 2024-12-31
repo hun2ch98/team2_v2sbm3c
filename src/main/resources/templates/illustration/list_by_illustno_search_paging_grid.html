@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
 
@@ -16,51 +15,52 @@
     </span>
     
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' >│</span>    
-    <a th:href="@{|./list_by_illustno?illustno=${illustno }&word=${word }&now_page=${now_page}|}">목록형</a>    
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_illustno_grid?illustno=${illustno }&word=${word }&now_page=${now_page}|}">갤러리형</a>    
+    <a th:href="@{|./list_by_illustno_grid?illustno=${illustno }&now_page=${now_page}|}">그림 목록</a>    
   </aside> 
 
   <!-- /illust/list_search_com.html 파일의 list_search_fragment import -->
-  <div th:replace="~{illust/list_search_com::list_search_fragment}"></div>
+  <div th:replace="~{illustration/list_search_com::list_search_fragment}"></div>
      
   <div class='menu_line'></div>
+  
+   <!-- 날짜 범위 설정 -->
+  <form name="searchForm" method="get" action="/illustration/list_by_illustno_search_paging_grid" style="margin: 20px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <!-- 시작 날짜 -->
+      <input type="date" name="start_date" th:value="${start_date}" class="form-control">
+
+      <!-- 종료 날짜 -->
+      <input type="date" name="end_date" th:value="${end_date}" class="form-control">
+
+      <!-- 검색 버튼 -->
+      <button type="submit" class="btn btn-secondary btn-sm">검색</button>
+    </div>
+  </form>
        
   <div style='width: 100%;'> <!-- 갤러리 Layout  시작 -->
-    <div th:if="${list.size() > 0}"  th:each="illustVO, status:${list}" 
-         th:attr="onclick=|location.href='/illust/read?illustno=${illustVO.illustno}&word=${word}&now_page=${now_page}'|"
+    <div th:if="${list != null and #lists.size(list) > 0}"  th:each="illustVO, status : ${list}" 
+         th:attr="onclick=|location.href='/illust/read?illustno=${illustVO.illustno}&now_page=${now_page}'|"
          style='width: 19.0%; height: 200px; float: left; margin: 0.5%; padding: 0.5%; background-color: #EEEFFF; text-align: left; cursor: pointer;'>
 
-      <!-- illust_size가 1인 경우 none1.png 출력 -->
-      <div th:if="${illustVO.illust_size == 1}" style="width: 100%; height: 100px;">
-        <img src="/images/none1.png" style="width: 100%; height: 100%;"/>
+      <!-- 썸네일 이미지 출력 -->
+      <div th:if="${illustVO.illust_thumb != null}" style="width: 100%; height: 100px;">
+        <img th:src="@{/illustration/storage/{file}(file=${illustVO.illust_thumb})}" style="width: 100%; height: 100%;" />
       </div>
 
-      <!-- 파일이 jpg, png, gif일 경우 -->
-      <div th:if="${illustVO.illust.endsWith('jpg') or illustVO.illust.endsWith('png') or illustVO.illust.endsWith('gif')}" 
-           style="width: 100%; height: 100px;">
-        <img th:src="@{|/illust/storage/${illustVO.illust_thumb}|}" style="width: 100%; height: 100%;"/>
+      <!-- 기본 이미지 출력 -->
+      <div th:if="${illustVO.illust_thumb == null}" style="width: 100%; height: 100px;">
+        <img src="/images/none1.png" style="width: 100%; height: 100%;" />
       </div>
 
-      <!-- 기타 파일 -->
-      <div th:if="${((illustVO.illust.endsWith('jpg') or illustVO.illust.endsWith('png') or illustVO.illust.endsWith('gif')) == false) and (illustVO.size1 > 0)}"
-           style="width: 100%; height: 100px;">
+      <!-- 텍스트 정보 -->
+      <div style="padding-top: 10px;">
         <span th:text="${illustVO.illust}"></span>
       </div>
 
-      <!-- illust_size가 0일 경우 -->
-      <div th:if="${illustVO.size1 == 0}" style="width: 100%; height: 100px;">
-        <img src="/illust/images/none1.png" style="width: 100%; height: 100%;"/>
-      </div>
-
-      </div>
-      
-      <div style="width: 100%; text-align: right;">♡</div>
-      
     </div>
     
-    <div th:if="${list.size() == 0}" style="text-align: center; padding: 50px 0px;">
+    <div th:if="${list == null or #lists.size(list) == 0}" style="text-align: center; padding: 50px 0px;">
       <span>관련 글이 등록되지 않았습니다.</span>
     </div> 
   </div>  <!-- 갤러리 Layout  종료 -->
