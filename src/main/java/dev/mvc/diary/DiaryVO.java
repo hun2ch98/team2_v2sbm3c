@@ -28,7 +28,7 @@ public class DiaryVO {
   private String title="";
   
   /** 일기 날짜  */
-  private String ddate;
+  private Date ddate;
   
   /** 날씨 테이블과 연결 */
   private int weatherno;

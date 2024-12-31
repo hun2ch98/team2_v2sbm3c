@@ -3,6 +3,7 @@ package dev.mvc.calendar;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import dev.mvc.diary.DiaryVO;
 
 //CREATE TABLE calendar (
 //    calendarno  NUMBER(30) NOT NULL PRIMARY KEY, 
@@ -22,8 +23,5 @@ public class CalendarVO {
   /** 일기 고유 번호 */
   private int diaryno;
 
-  //추가 필드
-  private int illustno; // 일기에서 가져올 그림
-  private int weatherno; // 날씨
-  private int emno; // 감정
+  private DiaryVO diaryVO; // DiaryVO 포함
 }
