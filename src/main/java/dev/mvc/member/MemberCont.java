@@ -95,9 +95,11 @@ public class MemberCont {
       int checkID_cnt = this.memberProc.checkID(memberVO.getId());
       if (checkID_cnt == 0) {
           if ("admin".equals(memberVO.getId())) {
-              memberVO.setGradeno(1); // admin 계정은 GRADE 1로 설정
+              memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+              memberVO.setGradeno(null); // gradeno를 NULL로 설정
           } else {
-              memberVO.setGradeno(15); // 기본 회원 15
+              memberVO.setGrade(3); // 기본 회원 3
+              memberVO.setGradeno(3); // 기본 회원 ICON 설정
           }
 
           // 기본 이미지 설정

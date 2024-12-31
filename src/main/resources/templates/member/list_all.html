@@ -34,17 +34,25 @@
       <th class='th_bs'>이메일</th>
       <th class='th_bs'>주소</th>
       <th class='th_bs'>등록일</th>
-      <th class='th_bs'> </th>
+      <th class='th_bs'>작업</th>
     </tr>
    
     <tr th:each="memberVO, status:${list}">
       <td class='td_basic'>
-        <div>
-          <div th:if="${memberVO.gradeno >= 1 and memberVO.gradeno <= 10}"><img th:src="@{/images/{gradeno}.png(gradeno=${memberVO.gradeno})}" title="관리자" class="icon"></div>
-          <div th:if="${memberVO.gradeno >= 11 and memberVO.gradeno <= 20}"><img th:src="@{/images/{gradeno}.png(gradeno=${memberVO.gradeno})}" title="회원" class="icon"></div>
-          <div th:if="${memberVO.gradeno >= 30 and memberVO.gradeno <= 39}"><img src='/member/images/pause.png' title="정지 회원" class="icon"></div>
-          <div th:if="${memberVO.gradeno >= 40 and memberVO.gradeno <= 49}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
-        </div>
+          <div>
+              <div th:if="${memberVO.gradeno == null}"><img src="/images/grade/1.png" title="관리자" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 3}"><img th:src="@{/images/grade/2.png}" title="씨앗 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 6}"><img th:src="@{/images/grade/3.png}" title="새싹1 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 7}"><img th:src="@{/images/grade/4.png}" title="새싹2 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 8}"><img th:src="@{/images/grade/5.png}" title="묘목 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 9}"><img th:src="@{/images/grade/6.png}" title="나무 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 13}"><img th:src="@{/images/grade/7.png}" title="열매나무 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 14}"><img th:src="@{/images/grade/8.png}" title="세계수 나뭇가지 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 15}"><img th:src="@{/images/grade/9.png}" title="세계수 묘목 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 16}"><img th:src="@{/images/grade/10.png}" title="세계수 회원" class="icon"></div>
+              <div th:if="${memberVO.grade >= 30 and memberVO.grade <= 39}"><img src='/member/images/pause.png' title="정지 회원" class="icon"></div>
+              <div th:if="${memberVO.grade >= 40 and memberVO.grade <= 49}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
+          </div>
       </td>
       <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
       <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
