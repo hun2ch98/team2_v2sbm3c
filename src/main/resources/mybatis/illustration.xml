@@ -7,10 +7,10 @@
   <!-- 이미지 등록 -->
   <insert id="create" parameterType="dev.mvc.illustration.IllustrationVO">
     INSERT INTO illustration (
-      illustno, illust, illust_saved, illust_thumb, illust_size, conversationno, rdate
+      illustno, illust, illust_saved, illust_thumb, illust_size, conversationno, memberno
     )
     VALUES (
-      illustration_seq.nextval, #{illust}, #{illust_saved}, #{illust_thumb}, #{illust_size}, #{conversationno}, sysdate
+      illustration_seq.nextval, #{illust}, #{illust_saved}, #{illust_thumb}, #{illust_size}, #{conversationno}, #{memberno}
     )
   </insert>
 
@@ -65,5 +65,39 @@
     SELECT COUNT(*)
     FROM illustration
   </select>
+
+  <select id="getDiaryDateByIllustNo" parameterType="int" resultType="java.util.Date">
+    SELECT d.ddate
+    FROM diary d
+    WHERE d.illustno = #{illustno}
+  </select>
+
+  <select id="listByIllustNoSearchPaging" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
+    SELECT * FROM (
+        SELECT A.*, ROWNUM AS rnum
+        FROM (
+            SELECT *
+            FROM diary
+            WHERE 1=1
+            <if test="start_date != null and start_date != ''">
+                AND TRUNC(ddate) >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+            </if>
+            <if test="end_date != null and end_date != ''">
+                AND TRUNC(ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+            </if>
+            ORDER BY ddate DESC
+        ) A
+        WHERE ROWNUM &lt;= #{endNum}
+    )
+    WHERE rnum >= #{startNum}
+  </select>
+
+  <select id="listByDateRange" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
+    SELECT diaryno, title, ddate, weatherno, emno, summary, illustno
+    FROM diary
+    WHERE ddate BETWEEN #{start_date} AND #{end_date}
+    ORDER BY ddate DESC
+  </select>
+
 
 </mapper>

@@ -1,10 +1,15 @@
 package dev.mvc.illustration;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import dev.mvc.diary.DiaryVO;
 
 @Component("dev.mvc.illustration.IllustrationProc")
 public class IllustrationProc implements IllustrationProcInter {
@@ -143,7 +148,42 @@ public class IllustrationProc implements IllustrationProcInter {
 
 
     @Override
-    public HashMap<String, Object> getDiaryInfoByIllustNo(int illustno) {
-        return illustrationDAO.getDiaryInfoByIllustNo(illustno);
+    public Date getDiaryDateByIllustNo(int illustno) {
+        return illustrationDAO.getDiaryDateByIllustNo(illustno);
     }
+
+    @Override
+    public int searchCount(int illustno, String word) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("illustno", illustno);
+        map.put("word", word);
+        return illustrationDAO.list_by_illustno_search_count(map);
+    }
+
+    @Override
+    public String pagingBox(int illustno, int searchCount, int nowPage, String word) {
+        int recordPerPage = 10; // 페이지당 레코드 수
+        int pagePerBlock = 5; // 블록당 페이지 수
+        String listFileName = "/illustration/list_by_illustno_search_paging_grid";
+
+        return pagingBox(nowPage, listFileName, searchCount, recordPerPage, pagePerBlock);
+    }
+    
+    @Override
+    public ArrayList<IllustrationVO> listByIllustNoSearchPaging(int illustno, String word, int nowPage) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("illustno", illustno);
+        paramMap.put("word", word);
+        paramMap.put("now_page", nowPage);
+        return illustrationDAO.listByIllustNoSearchPaging(paramMap);
+    }
+
+    @Override
+    public List<DiaryVO> listByDateRange(String start_date, String end_date) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("start_date", start_date);
+        paramMap.put("end_date", end_date);
+        return illustrationDAO.listByDateRange(paramMap);
+    }
+    
 }

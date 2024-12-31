@@ -4,7 +4,7 @@ CREATE TABLE diary (
     title        VARCHAR2(50) NULL,
     ddate        DATE               NULL,
     summary      CLOB,
-    weatherno NUMBER(10) NULL,
+    weatherno NUMBER(10) N ULL,
     emno         NUMBER(10)       NULL,
     memberno     NUMBER(10)      NULL,
     illustno     NUMBER(10) NULL,

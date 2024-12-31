@@ -78,6 +78,16 @@
                     </ul>
                 </li>
                 
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="그림">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/illustration/create|}">그림 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/illustration/list_by_illustno_search_paging_grid?is_continue=${is_continue ?: ''}|}">그림 목록</a></li>
+                    </ul>
+                </li>
+                
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" th:href="@{|/member/list_by_memberno|}" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="프로필">                                                            

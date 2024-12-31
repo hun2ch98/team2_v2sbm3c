@@ -40,6 +40,10 @@ public class IllustrationVO {
     private long illust_size = 0;
     /** 대화 번호 */
     private int conversationno;
+    /** 회원 번호 */
+    private int memberno;
+    
+   
     
 }
 
