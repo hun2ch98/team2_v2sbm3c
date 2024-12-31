@@ -54,10 +54,10 @@
               <div th:if="${memberVO.grade >= 40 and memberVO.grade <= 49}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
           </div>
       </td>
-      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
-      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
+      <td class='td_basic'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
+      <td class='td_basic'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
       <td class='td_basic' th:text="${memberVO.email}"></td>
-      <td class='td_left'>
+      <td class='td_basic'>
         <span th:if="${memberVO.address1.length() > 15 }" th:text="|${memberVO.address1.substring(0, 15) }...|"></span>
         <span th:unless="${memberVO.address1.length() > 15 }" th:text="${memberVO.address1}"></span>
       </td>
