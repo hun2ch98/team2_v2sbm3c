@@ -6,7 +6,9 @@ CREATE TABLE illustration (
     illust_size         NUMBER(10)    NULL,
     illust_thumb        VARCHAR(100)  NULL,
     conversationno      NUMBER(10),  
-    FOREIGN KEY (conversationno) REFERENCES AICONVERSATION(conversationno)
+    memberno            NUMBER(10),
+    FOREIGN KEY (conversationno) REFERENCES AICONVERSATION(conversationno),
+    FOREIGN KEY (memberno) REFERENCES MEMBER(memberno)
 );
 
 DROP SEQUENCE ILLUSTRATION_SEQ;

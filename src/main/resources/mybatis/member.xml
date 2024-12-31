@@ -100,4 +100,10 @@
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select> -->
   
+  <select id="getNickname" parameterType="int" resultType="string">
+    SELECT nickname
+    FROM member
+    WHERE memberno = #{memberno}
+  </select>
+    
 </mapper>

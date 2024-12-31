@@ -1,11 +1,16 @@
 package dev.mvc.illustration;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
+
+import dev.mvc.diary.DiaryVO;
 
 @Mapper
 @Repository
@@ -31,6 +36,15 @@ public interface IllustrationDAOInter {
 
     int count_by_illustno(int illustno);
 
-    @Select("SELECT d.title, d.ddate FROM diary d INNER JOIN illustration i ON d.diaryno = i.diaryno WHERE i.illustno = #{illustno}")
-    HashMap<String, Object> getDiaryInfoByIllustNo(int illustno); // Diary 정보 조회 쿼리 추가
+    Date getDiaryDateByIllustNo(int illustno);
+    
+    /**
+     * 검색어와 페이지 번호에 따라 일러스트 목록을 가져옴
+     * @param map
+     * @return 일러스트 목록
+     */
+    ArrayList<IllustrationVO> listByIllustNoSearchPaging(HashMap<String, Object> map);
+    
+    public List<DiaryVO> listByDateRange(Map<String, Object> paramMap);
+
 }
