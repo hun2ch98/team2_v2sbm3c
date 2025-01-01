@@ -108,4 +108,6 @@ public interface MemberDAOInter {
    * @return
    */
   public ArrayList<MemberVO> list_by_memberno_search_paging(HashMap<String, Object> map);
+
+  public String getNickname(int memberno);
 }

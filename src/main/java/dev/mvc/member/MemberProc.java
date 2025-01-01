@@ -54,6 +54,8 @@ public class MemberProc implements MemberProcInter{
     MemberVO memberVO = this.memberDAO.readById(id); // ID로 회원 정보 조회
     return memberVO;
   }
+  
+  
 
   /**
    * 회원인지 검사
@@ -256,5 +258,10 @@ public class MemberProc implements MemberProcInter{
   public int delete(int memberno) {
     int cnt = this.memberDAO.delete(memberno); // 회원 삭제
     return cnt;
+  }
+  
+  @Override
+  public String getNickname(int memberno) {
+      return memberDAO.getNickname(memberno); // DAO에서 nickname 가져옴
   }
 }

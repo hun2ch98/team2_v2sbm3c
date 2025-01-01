@@ -10,7 +10,7 @@ public class MemberVO {
     /** 회원 번호 */
     private int memberno;
     /** 등급 번호 */
-    private int gradeno;
+    private Integer gradeno;
     /** 아이디(이메일) */
     private String id = "";
     /** 패스워드 */
@@ -57,7 +57,5 @@ public class MemberVO {
     private String passwd_save = "";
     /** 이동할 주소 저장 */
     private String url_address = "";
-    
-    
 }
 

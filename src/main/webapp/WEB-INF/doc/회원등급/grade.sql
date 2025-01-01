@@ -34,6 +34,8 @@ CREATE SEQUENCE grade_seq
   CACHE 2                       -- 2번은 메모리에서만 계산
   NOCYCLE;                     -- 다시 1부터 생성되는 것을 방지
   
+SELECT * FROM grade;
+  
 SELECT gradeno, grade_name, evo_criteria, rdate, evolution
 FROM grade
 ORDER BY gradeno ASC, grade_name ASC;

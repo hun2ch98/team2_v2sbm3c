@@ -20,6 +20,8 @@ CREATE TABLE survey (
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
+ALTER TABLE survey MODIFY visible CHAR(1);
+
 COMMENT ON TABLE SURVEY is '설문조사';
 COMMENT ON COLUMN SURVEY.SURVEYNO is '설문 조사 번호';
 COMMENT ON COLUMN BOARD.MEMBERNO is '회원 번호';

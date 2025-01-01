@@ -4,13 +4,25 @@
 <div layout:fragment="content">
   <script>
     window.onload = () => {
-      /*document.querySelector('#pf_img').addEventListener('keypress', (event) => {
+      document.querySelector('#gradeno').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          document.getElementById('id').focus();
+        }
+      });
+      
+      document.querySelector('#id').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           document.getElementById('name').focus();
         }
-      });*/
+      });
       
       document.querySelector('#name').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          document.getElementById('nickname').focus();
+        }
+      });
+      
+      document.querySelector('#nickname').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           document.getElementById('email').focus();
         }
@@ -44,61 +56,94 @@
     }    
   </script>
 
-  <div class="title_line">회원 정보 조회 및 수정(*: 필수) > <span th:text="@{|${memberVO.name} (${memberVO.id})|}"></span></div>
+  <div class="title_line">회원 정보 조회 > <span th:text="@{|${memberVO.name} (${memberVO.id})|}"></span></div>
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span> 
-    <a href='./create'>회원 가입</a>
-    <span class='menu_divide'>│</span> 
-    <a href='./list'>목록</a>
+    <a href='./list_all'>목록</a>
   </aside> 
 
   <div class='menu_line'></div>
   
-  <div style="width: 60%; margin: 0px auto ">
-    <form name="frm" id="frm" th:object="${memberVO}" method="post" action="/member/update">
-      <input type="hidden" name="memberno" th:value="${memberVO.memberno}">
-<!--      
-      <div class="form-group">
-        <label for="name">프로필</label>
-        <input type='file' name='pf_imgMF' id='pf_imgMF' th:value='${memberVO.pf_img}' required="required" 
-               placeholder="프로필" class="form-control form-control-sm" style="width: 30%;">
-        <span id='pf_img_msg'></span>
-      </div>
--->      
-      <div class="form-group">
-        <label for="name">성명*</label>
-        <input type='text' name='name' id='name' th:value='${memberVO.name}' required="required" 
-               placeholder="성명" class="form-control form-control-sm" style="width: 30%;">
-        <span id='name_msg'></span>
-      </div>
-      
-      <div class="form-group">
-        <label for="name">이메일*</label>
-        <input type='text' name='email' id='email' th:value='${memberVO.email}' required="required" 
-               placeholder="이메일" class="form-control form-control-sm" style="width: 30%;">
-        예) member@naver.com
-      </div> 
-  
-      <div class="form-group"> 
-        <label for="zipcode">우편 번호</label>
-        <input type='text' name='zipcode' id='zipcode' th:value='${memberVO.zipcode}' placeholder="우편번호"
-                  class="form-control form-control-sm" style="width: 30%;">
-        <button type="button" id="btn_DaumPostcode" onclick="DaumPostcode()" 
-                  class="btn btn-primary btn-sm" style="margin-top: 4px;">우편번호 찾기</button>
-      </div>  
-  
-      <div class="form-group">
-        <label for="address1" style="width: 100%;">주소</label>
-        <input type='text' name='address1' id='address1' th:value='${memberVO.address1}' placeholder="주소"
-                   class="form-control form-control-sm">
-      </div>   
-  
-      <div class="form-group">
-        <label for="address2" style="width: 100%;">상세 주소</label>
-        <input type='text' name='address2' id='address2' th:value='${memberVO.address2}' placeholder="상세 주소"
-                  class="form-control form-control-sm">
-      </div>   
+  <div style="width: 60%; margin: 0 auto;">
+    <input type="hidden" name="memberno" th:value="${memberVO.memberno}"> 
+
+    <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+        <label for="gradeno">등급</label>
+        <div>
+            <div th:if="${memberVO.gradeno == null}">
+                <img src="/images/grade/1.png" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="관리자">
+            </div>
+            <div th:if="${memberVO.gradeno == 3}">
+                <img th:src="@{/images/grade/2.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="씨앗 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 6}">
+                <img th:src="@{/images/grade/3.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="새싹1 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 7}">
+                <img th:src="@{/images/grade/4.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="새싹2 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 8}">
+                <img th:src="@{/images/grade/5.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="묘목 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 9}">
+                <img th:src="@{/images/grade/6.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="나무 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 13}">
+                <img th:src="@{/images/grade/7.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="열매나무 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 14}">
+                <img th:src="@{/images/grade/8.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="세계수 나뭇가지 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 15}">
+                <img th:src="@{/images/grade/9.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="세계수 묘목 회원">
+            </div>
+            <div th:if="${memberVO.gradeno == 16}">
+                <img th:src="@{/images/grade/10.png}" style='width: 5%; border: 2px solid black; border-radius: 10px;' title="세계수 회원">
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+            <label for="id" style="margin-right: 10px; width: 100px;">ID:</label>
+            <span th:text="${memberVO.id}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+        </div>
+        
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+            <label for="name" style="margin-right: 10px; width: 100px;">이름:</label>
+            <span th:text="${memberVO.name}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+        </div>
+        
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+            <label for="nickname" style="margin-right: 10px; width: 100px;">닉네임:</label>
+            <span th:text="${memberVO.nickname}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+            <span id='name_msg'></span>
+        </div>
+        
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+            <label for="email" style="margin-right: 10px; width: 100px;">이메일:</label>
+            <span th:text="${memberVO.email}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+        </div> 
+        
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;"> 
+            <label for="zipcode" style="margin-right: 10px; width: 100px;">우편 번호:</label>
+            <span th:text="${memberVO.zipcode}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+            <button type="button" id="btn_DaumPostcode" onclick="DaumPostcode()" class="btn btn-primary btn-sm" style="margin-left: 10px;">우편번호 찾기</button>
+        </div>
+    
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+            <label for="address1" style="margin-right: 10px; width: 100px;">주소:</label>
+            <span th:text="${memberVO.address1}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+        </div>   
+        
+        <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+            <label for="address2" style="margin-right: 10px; width: 100px;">상세 주소:</label>
+            <span th:text="${memberVO.address2}" style="padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></span>
+        </div>
+    </div>
+
+
 
 <!-- ------------------------------ DAUM 우편번호 API 시작 ------------------------------ -->
     <div>
@@ -189,12 +234,5 @@
 
     </div>
 <!-- ------------------------------ DAUM 우편번호 API 종료 ------------------------------ -->     
-
-      <div class="content_body_bottom">
-        <button type="button" onclick="send();" class="btn btn-secondary btn-sm">저장</button>
-        <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
-      </div>
-    </form>
-  </div>
 </div>
 </html>
