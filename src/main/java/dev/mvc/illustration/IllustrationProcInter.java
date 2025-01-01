@@ -54,10 +54,31 @@ public interface IllustrationProcInter {
      * @return 검색 결과 수
      */
     int searchCount(String startDate, String endDate);
+    
+    /**
+     * 검색 목록
+     * SQL -> DiaryVO 객체 레코드 수 만큼 생성 -> ArrayList<diaryVO> 객체 생성되어 DiaryDAOInter로 리턴 
+     * select id="list_search" resultType="dev.mvc.diary.DiaryVO" parameterType="String"
+     * @return
+     */
+    public ArrayList<IllustrationVO> list_search(String date);  
+    
+    int list_search_count(String date);
+    
+    /**
+     * 
+     * @param title
+     * @param now_page
+     * @param record_per_page
+     * @param start_num
+     * @param end_num
+     * @return
+     */
+    public ArrayList<IllustrationVO> list_search_paging(String now_page, String record_per_page, int start_num, int end_num);
 
 
     /**
-     * 페이징 HTML 생성
+     * 
      * @param now_page
      * @param start_date
      * @param end_date
@@ -65,11 +86,17 @@ public interface IllustrationProcInter {
      * @param search_count
      * @param record_per_page
      * @param page_per_block
-     * @return 페이징 HTML 문자열
+     * @return
      */
     String pagingBox(int now_page, String start_date, String end_date, String list_file_name, int search_count, int record_per_page, int page_per_block);
 
-    int countByDateRange(HashMap<String, Object> paramMap);
+    public int cntcount(int illustno);
+
+    // 검색 및 날짜 필터링 목록 조회
+    ArrayList<IllustrationVO> listSearch(String startDate, String endDate);
+
+    int countSearchResults(String startDate, String endDate);
+
 
     
 }

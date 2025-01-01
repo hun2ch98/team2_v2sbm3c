@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import dev.mvc.diary.DiaryVO;
 
@@ -41,4 +42,28 @@ public interface IllustrationDAOInter {
 
     int countByDateRange(HashMap<String, Object> paramMap);
     
+    
+    /**
+     * 검색 갯수
+     * @return
+     */
+    int list_search_count(@Param("date") String date);
+
+    
+    /**
+     * 검색 + 페이징 목록
+     * select id="list_search_paging" resultType="dev.mvc.diary.DiaryVO" parameterType="Map"
+     * @param map
+     * @return
+     */
+    public ArrayList<IllustrationVO> list_search_paging(Map<String, Object> map);
+
+    
+
+    public int cntcount(int illustno);
+    
+    public ArrayList<IllustrationVO> list_search(String date);
+    
+
+    ArrayList<IllustrationVO> listSearch(Map<String, Object> paramMap);
 }
