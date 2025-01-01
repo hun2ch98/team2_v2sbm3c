@@ -94,7 +94,7 @@ public class ItemCont {
    * @param model
    * @return
    */
-  @GetMapping(value = "/surveyitem")
+  @GetMapping(value = "/list_all_com")
   public String list_all_com(@RequestParam("surveyno") int surveyno,
                     Model model) {
     ItemVO itemVO = new ItemVO();
@@ -106,5 +106,9 @@ public class ItemCont {
 
     return "/surveyitem/list_all_com"; // /templates/cate/list_all.html
   }
+  
+  /**
+   * getmapping list_all 인거 하나 더 생성해야함
+   */
 
 }
