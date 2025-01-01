@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dev.mvc.diary.DiaryVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -46,7 +45,7 @@ public class IllustrationCont {
   public int page_per_block = 10;
 
   /** 페이징 목록 주소 */
-  private String list_file_name = "/diary/list_by_illustno_search_paging_grid";
+  private String list_file_name = "/illustration/list_by_illustno_search_paging_grid";
 
     /**
      * 등록 폼
@@ -129,7 +128,7 @@ public class IllustrationCont {
         }
 
         ra.addAttribute("now_page", now_page);
-        return "redirect:/illustration/list_by_illustno";
+        return "redirect:/illustration/list_by_illustno_search_paging_grid";
     }
 
     /**
@@ -238,8 +237,8 @@ public class IllustrationCont {
   
   @GetMapping("/list_by_illustno_search_paging_grid")
   public String listByIllustNoSearchPagingGrid(HttpSession session, Model model,
-                                                                    @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
-                                                                    @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
+                                                                    @RequestParam(value = "start_date", required = false, defaultValue = "2000-01-01") String startDate,
+                                                                    @RequestParam(value = "end_date", required = false, defaultValue = "2030-12-31") String endDate,
                                                                     @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage) {
     if (this.memberProc.isMemberAdmin(session)) {
       startDate = startDate.trim();
@@ -261,7 +260,7 @@ public class IllustrationCont {
       
       
       
-      return "redirect:/diary/list_by_diaryno_search_paging_grid";
+      return "redirect:/illustration/list_by_illustno_search_paging_grid";
     } else {
       return "redirect:/member/login_cookie_need";
     }
