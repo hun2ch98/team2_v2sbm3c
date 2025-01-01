@@ -23,5 +23,4 @@ public class CalendarVO {
   /** 일기 고유 번호 */
   private int diaryno;
 
-  private DiaryVO diaryVO; // DiaryVO 포함
 }
