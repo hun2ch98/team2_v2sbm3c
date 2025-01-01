@@ -239,7 +239,7 @@ public class MemberCont {
   }
   
   /**
-   * 삭제
+   * 삭제 폼
    * @param model
    * @param memberno 회원 번호
    * @return 회원 정보
@@ -259,6 +259,30 @@ public class MemberCont {
       return "redirect:/member/login_cookie_need";  // redirect
     }
     
+  }
+  
+  /**
+   * 삭제 처리
+   * @param model
+   * @param memberno 삭제할 레코드 번호
+   * @return
+   */
+  @PostMapping(value="/delete")
+  public String delete_process(HttpSession session,
+                                          Model model,
+                                          @RequestParam(name="memberno", defaultValue = "") int memberno) {
+    if (this.memberProc.isMemberAdmin(session)) {
+      int cnt = this.memberProc.delete(memberno);
+      
+      if (cnt == 1) {
+        return "redirect:/member/list_all";
+      } else {
+        model.addAttribute("code", "delete_fail");
+        return "/member/msg"; // /templates/member/msg.html
+      }
+    } else {
+      return "redirect:/member/login_cookie_need";  // redirect
+    }
   }
 
 ///**
@@ -619,29 +643,6 @@ public class MemberCont {
 //  }
 //
 //  
-//  /**
-//   * 회원 Delete process
-//   * @param model
-//   * @param memberno 삭제할 레코드 번호
-//   * @return
-//   */
-//  @PostMapping(value="/delete")
-//  public String delete_process(HttpSession session,
-//                                          Model model,
-//                                          @RequestParam(name="memberno", defaultValue = "") int memberno) {
-//    if (this.memberProc.isMemberAdmin(session)) {
-//      int cnt = this.memberProc.delete(memberno);
-//      
-//      if (cnt == 1) {
-//        return "redirect:/member/list";
-//      } else {
-//        model.addAttribute("code", "delete_fail");
-//        return "/member/msg"; // /templates/member/msg.html
-//      }
-//    } else {
-//      return "redirect:/member/login_cookie_need";  // redirect
-//    }
-//  }
 
   //----------------------------------------------------------------------------------
   // 로그인 및 로그아웃 메서드 컨트롤러 시작
