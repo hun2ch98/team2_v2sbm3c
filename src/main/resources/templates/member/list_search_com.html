@@ -1,10 +1,14 @@
 <div th:fragment="list_search_fragment">
   <div style="text-align: right; clear: both;">
-    <form name="frm_search" method="get" action="/member/list">
-      <input type="hidden" name="now_page" th:value="${now_page}" >
-      <input type="text" name="word" id="word" th:value="${word}" >
+    <form name="frm_search" method="get" th:action="@{/member/list_by_memberno_search_paging}">
+    
+      <input type="hidden" name="memberno" id="memberno" th:value="${memberVO.memberno}" >
+      
+      <input type="text" name="word" id="word" th:value="${word}" placeholder="검색어를 입력하세요">
+      
       <button type='submit' class='btn btn-secondary btn-sm' 
               style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
+      
       <span th:if="${word != null and word != ''}">
         <button type='button' class='btn btn-secondary btn-sm' 
                 style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
