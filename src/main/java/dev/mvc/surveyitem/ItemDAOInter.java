@@ -37,5 +37,12 @@ public interface ItemDAOInter {
    * @return
    */
   public int delete(int itemVO);
+  
+  /**
+   * 회원 참여수
+   * @param itemVO
+   * @return
+   */
+  public int update_cnt(int itemVO);
 
 }

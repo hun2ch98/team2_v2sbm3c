@@ -38,4 +38,12 @@
     DELETE FROM surveyitem WHERE itemno=#{itemno}
   </delete>
   
+  <!-- 설문조사 참여 수 -->
+  <update id="update_cnt" parameterType="dev.mvc.surveyitem.ItemVO">
+    UPDATE surveyitem
+    SET item_cnt = item_cnt + 1
+    WHERE itemno = #{itemno}
+  </update>
+
+  
 </mapper>

@@ -316,7 +316,7 @@ public class SurveyCont {
    * 글 수정 폼
    *
    */
-  @GetMapping(value = "/update_text")
+  @GetMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
       Model model, 
       @RequestParam(name="surveyno", defaultValue="") int surveyno, 
@@ -326,6 +326,7 @@ public class SurveyCont {
 
     model.addAttribute("is_continue", is_continue);
     model.addAttribute("now_page", now_page);
+    model.addAttribute("surveyno", surveyno);
 
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       SurveyVO surveyVO = this.surveyProc.read(surveyno);
@@ -351,7 +352,7 @@ public class SurveyCont {
    * 
    * @return
    */
-  @PostMapping(value = "/update_text")
+  @PostMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
       Model model, 
       @ModelAttribute("surveyVO") SurveyVO surveyVO, 
@@ -385,7 +386,7 @@ public class SurveyCont {
    * 파일 수정 폼 
    * @return
    */
-  @GetMapping(value = "/update_file")
+  @GetMapping(value = "/update_file/{surveyno}")
   public String update_file(HttpSession session, Model model, 
          @RequestParam(name="surveyno", defaultValue="0") int surveyno,
          @RequestParam(name="is_continue", defaultValue="") String is_continue, 
@@ -393,22 +394,26 @@ public class SurveyCont {
     
     model.addAttribute("is_continue", is_continue);
     model.addAttribute("now_page", now_page);
+    model.addAttribute("surveyno", surveyno);
     
-    SurveyVO surveyVO = this.surveyProc.read(surveyno);
-    model.addAttribute("surveyVO", surveyVO);
+    if (memberProc.isMemberAdmin(session)) {
+      SurveyVO surveyVO = surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
 
-    MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
+      MemberVO memberVO = memberProc.read(surveyVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
 
-    return "/survey/update_file";
-
+      return "/survey/update_file";
+    } else {
+        return "member/login_cookie_need";
+    }
   }
-
+  
   /**
    * 파일 수정 처리 
    * @return
    */
-  @PostMapping(value = "/update_file")
+  @PostMapping(value = "/update_file/{surveyno}")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,
                             @ModelAttribute("surveyVO") SurveyVO surveyVO,
                             @RequestParam(name="is_continue", defaultValue="") String is_continue, 
@@ -489,7 +494,7 @@ public class SurveyCont {
    * 
    * @return
    */
-  @GetMapping(value = "/delete")
+  @GetMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
                                @RequestParam(name="memberno", defaultValue="1") int memberno, 
                                @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
@@ -497,6 +502,7 @@ public class SurveyCont {
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       model.addAttribute("memberno", memberno);
+      model.addAttribute("surveyno", surveyno);
       model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
       
@@ -520,7 +526,7 @@ public class SurveyCont {
    * 
    * @return
    */
-  @PostMapping(value = "/delete")
+  @PostMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, RedirectAttributes ra,
       @RequestParam(name="memberno", defaultValue="1") int memberno, 
       @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
@@ -568,6 +574,7 @@ public class SurveyCont {
       ra.addAttribute("memberno", memberno);
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
+      ra.addAttribute("surveyno", surveyno);
       
       return "redirect:/survey/list_by_surveyno_search_paging";    
       
