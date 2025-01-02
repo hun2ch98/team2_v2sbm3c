@@ -94,7 +94,7 @@ public interface MemberDAOInter {
    * @return
    */
   public ArrayList<MemberVO> list_by_memberno_search(HashMap<String, Object> hashMap);
-
+  
   /**
    * 회원번호별 검색된 레코드 갯수
    * @param hashMap
@@ -108,6 +108,4 @@ public interface MemberDAOInter {
    * @return
    */
   public ArrayList<MemberVO> list_by_memberno_search_paging(HashMap<String, Object> map);
-
-  public String getNickname(int memberno);
 }

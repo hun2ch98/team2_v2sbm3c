@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dev.mvc.board.Board;
-import dev.mvc.board.BoardProcInter;
-import dev.mvc.board.BoardVO;
 import dev.mvc.diary.DiaryProcInter;
 import dev.mvc.grade.Grade;
 import dev.mvc.grade.GradeProcInter;
@@ -49,9 +46,6 @@ public class MemberCont {
   /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
   public int page_per_block = 10;
 
-  /** 페이징 목록 주소 */
-  private String list_file_name = "/grade/list_by_memberno_search_paging";
-  
   public MemberCont() {
     System.out.println("-> MemberCont created.");
   }
@@ -141,85 +135,27 @@ public class MemberCont {
   //----------------------------------------------------------------------------------
   // 회원가입 정보 목록 메서드 컨트롤러 시작 => list_by_memberno_search_paging으로 Update
   // ---------------------------------------------------------------------------------
-  @GetMapping(value = "/list_all")
-  public String list_all(HttpSession session, Model model) {
-      
-      // 세션에서 사용자 등급을 확인
-      String grade = (String) session.getAttribute("grade");
-      
-      // 관리자 등급만 접근을 허용
-      if (grade != null && grade.equals("admin")) {
-          // 모든 회원 정보를 가져옴
-          ArrayList<MemberVO> list = this.memberProc.list_all();
-          
-          // 모델에 회원 목록 추가
-          model.addAttribute("list", list);
-          
-          // 회원 목록 페이지로 이동
-          return "/member/list_all"; // /templates/member/list.html
-      } else {
-          // 관리자 등급이 아닐 경우 로그인 페이지로 리다이렉트
-          return "redirect:/member/login_cookie_need"; // redirect
-      }
-  }
-  //----------------------------------------------------------------------------------
-  // 회원가입 정보 목록 메서드 컨트롤러 종료
-  // ---------------------------------------------------------------------------------
-
-  //----------------------------------------------------------------------------------
-  // 회원 정보 조회 메서드 컨트롤러 시작
-  // ---------------------------------------------------------------------------------
-//  /**
-//   * 조회
-//   * @param model
-//   * @param memberno 회원 번호
-//   * @return 회원 정보
-//   */
-//  @GetMapping(value="/read")
-//  public String read(HttpSession session, Model model,
-//                     @RequestParam(name="memberno", defaultValue = "") int memberno) {
-//      String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
-//
-//      // grade가 null인지 확인한 후 equals 비교
-//      if ("member".equals(grade) && memberno == (int) session.getAttribute("memberno")) {
-//          System.out.println("-> read memberno: " + memberno);
-//          
-//          MemberVO memberVO = this.memberProc.read(memberno);
-//          model.addAttribute("memberVO", memberVO);
-//          return "member/read";  // templates/member/read.html
-//      } else if ("admin".equals(grade)) {
-//          System.out.println("-> read memberno: " + memberno);
-//          
-//          MemberVO memberVO = this.memberProc.read(memberno);
-//          model.addAttribute("memberVO", memberVO);
-//          
-//          return "member/read";  // templates/member/read.html
-//      } else {
-//          return "redirect:/member/login_cookie_need";  // redirect
-//      }
+//  @GetMapping(value = "/list_all")
+//  public String list_all(HttpSession session, Model model) {
+//    ArrayList<MemberVO> list = this.memberProc.list_all();
+//    model.addAttribute("list", list);
+//    return "/member/list_all";
 //  }
-  /**
-   * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
-   * http://localhost:9093/member/list_by_memberno?memberno=6
-   * 
-   * @return
-   */
+  
   @GetMapping(value = "/list_by_memberno_search_paging")
   public String list_by_memberno_search_paging(
-      HttpSession session, 
+      HttpSession session,
       Model model,
-      @ModelAttribute("memberVO") MemberVO memberVO,
       @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-      @RequestParam(name = "name", defaultValue = "") String name,
+      @RequestParam(name = "id", defaultValue = "") String id,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-      
+    
     int startRow = (now_page - 1) * record_per_page + 1;
     int endRow = now_page * record_per_page;
-    
-    name = Tool.checkNull(name).trim();
-    if (name.isEmpty()) {
-      name = "";
+
+    id = Tool.checkNull(id).trim();
+    if (id.isEmpty()) {
+      id = "";
     }
     
     if (memberno < 0) {
@@ -227,12 +163,12 @@ public class MemberCont {
     }
     
     model.addAttribute("memberno", memberno);
-    model.addAttribute("name", name);
+    model.addAttribute("id", id);
     model.addAttribute("now_page", now_page);
     
     HashMap<String, Object> map = new HashMap<>();
     map.put("memberno", memberno);
-    map.put("name", name);
+    map.put("id", id);
     map.put("now_page", now_page);
     map.put("startRow", startRow);
     map.put("endRow", endRow);
@@ -245,9 +181,9 @@ public class MemberCont {
     }
     
     int search_count = this.memberProc.list_by_memberno_search_count(map);
-    String paging = this.memberProc.pagingBox(now_page, name, "/member/list_by_memberno_search_paging", search_count, Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK); // pageSize 사용
+    String paging = this.memberProc.pagingBox(now_page, id, "/member/list_by_memberno_search_paging", search_count, Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
     model.addAttribute("paging", paging);
-    model.addAttribute("name", name);
+    model.addAttribute("id", id);
     model.addAttribute("now_page", now_page);
     model.addAttribute("search_count", search_count);
     
@@ -256,7 +192,42 @@ public class MemberCont {
     
     return "/member/list_by_memberno_search_paging";
   }
-  
+  //----------------------------------------------------------------------------------
+  // 회원가입 정보 목록 메서드 컨트롤러 종료
+  // ---------------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------------
+  // 회원 정보 조회 메서드 컨트롤러 시작
+  // ---------------------------------------------------------------------------------
+  /**
+   * 조회
+   * @param model
+   * @param memberno 회원 번호
+   * @return 회원 정보
+   */
+  @GetMapping(value="/read")
+  public String read(HttpSession session, Model model,
+                     @RequestParam(name="memberno", defaultValue = "") int memberno) {
+      String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
+
+      // grade가 null인지 확인한 후 equals 비교
+      if ("member".equals(grade) && memberno == (int) session.getAttribute("memberno")) {
+          System.out.println("-> read memberno: " + memberno);
+          
+          MemberVO memberVO = this.memberProc.read(memberno);
+          model.addAttribute("memberVO", memberVO);
+          return "member/read";  // templates/member/read.html
+      } else if ("admin".equals(grade)) {
+          System.out.println("-> read memberno: " + memberno);
+          
+          MemberVO memberVO = this.memberProc.read(memberno);
+          model.addAttribute("memberVO", memberVO);
+          
+          return "member/read";  // templates/member/read.html
+      } else {
+          return "redirect:/member/login_cookie_need";  // redirect
+      }
+  }
   //----------------------------------------------------------------------------------
   // 회원 정보 조회 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------

@@ -107,7 +107,7 @@ public interface MemberProcInter {
    * @return
    */
   public ArrayList<MemberVO> list_by_memberno_search(HashMap<String, Object> hashMap);
-
+  
   /**
    * 회원번호별 검색된 레코드 갯수
    * @param hashMap
@@ -135,14 +135,6 @@ public interface MemberProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */ 
-  public String pagingBox(int now_page, String name, String list_file, int search_count, 
+  public String pagingBox(int now_page, String id, String list_file, int search_count, 
                                         int record_per_page, int page_per_block);
-
-
-  /**
-   * Member의 nickname 가져오기
-   * @param memberno
-   * @return nickname
-   */
-  String getNickname(int memberno);
 }

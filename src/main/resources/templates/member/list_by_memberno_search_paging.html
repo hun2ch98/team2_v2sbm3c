@@ -3,22 +3,16 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-    <span th:text="${memberVO?.name ?: '회원'}" class="title_line_text"></span>
-    > 검색 페이징
-    <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+    회원(관리자 전용)
+    <span th:text="|>(${search_count} 건)|" class="title_line_text"></span>
   </div>
-<!--
+
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|./list_by_memberno?memberno=${memberVO?.memberno}&now_page=${now_page}|}">목록</a>    
-  </aside>
--->
-  <aside class="aside_right">
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class="menu_divide">│</span>
-    <a th:href="@{/grade/list_by_memberno_search_paging(memberno=${memberVO?.memberno}, name=${name != null ? name : ''}, now_page=${now_page})}">목록</a>
-    <span class="menu_divide">│</span>
+    <a th:href='@{|member/create?memberno=${memberVO?.memberno}|}'>회원 가입</a>
+    <span class='menu_divide'>│</span>
+    <a th:href='@{/member/list_by_memberno_search_paging(memberno=${memberVO?.memberno}, id=${id != null ? id : ''}, now_page=${now_page})}'>목록</a>
   </aside>
 
   <!-- 검색 프래그먼트 -->
@@ -36,28 +30,36 @@
       <col style='width: 10%;'/>
     </colgroup>
     <tr>
-      <th class='th_bs'>등급 </th>
-      <th class='th_bs'>ID </th>
+      <th class='th_bs'>등급</th>
+      <th class='th_bs'>ID</th>
       <th class='th_bs'>성명</th>
       <th class='th_bs'>이메일</th>
       <th class='th_bs'>주소</th>
       <th class='th_bs'>등록일</th>
-      <th class='th_bs'> </th>
+      <th class='th_bs'>작업</th>
     </tr>
 
     <tr th:each="memberVO, status:${list}">
       <td class='td_basic'>
-        <div>
-          <div th:if="${memberVO.grade >= 1 and memberVO.grade <= 10}"><img th:src="/images/${memberVO.grade}.png" title="관리자" class="icon"></div>
-          <div th:if="${memberVO.grade >= 11 and memberVO.grade <= 20}"><img th:src="/images/${memberVO.grade}.png" title="회원" class="icon"></div>
-          <div th:if="${memberVO.grade >= 30 and memberVO.grade <= 39}"><img src='/member/images/pause.png' title="정지 회원" class="icon"></div>
-          <div th:if="${memberVO.grade >= 40 and memberVO.grade <= 49}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
-        </div>
+          <div>
+              <div th:if="${memberVO.gradeno == null}"><img src="/images/grade/1.png" title="관리자" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 3}"><img th:src="@{/images/grade/2.png}" title="씨앗 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 6}"><img th:src="@{/images/grade/3.png}" title="새싹1 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 7}"><img th:src="@{/images/grade/4.png}" title="새싹2 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 8}"><img th:src="@{/images/grade/5.png}" title="묘목 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 9}"><img th:src="@{/images/grade/6.png}" title="나무 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 13}"><img th:src="@{/images/grade/7.png}" title="열매나무 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 14}"><img th:src="@{/images/grade/8.png}" title="세계수 나뭇가지 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 15}"><img th:src="@{/images/grade/9.png}" title="세계수 묘목 회원" class="icon"></div>
+              <div th:if="${memberVO.gradeno == 16}"><img th:src="@{/images/grade/10.png}" title="세계수 회원" class="icon"></div>
+              <div th:if="${memberVO.grade >= 30 and memberVO.grade <= 39}"><img src='/member/images/pause.png' title="정지 회원" class="icon"></div>
+              <div th:if="${memberVO.grade >= 40 and memberVO.grade <= 49}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
+          </div>
       </td>
-      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
-      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
+      <td class='td_basic'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
+      <td class='td_basic'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
       <td class='td_basic' th:text="${memberVO.email}"></td>
-      <td class='td_left'>
+      <td class='td_basic'>
         <span th:if="${memberVO.address1.length() > 15 }" th:text="|${memberVO.address1.substring(0, 15) }...|"></span>
         <span th:unless="${memberVO.address1.length() > 15 }" th:text="${memberVO.address1}"></span>
       </td>
@@ -68,11 +70,14 @@
       </td>
     </tr>
 
-    <tr th:if="${list == null || list.size() == 0}">
-      <td colspan="7" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
     </tr>
+    
   </table>
-   
-  <div class="bottom_menu" th:if="${paging != null}" th:utext="${paging}"></div>
+  
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 -->
 </div>
 </html>

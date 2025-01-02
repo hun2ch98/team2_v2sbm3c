@@ -36,30 +36,30 @@
     <tr th:if="${list != null and list.size() > 0}" th:each="gradeVO, status:${list}" 
     th:attr="onclick=|location.href='/grade/read?gradeno=${gradeVO.gradeno}&now_page=${now_page}'|"
     style="cursor: pointer; height: 90px;">
-    <td class='td_basic image-container' style="vertical-align: middle; text-align: center;">
-        <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png') or gradeVO.file1.endsWith('gif')}">
-            <img th:src="@{|/grade/storage/${gradeVO.thumb1}|}" style="width: 120px; height: 90px;">
-        </div>
-        <div th:if="${((gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png') or gradeVO.file1.endsWith('gif')) == false) and (gradeVO.size1 > 0)}">
-            <span th:text="${gradeVO.file1}"></span>
-        </div>
-        <div th:if="${gradeVO.size1 == 0}">
-            <img src="/grade/images/none1.png" style="width: 120px; height: 90px;">
-        </div>
-    </td>
-    <td class='td_left'>
-        <span th:text="${gradeVO.grade_name}" style="font-weight: bold;"></span><br>
-        <span th:text="${#dates.format(gradeVO.rdate, 'yyyy-MM-dd')}"></span><br>
-        <span th:if="${gradeVO.evo_criteria.length() > 160 }" 
-              th:text="|${gradeVO.evo_criteria.substring(0, 160) }...|"></span>
-        <span th:if="${gradeVO.evo_criteria.length() <= 160 }" 
-              th:text="|${gradeVO.evo_criteria}|"></span>
-        <span th:if="${gradeVO.evolution.length() > 160 }" 
-              th:text="|${gradeVO.evolution.substring(0, 160) }...|"></span><br>
-        <span th:if="${gradeVO.evolution.length() <= 160 }" 
-              th:text="|${gradeVO.evolution}|"></span>
-    </td>
-</tr>
+      <td class='td_basic image-container' style="vertical-align: middle; text-align: center;">
+          <div th:if="${gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png') or gradeVO.file1.endsWith('gif')}">
+              <img th:src="@{|/grade/storage/${gradeVO.thumb1}|}" style="width: 120px; height: 90px;">
+          </div>
+          <div th:if="${((gradeVO.file1.endsWith('jpg') or gradeVO.file1.endsWith('png') or gradeVO.file1.endsWith('gif')) == false) and (gradeVO.size1 > 0)}">
+              <span th:text="${gradeVO.file1}"></span>
+          </div>
+          <div th:if="${gradeVO.size1 == 0}">
+              <img src="/grade/images/none1.png" style="width: 120px; height: 90px;">
+          </div>
+      </td>
+      <td class='td_left'>
+          <span th:text="${gradeVO.grade_name}" style="font-weight: bold;"></span><br>
+          <span th:text="${#dates.format(gradeVO.rdate, 'yyyy-MM-dd')}"></span><br>
+          <span th:if="${gradeVO.evo_criteria.length() > 160 }" 
+                th:text="|${gradeVO.evo_criteria.substring(0, 160) }...|"></span>
+          <span th:if="${gradeVO.evo_criteria.length() <= 160 }" 
+                th:text="|${gradeVO.evo_criteria}|"></span>
+          <span th:if="${gradeVO.evolution.length() > 160 }" 
+                th:text="|${gradeVO.evolution.substring(0, 160) }...|"></span><br>
+          <span th:if="${gradeVO.evolution.length() <= 160 }" 
+                th:text="|${gradeVO.evolution}|"></span>
+      </td>
+    </tr>
 
 
     <tr th:if="${list != null and list.size() == 0}">
