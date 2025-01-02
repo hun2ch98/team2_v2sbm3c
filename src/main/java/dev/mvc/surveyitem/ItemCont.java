@@ -52,14 +52,16 @@ public class ItemCont {
    * @return
    */
   @GetMapping(value = "/create")
-  public String create(@RequestParam("surveyno") int surveyno, Model model,
-                      RedirectAttributes ra) {
-    ItemVO itemVO = new ItemVO();
-    itemVO.setSurveyno(surveyno); // 선택된 주제 번호 자동 설정
-    model.addAttribute("itemVO", itemVO);
-    ra.addAttribute("surveyno", itemVO.getSurveyno());
-    return "redirect:/surveyitem/list_all_com"; // 뷰 파일
+  public String create(@RequestParam("surveyno") int surveyno, Model model) {
+      System.out.println("Received surveyno in create: " + surveyno);
+
+      ItemVO itemVO = new ItemVO();
+      itemVO.setSurveyno(surveyno); // 설문조사 번호 설정
+      model.addAttribute("itemVO", itemVO);
+
+      return "/surveyitem/create";
   }
+
 
   /**
    * 설문조사 항목 추가 처리
@@ -127,7 +129,7 @@ public class ItemCont {
           ItemVO itemVO = this.itemProc.read(itemno);
           if (itemVO == null) {
               ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
-              return "redirect:/surveyitem/list_all_com";
+              return "redirect:/surveyitem/msg";
           }
 
           model.addAttribute("itemVO", itemVO);
@@ -140,18 +142,17 @@ public class ItemCont {
   /**
    * 설문조사 항목 수정 처리
    */
-  @PostMapping(value = "/update")
+  @PostMapping(value = "/update/{itemno}")
   public String update(HttpSession session, 
+                       @PathVariable("itemno") int itemno,
                        @ModelAttribute("itemVO") ItemVO itemVO, 
                        RedirectAttributes ra) {
+      if (this.memberProc.isMemberAdmin(session)) {
+          itemVO.setItemno(itemno); // URL에서 받은 itemno 설정
+          this.itemProc.update(itemVO); // 항목 수정 처리
 
-      if (this.memberProc.isMemberAdmin(session)) { 
-          int result = this.itemProc.update(itemVO);
-          if (result > 0) {
-              ra.addFlashAttribute("msg", "항목이 성공적으로 수정되었습니다.");
-          } else {
-              ra.addFlashAttribute("msg", "항목 수정에 실패했습니다.");
-          }
+          // Redirect 시 surveyno 값 추가
+          ra.addAttribute("surveyno", itemVO.getSurveyno());
           return "redirect:/surveyitem/list_all_com";
       } else {
           return "member/login_cookie_need";
@@ -172,7 +173,7 @@ public class ItemCont {
           ItemVO itemVO = this.itemProc.read(itemno);
           if (itemVO == null) { 
               ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
-              return "redirect:/surveyitem/list_all_com";
+              return "redirect:/surveyitem/msg";
           }
 
           model.addAttribute("itemVO", itemVO);
@@ -185,18 +186,16 @@ public class ItemCont {
   /**
    * 설문조사 항목 삭제 처리
    */
-  @PostMapping(value = "/delete")
+  @PostMapping(value = "/delete/{itemno}")
   public String delete(HttpSession session, 
-                       @RequestParam("itemno") int itemno, 
+                       @PathVariable("itemno") int itemno, 
+                       @RequestParam("surveyno") int surveyno, // surveyno 값 추가
                        RedirectAttributes ra) {
+      if (this.memberProc.isMemberAdmin(session)) {
+          this.itemProc.delete(itemno); // 항목 삭제
 
-      if (this.memberProc.isMemberAdmin(session)) { 
-          int result = this.itemProc.delete(itemno);
-          if (result > 0) {
-              ra.addFlashAttribute("msg", "항목이 성공적으로 삭제되었습니다.");
-          } else {
-              ra.addFlashAttribute("msg", "항목 삭제에 실패했습니다.");
-          }
+          // Redirect 시 surveyno 값 추가
+          ra.addAttribute("surveyno", surveyno);
           return "redirect:/surveyitem/list_all_com";
       } else {
           return "member/login_cookie_need";

@@ -16,7 +16,8 @@
   <div style="width: 50%; margin: 0px auto;">        
     <h3>항목 추가</h3>
     <form method="post" th:action="@{/surveyitem/create}" th:object="${itemVO}">
-      <input type="hidden" th:field="*{surveyno}" />
+      <input type="hidden" th:field="*{surveyno}" th:value="${surveyno}" />
+
       <div>
         <label>항목 내용</label>
         <input type="text" name="item" value="" autofocus="autofocus"
@@ -31,13 +32,13 @@
           <div th:if="${#fields.hasErrors('item_seq')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
           <div th:each="err: ${#lists.sort(#fields.errors('item_seq'))}" th:text="${err}"></div>
       </div>
-      <div>
+      <!-- <div>
         <label>참여 인원</label>
-        <input type="number" name="item_cnt" value="1" min="1" max="10000" step="1"
+        <input type="number" name="item_cnt" value="1" min="0" max="10000" step="1"
               class="form-control" style="width:50%;" th:field="*{item_cnt}"  />
           <div th:if="${#fields.hasErrors('item_cnt')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
           <div th:each="err: ${#lists.sort(#fields.errors('item_cnt'))}" th:text="${err}"></div>
-      </div>
+      </div> -->
 
       <div class="content_body_bottom">
         <button type="submit" class="btn btn-secondary btn-sm">등록</button>

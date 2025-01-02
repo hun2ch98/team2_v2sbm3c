@@ -5,18 +5,19 @@
 
     <fieldset class="fieldset_basic">
         <div style="text-align: left; width: 47%; float: left;">
-            <span style="font-size: 1.5em;" th:text="${itemVO.itemno}"></span>
+            <span style="font-size: 1.5em;" th:text="'항목 번호: ' + ${itemVO.itemno}"></span>
             <br>
-            <form name="frm" method="POST" action="/surveyitem/delete">
-                <input type="hidden" name="itemno" th:value="${itemVO.itemno}">
+            <form name="frm" method="post" th:action="@{/surveyitem/delete/{itemno}(itemno=${itemVO.itemno})}">
+                <!-- surveyno 값을 전달 -->
+                <input type="hidden" name="surveyno" th:value="${itemVO.surveyno}" />
                 <br> 
                 <div style="margin-top: 20px; clear: both;">
                     <span style="color: #FF0000; font-weight: bold;">
-                        삭제를 진행 하시겠습니까? 삭제하시면 복구 할 수 없습니다.
+                        삭제를 진행하시겠습니까? 삭제 후 복구는 불가능합니다.
                     </span>
                     <br><br><br>  
                     <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
-                    <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+                    <button type="button" onclick="location.href='/surveyitem/list_all_com?surveyno=${itemVO.surveyno}'" class="btn btn-secondary btn-sm">취소</button>
                 </div>  
             </form>
         </div>
