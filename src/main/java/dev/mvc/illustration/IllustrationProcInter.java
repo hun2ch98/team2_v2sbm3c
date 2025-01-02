@@ -17,8 +17,6 @@ public interface IllustrationProcInter {
 
     IllustrationVO read(int illustno);
 
-    int update_text(IllustrationVO illustrationVO);
-
     int update_file(IllustrationVO illustrationVO);
 
     int delete(int illustno);
@@ -97,6 +95,12 @@ public interface IllustrationProcInter {
 
     // 검색 결과 카운트 메서드 추가
     int countSearchResults(String startDate, String endDate);
+
+    
+    //2323
+    ArrayList<IllustrationVO> listByIllustrationPaging(int startNum, int endNum);
+    int countAllIllustrations();
+    String pagingBox(int nowPage, int totalCount, int recordPerPage, int pagePerBlock, String listFileName);
 
     
     

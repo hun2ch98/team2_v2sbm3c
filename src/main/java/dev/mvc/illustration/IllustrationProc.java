@@ -38,11 +38,7 @@ public class IllustrationProc implements IllustrationProcInter {
         return illustrationDAO.read(illustno);
     }
 
-    @Override
-    public int update_text(IllustrationVO illustrationVO) {
-        return illustrationDAO.update_text(illustrationVO);
-    }
-
+   
     @Override
     public int update_file(IllustrationVO illustrationVO) {
         return illustrationDAO.update_file(illustrationVO);
@@ -53,10 +49,6 @@ public class IllustrationProc implements IllustrationProcInter {
         return illustrationDAO.delete(illustno);
     }
 
-    @Override
-    public int list_by_illustno_search_count(HashMap<String, Object> hashMap) {
-        return illustrationDAO.list_by_illustno_search_count(hashMap);
-    }
 
     @Override
     public ArrayList<IllustrationVO> list_by_illustno_search_paging(HashMap<String, Object> map) {
@@ -192,14 +184,42 @@ public class IllustrationProc implements IllustrationProcInter {
         pagingHtml.append("</div>");
         return pagingHtml.toString();
     }
-    // URL 인코딩 처리 메서드
-    private String encode(String value) {
-        try {
-            return value == null ? "" : java.net.URLEncoder.encode(value, "UTF-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            return ""; // 인코딩 실패 시 빈 문자열 반환
+
+    @Override
+    public String pagingBox(int nowPage, int totalCount, int recordPerPage, int pagePerBlock, String listFileName) {
+        int totalPage = (int) Math.ceil((double) totalCount / recordPerPage); // 전체 페이지 수
+        int startPage = ((nowPage - 1) / pagePerBlock) * pagePerBlock + 1;    // 현재 블록의 시작 페이지 번호
+        int endPage = Math.min(startPage + pagePerBlock - 1, totalPage);     // 현재 블록의 마지막 페이지 번호
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<ul class='pagination'>");
+
+        // 이전 블록으로 이동
+        if (startPage > 1) {
+            sb.append("<li><a href='").append(listFileName)
+              .append("?now_page=").append(startPage - 1).append("'>이전</a></li>");
         }
+
+        // 현재 블록의 페이지 목록 생성
+        for (int i = startPage; i <= endPage; i++) {
+            if (i == nowPage) {
+                sb.append("<li class='active'><a>").append(i).append("</a></li>");
+            } else {
+                sb.append("<li><a href='").append(listFileName)
+                  .append("?now_page=").append(i).append("'>").append(i).append("</a></li>");
+            }
+        }
+
+        // 다음 블록으로 이동
+        if (endPage < totalPage) {
+            sb.append("<li><a href='").append(listFileName)
+              .append("?now_page=").append(endPage + 1).append("'>다음</a></li>");
+        }
+
+        sb.append("</ul>");
+        return sb.toString();
     }
+
     
     @Override
     public int cntcount(int illustno) {
@@ -228,6 +248,25 @@ public class IllustrationProc implements IllustrationProcInter {
         return sqlSession.selectOne("countSearchResults", paramMap);
     }
 
+
+    //2323
+    @Override
+    public ArrayList<IllustrationVO> listByIllustrationPaging(int startNum, int endNum) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("startNum", startNum);
+        map.put("endNum", endNum);
+        return illustrationDAO.listByIllustrationPaging(map);
+    }
+
+    @Override
+    public int countAllIllustrations() {
+        return illustrationDAO.countAllIllustrations();
+    }
+    
+    @Override
+    public int list_by_illustno_search_count(HashMap<String, Object> map) {
+        return illustrationDAO.list_by_illustno_search_count(map);
+    }
 
    
     

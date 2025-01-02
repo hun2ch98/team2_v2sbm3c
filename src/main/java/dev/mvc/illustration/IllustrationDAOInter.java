@@ -22,8 +22,6 @@ public interface IllustrationDAOInter {
 
     IllustrationVO read(int illustno);
 
-    int update_text(IllustrationVO illustrationVO);
-
     int update_file(IllustrationVO illustrationVO);
 
     int delete(int illustno);
@@ -66,4 +64,13 @@ public interface IllustrationDAOInter {
     
 
     ArrayList<IllustrationVO> listSearch(Map<String, Object> paramMap);
+    
+    //2323
+    ArrayList<IllustrationVO> listByIllustrationPaging(HashMap<String, Object> map);
+    int countAllIllustrations();
+    String pagingBox(int nowPage, int totalCount, int recordPerPage, int pagePerBlock, String listFileName);
+
+    
+    int list_by_illustno_search_count(HashMap<String, Object> map);
+    
 }
