@@ -44,5 +44,11 @@ public class ItemProc implements ItemProcInter{
     int cnt = this.itemDAO.delete(itemno);
     return cnt;
   }
+  
+  @Override
+  public int update_cnt(int itemVO) {
+    int cnt = this.itemDAO.update_cnt(itemVO);
+    return cnt;
+  }
 
 }

@@ -53,4 +53,9 @@ UPDATE surveyitem SET item_seq='5' WHERE itemno=9;
 -- 삭제
 DELETE FROM surveyitem;
 
+UPDATE surveyitem
+SET item_cnt = 0
+WHERE itemno = 17;
+
+
 COMMIT;
