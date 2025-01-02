@@ -9,25 +9,27 @@
     INSERT INTO surveyitem(itemno, surveyno, item_seq, item, item_cnt)
     VALUES (surveyitem_seq.nextval, #{surveyno}, #{item_seq}, #{item}, #{item_cnt})
   </insert>
-
-  <!-- 일반적인 조회 -->
-  <select id="read" resultType="dev.mvc.surveyitem.ItemVO" parameterType="int">
+  
+  <select id="read" parameterType="int" resultType="dev.mvc.surveyitem.ItemVO">
     SELECT itemno, surveyno, item_seq, item, item_cnt
     FROM surveyitem
     WHERE itemno = #{itemno}
   </select>
+
   
   <!-- 전체 조회 -->
-  <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
+  <select id="list_all_com" parameterType="int" resultType="dev.mvc.surveyitem.ItemVO">
     SELECT itemno, surveyno, item_seq, item, item_cnt
     FROM surveyitem
-    ORDER BY itemno DESC
+    WHERE surveyno = #{surveyno}
+    ORDER BY item_seq ASC
   </select>
+
   
   <!-- 수정 -->
   <update id="update" parameterType="dev.mvc.surveyitem.ItemVO">
     UPDATE surveyitem
-    SET surveyno = #{surveyno}, item_seq = #{item_seq}, item = #{item}, item_cnt = #{item_cnt}
+    SET item_seq = #{item_seq}, item = #{item}, item_cnt = #{item_cnt}
     WHERE itemno = #{itemno}
   </update>
   

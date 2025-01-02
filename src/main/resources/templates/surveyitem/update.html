@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+  <div class="title_line">설문조사 항목 수정</div>
+  
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{/surveyitem/create(surveyno=${itemVO.surveyno})}">항목 추가</a>
+      <span class="menu_divide">│</span> 
+    </span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class="menu_divide">│</span> 
+    <a th:href="@{/surveyitem/list_all_com(surveyno=${itemVO.surveyno})}">설문조사 목록</a>
+  </aside>  
+    
+  <div class="menu_line"></div>
+
+  <div style="width: 50%; margin: 0px auto;">  
+    <form name="frm" method="post" th:action="@{/surveyitem/update/{itemno}(itemno=${itemVO.itemno})}" th:object="${itemVO}">
+      <input type="hidden" th:field="*{surveyno}" />
+       
+      <div>
+        <label>항목 내용</label>
+        <input type="text" th:field="*{item}" class="form-control" style="width: 50%;" autofocus />
+        <div th:if="${#fields.hasErrors('item')}" class="alert alert-danger" style="margin-top: 5px;">
+          <div th:each="err: ${#fields.errors('item')}" th:text="${err}"></div>
+        </div>
+      </div>
+      <div>
+        <label>출력 순서</label>
+        <input type="number" th:field="*{item_seq}" class="form-control" style="width: 50%;" min="1" max="10000" step="1" />
+        <div th:if="${#fields.hasErrors('item_seq')}" class="alert alert-danger" style="margin-top: 5px;">
+          <div th:each="err: ${#fields.errors('item_seq')}" th:text="${err}"></div>
+        </div>
+      </div>
+      <!-- <div>
+        <label>참여 인원</label>
+        <input type="number" th:field="*{item_cnt}" class="form-control" style="width: 50%;" min="0" max="10000" step="1" />
+        <div th:if="${#fields.hasErrors('item_cnt')}" class="alert alert-danger" style="margin-top: 5px;">
+          <div th:each="err: ${#fields.errors('item_cnt')}" th:text="${err}"></div>
+        </div>
+      </div> -->
+      
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+        <button type="button" onclick="location.href='/surveyitem/list_all_com?surveyno=${itemVO.surveyno}'" class="btn btn-secondary btn-sm">취소</button>
+      </div>
+    </form>  
+  </div>
+</div>
+</html>
