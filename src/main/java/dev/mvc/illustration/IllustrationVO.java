@@ -1,5 +1,7 @@
 package dev.mvc.illustration;
 
+import java.util.Date;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Getter;
@@ -42,8 +44,6 @@ public class IllustrationVO {
     private int conversationno;
     /** 회원 번호 */
     private int memberno;
-    
-   
-    
+
 }
 

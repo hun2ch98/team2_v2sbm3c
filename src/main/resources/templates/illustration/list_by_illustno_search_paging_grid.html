@@ -9,13 +9,13 @@
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로 고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{/illustration/create}">새 일기 등록</a>
+    <a th:href="@{/illustration/create}">새 그림 등록</a>
   </aside>
 
   <div class="menu_line"></div>
 
   <!-- 검색 및 날짜 범위 설정 -->
-  <form name="searchForm" method="get" action="/diary/list_by_diaryno_search_paging_grid" style="margin: 20px 0;">
+  <form name="searchForm" method="get" action="/illstration/list_by_illustno_search_paging_grid" style="margin: 20px 0;">
     <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
     
       <!-- 시작 날짜 -->
@@ -36,14 +36,14 @@
         <tr>
           <th>그림 번호</th>
           <th>그림 제목</th>
-          <th>등록 날짜</th>
+          
         </tr>
       </thead>
       <tbody>
         <tr th:each="illustration : ${illustList}">
           <td th:text="${illustration.illustno}"></td>
           <td th:text="${illustration.illust}"></td>
-          <!--<td th:text="${illustration.ddate}"></td>-->
+          
           <td>
             <a th:href="@{/illustration/update/{illustno}(illustno=${illustration.illustno})}">수정</a>
             <span class="menu_divide">│</span>

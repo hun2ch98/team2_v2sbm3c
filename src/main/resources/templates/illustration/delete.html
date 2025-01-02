@@ -3,17 +3,15 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${illustVO.genre }" class="title_line_text"></span > 
-    > <span th:text="${illustVO.name}" class="title_line_text"></span > 
-    > 삭제
+    그림 삭제
   </div>
   
   <aside class="aside_right">
-    <a th:href="@{|./create?illustno=${illustVO.illustno }|}">등록</a>
+    <a th:href="@{|./create|}">등록</a>
     <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_illustno_grid?illustno=${illustVO.illustno }&word=${word }&now_page=${now_page}|}">갤러리형</a>
+    <a th:href="@{|./list_by_illustno_paging_grid?illustno=${illustVO.illustno }&now_page=${now_page}|}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -21,29 +19,28 @@
   <fieldset class="fieldset_basic">
     <ul>
       <li class="li_none">
-        <div th:if="${illustVO.file1.endsWith('jpg') or illustVO.file1.endsWith('png')  or illustVO.file1.endsWith('gif')}"
+        <div th:if="${illustVO.illust.endsWith('jpg') or illustVO.illust.endsWith('png')  or illustVO.illust.endsWith('gif')}"
                style="text-align: center; width: 50%; float: left;">
-          <img th:src="@{|/contents/storage/${illustVO.file1saved}|}" style="width: 90%;">
+          <img th:src="@{|/contents/storage/${illustVO.illust_saved}|}" style="width: 90%;">
         </div>
-
-        <div th:if="${((illustVO.file1.endsWith('jpg') or illustVO.file1.endsWith('png')  or illustVO.file1.endsWith('gif')) == false) and (illustVO.size1 > 0)}"
+        
+        <div th:if="${((illustVO.illust.endsWith('jpg') or illustVO.illust.endsWith('png')  or illustVO.illust.endsWith('gif')) == false) and (illustVO.illust_size > 0)}"
                class="display_table" style="float: left; width: 50%;">
             <div class="display_table_cell">
               <span th:text="${illustVO.file1}"></span>
             </div>
         </div>
 
-        <div th:if="${illustVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
+        <div th:if="${illustVO.illust_size== 0}" style="text-align: center; width: 50%; float: left;">
           <img src="/illustration/images/none1.png" style="width: 90%;">
         </div>
   
         <div style='text-align: left; width: 47%; float: left;'>
-          <span style='font-size: 1.5em;' th:text="${illustVO.title}"></span>
+          <span style='font-size: 1.5em;' th:text="${illustVO.illust}"></span>
           <br>
           <form name='frm' method='POST' action='./delete'>
             <input type="hidden" name="illustno" th:value="${illustVO.illustno }">
             <input type="hidden" name="now_page" th:value="${now_page}">
-            <input type="hidden" name="search_word" th:value="${word}">
                 
             <br> 
             <div style='margin-top: 20px; clear: both;'>
