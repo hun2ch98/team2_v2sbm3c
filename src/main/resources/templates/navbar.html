@@ -33,8 +33,7 @@
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list_by_memberno_search_paging?word=${word}|}">회원 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name != null ? grade_name : ''}|}">등급 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate}|}">요청사항 글 목록</a></li>
                     </ul>
                 </li>
                 
@@ -54,6 +53,15 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" >
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="설문조사">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
                     </ul>
                 </li>

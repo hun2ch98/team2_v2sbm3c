@@ -22,7 +22,7 @@ public interface ItemDAOInter {
    * 목록
    * @return
    */
-  public ArrayList<ItemVO> list_all();
+  public ArrayList<ItemVO> list_all_com(int surveyno);
   
   /**
    * 수정

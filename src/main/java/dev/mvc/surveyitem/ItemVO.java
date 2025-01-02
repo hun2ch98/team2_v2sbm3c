@@ -37,6 +37,6 @@ public class ItemVO {
   private String item="";
   
   /** 항목 선택 인원 */
-  private int item_cnt;
+  private int item_cnt=0;
 
 }
