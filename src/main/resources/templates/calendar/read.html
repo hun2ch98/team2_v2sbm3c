@@ -1,0 +1,41 @@
+<!DOCTYPE html> 
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${calendarVO.ddate }" class="title_line_text"></span > 
+    일정 조회
+  </div>
+  
+  <aside class="aside_right" th:if="${session.grade == 'admin'}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>    
+    <a th:href="@{|./list_all?calendarno=${calendarVO.calendarno }&date=${date }&now_page=${now_page}|}">목록형</a>    
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/calendar/create?calendarno=${calendarVO.calendarno}|}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/calendar/update?calendarno=${calendarVO.calendarno}&now_page=${now_page}&date=${date }|}">일정 수정</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./delete?calendarno=${calendarVO.calendarno}&date=${date}&now_page=${now_page}&calendarno=${calendarVO.calendarno}|}">삭제</a>  
+ </aside> 
+
+  <aside class="aside_right" th:if="${session.grade != 'admin'}">
+     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>    
+    <a th: href="@{|./list_calendar|}">일정</a>
+  </aside> 
+ 
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none" th:text="|검색할 날짜: ${calendarVO.ddate }|">
+      </li>
+      
+    </ul>
+  </fieldset>
+
+</div>
+
+</html>
+
