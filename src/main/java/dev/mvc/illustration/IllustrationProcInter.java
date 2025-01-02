@@ -95,8 +95,9 @@ public interface IllustrationProcInter {
     // 검색 및 날짜 필터링 목록 조회
     ArrayList<IllustrationVO> listSearch(String startDate, String endDate);
 
+    // 검색 결과 카운트 메서드 추가
     int countSearchResults(String startDate, String endDate);
 
-
+    
     
 }
