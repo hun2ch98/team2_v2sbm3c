@@ -2,21 +2,24 @@
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
-  <div class="title_line">설문조사 항목 등록</div>
+  <div class="title_line">설문조사 항목 수정</div>
   
   <aside class="aside_right">
-    <a href="javascript: location.reload();">새로 고침</a>
-  </aside>
-  
-  <!--/* '/cate/list_search_com.html' 파일의 list_search_fragment를 가져다 사용 */--> 
-  <!--<div th:replace="~{surveyitem/list_search_com::list_search_fragment}"></div> --> 
-
-  <div class="menu_line"></div>
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{/surveyitem/create(surveyno=${surveyno})}">항목 추가</a>
+      <span class='menu_divide'>│</span> 
+    </span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span> 
+    <a th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
+  </aside>  
     
-  <div style="width: 50%; margin: 0px auto;">        
-    <h3>항목 추가</h3>
-    <form method="post" th:action="@{/surveyitem/create}" th:object="${itemVO}">
-      <input type="hidden" th:field="*{surveyno}" />
+  <div class="menu_line"></div>
+
+  <div style="width: 50%; margin: 0px auto;">  
+    <form name="frm" method="post" action="/surveyitem/update" th:object="${itemVO}">
+      <input type="hidden" name="itemno" th:value="${itemVO.itemno}"> 
+       
       <div>
         <label>항목 내용</label>
         <input type="text" name="item" value="" autofocus="autofocus"
@@ -38,14 +41,19 @@
           <div th:if="${#fields.hasErrors('item_cnt')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
           <div th:each="err: ${#lists.sort(#fields.errors('item_cnt'))}" th:text="${err}"></div>
       </div>
-
+      
+      </div>
       <div class="content_body_bottom">
-        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
-        <button type="button" onclick="location.href='/surveyitem/list_search'" class="btn btn-secondary btn-sm">목록</button>
+        <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+        <button type="button" onclick="location.href='/surveyitem/list_all_com'" class="btn btn-secondary btn-sm">취소</button>
       </div>
       
-    </form>
-  <div>  
+    </form>  
+  </div>
+
+  <div th:replace="~{surveyitem/list_all_com::list_all_fragment}"></div> 
+
 </div>
 </html>
+
 

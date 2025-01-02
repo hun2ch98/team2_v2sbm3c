@@ -28,8 +28,8 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public ArrayList<ItemVO> list_all(){
-    ArrayList<ItemVO> list = this.itemDAO.list_all();
+  public ArrayList<ItemVO> list_all_com(int surveyno){
+    ArrayList<ItemVO> list = this.itemDAO.list_all_com(surveyno);
     return list;
   }
   
