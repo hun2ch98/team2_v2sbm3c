@@ -72,38 +72,72 @@
     WHERE memberno=#{memberno}
   </update> -->
   
-  <!-- 검색 목록 
+  <!-- 검색 목록 -->
   <select id="list_by_memberno_search" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
-      SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade
-      FROM grade
-      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
-      ORDER BY gradeno DESC
-      OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-  </select> -->
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade
+    FROM member
+    WHERE (#{id} IS NULL OR #{id} = '' OR LOWER(id) LIKE LOWER('%' || #{id} || '%'))
+    ORDER BY memberno DESC
+    OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+  </select>
   
-  <!-- 검색된 레코드 갯수 
+  <!-- 검색된 레코드 갯수 -->
   <select id="list_by_memberno_search_count" resultType="int" parameterType="HashMap">
       SELECT COUNT(*)
       FROM member
-      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
-  </select> -->
+      WHERE (#{id} IS NULL OR #{id} = '' OR LOWER(id) LIKE LOWER('%' || #{id} || '%'))
+  </select>
   
-  <!-- 등급별 검색 + 페이징 목록 
-  <select id="list_by_memberno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
+  <!-- 등급별 검색 + 페이징 목록 -->
+  <select id="list_by_memberno_search_paging" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
       SELECT *
       FROM (
           SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade,
                  ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
-          FROM grade
-          WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+          FROM member
+          WHERE (#{id} IS NULL OR #{id} = '' OR LOWER(id) LIKE LOWER('%' || #{id} || '%'))
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
-  </select> -->
-  
-  <select id="getNickname" parameterType="int" resultType="string">
-    SELECT nickname
-    FROM member
-    WHERE memberno = #{memberno}
   </select>
-    
+
+  
+  <!-- 검색된 레코드 갯수 
+  <select id="list_by_memberno_search_count" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM member
+    <choose>
+      <when test="word == null or word == ''">
+        WHERE memberno=#{memberno}
+      </when>
+      <otherwise>
+        WHERE memberno=#{memberno} AND (UPPER(email) LIKE '%' || UPPER(#{word}) || '%' 
+                                                  OR UPPER(name) LIKE '%' || UPPER(#{word}) || '%' 
+                                                  OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
+      </otherwise>
+    </choose>
+  </select>   -->
+  
+  <!-- 등급별 검색 + 페이징 목록 
+  <select id="list_by_memberno_search_paging" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
+   SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, r
+   FROM (
+              SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, rownum as r
+              FROM (
+                        SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+                        FROM member
+                        <choose>
+                          <when test="word == null or word == ''">
+                            WHERE memberno=#{memberno}
+                          </when>
+                          <otherwise>
+                            WHERE memberno=#{memberno} AND (UPPER(email) LIKE '%' || UPPER(#{word}) || '%' 
+                                                              OR UPPER(name) LIKE '%' || UPPER(#{word}) || '%' 
+                                                              OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
+                          </otherwise>
+                        </choose>
+                        ORDER BY memberno DESC
+               )
+    )
+    WHERE <![CDATA[ r >= #{start_num} AND r <= #{end_num} ]]>
+  </select>   -->
 </mapper>

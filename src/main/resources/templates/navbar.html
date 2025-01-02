@@ -32,8 +32,9 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list_by_memberno_search_paging?word=${word}|}">회원 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name != null ? grade_name : ''}|}">등급 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate}|}">요청사항 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
                     </ul>
                 </li>
                 
@@ -166,7 +167,7 @@
       const idInput = document.createElement('input');
       idInput.type = 'hidden';
       idInput.name = 'id';
-      idInput.value = 'member'; // 회원 ID 설정
+      idInput.value = 'test1'; // 회원 ID 설정
 
       const passwdInput = document.createElement('input');
       passwdInput.type = 'hidden';
