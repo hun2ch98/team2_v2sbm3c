@@ -56,8 +56,9 @@ CREATE SEQUENCE member_seq
 commit;
 
 SELECT * FROM member;
-SELECT * FROM member WHERE id = 'admin';
-SELECT * FROM member WHERE email = 'baba001109@naver.com';
+
+-- 모두 삭제
+DELETE FROM member;
 
 
 SELECT * FROM member WHERE gradeno = ?;
@@ -79,9 +80,6 @@ VALUES (member_seq.nextval, 'member', '1234', 'member@mail.com', '일반 회원'
 SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, gradeno
 FROM member
 ORDER BY grade ASC, id ASC;
-
--- 모두 삭제
-DELETE FROM member;
 
 --특정 회원 삭제
 DELETE FROM member
