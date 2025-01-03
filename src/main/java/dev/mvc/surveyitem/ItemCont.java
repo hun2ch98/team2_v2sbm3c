@@ -40,6 +40,15 @@ public class ItemCont {
   @Autowired
   @Qualifier("dev.mvc.survey.SurveyProc")
   private SurveyProcInter surveyProc;
+  
+  /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
+  public int record_per_page = 10;
+
+  /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
+  public int page_per_block = 10;
+
+  /** 페이징 목록 주소 */
+  private String list_file_name = "/cate/list_search";
 
   public ItemCont() {
     System.out.println("-> ItemCont created.");
@@ -80,7 +89,7 @@ public class ItemCont {
     int cnt = this.itemProc.create(itemVO); // 항목 추가
     if (cnt == 1) {
       ra.addAttribute("surveyno", itemVO.getSurveyno());
-      return "redirect:/surveyitem/list_all_com"; // 성공 시 목록으로 이동
+      return "redirect:/surveyitem/list_search"; // 성공 시 목록으로 이동
     } else {
       return "redirect:/surveyitem/msg"; // 실패 시 메시지
     }
@@ -109,19 +118,19 @@ public class ItemCont {
       model.addAttribute("list", list);
       model.addAttribute("surveyno", surveyno);
 
-      return "/surveyitem/list_all_com";
+      return "/surveyitem/list_search";
   }
   
   /**
    * 설문조사 항목 수정 폼
    */
   @GetMapping(value = "/update/{itemno}")
-  public String updateForm(HttpSession session, 
+  public String update(HttpSession session, 
                            Model model, 
                            @PathVariable("itemno") int itemno, 
                            RedirectAttributes ra) {
 
-      if (this.memberProc.isMember(session)) {
+      if (this.memberProc.isMember(session)|| this.memberProc.isMemberAdmin(session)) {
           ItemVO itemVO = this.itemProc.read(itemno);
           if (itemVO == null) {
               ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
@@ -143,13 +152,13 @@ public class ItemCont {
                        @PathVariable("itemno") int itemno,
                        @ModelAttribute("itemVO") ItemVO itemVO, 
                        RedirectAttributes ra) {
-      if (this.memberProc.isMemberAdmin(session)) {
+      if (this.memberProc.isMemberAdmin(session)|| this.memberProc.isMember(session)) {
           itemVO.setItemno(itemno); // URL에서 받은 itemno 설정
           this.itemProc.update(itemVO); // 항목 수정 처리
 
           // Redirect 시 surveyno 값 추가
           ra.addAttribute("surveyno", itemVO.getSurveyno());
-          return "redirect:/surveyitem/list_all_com";
+          return "redirect:/surveyitem/list_search";
       } else {
           return "member/login_cookie_need";
       }
@@ -160,12 +169,12 @@ public class ItemCont {
    * 설문조사 항목 삭제 폼
    */
   @GetMapping(value = "/delete/{itemno}")
-  public String deleteForm(HttpSession session, 
+  public String delete(HttpSession session, 
                            Model model, 
                            @PathVariable("itemno") int itemno, 
                            RedirectAttributes ra) {
 
-      if (this.memberProc.isMemberAdmin(session)) { 
+      if (this.memberProc.isMemberAdmin(session)|| this.memberProc.isMember(session)) { 
           ItemVO itemVO = this.itemProc.read(itemno);
           if (itemVO == null) { 
               ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
@@ -187,12 +196,12 @@ public class ItemCont {
                        @PathVariable("itemno") int itemno, 
                        @RequestParam("surveyno") int surveyno, // surveyno 값 추가
                        RedirectAttributes ra) {
-      if (this.memberProc.isMemberAdmin(session)) {
+      if (this.memberProc.isMemberAdmin(session)|| this.memberProc.isMember(session)) {
           this.itemProc.delete(itemno); // 항목 삭제
 
           // Redirect 시 surveyno 값 추가
           ra.addAttribute("surveyno", surveyno);
-          return "redirect:/surveyitem/list_all_com";
+          return "redirect:/surveyitem/list_search";
       } else {
           return "member/login_cookie_need";
       }
@@ -229,6 +238,47 @@ public class ItemCont {
 
       ra.addFlashAttribute("msg", "설문조사 완료!");
       return "redirect:/surveyitem/finish"; // 완료 페이지로 리다이렉트
+  }
+
+
+  /**
+   * 등록 폼 및 검색 목록 + 페이징 http://localhost:9091/cate/list_search
+   * http://localhost:9091/cate/list_search?word=&now_page=
+   * http://localhost:9091/cate/list_search?word=까페&now_page=1
+   * 
+   * @param model
+   * @return
+   */
+  @GetMapping(value = "/list_search")
+  public String list_search_paging(HttpSession session, Model model,
+                                   @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                   @RequestParam(name = "word", defaultValue = "") String word,
+                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+
+      if (this.memberProc.isMemberAdmin(session) || this.memberProc.isMember(session)) {
+          word = Tool.checkNull(word);
+
+          ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
+          model.addAttribute("list", list);
+
+          int search_cnt = this.itemProc.count_by_search(word);
+          model.addAttribute("search_cnt", search_cnt);
+
+          model.addAttribute("word", word);
+          model.addAttribute("surveyno", surveyno);
+
+          String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_cnt, 
+                                                  this.record_per_page, this.page_per_block);
+          model.addAttribute("paging", paging);
+          model.addAttribute("now_page", now_page);
+
+          int no = search_cnt - ((now_page - 1) * this.record_per_page);
+          model.addAttribute("no", no);
+
+          return "/surveyitem/list_search";
+      } else {
+          return "redirect:/member/login_cookie_need";
+      }
   }
 
 

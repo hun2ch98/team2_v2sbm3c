@@ -145,3 +145,12 @@ WHERE rnum >= 1; -- 여기서 1~10번 행만 가져옴
 
 COMMIT;
 
+
+-- cateno FK 특정 그룹에 속한 레코드 모두 삭제
+DELETE FROM surveyitem
+WHERE surveyno=11;
+
+
+
+
+

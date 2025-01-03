@@ -66,11 +66,13 @@
           <col style='width: 10%;'/>
           <col style='width: 70%;'/>
           <col style='width: 10%;'/>
+          <col style='width: 10%;'/>
         </colgroup>
         <thead>
           <tr>
             <th class="th_bs">항목 번호</th>
             <th class="th_bs">설문 조사 항목</th>
+            <th class="th_bs">선택 인원</th>
             <th class="th_bs">선택</th>
           </tr>
         </thead>
@@ -81,6 +83,7 @@
           <tr th:each="itemVO : ${list}" >
             <td th:text="${itemVO.itemno}"></td>
             <td th:text="${itemVO.item}"></td>
+            <td th:text="${itemVO.item_cnt}"></td>
             <td>
               <input type="radio" name="itemno" th:value="${itemVO.itemno}" required /> 선택
             </td>

@@ -80,5 +80,10 @@
     DELETE FROM survey WHERE surveyno=#{surveyno}
   </delete>
   
+  <!-- 자식 무시하고 주제 삭제 -->
+  <delete id="delete_survey" parameterType="int">
+    DELETE FROM surveyitem WHERE surveyno = #{surveyno}
+  </delete>
+  
   
 </mapper>

@@ -1,6 +1,7 @@
 package dev.mvc.surveyitem;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public interface ItemDAOInter {
   
@@ -26,13 +27,6 @@ public interface ItemDAOInter {
   public ArrayList<ItemVO> list_all_com(int surveyno);
   
   /**
-   * 관리자
-   * 목록
-   * @return
-   */
-  public ArrayList<ItemVO> admin_list(int surveyno);
-  
-  /**
    * 수정
    * @param itemVO
    * @return
@@ -51,6 +45,27 @@ public interface ItemDAOInter {
    * @param itemVO
    * @return
    */
-  public int update_cnt(int itemVO);
+  public int update_cnt(int itemno);
+  
+  /**
+   * 검색 목록
+   * @return
+   */
+  public ArrayList<ItemVO> list_search(String word);
+  
+  /**
+   * 검색 갯수
+   * @param word
+   * @return
+   */
+  public Integer count_by_search(String word);
+  
+  /**
+   * 검색 + 페이징 목록
+   * @param map
+   * @return
+   */
+  public ArrayList<ItemVO> list_search_paging(Map<String, Object> map);
+
 
 }

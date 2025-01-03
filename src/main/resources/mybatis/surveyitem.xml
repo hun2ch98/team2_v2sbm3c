@@ -38,11 +38,46 @@
   </delete>
   
   <!-- 설문조사 참여 수 -->
-  <update id="update_cnt" parameterType="dev.mvc.surveyitem.ItemVO">
+  <update id="update_cnt" parameterType="int">
     UPDATE surveyitem
     SET item_cnt = item_cnt + 1
     WHERE itemno = #{itemno}
   </update>
+  
+  <!-- 카테고리별 검색 목록 -->
+  <select id="list_search" resultType="dev.mvc.surveyitem.ItemVO" parameterType="String">
+      SELECT itemno, surveyno, item_seq, item, item_cnt
+      FROM surveyitem
+      <if test="word != null and word != ''"> <!-- 검색 상태라면 WHERE 생성 -->
+         WHERE (UPPER(item) LIKE '%' || UPPER(#{word}) || '%')
+      </if> 
+      ORDER BY itemno ASC
+  </select>
+  
+  <!-- 카테고리별 검색 레코드 갯수 -->
+  <select id="count_by_search" resultType="int" parameterType="String">
+    SELECT COUNT(*) as cnt
+    FROM surveyitem
+    <if test="word != null and word != ''"> <!-- 검색 상태라면 WHERE 생성 -->
+       WHERE (UPPER(item) LIKE '%' || UPPER(#{word}) || '%')
+    </if> 
+    ORDER BY itemno ASC
+  </select>
+  
+  <!-- 회원 카테고리별 검색 + 페이징 목록 -->
+  <select id="list_search_paging" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
+    SELECT itemno, surveyno, item_seq, item, item_cnt, r
+    FROM (
+        SELECT itemno, surveyno, item_seq, item, item_cnt, rownum as r
+        FROM (
+            SELECT itemno, surveyno, item_seq, item, item_cnt
+            FROM surveyitem
+            WHERE (UPPER(item) LIKE '%' || UPPER(#{word}) || '%')
+            ORDER BY itemno ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num} 
+  </select>
 
   
 </mapper>
