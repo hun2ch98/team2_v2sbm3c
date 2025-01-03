@@ -64,7 +64,7 @@ public class IllustrationCont {
     public String create(@ModelAttribute IllustrationVO illustrationVO, 
                                      RedirectAttributes ra, HttpSession session, 
                                      Model model,  HttpServletRequest request) {
-      if (memberProc.isMemberAdmin(session)) {
+      if (memberProc.isMember(session)) {
         String illust = "";
         String illust_saved = "";
         String illust_thumb = "";
@@ -136,14 +136,17 @@ public class IllustrationCont {
      */
     @GetMapping(value = "/update_file")
     public String update_file(HttpSession session, Model model, 
-                                       @RequestParam(name="illustno", defaultValue = "0") int illustno,
+                                       @PathVariable("illustno") int illustno,
                                        @RequestParam(name="now_page", defaultValue = "1") int now_page) {
       model.addAttribute("now_page", now_page);
       
-      IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
-      model.addAttribute("illustrationVO", illustrationVO);
-      return "/illustration/update_file";
-
+      if (this.memberProc.isMember(session)) {
+        IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
+        model.addAttribute("illustrationVO", illustrationVO);
+        return "/illustration/update_file";
+      } else {
+        return "/member/login_cookie_need";
+      }
     }
 
     /**
@@ -153,9 +156,9 @@ public class IllustrationCont {
      */
     @PostMapping(value = "/update_file")
     public String update_file(HttpSession session, Model model, RedirectAttributes ra,
-                              @ModelAttribute("illustration") IllustrationVO illustrationVO,
+                              @ModelAttribute("illustrationVO") IllustrationVO illustrationVO,
                               @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-        if (this.memberProc.isMemberAdmin(session)) {
+        if (this.memberProc.isMember(session)) {
             IllustrationVO illustrationVO_old = illustrationProc.read(illustrationVO.getIllustno());
 
             // 기존 파일 삭제
@@ -189,7 +192,7 @@ public class IllustrationCont {
             illustrationProc.update_file(illustrationVO);
             ra.addAttribute("illustno", illustrationVO.getIllustno());
             ra.addAttribute("now_page", now_page);
-            return "redirect:/illustration/read";
+            return "redirect:/illustration/read" + illustrationVO.getIllustno();
         } else {
             ra.addAttribute("url", "/member/login_cookie_need");
             return "redirect:/illustration/msg";
@@ -202,21 +205,23 @@ public class IllustrationCont {
   
   @GetMapping("/list_by_illustno_search_paging_grid")
   public String listByIllustNoSearchPagingGrid(HttpSession session, Model model,
+                                                                    @RequestParam(value = "illustno", defaultValue = "0") int illustno,
                                                                     @RequestParam(value = "start_date", required = false, defaultValue = "2000-01-01") String startDate,
                                                                     @RequestParam(value = "end_date", required = false, defaultValue = "2030-12-31") String endDate,
                                                                     @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage) {
-  
+    IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
     startDate = startDate.trim();
     endDate = endDate.trim();
     int startNum = (nowPage - 1) * record_per_page + 1;
     int endNum = nowPage * record_per_page;
 
-    ArrayList<IllustrationVO> illustList = illustrationProc.listByIllustrationPaging(startNum, endNum);
+    ArrayList<IllustrationVO> illustList = illustrationProc.listByIllustrationPaging(illustno, startNum, endNum);
     
     int totalCount = illustrationProc.countAllIllustrations(); 
     
     String paging = illustrationProc.pagingBox(nowPage, totalCount, record_per_page, page_per_block, list_file_name);
 
+    model.addAttribute(illustrationVO);
     model.addAttribute("illustList", illustList);
     model.addAttribute("start_date", startDate);
     model.addAttribute("end_date", endDate);
@@ -241,7 +246,10 @@ public class IllustrationCont {
       @RequestParam(name="end_date", defaultValue = "") String endDate, 
       @RequestParam(name="now_page", defaultValue = "1") int now_page) {
     
-    if (this.memberProc.isMemberAdmin(session)) { 
+    if (this.memberProc.isMember(session)) { 
+      model.addAttribute(endDate);
+      model.addAttribute(startDate);
+      model.addAttribute(illustno);
       model.addAttribute("now_page", now_page);
 
       IllustrationVO illustrationVO = this.illustrationProc.read(illustno);

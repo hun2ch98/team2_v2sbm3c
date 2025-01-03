@@ -45,9 +45,9 @@
           <td th:text="${illustration.illust}"></td>
           
           <td>
-            <a th:href="@{/illustration/update/{illustno}(illustno=${illustration.illustno})}">수정</a>
+            <a th:href="@{|/illustration/update_file/${illustrationVO.illustno}|}">수정</a>
             <span class="menu_divide">│</span>
-            <form th:action="@{/illustration/delete}" method="post" style="display: inline;">
+            <form th:action="@{|/illustration/delete/${illustrationVO.illustno}|}" method="post" style="display: inline;">
               <input type="hidden" name="illustno" th:value="${illustration.illustno}" />
               <button type="submit" class="btn btn-link">삭제</button>
             </form>
