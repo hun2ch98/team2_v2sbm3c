@@ -53,7 +53,6 @@ public class ItemCont {
    */
   @GetMapping(value = "/create")
   public String create(@RequestParam("surveyno") int surveyno, Model model) {
-      System.out.println("Received surveyno in create: " + surveyno);
 
       ItemVO itemVO = new ItemVO();
       itemVO.setSurveyno(surveyno); // 설문조사 번호 설정
@@ -88,6 +87,7 @@ public class ItemCont {
   }
   
   /**
+   * 회원
    * 설문조사 항목 목록 보기
    * @param surveyno
    * @param model
@@ -95,19 +95,15 @@ public class ItemCont {
    */
   @GetMapping("/list_all_com")
   public String list_all_com(@RequestParam("surveyno") int surveyno, Model model) {
-      System.out.println("Surveyno received: " + surveyno);
 
       // 데이터 가져오기
       ArrayList<ItemVO> list = this.itemProc.list_all_com(surveyno);
 
       // 디버깅: 리스트 데이터 확인
       if (list != null && !list.isEmpty()) {
-          System.out.println("Retrieved list size: " + list.size());
           for (ItemVO item : list) {
-              System.out.println(item);
           }
       } else {
-          System.out.println("No items found for surveyno: " + surveyno);
       }
 
       model.addAttribute("list", list);
@@ -125,7 +121,7 @@ public class ItemCont {
                            @PathVariable("itemno") int itemno, 
                            RedirectAttributes ra) {
 
-      if (this.memberProc.isMemberAdmin(session)) {
+      if (this.memberProc.isMember(session)) {
           ItemVO itemVO = this.itemProc.read(itemno);
           if (itemVO == null) {
               ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
@@ -222,7 +218,7 @@ public class ItemCont {
                             @RequestParam("itemno") int itemno,
                             HttpSession session,
                             RedirectAttributes ra) {
-      // 사용자 인증 확인
+//       사용자 인증 확인
       if (session.getAttribute("memberno") == null) {
           ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
           return "redirect:/member/login";

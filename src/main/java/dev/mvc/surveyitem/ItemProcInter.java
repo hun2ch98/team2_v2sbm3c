@@ -19,10 +19,18 @@ public interface ItemProcInter {
   public ItemVO read(int itemno);
   
   /**
+   * 회원
    * 목록
    * @return
    */
   public ArrayList<ItemVO> list_all_com(int surveyno);
+  
+  /**
+   * 관리자
+   * 목록
+   * @return
+   */
+  public ArrayList<ItemVO> admin_list(int surveyno);
   
   /**
    * 수정
