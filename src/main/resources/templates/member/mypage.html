@@ -26,14 +26,10 @@
   <div class="title_line">마이페이지</div>
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' >│</span> 
-    <a href='./mypage'>프로필</a>
-    <span class='menu_divide'>│</span> 
-    <a th:href="@{/member/update_information}">개인정보 수정</a>
-    <span class='menu_divide'>│</span> 
-    <a th:href="@{/member/form}">메일 보내기</a>
-    <span class='menu_divide'>│</span> 
-    <a th:href="@{/member/delete_account}">회원 탈퇴</a>
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span> 
+    <a href='/member/update_passwd' th:if="${session.id == memberVO.id}">비밀번호 변경</a>
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
+    <a href="/member/withdraw" th:if="${session.id == memberVO.id}">회원 탈퇴</a>
   </aside>
 
   <div class='menu_line'></div>

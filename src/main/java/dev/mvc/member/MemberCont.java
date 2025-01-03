@@ -48,17 +48,14 @@ public class MemberCont {
   @Autowired
   @Qualifier("dev.mvc.grade.GradeProc")
   private GradeProcInter gradeProc;
-  
-//  /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
-//  public int record_per_page = 10;
-//
-//  /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
-//  public int page_per_block = 10;
 
   public MemberCont() {
     System.out.println("-> MemberCont created.");
   }
   
+  //----------------------------------------------------------------------------------
+  // 아이디 및 이메일 중복 확인 메서드 컨트롤러 시작
+  // ---------------------------------------------------------------------------------
   /**
    * 아이디 중복 확인
    * @param id
@@ -93,7 +90,13 @@ public class MemberCont {
     
     return obj.toString();
   }
-
+  //----------------------------------------------------------------------------------
+  // 아이디 및 이메일 중복 확인 메서드 컨트롤러 종료
+  // ---------------------------------------------------------------------------------
+  
+  //----------------------------------------------------------------------------------
+  // 회원가입 폼 및 처리 메서드 컨트롤러 시작
+  // ---------------------------------------------------------------------------------
   /**
    * 회원 가입 폼
    * @param model
@@ -113,7 +116,7 @@ public class MemberCont {
    * @return
    */
   @PostMapping(value = "/create")
-  public String create_proc(Model model, 
+  public String create_proc(HttpSession session, Model model, 
       @ModelAttribute("memberVO") MemberVO memberVO) {
     
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
@@ -127,6 +130,15 @@ public class MemberCont {
         memberVO.setGrade(11); // 기본 회원 11~20
         memberVO.setGradeno(2); // 기본 회원 gradeno 2로 설정
       }
+      
+      // 기본 이미지 설정
+      memberVO.setPf_img("default.png");
+      memberVO.setFile1saved("default.png");
+      memberVO.setThumb1("default_thumb.png");
+      memberVO.setSize1(0);
+
+      // 기본 이미지 파일 이름을 세션에 저장
+      session.setAttribute("file1saved", "default.png");
       
       // 데이터 베이스 처리
       int cnt = this.memberProc.create(memberVO);
@@ -155,166 +167,12 @@ public class MemberCont {
     
     return "/member/msg";
   }
-  
-///**
-//* 회원가입 처리
-//* @param model
-//* @param memberVO
-//* @return
-//*/
-//@PostMapping(value="/create")
-//public String create_proc(HttpSession session, 
-//                         Model model,
-//                         @ModelAttribute("memberVO") MemberVO memberVO,
-//                         RedirectAttributes ra) {
-//   int checkID_cnt = this.memberProc.checkID(memberVO.getId());
-//   if (checkID_cnt == 0) {
-//       if ("admin".equals(memberVO.getId())) {
-//           memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
-//           memberVO.setGradeno(null); // gradeno를 NULL로 설정
-//       } else {
-//           memberVO.setGrade(3); // 기본 회원 3
-//           memberVO.setGradeno(3); // 기본 회원 ICON 설정
-//       }
-//
-//       // 기본 이미지 설정
-//       memberVO.setPf_img("default.png");
-//       memberVO.setFile1saved("default.png");
-//       memberVO.setThumb1("default_thumb.png");
-//       memberVO.setSize1(0);
-//
-//       // 기본 이미지 파일 이름을 세션에 저장
-//       session.setAttribute("file1saved", "default.png");
-//
-//       // 회원 등록
-//       int cnt = this.memberProc.create(memberVO);
-//       if (cnt == 1) {
-//           model.addAttribute("code", "create_success");
-//           model.addAttribute("name", memberVO.getName());
-//           model.addAttribute("id", memberVO.getId());
-//           model.addAttribute("gradeno", memberVO.getGradeno());
-//       } else {
-//           model.addAttribute("code", "create_fail");
-//       }
-//
-//       model.addAttribute("cnt", cnt);
-//   } else { // id 중복
-//       model.addAttribute("code", "duplicate_fail");
-//       model.addAttribute("cnt", 0);
-//   }
-//
-//   return "/member/msg"; // /templates/member/msg.html
-//}
-  
-//  @PostMapping(value = "/create")
-//  public String create_proc(Model model, 
-//      @ModelAttribute("memberVO") MemberVO memberVO, 
-//                            @RequestParam(value = "isAdmin", required = false) boolean isAdmin) {
-//      
-//      // 입력값 검증: ID가 비어있는지 확인
-//      if (memberVO.getId() == null || memberVO.getId().isEmpty()) {
-//          model.addAttribute("code", "id_empty"); // ID가 비어있다는 메시지를 모델에 추가
-//          return "/member/msg"; // 메시지 페이지로 이동
-//      }
-//      
-//      // 입력값 검증: 이메일이 비어있는지 확인
-//      if (memberVO.getEmail() == null || memberVO.getEmail().isEmpty()) {
-//          model.addAttribute("code", "email_empty"); // 이메일이 비어있다는 메시지를 모델에 추가
-//          return "/member/msg"; // 메시지 페이지로 이동
-//      }
-//
-//      // ID와 이메일 중복 체크
-//      int checkID_cnt = this.memberProc.checkID(memberVO.getId()); // ID 중복 체크
-//      int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail()); // 이메일 중복 체크
-//
-//      // 중복이 없을 경우
-//      if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
-//          // 관리자인지 여부에 따라 등급 설정
-//          if (isAdmin) {
-//              memberVO.setGrade(1); // 관리자 등급 설정
-//              memberVO.setGradeno(1); // 관리자 gradeno
-//          } else {
-//              memberVO.setGrade(11); // 기본 회원 등급 설정
-//              memberVO.setGradeno(2); // 기본적으로 씨앗 회원으로 설정
-//          }
-//
-//          try {
-//              // 데이터베이스에 회원가입 처리
-//              int cnt = this.memberProc.create(memberVO); // 회원정보 저장
-//              
-//              // 회원가입 성공 여부 확인
-//              if (cnt == 1) {
-//                  model.addAttribute("code", "create_success"); // 성공 메시지 추가
-//                  model.addAttribute("id", memberVO.getId()); // 가입한 ID 추가
-//                  model.addAttribute("email", memberVO.getEmail()); // 가입한 이메일 추가
-//                  model.addAttribute("memberVO", memberVO); // 회원 정보 추가
-//              } else {
-//                  model.addAttribute("code", "create_fail"); // 실패 메시지 추가
-//              }
-//              model.addAttribute("cnt", cnt); // 처리된 결과 수 추가
-//          } catch (Exception e) {
-//              // 예외 처리: 예외 발생 시 오류 메시지를 출력
-//              System.err.println("회원가입 처리 중 오류 발생: " + e.getMessage()); // 콘솔에 오류 메시지 출력
-//              model.addAttribute("code", "create_fail"); // 실패 메시지 추가
-//          }
-//      } else {
-//          // 중복 ID 또는 이메일이 있는 경우
-//          if (checkID_cnt > 0) {
-//              model.addAttribute("code", "duplicate_id"); // 중복 ID 메시지 추가
-//          }
-//          if (checkEMAIL_cnt > 0) {
-//              model.addAttribute("code", "duplicate_email"); // 중복 이메일 메시지 추가
-//          }
-//          model.addAttribute("cnt", 0); // 처리된 결과 수 0으로 설정
-//      }
-//      
-//      return "/member/msg"; // 메시지 페이지로 이동
-//  }
-
-
-
-
-  
-//  /**
-//   * 회원 가입 처리
-//   * @param model
-//   * @param memberVO
-//   * @return
-//   */
-//  @PostMapping(value = "/create")
-//  public String create_proc(Model model, @ModelAttribute("memberVO") MemberVO memberVO) {
-//    int checkID_cnt = this.memberProc.checkID(memberVO.getId());
-//    int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
-//    
-//    // id랑 이메일 둘 다 중복 아닐 경우
-//    if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
-//      memberVO.setGrade(11); // 11~20: 회원
-//      int cnt = this.memberProc.create(memberVO);
-//      
-//      if (cnt == 1) {
-//        model.addAttribute("code", "create_success");
-//        model.addAttribute("id", "id");
-//        model.addAttribute("email", memberVO.getEmail());
-//      } else {
-//        model.addAttribute("code", "create_fail");
-//      }
-//      model.addAttribute("cnt", cnt);
-//    } else {
-//      model.addAttribute("code", "duplicate_fail");
-//      model.addAttribute("cnt", 0);
-//    }
-//    
-//    return "/member/msg";
-//  }
-  
-
-  
   //----------------------------------------------------------------------------------
   // 회원가입 폼 및 처리 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
   
   //----------------------------------------------------------------------------------
-  // 회원가입 정보 목록 메서드 컨트롤러 시작 => list_by_memberno_search_paging으로 Update
+  // 회원 정보 목록 메서드 컨트롤러 시작 => list_search_paging으로 Update
   // ---------------------------------------------------------------------------------
   
   @GetMapping(value = "/list")
@@ -356,73 +214,13 @@ public class MemberCont {
       return "redirect:/member/login_cookie_need";
     }
   }
-  
-  
-//  @GetMapping(value = "/list_all")
-//  public String list_all(HttpSession session, Model model) {
-//    ArrayList<MemberVO> list = this.memberProc.list_all();
-//    model.addAttribute("list", list);
-//    return "/member/list_all";
-//  }
-  
-//  @GetMapping(value = "/list_by_memberno_search_paging")
-//  public String list_by_memberno_search_paging(
-//      HttpSession session,
-//      Model model,
-//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-//      @RequestParam(name = "id", defaultValue = "") String id,
-//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-//    
-//    int startRow = (now_page - 1) * record_per_page + 1;
-//    int endRow = now_page * record_per_page;
-//
-//    id = Tool.checkNull(id).trim();
-//    if (id.isEmpty()) {
-//      id = "";
-//    }
-//    
-//    if (memberno < 0) {
-//      memberno = 0;
-//    }
-//    
-//    model.addAttribute("memberno", memberno);
-//    model.addAttribute("id", id);
-//    model.addAttribute("now_page", now_page);
-//    
-//    HashMap<String, Object> map = new HashMap<>();
-//    map.put("memberno", memberno);
-//    map.put("id", id);
-//    map.put("now_page", now_page);
-//    map.put("startRow", startRow);
-//    map.put("endRow", endRow);
-//    
-//    ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-//    if (list == null || list.isEmpty()) {
-//      model.addAttribute("message", "회원이 없습니다.");
-//    } else {
-//      model.addAttribute("list", list);
-//    }
-//    
-//    int search_count = this.memberProc.list_by_memberno_search_count(map);
-//    String paging = this.memberProc.pagingBox(now_page, id, "/member/list_by_memberno_search_paging", search_count, Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-//    model.addAttribute("paging", paging);
-//    model.addAttribute("id", id);
-//    model.addAttribute("now_page", now_page);
-//    model.addAttribute("search_count", search_count);
-//    
-//    int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-//    model.addAttribute("no", no);
-//    
-//    return "/member/list_by_memberno_search_paging";
-//  }
   //----------------------------------------------------------------------------------
-  // 회원가입 정보 목록 메서드 컨트롤러 종료
+  // 회원 정보 목록 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------------
   // 회원 정보 조회 메서드 컨트롤러 시작
   // ---------------------------------------------------------------------------------
-  
   @GetMapping(value = "/read")
   public String read(HttpSession session, Model model,
       @RequestParam(name = "memberno", required = false) Integer memberno) {
@@ -447,36 +245,6 @@ public class MemberCont {
       return "redirect:/member/login_cookie_need";
     }
   }
-  
-//  /**
-//   * 조회
-//   * @param model
-//   * @param memberno 회원 번호
-//   * @return 회원 정보
-//   */
-//  @GetMapping(value="/read")
-//  public String read(HttpSession session, Model model,
-//      @RequestParam(name="memberno", defaultValue = "") int memberno) {
-//      String grade = (String) session.getAttribute("grade"); // 등급: admin, member, guest
-//
-//      // grade가 null인지 확인한 후 equals 비교
-//      if ("member".equals(grade) && memberno == (int) session.getAttribute("memberno")) {
-//          System.out.println("-> read memberno: " + memberno);
-//          
-//          MemberVO memberVO = this.memberProc.read(memberno);
-//          model.addAttribute("memberVO", memberVO);
-//          return "member/read";  // templates/member/read.html
-//      } else if ("admin".equals(grade)) {
-//          System.out.println("-> read memberno: " + memberno);
-//          
-//          MemberVO memberVO = this.memberProc.read(memberno);
-//          model.addAttribute("memberVO", memberVO);
-//          
-//          return "member/read";  // templates/member/read.html
-//      } else {
-//          return "redirect:/member/login_cookie_need";  // redirect
-//      }
-//  }
   //----------------------------------------------------------------------------------
   // 회원 정보 조회 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
@@ -484,7 +252,6 @@ public class MemberCont {
   //----------------------------------------------------------------------------------
   // 회원 정보 수정 메서드 컨트롤러 시작
   // ---------------------------------------------------------------------------------
-  
   /**
    * 회원 정보 수정 폼(회원, 관리자 본인 계정만 수정 가능)
    * @param session
@@ -677,7 +444,13 @@ public class MemberCont {
       return "redirect:/member/login_cookie_need";
     }
   }
+  //----------------------------------------------------------------------------------
+  // 회원 정보 수정 메서드 컨트롤러 종료
+  // ---------------------------------------------------------------------------------
   
+  //----------------------------------------------------------------------------------
+  // 비밀번호 수정 메서드 컨트롤러 시작
+  // ---------------------------------------------------------------------------------
   /**
    * 비밀번호 수정 폼
    * @param session
@@ -733,6 +506,7 @@ public class MemberCont {
     
     JSONObject json = new JSONObject();
     json.put("cnt", cnt);
+    System.out.println("cnt -> : " + cnt);
     System.out.println(json.toString());
     
     return json.toString();
@@ -751,6 +525,7 @@ public class MemberCont {
       @RequestParam(value = "current_passwd", defaultValue = "") String current_passwd,
       @RequestParam(value = "passwd", defaultValue = "") String passwd) {
     
+    System.out.println("asdf");
     if (this.memberProc.isMember(session)) {
       int memberno = (int) session.getAttribute("memberno");
       HashMap<String, Object> map = new HashMap<String, Object>();
@@ -768,22 +543,58 @@ public class MemberCont {
         map.put("passwd", passwd);
         
         int passwd_change_cnt = this.memberProc.passwd_update(map);
+        System.out.println(passwd_change_cnt);
         
         if (passwd_change_cnt == 1) {
           model.addAttribute("code", "passwd_change_success");
           model.addAttribute("cnt", 1);
         } else {
-          model.addAttribute("code", "passwd_change_success");
+          model.addAttribute("code", "passwd_change_fail");
           model.addAttribute("cnt", 0);
         }
       }
       
       return "redirect:/member/read";
+    } else if (this.memberProc.isMemberAdmin(session)) { // 로그인된 관리자일 경우
+      int memberno = (int) session.getAttribute("memberno"); // session에서 가져오기
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("memberno", memberno);
+      map.put("passwd", current_passwd);
+
+      int cnt = this.memberProc.passwd_check(map);
+
+      if (cnt == 0) { // 패스워드 불일치
+        model.addAttribute("code", "passwd_not_equal");
+        model.addAttribute("cnt", 0);
+
+      } else { // 패스워드 일치
+        map = new HashMap<String, Object>();
+        map.put("memberno", memberno);
+        map.put("passwd", passwd);
+
+        int passwd_change_cnt = this.memberProc.passwd_update(map);
+
+        if (passwd_change_cnt == 1) {
+          model.addAttribute("code", "passwd_change_success");
+          model.addAttribute("cnt", 1);
+        } else {
+          model.addAttribute("code", "passwd_change_fail");
+          model.addAttribute("cnt", 0);
+        }
+      }
+      
+      return "redirect:/member/read"; // 수정 처리 하고 새로고침
     } else {
       return "redirect:/member/login_cookie_need";
     }
   }
+  //----------------------------------------------------------------------------------
+  // 비밀번호 수정 메서드 컨트롤러 종료
+  // ---------------------------------------------------------------------------------
   
+  //----------------------------------------------------------------------------------
+  // 회원 탈퇴 메서드 컨트롤러 시작
+  // ---------------------------------------------------------------------------------
   /**
    * 회원 탈퇴 폼
    * @param session
@@ -799,13 +610,14 @@ public class MemberCont {
       memberno = (int) session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
-      
+      System.out.println("memberasdasd");
+      System.out.println(memberVO.getMemberno() + "member");
       return "/member/unsub_delete";
     } else if (this.memberProc.isMemberAdmin(session)) {
       memberno = (int) session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
-      
+      System.out.println("adminasdasd");
       return "/member/unsub_delete";
     } else {
       return "redirect:/member/login_cookie_need";
@@ -821,8 +633,9 @@ public class MemberCont {
    */
   @PostMapping(value = "/unsub_delete")
   public String unsub_delete_process(HttpSession session, Model model, @ModelAttribute("memberVO") MemberVO memberVO) {
-    
+//    System.out.println(session.getAttribute("memberno"));
     // 회원 및 회원 본인일 경우
+    System.out.println("asdasd" + memberVO.getMemberno());
     if (this.memberProc.isMember(session) && memberVO.getMemberno() == (int) session.getAttribute("memberno")) {
       int cnt = this.memberProc.unsub_delete(memberVO);
       
@@ -861,150 +674,28 @@ public class MemberCont {
       return "redirect:/member/login_cookie_need";
     }
   }
-  
-//  /**
-//   * 수정 처리
-//   * @param model
-//   * @param memberVO
-//   * @return
-//   */
-//  @PostMapping(value="/update")
-//  public String update_proc(HttpSession session, Model model, 
-//      @ModelAttribute("memberVO") MemberVO memberVO) {
-//    
-//    String grade = (String)session.getAttribute("grade"); // 등급: admin, member, guest
-//
-//    // 회원 본인이거나 관리자인경우 처리
-//    if ((grade.equals("member") &&  memberVO.getMemberno() == (int)session.getAttribute("memberno")) ||  grade.equals("admin")) {
-//      int cnt = this.memberProc.update(memberVO); // 수정
-//      
-//      if (cnt == 1) {
-//        model.addAttribute("code", "update_success");
-//        model.addAttribute("name", memberVO.getName());
-//        model.addAttribute("id", memberVO.getId());
-//      } else {
-//        model.addAttribute("code", "update_fail");
-//      }
-//      
-//      model.addAttribute("cnt", cnt);
-//      
-//      return "/member/msg"; // /templates/member/msg.html
-//    } else {
-//      return "redirect:/member/login_cookie_need";  // redirect
-//    }
-//    
-//  }
   //----------------------------------------------------------------------------------
-  // 회원 정보 수정 메서드 컨트롤러 종료
+  // 회원 탈퇴 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
-  
-  //----------------------------------------------------------------------------------
-  // 회원 정보 삭제 메서드 컨트롤러 시작
-  // ---------------------------------------------------------------------------------
-//  /**
-//   * 삭제 폼
-//   * @param model
-//   * @param memberno 회원 번호
-//   * @return 회원 정보
-//   */
-//  @GetMapping(value="/delete")
-//  public String delete(HttpSession session,
-//                              Model model,
-//                              @RequestParam(name="memberno", defaultValue = "") int memberno) {
-//    if (this.memberProc.isAdmin(session)) {
-//      System.out.println("-> delete memberno: " + memberno);
-//      
-//      MemberVO memberVO = this.memberProc.read(memberno);
-//      model.addAttribute("memberVO", memberVO);
-//      
-//      return "/member/delete";  // templates/member/delete.html
-//    } else {
-//      return "redirect:/member/login_cookie_need";  // redirect
-//    }
-//    
-//  }
-//  
-//  /**
-//   * 삭제 처리
-//   * @param model
-//   * @param memberno 삭제할 레코드 번호
-//   * @return
-//   */
-//  @PostMapping(value="/delete")
-//  public String delete_process(HttpSession session,
-//                                          Model model,
-//                                          @RequestParam(name="memberno", defaultValue = "") int memberno) {
-//    if (this.memberProc.isAdmin(session)) {
-//      int cnt = this.memberProc.delete(memberno);
-//      
-//      if (cnt == 1) {
-//        return "redirect:/member/list_all";
-//      } else {
-//        model.addAttribute("code", "delete_fail");
-//        return "/member/msg"; // /templates/member/msg.html
-//      }
-//    } else {
-//      return "redirect:/member/login_cookie_need";  // redirect
-//    }
-//  }
-  //----------------------------------------------------------------------------------
-  // 회원 정보 삭제 메서드 컨트롤러 종료
-  // ---------------------------------------------------------------------------------
-  
-//  
-//  /**
-//   * 유형 3
-//   * 카테고리별 목록 + 검색 + 페이징 http://localhost:9093/member/list_by_memberno?memberno=5
-//   * http://localhost:9093/member/list_by_memberno?memberno=6
-//   * 
-//   * @return
-//   */
-//  @GetMapping(value = "/list_by_memberno_search_paging")
-//  public String list_by_memberno_search_paging(
-//      HttpSession session, 
-//      Model model, 
-//      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-//      @RequestParam(name = "word", defaultValue = "") String word,
-//      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-//
-//      // 세션에서 등급 확인
-//      String grade = (String) session.getAttribute("grade");
-//
-//      // 관리자 등급만 접근 허용
-//      if (grade != null && grade.equals("admin")) {
-//          MemberVO memberVO = this.memberProc.read(memberno);
-//          model.addAttribute("memberVO", memberVO);
-//
-//          word = Tool.checkNull(word).trim();
-//
-//          HashMap<String, Object> map = new HashMap<>();
-//          map.put("memberno", memberno);
-//          map.put("word", word);
-//          map.put("now_page", now_page);
-//
-//          ArrayList<MemberVO> list = this.memberProc.list_by_memberno_search_paging(map);
-//          model.addAttribute("list", list);
-//
-//          model.addAttribute("word", word);
-//
-//          int search_count = this.memberProc.list_by_memberno_search_count(map);
-//          String paging = this.memberProc.pagingBox(memberno, now_page, word, "/member/list_by_memberno", search_count,
-//              Member.RECORD_PER_PAGE, Member.PAGE_PER_BLOCK);
-//          model.addAttribute("paging", paging);
-//          model.addAttribute("now_page", now_page);
-//
-//          model.addAttribute("search_count", search_count);
-//
-//          // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-//          int no = search_count - ((now_page - 1) * Member.RECORD_PER_PAGE);
-//          model.addAttribute("no", no);
-//
-//          return "/member/list_by_memberno_search_paging"; // /templates/member/list_by_memberno_search_paging.html
-//      } else {
-//          return "redirect:/member/login_cookie_need"; // redirect
-//      }
-//  }
 
+  //----------------------------------------------------------------------------------
+  // 회원 프로필 메서드 컨트롤러 종료
+  // ---------------------------------------------------------------------------------
+  /**
+   * 프로필 이미지 수정 폼
+   * @param session
+   * @param model
+   * @param memberno
+   * @return
+   */
+  @GetMapping(value = "/mypage")
+  public String mypage(HttpSession session, Model model,
+      @RequestParam(name="memberno", defaultValue = "0") int memberno) {
+    MemberVO memberVO = this.memberProc.read(memberno);
+    model.addAttribute("memberVO", memberVO);
+    
+    return "/member/mypage";
+  }
 //  
 //  /**
 //   * 프로필 이미지 수정 폼
@@ -1161,96 +852,6 @@ public class MemberCont {
 //    return "redirect:/member/mypage";
 //  }
 //  
-//  /**
-//   * 개인정보수정 폼
-//   * @param session
-//   * @param model
-//   * @return
-//   */
-//  @GetMapping(value = "/update_information")
-//  public String update_information_form(HttpSession session, Model model) {
-//      Integer memberno = (Integer) session.getAttribute("memberno");
-//      if (memberno == null) {
-//          return "redirect:/member/login";
-//      }
-//
-//      MemberVO memberVO = this.memberProc.read(memberno);
-//      if (memberVO == null) {
-//          return "redirect:/member/login";
-//      }
-//      model.addAttribute("memberVO", memberVO);
-//      return "/member/update_information"; // update_information.html로 이동
-//  }
-//  
-//  /**
-//   * 개인정보수정 처리
-//   * @param session
-//   * @param model
-//   * @param memberVO
-//   * @param ra
-//   * @return
-//   */
-//  @PostMapping(value = "/update_information")
-//  public String update_information_proc(HttpSession session, 
-//                                        Model model,
-//                                        @ModelAttribute("memberVO") MemberVO memberVO,
-//                                        RedirectAttributes ra) {
-//      int memberno = (int) session.getAttribute("memberno");
-//      memberVO.setMemberno(memberno);
-//
-//      int cnt = this.memberProc.update(memberVO);
-//      if (cnt == 1) {
-//          ra.addFlashAttribute("code", "update_success");
-//      } else {
-//          ra.addFlashAttribute("code", "update_fail");
-//      }
-//      return "redirect:/member/update_information";
-//  }
-  
-//  /**
-//   * 문의글 폼
-//   * @param session
-//   * @param model
-//   * @return
-//   */
-//  @GetMapping(value = "/inquiries")
-//  public String inquiriesForm(HttpSession session, Model model) {
-//    int memberno = (int) session.getAttribute("memberno");
-//    HashMap<String, Object> map = new HashMap<>();
-//    map.put("memberno", memberno);
-//    ArrayList<BoardVO> inquiries = this.boardProc.list_by_boardno_search(map);
-//    model.addAttribute("inquiries", inquiries);
-//    return "/member/inquiries"; // inquiries.html로 이동
-//  }
-  
-//  /**
-//   * 회원 탈퇴 폼
-//   * @param session
-//   * @param model
-//   * @return
-//   */
-//  @GetMapping(value = "/delete_account")
-//  public String deleteAccountForm(HttpSession session, Model model) {
-//    return "/member/delete_account"; // delete_account.html로 이동
-//  }
-//
-//  /**
-//   * 회원 탈퇴 처리
-//   * @param session
-//   * @param model
-//   * @return
-//   */
-//  @PostMapping(value = "/delete_account")
-//  public String deleteAccount(HttpSession session, Model model) {
-//    int memberno = (int) session.getAttribute("memberno"); // 현재 로그인한 회원의 번호를 가져옴
-//    this.memberProc.delete(memberno); // 회원 탈퇴 처리
-//    session.invalidate(); // 세션 무효화
-//    
-//    return "redirect:/"; // 메인 페이지로 리다이렉트
-//  }
-//
-//  
-
   //----------------------------------------------------------------------------------
   // 로그인 및 로그아웃 메서드 컨트롤러 시작
   // ---------------------------------------------------------------------------------
