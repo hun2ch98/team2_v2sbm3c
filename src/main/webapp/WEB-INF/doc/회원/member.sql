@@ -59,9 +59,20 @@ SELECT * FROM member;
 
 -- 모두 삭제
 DELETE FROM member;
+2) 특정 회원 삭제
+DELETE FROM member
+WHERE memberno=2;
+
+-- cateno FK 특정 그룹에 속한 레코드 모두 삭제
+DELETE FROM grade
+WHERE memberno=2;
+
+DELETE FROM member WHERE gradeno = 1; 
 
 
-SELECT * FROM member WHERE gradeno = ?;
+DELETE FROM member WHERE memberno = 2;
+
+
 
 --1. 등록
 -- 회원 관리용 계정
