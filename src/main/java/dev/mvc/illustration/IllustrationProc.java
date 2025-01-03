@@ -251,8 +251,9 @@ public class IllustrationProc implements IllustrationProcInter {
 
     //2323
     @Override
-    public ArrayList<IllustrationVO> listByIllustrationPaging(int startNum, int endNum) {
+    public ArrayList<IllustrationVO> listByIllustrationPaging(int illustno, int startNum, int endNum) {
         HashMap<String, Object> map = new HashMap<>();
+        map.put("illustno", illustno);
         map.put("startNum", startNum);
         map.put("endNum", endNum);
         return illustrationDAO.listByIllustrationPaging(map);

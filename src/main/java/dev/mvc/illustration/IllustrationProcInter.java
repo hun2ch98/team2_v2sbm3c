@@ -98,7 +98,7 @@ public interface IllustrationProcInter {
 
     
     //2323
-    ArrayList<IllustrationVO> listByIllustrationPaging(int startNum, int endNum);
+    ArrayList<IllustrationVO> listByIllustrationPaging(int illustno, int startNum, int endNum);
     int countAllIllustrations();
     String pagingBox(int nowPage, int totalCount, int recordPerPage, int pagePerBlock, String listFileName);
 
