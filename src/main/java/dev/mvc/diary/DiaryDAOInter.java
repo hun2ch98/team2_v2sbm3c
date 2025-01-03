@@ -1,6 +1,8 @@
 package dev.mvc.diary;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
@@ -130,6 +132,6 @@ public interface DiaryDAOInter {
 
   ArrayList<DiaryVO> listSearch(Map<String, Object> paramMap);
 
-  
+  public List<Date> getAvailableDates();
   
 }

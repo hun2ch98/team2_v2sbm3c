@@ -42,14 +42,13 @@
           <th>날씨</th>
           <th>감정</th>
           <th>일기</th>
-          <th>그림</th>
           <th>관리</th>
         </tr>
       </thead>
       <tbody>
         <tr th:each="diary : ${diaryList}">
           <td th:text="${diary.title}"></td>
-          <td th:text="${diary.ddate}"></td>
+          <td th:text="${diary.ddate != null ? #dates.format(diary.ddate, 'yyyy-MM-dd') : 'N/A'}"></td>
           <td th:text="${diary.weatherno}"></td>
           <td th:text="${diary.emno}"></td>
           <td>
@@ -58,7 +57,6 @@
             <span th:if="${diary.summary.length() <= 15}" 
                 th:text="${diary.summary}"></span>
           </td>
-          <td th:text="${diary.illustno}"></td>
           <td>
             <a th:href="@{/diary/update/{diaryno}(diaryno=${diary.diaryno})}">수정</a>
             <span class="menu_divide">│</span>

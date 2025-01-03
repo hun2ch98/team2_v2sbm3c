@@ -30,7 +30,6 @@
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="관리자">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
@@ -99,11 +98,32 @@
                 
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="일기">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/diary/create|}">일기 작성</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">일기 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="그림">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/illustration/create|}">그림 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/illustration/list_by_illustno_search_paging_grid?is_continue=${is_continue ?: ''}|}">그림 목록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/illustration/list_all|}">그림 목록</a></li>
+                    </ul>
+                </li>
+                
+                <!--<li class="nav-item dropdown" th:if="${session.grade == 'admin'}">-->
+                <li class="nav-item dropdown" >
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="일정">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/schedule/create|}">일정 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/schedule/list_all|}">일정 목록</a></li>
                     </ul>
                 </li>
                 

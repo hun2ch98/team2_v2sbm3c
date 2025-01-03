@@ -15,7 +15,9 @@ import lombok.ToString;
 //    illust_size         NUMBER(10)    NULL,
 //    illust_thumb        VARCHAR(100)  NULL,
 //    conversationno      NUMBER(10),  
-//    FOREIGN KEY (illustno) REFERENCES ILLUSTLATION(illustno)
+//    diaryno     NUMBER(10),
+//    FOREIGN KEY (conversationno) REFERENCES conversation(conversationno),
+//    FOREIGN KEY (diaryno) REFERENCES diary(diaryno)
 //);
 
 @Getter @Setter @ToString
@@ -23,7 +25,6 @@ public class IllustrationVO {
     /** 그림 번호 */
     private int illustno;
     
-   
     /**
     이미지 파일
     <input type='file' class="form-control" name='file1MF' id='file1MF' 
@@ -42,8 +43,7 @@ public class IllustrationVO {
     private long illust_size = 0;
     /** 대화 번호 */
     private int conversationno;
-    /** 회원 번호 */
-    private int memberno;
-
+    /** 일기 번호 */
+    private int diaryno;
 }
 

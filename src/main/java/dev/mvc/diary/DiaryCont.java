@@ -1,5 +1,7 @@
 package dev.mvc.diary;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,8 +100,19 @@ public class DiaryCont {
       diaryVO.setTitle(diaryVO.getTitle().trim());
       diaryVO.setSummary(diaryVO.getSummary().trim());
 
-      int memberno = (int) session.getAttribute("memberno");
+      // ddate 설정
+      if (diaryVO.getDdate() == null) {
+          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
+      }
+
+      // 세션에서 memberno 가져오기
+      Integer memberno = (Integer) session.getAttribute("memberno");
+      if (memberno == null) {
+          ra.addFlashAttribute("message", "로그인이 필요합니다.");
+          return "redirect:/member/login";
+      }
       diaryVO.setMemberno(memberno);
+
       // DB 저장 로직 호출
       int cnt = diaryProc.create(diaryVO);
       System.out.println("-> create_cnt: " + cnt);
@@ -111,7 +124,6 @@ public class DiaryCont {
           return "/diary/msg";
       }
   }
-
 
   
   @GetMapping("/list_by_diaryno_search_paging")

@@ -6,13 +6,14 @@
 
   <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
   <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
-    INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emno, memberno, illustno)
-    VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weatherno}, #{emno}, #{memberno}, #{illustno})
+    INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emno, memberno)
+    VALUES(diary_seq.nextval, #{title}, TRUNC(#{ddate}), #{summary}, #{weatherno}, #{emno}, #{memberno})
   </insert>
+
 
   <!-- 모든 카테고리의 등록된 글목록 -->
   <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, ddate, summary, weatherno, emno, illustno
+    SELECT diaryno, title, ddate, summary, weatherno, emno
     FROM diary
     ORDER BY diaryno DESC
   </select>
@@ -103,6 +104,18 @@
     </if>
   </select>
 
+  <select id="selectAvailableDates" resultType="java.util.Date">
+    SELECT DISTINCT ddate 
+    FROM diary
+    ORDER BY ddate ASC
+  </select>
+
+
+  <select id="getDiaryNoByDate" parameterType="java.util.Date" resultType="int">
+    SELECT diaryno 
+    FROM diary
+    WHERE ddate = #{ddate}
+  </select>
 
     
 </mapper> 

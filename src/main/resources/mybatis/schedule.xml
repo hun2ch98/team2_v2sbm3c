@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.schedule.ScheduleDAOInter">
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.schedule.ScheduleVO">
+    INSERT INTO schedule(scheduleno, sdate, label, title, content, seqno, regdate, memberno)
+    VALUES (schedule_seq.nextval, #{sdate}, #{label}, #{title}, #{content}, 1, sysdate, #{memberno})
+  </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list_all" resultType="dev.mvc.schedule.ScheduleVO">
+    SELECT scheduleno, sdate, label, title, content, seqno, regdate, memberno
+    FROM schedule
+    ORDER BY seqno ASC
+  </select>
+  
+  <!-- 일반적인 조회 -->
+  <select id="read" resultType="dev.mvc.schedule.ScheduleVO" parameterType="int">
+    SELECT scheduleno, sdate, label, title, content, regdate, seqno
+    FROM schedule
+    WHERE scheduleno = #{scheduleno}
+  </select>
+
+  
+  <!-- 일정 수정 -->
+  <update id="update" parameterType="dev.mvc.schedule.ScheduleVO">
+    UPDATE schedule
+    SET sdate = #{sdate}, label = #{label}, title = #{title}, content = #{content}, seqno = #{seqno}
+    WHERE scheduleno = #{scheduleno}
+  </update>
+  
+  <!-- 글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM schedule
+    WHERE scheduleno=#{scheduleno}
+  </delete>
+  
+  <!-- 특정 달의 조회 -->
+  <select id="list_schedule" resultType="dev.mvc.schedule.ScheduleVO" parameterType="String">
+    SELECT scheduleno, sdate, label, seqno
+    FROM schedule
+    WHERE SUBSTR(sdate, 1, 7) = #{sdate}
+    ORDER BY sdate ASC, seqno ASC
+  </select>
+  
+  <!-- 특정 날짜 조회 -->
+  <select id="list_schedule_day" resultType="dev.mvc.schedule.ScheduleVO" parameterType="String">
+    SELECT scheduleno, sdate, label, seqno
+    FROM schedule
+    WHERE sdate = #{sdate}
+    ORDER BY sdate ASC, seqno ASC
+  </select>
+  
+</mapper>
+
+
+
+
+
+
+
