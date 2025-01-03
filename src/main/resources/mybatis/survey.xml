@@ -6,30 +6,29 @@
 
   <!-- 등록 -->
   <insert id="create" parameterType="dev.mvc.survey.SurveyVO">
-    INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue, 
+    INSERT INTO survey(surveyno, topic, sdate, edate, s_number, is_continue, 
                         file1, file1saved, thumb1, size1)
-    VALUES (survey_seq.nextval, #{memberno}, #{topic}, #{sdate}, #{edate}, #{s_number}, #{is_continue}, 
+    VALUES (survey_seq.nextval, #{topic}, #{sdate}, #{edate}, #{s_number}, #{is_continue}, 
             #{file1}, #{file1saved}, #{thumb1}, #{size1})
   </insert>
   
   <!-- 전체 조회 -->
   <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
-    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1
+    SELECT surveyno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1
     FROM survey
     ORDER BY surveyno DESC
   </select>
   
   <!-- 특정 카테고리의 등록된 글목록 -->
   <select id="list_by_surveyno" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
-    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
+    SELECT surveyno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
     FROM survey
-    WHERE memberno = #{memberno}
     ORDER BY surveyno DESC
   </select>
   
   <!-- 카테고리별 검색 목록 -->
   <select id="list_by_surveyno_search" resultType="dev.mvc.survey.SurveyVO" parameterType="HashMap">
-      SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
+      SELECT surveyno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1
       FROM survey
       WHERE is_continue = #{is_continue, jdbcType=VARCHAR}
       ORDER BY surveyno DESC
@@ -43,11 +42,11 @@
     WHERE (#{is_continue} IS NULL OR #{is_continue} = '' OR is_continue = #{is_continue})
   </select>
   
-  <!-- 카테고리별 검색 + 페이징 목록 -->
+  <!-- 회원 카테고리별 검색 + 페이징 목록 -->
   <select id="list_by_surveyno_search_paging" resultType="dev.mvc.survey.SurveyVO" parameterType="HashMap">
     SELECT *
     FROM (
-        SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, 
+        SELECT surveyno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, 
                ROW_NUMBER() OVER (ORDER BY surveyno DESC) AS rnum
         FROM survey
         WHERE (#{is_continue} = '' OR is_continue LIKE '%' || #{is_continue} || '%')
@@ -55,14 +54,9 @@
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
   
-  <!-- 회원이 작성한 게시글 목록 -->
-  <select id="getSurveysByMember" parameterType="int" resultType="dev.mvc.survey.SurveyVO">
-    SELECT * FROM survey WHERE memberno = #{memberno}
-  </select>
-  
   <!-- 일반적인 조회 -->
   <select id="read" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
-    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1
+    SELECT surveyno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1
     FROM survey
     WHERE surveyno = #{surveyno}
   </select>

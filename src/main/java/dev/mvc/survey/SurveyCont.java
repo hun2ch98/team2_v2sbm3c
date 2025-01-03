@@ -93,7 +93,7 @@ public class SurveyCont {
       BindingResult bindingResult, 
       RedirectAttributes ra) {
     
-    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+//    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
    // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
@@ -183,9 +183,9 @@ public class SurveyCont {
         ra.addFlashAttribute("url", "/survey/msg"); // msg.html, redirect parameter 적용
         return "redirect:/survey/msg"; // Post -> Get - param...
       }
-    } else { // 로그인 실패 한 경우
-      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-    }
+//    } else { // 로그인 실패 한 경우
+//      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
+//    }
   }
   
   /**
@@ -196,16 +196,16 @@ public class SurveyCont {
   @GetMapping(value = "/list_all")
   public String list_all(HttpSession session, Model model) {
     
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
   
       ArrayList<SurveyVO> list = this.surveyProc.list_all();
       model.addAttribute("list", list);
   
       return "/survey/list_all"; // /templates/cate/list_all.html
-      } else {
-        return "redirect:/member/login_cookie_need";
-  
-      }
+//      } else {
+//        return "redirect:/member/login_cookie_need";
+//  
+//      }
     }
   
   /**
@@ -319,7 +319,7 @@ public class SurveyCont {
   @GetMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
       Model model, 
-      @RequestParam(name="surveyno", defaultValue="") int surveyno, 
+      @RequestParam("surveyno") int surveyno, 
       RedirectAttributes ra, 
       @RequestParam(name="is_continue", defaultValue="") String is_continue,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
@@ -340,8 +340,6 @@ public class SurveyCont {
       // model.addAttribute("content", content);
 
     } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
       return "member/login_cookie_need";
     }
 
@@ -373,7 +371,7 @@ public class SurveyCont {
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
-          return "redirect:/survey/read"; // @GetMapping(value = "/read")
+          return "redirect:/survey/list_by_surveyno_search_paging"; // @GetMapping(value = "/read")
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
           ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
@@ -481,7 +479,7 @@ public class SurveyCont {
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
       
-      return "redirect:/survey/read";
+      return "redirect:/survey/list_by_surveyno_search_paging";
     } else {
       ra.addAttribute("url", "/member/login_cookie_need"); 
       return "redirect:/survey/post2get"; // GET
