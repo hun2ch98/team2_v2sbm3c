@@ -3,14 +3,14 @@
 <!-- SB가 자동으로 구현하여 연동하는 interface -->
 <mapper namespace="dev.mvc.member.MemberDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
 
-  <!-- ID 중복 검사 -->
+  <!-- ID 중복 확인 -->
   <select id="checkID" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
     WHERE id = #{id}
   </select>
   
-  <!-- email 중복 확인 -->
+  <!-- EMAIL 중복 확인 -->
   <select id="checkEMAIL" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
@@ -40,7 +40,7 @@
   <!-- 회원 정보 수정 -->
   <update id="update" parameterType="dev.mvc.member.MemberVO">
     UPDATE member 
-    SET name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
+    SET email=#{email}, name=#{name}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
     WHERE memberno=#{memberno}
   </update>
   
@@ -58,27 +58,20 @@
     WHERE id=#{id} AND passwd=#{passwd}
   </select>
   
+  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 -->
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE memberno=#{memberno} AND passwd=#{passwd}
+  </select> 
+  
   <!-- 회원 정보 수정(passwd) - 로그인 상태일 때-->
   <update id="passwd_update" parameterType="HashMap">
     UPDATE member
     SET passwd=#{passwd}
     WHERE memberno=#{memberno}
   </update>
-  
-  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 
-  <select id="passwd_check" parameterType="HashMap" resultType="int">
-    SELECT COUNT(memberno) as cnt
-    FROM member
-    WHERE memberno=#{memberno} AND passwd=#{passwd}
-  </select> -->
-  
-  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때
-  <update id="update_passwd_find" parameterType="HashMap">
-    UPDATE member
-    SET passwd=#{passwd}
-    WHERE id=#{id}
-  </update> -->
-  
+
   <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때
   <update id="update_passwd_find" parameterType="HashMap">
     UPDATE member

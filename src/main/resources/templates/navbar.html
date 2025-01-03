@@ -14,12 +14,12 @@
         <!-- 메뉴 시작 -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown" th:if="${session.memberno == null}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="회원">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item" th:if="${session.memberno == null}">
+                        <li class="nav-item">
                             <a class="nav-link" th:href="@{|/member/create|}">회원 가입</a>
                         </li>
                     </ul>
@@ -127,14 +127,26 @@
                     </ul>
                 </li>
                 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" th:href="@{|/member/list_by_memberno|}" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="프로필">                                                            
+                <li class="nav-item dropdown" th:if="${session.memberno != null}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="MyPage">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item" th:if="${session.memberno != null}">
-                            <a class="nav-link" th:href="@{|/member/mypage|}">MyPage</a>
-                        </li>  
+                            <a class="nav-link" th:href="@{|/member/mypage|}">프로필 바꾸기</a>
+                        </li>
+                        <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀번호 변경</a>
+                        </li>
+                        <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/read|}">개인정보 보기</a>
+                        </li>
+                        <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/update|}">회원 정보 수정</a>
+                        </li>
+                        <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/unsub_delete|}">회원 탈퇴</a>
+                        </li>
                     </ul>
                 </li>
                 

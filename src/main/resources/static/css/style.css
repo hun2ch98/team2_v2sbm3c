@@ -543,5 +543,33 @@
   /* ---------------------------------------------------------------------- */
   /* Bootstrap div input 태그 수평 center 정렬 종료                          */
   /* ---------------------------------------------------------------------- */
+  
+  /* 페이징 관련 스타일 추가 */
+  .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      text-align: center;
+  }
+  
+  .pagination a {
+      color: #2e7d32; /* 어두운 초록색 텍스트 */
+      padding: 8px 16px;
+      text-decoration: none;
+      transition: background-color .3s;
+      border: 1px solid #c8e6c9; /* 연한 초록색 경계선 */
+      margin: 0 4px;
+      border-radius: 5px; /* 라운드 처리 */
+  }
+  
+  .pagination a.active {
+      background-color: #66bb6a; /* 중간 초록색 배경 */
+      color: white; /* 흰색 텍스트 */
+      border: 1px solid #66bb6a; /* 중간 초록색 경계선 */
+  }
+  
+  .pagination a:hover:not(.active) {
+      background-color: #c8e6c9; /* hover 시 연한 초록색 배경 */
+  }
 
   
