@@ -1,0 +1,47 @@
+<!--/* 
+<div th:replace="~{calendar/list_all_com::list_all_fragment}"></div> 
+'/calendar/list_all_com.html' 파일의 list_all_fragment를 가져다 사용
+*/-->
+<div th:fragment="list_all_fragment"> 
+  <table class="table table-hover" style="width: 100%;">
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 10%;'/>    
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">순서</th>
+        <th class="th_bs">출력할 날짜</th>
+        <th class="th_bs">달력에 출력될 레이블</th>
+        <th class="th_bs">출력 순서</th>
+        <th class="th_bs">등록일</th>
+        <th class="th_bs">기타</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="scheduleVO, status:${list}">
+        <td class="td_bs" th:text="|${status.index+1}|"></td>
+        <td class="td_bs">
+          <a th:href="@{|/schedule/read/${scheduleVO.scheduleno}|}" style="display:block;" th:text="${scheduleVO.sdate}"></a>
+        </td>
+        <td class="td_bs">
+          <a th:href="@{|/schedule/read/${scheduleVO.scheduleno}|}" style="display:block;" th:text="${scheduleVO.label}"></a>
+        </td>
+        <td class="td_bs" th:text="${scheduleVO.seqno}"></td>
+        <td class="td_bs" th:text="${scheduleVO.regdate.substring(0, 10)}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/schedule/update_seqno_forward/${scheduleVO.scheduleno}|}"><img src="/schedule/images/decrease.png" class="icon" title="우선순위 높임"></a>
+          <a th:href="@{|/schedule/update_seqno_backward/${scheduleVO.scheduleno}|}"><img src="/schedule/images/increase.png" class="icon" title="우선순위 낮춤"></a>
+          <a th:href="@{|/schedule/update/${scheduleVO.scheduleno}|}"><img src="/schedule/images/update.png" class="icon" title="수정"></a> <!-- /static 기준 -->
+          <a th:href="@{|/schedule/delete/${scheduleVO.scheduleno}|}"><img src="/schedule/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+</div>
+

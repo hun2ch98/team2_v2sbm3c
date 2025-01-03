@@ -1,6 +1,8 @@
 package dev.mvc.diary;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public interface DiaryProcInter {
   /**
@@ -134,6 +136,10 @@ public interface DiaryProcInter {
 
   int countSearchResults(String title, String startDate, String endDate);
 
+  public List<Date> getAvailableDates();
+
+  int getDiaryNoByDate(Date ddate);
+  
   
 }
 

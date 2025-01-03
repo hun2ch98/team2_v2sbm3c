@@ -36,10 +36,6 @@
     <ul>
       <li class="li_none">
         <div style="width: 100%; word-break: break-all;">
-        
-          <div th:if="${illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')}">
-            <img th:src="@{|/contents/storage/${illustrationVO.illust_saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
-          </div>
 
           <span style="font-size: 1.5em; font-weight: bold;" th:text="${diaryVO.title}"></span>
           <span style="font-size: 1em;" th:text="${diaryVO.ddate }"></span><br><br>
