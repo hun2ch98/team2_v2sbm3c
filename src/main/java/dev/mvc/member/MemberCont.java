@@ -109,83 +109,205 @@ public class MemberCont {
    * 회원 가입 처리
    * @param model
    * @param memberVO
+   * @param isAdmin
    * @return
    */
   @PostMapping(value = "/create")
-  public String create_proc(Model model, @ModelAttribute("memberVO") MemberVO memberVO) {
+  public String create_proc(Model model, 
+      @ModelAttribute("memberVO") MemberVO memberVO) {
+    
     int checkID_cnt = this.memberProc.checkID(memberVO.getId());
     int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
     
-    // id랑 이메일 둘 다 중복 아닐 경우
     if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
-      memberVO.setGrade(11);
+      if ("admin".equals(memberVO.getId())) {
+        memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+        memberVO.setGradeno(1); // 관리자 gradeno를 1로 설정
+      } else {
+        memberVO.setGrade(11); // 기본 회원 11~20
+        memberVO.setGradeno(2); // 기본 회원 gradeno 2로 설정
+      }
+      
+      // 데이터 베이스 처리
       int cnt = this.memberProc.create(memberVO);
       
+      // 회원 등록
       if (cnt == 1) {
         model.addAttribute("code", "create_success");
-        model.addAttribute("id", "id");
-        model.addAttribute("email", memberVO.getEmail());
+        model.addAttribute("name", memberVO.getName());
+        model.addAttribute("id", memberVO.getId());
+        model.addAttribute("gradeno", memberVO.getGradeno());
       } else {
         model.addAttribute("code", "create_fail");
       }
+      
       model.addAttribute("cnt", cnt);
-    } else {
-      model.addAttribute("code", "duplicate_fail");
-      model.addAttribute("cnt", 0);
-    }
+    } else { // id 중복
+        // 중복 ID 또는 이메일이 있는 경우
+        if (checkID_cnt > 0) {
+            model.addAttribute("code", "duplicate_id"); // 중복 ID 메시지 추가
+        }
+        if (checkEMAIL_cnt > 0) {
+            model.addAttribute("code", "duplicate_email"); // 중복 이메일 메시지 추가
+        }
+        model.addAttribute("cnt", 0); // 처리된 결과 수 0으로 설정
+     }
     
     return "/member/msg";
   }
   
+///**
+//* 회원가입 처리
+//* @param model
+//* @param memberVO
+//* @return
+//*/
+//@PostMapping(value="/create")
+//public String create_proc(HttpSession session, 
+//                         Model model,
+//                         @ModelAttribute("memberVO") MemberVO memberVO,
+//                         RedirectAttributes ra) {
+//   int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+//   if (checkID_cnt == 0) {
+//       if ("admin".equals(memberVO.getId())) {
+//           memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+//           memberVO.setGradeno(null); // gradeno를 NULL로 설정
+//       } else {
+//           memberVO.setGrade(3); // 기본 회원 3
+//           memberVO.setGradeno(3); // 기본 회원 ICON 설정
+//       }
+//
+//       // 기본 이미지 설정
+//       memberVO.setPf_img("default.png");
+//       memberVO.setFile1saved("default.png");
+//       memberVO.setThumb1("default_thumb.png");
+//       memberVO.setSize1(0);
+//
+//       // 기본 이미지 파일 이름을 세션에 저장
+//       session.setAttribute("file1saved", "default.png");
+//
+//       // 회원 등록
+//       int cnt = this.memberProc.create(memberVO);
+//       if (cnt == 1) {
+//           model.addAttribute("code", "create_success");
+//           model.addAttribute("name", memberVO.getName());
+//           model.addAttribute("id", memberVO.getId());
+//           model.addAttribute("gradeno", memberVO.getGradeno());
+//       } else {
+//           model.addAttribute("code", "create_fail");
+//       }
+//
+//       model.addAttribute("cnt", cnt);
+//   } else { // id 중복
+//       model.addAttribute("code", "duplicate_fail");
+//       model.addAttribute("cnt", 0);
+//   }
+//
+//   return "/member/msg"; // /templates/member/msg.html
+//}
+  
+//  @PostMapping(value = "/create")
+//  public String create_proc(Model model, 
+//      @ModelAttribute("memberVO") MemberVO memberVO, 
+//                            @RequestParam(value = "isAdmin", required = false) boolean isAdmin) {
+//      
+//      // 입력값 검증: ID가 비어있는지 확인
+//      if (memberVO.getId() == null || memberVO.getId().isEmpty()) {
+//          model.addAttribute("code", "id_empty"); // ID가 비어있다는 메시지를 모델에 추가
+//          return "/member/msg"; // 메시지 페이지로 이동
+//      }
+//      
+//      // 입력값 검증: 이메일이 비어있는지 확인
+//      if (memberVO.getEmail() == null || memberVO.getEmail().isEmpty()) {
+//          model.addAttribute("code", "email_empty"); // 이메일이 비어있다는 메시지를 모델에 추가
+//          return "/member/msg"; // 메시지 페이지로 이동
+//      }
+//
+//      // ID와 이메일 중복 체크
+//      int checkID_cnt = this.memberProc.checkID(memberVO.getId()); // ID 중복 체크
+//      int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail()); // 이메일 중복 체크
+//
+//      // 중복이 없을 경우
+//      if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
+//          // 관리자인지 여부에 따라 등급 설정
+//          if (isAdmin) {
+//              memberVO.setGrade(1); // 관리자 등급 설정
+//              memberVO.setGradeno(1); // 관리자 gradeno
+//          } else {
+//              memberVO.setGrade(11); // 기본 회원 등급 설정
+//              memberVO.setGradeno(2); // 기본적으로 씨앗 회원으로 설정
+//          }
+//
+//          try {
+//              // 데이터베이스에 회원가입 처리
+//              int cnt = this.memberProc.create(memberVO); // 회원정보 저장
+//              
+//              // 회원가입 성공 여부 확인
+//              if (cnt == 1) {
+//                  model.addAttribute("code", "create_success"); // 성공 메시지 추가
+//                  model.addAttribute("id", memberVO.getId()); // 가입한 ID 추가
+//                  model.addAttribute("email", memberVO.getEmail()); // 가입한 이메일 추가
+//                  model.addAttribute("memberVO", memberVO); // 회원 정보 추가
+//              } else {
+//                  model.addAttribute("code", "create_fail"); // 실패 메시지 추가
+//              }
+//              model.addAttribute("cnt", cnt); // 처리된 결과 수 추가
+//          } catch (Exception e) {
+//              // 예외 처리: 예외 발생 시 오류 메시지를 출력
+//              System.err.println("회원가입 처리 중 오류 발생: " + e.getMessage()); // 콘솔에 오류 메시지 출력
+//              model.addAttribute("code", "create_fail"); // 실패 메시지 추가
+//          }
+//      } else {
+//          // 중복 ID 또는 이메일이 있는 경우
+//          if (checkID_cnt > 0) {
+//              model.addAttribute("code", "duplicate_id"); // 중복 ID 메시지 추가
+//          }
+//          if (checkEMAIL_cnt > 0) {
+//              model.addAttribute("code", "duplicate_email"); // 중복 이메일 메시지 추가
+//          }
+//          model.addAttribute("cnt", 0); // 처리된 결과 수 0으로 설정
+//      }
+//      
+//      return "/member/msg"; // 메시지 페이지로 이동
+//  }
+
+
+
+
+  
 //  /**
-//   * 회원가입 처리
+//   * 회원 가입 처리
 //   * @param model
 //   * @param memberVO
 //   * @return
 //   */
-//  @PostMapping(value="/create")
-//  public String create_proc(HttpSession session, 
-//                            Model model,
-//                            @ModelAttribute("memberVO") MemberVO memberVO,
-//                            RedirectAttributes ra) {
-//      int checkID_cnt = this.memberProc.checkID(memberVO.getId());
-//      if (checkID_cnt == 0) {
-//          if ("admin".equals(memberVO.getId())) {
-//              memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
-//              memberVO.setGradeno(null); // gradeno를 NULL로 설정
-//          } else {
-//              memberVO.setGrade(3); // 기본 회원 3
-//              memberVO.setGradeno(3); // 기본 회원 ICON 설정
-//          }
-//
-//          // 기본 이미지 설정
-//          memberVO.setPf_img("default.png");
-//          memberVO.setFile1saved("default.png");
-//          memberVO.setThumb1("default_thumb.png");
-//          memberVO.setSize1(0);
-//
-//          // 기본 이미지 파일 이름을 세션에 저장
-//          session.setAttribute("file1saved", "default.png");
-//
-//          // 회원 등록
-//          int cnt = this.memberProc.create(memberVO);
-//          if (cnt == 1) {
-//              model.addAttribute("code", "create_success");
-//              model.addAttribute("name", memberVO.getName());
-//              model.addAttribute("id", memberVO.getId());
-//              model.addAttribute("gradeno", memberVO.getGradeno());
-//          } else {
-//              model.addAttribute("code", "create_fail");
-//          }
-//
-//          model.addAttribute("cnt", cnt);
-//      } else { // id 중복
-//          model.addAttribute("code", "duplicate_fail");
-//          model.addAttribute("cnt", 0);
+//  @PostMapping(value = "/create")
+//  public String create_proc(Model model, @ModelAttribute("memberVO") MemberVO memberVO) {
+//    int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+//    int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
+//    
+//    // id랑 이메일 둘 다 중복 아닐 경우
+//    if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
+//      memberVO.setGrade(11); // 11~20: 회원
+//      int cnt = this.memberProc.create(memberVO);
+//      
+//      if (cnt == 1) {
+//        model.addAttribute("code", "create_success");
+//        model.addAttribute("id", "id");
+//        model.addAttribute("email", memberVO.getEmail());
+//      } else {
+//        model.addAttribute("code", "create_fail");
 //      }
-//
-//      return "/member/msg"; // /templates/member/msg.html
+//      model.addAttribute("cnt", cnt);
+//    } else {
+//      model.addAttribute("code", "duplicate_fail");
+//      model.addAttribute("cnt", 0);
+//    }
+//    
+//    return "/member/msg";
 //  }
+  
+
   
   //----------------------------------------------------------------------------------
   // 회원가입 폼 및 처리 메서드 컨트롤러 종료
@@ -196,7 +318,7 @@ public class MemberCont {
   // ---------------------------------------------------------------------------------
   
   @GetMapping(value = "/list")
-  public String list_memberno_search_paging(Model model, HttpSession session,
+  public String list_search_paging(Model model, HttpSession session,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "searchType", required = false) String searchType,
       @RequestParam(value = "keyword", defaultValue = "") String keyword) {
@@ -211,7 +333,7 @@ public class MemberCont {
       searchDTO.setOffset((page - 1) * 10);
       
       // 전체 회원 수 조회
-      int total = this.memberProc.list_memberno_search_count(searchDTO);
+      int total = this.memberProc.list_search_count(searchDTO);
       
       // 검색 페이지 결과가 없고 페이지가 1보다 큰 경우 첫 페이지로 리다이렉트
       if(total == 0 && page > 1) {
@@ -222,14 +344,14 @@ public class MemberCont {
       PageDTO pageDTO = new PageDTO(total, page);
       
       // 회원 목록 조회
-      ArrayList<MemberVO> list = memberProc.list_memberno_search_paging(searchDTO);
+      ArrayList<MemberVO> list = memberProc.list_search_paging(searchDTO);
       
       model.addAttribute("list", list);
       model.addAttribute("searchDTO", searchDTO);
       model.addAttribute("pageDTO", pageDTO);
       model.addAttribute("total", total);
       
-      return "/member/list_memberno_search_paging";
+      return "/member/list_search";
     } else {
       return "redirect:/member/login_cookie_need";
     }

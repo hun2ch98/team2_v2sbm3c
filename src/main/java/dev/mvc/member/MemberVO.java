@@ -54,6 +54,9 @@ public class MemberVO {
   /** 주소 2 */
   private String address2 = "";
   
+  /** 작성 댓글수 */
+  private int replycnt = 0;
+  
   /** 가입일 */
   private String mdate = "";
   
@@ -75,8 +78,8 @@ public class MemberVO {
   private long size1 = 0;
   // -----------------------------------------------------------------------------------
   
-  /** 등록된 패스워드 */
-  private String old_passwd = "";
+//  /** 등록된 패스워드 */
+//  private String old_passwd = "";
   /** id 저장 여부 */
   private String id_save = "";
   /** passwd 저장 여부 */
