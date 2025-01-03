@@ -76,6 +76,19 @@
       <td class='td_left'>
         <span th:text="| ${surveyVO.is_continue}|"></span>
       </td>
+      <td>
+        <span th:if="${session.grade == 'admin'}">
+          <a th:href="@{|/survey/update_text/${surveyVO.surveyno}|}">
+            <img src="/survey/images/update_text.png" class="icon" title="글수정">
+          </a> 
+          <a th:href="@{|/survey/update_file/${surveyVO.surveyno}|}">
+            <img src="/survey/images/update_file.png" class="icon" title="파일수정">
+          </a> 
+          <a th:href="@{|/survey/delete/${surveyVO.surveyno}|}">
+            <img src="/survey/images/delete.png" class="icon" title="삭제">
+          </a> 
+        </span>
+      </td>
     </tr>
 
     <tr th:if="${list != null and list.size() == 0}">
