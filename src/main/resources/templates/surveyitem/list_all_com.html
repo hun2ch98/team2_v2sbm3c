@@ -15,7 +15,47 @@
     <a th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
   </aside>
 
-  <div class='menu_line'></div>s
+  <div class='menu_line'></div>
+  
+  <!-- 관리자 모드 -->
+  <div th:fragment="list_all_fragment" th:if="${session.grade == 'admin'}"> 
+    <table class="table table-hover" style="width: 100%;">
+      <colgroup>
+        <col style='width: 10%;'/>
+        <col style='width: 60%;'/>
+        <col style='width: 13%;'/>    
+        <col style='width: 13%;'/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="th_bs">항목 번호</th>
+          <th class="th_bs">설문 조사 항목</th>
+          <th class="th_bs">출력 순서</th>
+          <th class="th_bs">선택 인원</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${list == null or #lists.isEmpty(list)}">
+          <td colspan="4">등록된 항목이 없습니다.</td>
+        </tr>
+        <tr th:each="itemVO : ${list}">
+          <td th:text="${itemVO.itemno}"></td>
+          <td th:text="${itemVO.item}"></td>
+          <td th:text="${itemVO.item_seq}"></td>
+          <td th:text="${itemVO.item_cnt}"></td>
+          <td>
+            <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
+              <img src="/item/images/update.png" class="icon" title="수정">
+            </a> 
+            <a th:href="@{|/surveyitem/delete/${itemVO.itemno}|}">
+              <img src="/item/images/delete.png" class="icon" title="삭제">
+            </a> 
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
   
   <!-- 회원 모드 -->
   <div th:if="${session.grade != 'admin'}">

@@ -38,22 +38,22 @@ COMMIT;
 
 -- 등록
 INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 12, 1, '이 서비스를 일주일에 얼마나 사용하나요?');
+VALUES (surveyitem_seq.nextval, 1, 12, 1, '이 서비스를 일주일에 얼마나 사용하나요?');
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 12, 2, '이 서비스를 자주 이용하는데 어려움이 있나요?');
+VALUES (surveyitem_seq.nextval, 1, 12, 2, '이 서비스를 자주 이용하는데 어려움이 있나요?');
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 12, 3, '이 서비스를 아이가 자주 찾나요?');
+VALUES (surveyitem_seq.nextval, 1, 12, 3, '이 서비스를 아이가 자주 찾나요?');
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 12, 4, '자주 사용하는 기능은 무엇인가요?');
+VALUES (surveyitem_seq.nextval, 1, 12, 4, '자주 사용하는 기능은 무엇인가요?');
 
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 2, 1, '사용되는 언어와 표현이 적절하다고 느끼셨나요?');
+VALUES (surveyitem_seq.nextval, 1, 2, 1, '사용되는 언어와 표현이 적절하다고 느끼셨나요?');
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 2, 2, '아이에게 불쾌감을 줄 수 있는 표현이 있었나요?');
+VALUES (surveyitem_seq.nextval, 1, 2, 2, '아이에게 불쾌감을 줄 수 있는 표현이 있었나요?');
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 2, 3, '사용된 문구가 아이들에게 친근하고 이해하기 쉬웠나요?');
+VALUES (surveyitem_seq.nextval, 1, 2, 3, '사용된 문구가 아이들에게 친근하고 이해하기 쉬웠나요?');
 INSERT INTO surveyitem(itemno, memberno,surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 2, 4, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?');
+VALUES (surveyitem_seq.nextval, 1, 2, 4, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?');
 
 -- 조회
 SELECT * FROM surveyitem;

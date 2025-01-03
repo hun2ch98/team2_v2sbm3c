@@ -48,29 +48,29 @@ COMMIT;
 
 -- create
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '교육적 가치', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '교육적 가치', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '언어와 표현', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '언어와 표현', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '다양한 콘텐츠', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '다양한 콘텐츠', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '에러 및 장애', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '에러 및 장애', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, 'AI 정확성', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, 'AI 정확성', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '저장 및 관리', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '저장 및 관리', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '데이터 신뢰도', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '데이터 신뢰도', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, 'UI/UX 편리성', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, 'UI/UX 편리성', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '아이의 반응', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '아이의 반응', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '추가 기능 요청', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '추가 기능 요청', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '기능 만족도', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '기능 만족도', '2024/12/23', '2025/01/01', 5, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 2, '사용 빈도', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '사용 빈도', '2024/12/23', '2025/01/01', 5, 'Y');
 
 -- read
 SELECT * FROM survey;

@@ -221,7 +221,7 @@ public class SurveyCont {
       @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
+    if (this.memberProc.isMemberAdmin(session)) { // 회원 로그인한경우
 
       int record_per_page = 10;
       int startRow = (now_page - 1) * record_per_page + 1;
