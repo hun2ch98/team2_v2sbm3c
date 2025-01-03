@@ -2,10 +2,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
 
-  <div class='title_line'>
-    회원(관리자 전용)
-    <span th:text="|>(${search_count} 건)|" class="title_line_text"></span>
-  </div>
+  <div class='title_line'>회원 목록(관리자 전용)</div>
 
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
@@ -32,10 +29,18 @@
       <th class='th_bs'>이메일</th>
       <th class='th_bs'>주소</th>
       <th class='th_bs'>등록일</th>
-      <th class='th_bs'>작업</th>
+      <th class='th_bs'>가입일</th>
     </tr>
 
     <tr th:each="memberVO, status:${list}">
+      <td class='td_basic'>
+        <div>
+          <div th:if="${memberVO.grade >= 1 and memberVO.grade <= 10}"><img src='/member/images/admin.png' title="관리자" class="icon"></div>
+          <div th:if="${memberVO.grade >= 11 and memberVO.grade <= 20}"><img src='/member/images/user.png' title="회원" class="icon"></div>
+          <div th:if="${memberVO.grade >= 30 and memberVO.grade <= 39}"><img src='/member/images/pause.png' title="정지 회원" class="icon"></div>
+          <div th:if="${memberVO.grade == 99}"><img src='/member/images/x.png' title="탈퇴 회원" class="icon"></div>
+        </div>
+      </td>
       <td class='td_basic'>
           <div>
               <div th:if="${memberVO.gradeno == null}"><img src="/images/grade/1.png" title="관리자" class="icon"></div>

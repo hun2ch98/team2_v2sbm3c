@@ -34,14 +34,14 @@ public interface MemberDAOInter {
    * @param memberVO
    * @return
    */
-  public int list_memberno_search_count(SearchDTO searchDTO);
+  public int list_search_count(SearchDTO searchDTO);
   
   /**
    * 회원 검색 + 페이징 목록
    * @param memberVO
    * @return
    */
-  public ArrayList<MemberVO> list_memberno_search_paging(SearchDTO searchDTO);
+  public ArrayList<MemberVO> list_search_paging(SearchDTO searchDTO);
 
   /**
    * memberno로 회원 정보 조회
@@ -112,6 +112,8 @@ public interface MemberDAOInter {
 //   * @return
 //   */
 //  public int find_passwd(String id, String email);
+  
+  
   
 //  /**
 //   * 프로필 이미지 수정

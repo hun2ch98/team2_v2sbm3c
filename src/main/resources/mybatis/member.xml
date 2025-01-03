@@ -19,20 +19,20 @@
   
   <!-- 회원 가입 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade <if test="gradeno != null">, gradeno</if>)
-      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade} <if test="gradeno != null">, #{gradeno}</if>)
+      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade, gradeno)
+      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, #{replycnt}, sysdate, #{grade}, #{gradeno})
   </insert>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade
     FROM member
     WHERE memberno = #{memberno}
   </select>
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade
     FROM member
     WHERE id = #{id}
   </select>
@@ -58,13 +58,6 @@
     WHERE id=#{id} AND passwd=#{passwd}
   </select>
   
-  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 -->
-  <select id="passwd_check" parameterType="HashMap" resultType="int">
-    SELECT COUNT(memberno) as cnt
-    FROM member
-    WHERE memberno=#{memberno} AND passwd=#{passwd}
-  </select>
-  
   <!-- 회원 정보 수정(passwd) - 로그인 상태일 때-->
   <update id="passwd_update" parameterType="HashMap">
     UPDATE member
@@ -72,12 +65,12 @@
     WHERE memberno=#{memberno}
   </update>
   
-  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때-->
-  <update id="update_passwd_find" parameterType="HashMap">
-    UPDATE member
-    SET passwd=#{passwd}
-    WHERE id=#{id}
-  </update>
+  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE memberno=#{memberno} AND passwd=#{passwd}
+  </select> -->
   
   <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때
   <update id="update_passwd_find" parameterType="HashMap">
@@ -86,12 +79,19 @@
     WHERE id=#{id}
   </update> -->
   
-  <!-- 아이디 찾기 회원 정보 일치 검증(name, tel) -->
+  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때
+  <update id="update_passwd_find" parameterType="HashMap">
+    UPDATE member
+    SET passwd=#{passwd}
+    WHERE id=#{id}
+  </update> -->
+  
+  <!-- 아이디 찾기 회원 정보 일치 검증(name, email) -->
   <select id="find_id_check" resultType="int" parameterType="HashMap">
     SELECT COUNT(id) as cnt
     FROM member
     WHERE name=#{name} AND tel=#{email}
-  </select>
+  </select> 
   
   <!-- 비밀번호 찾기 회원 정보 일치 검증(id, tel) 
   <select id="find_passwd_check" resultType="int" parameterType="String">
@@ -101,7 +101,7 @@
   </select>-->
   
   <!-- 회원 검색 목록 + 페이징 -->
-  <select id="list_memberno_search_paging" parameterType="dev.mvc.dto.SearchDTO" resultType="dev.mvc.member.MemberVO" >
+  <select id="list_search_paging" parameterType="dev.mvc.dto.SearchDTO" resultType="dev.mvc.member.MemberVO" >
     SELECT *
       FROM(
         SELECT a.*, ROWNUM rnum
@@ -128,7 +128,7 @@
   </select>
   
   <!-- 회원 검색 레코드 갯수 -->
-  <select id="list_memberno_search_count" parameterType="dev.mvc.dto.SearchDTO" resultType="int">
+  <select id="list_search_count" parameterType="dev.mvc.dto.SearchDTO" resultType="int">
     SELECT COUNT(*)
     FROM member
     <where>

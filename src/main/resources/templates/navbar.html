@@ -21,7 +21,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item" th:if="${session.memberno == null}">
                             <a class="nav-link" th:href="@{|/member/create|}">회원 가입</a>
-                        </li> 
+                        </li>
                     </ul>
                 </li>
 
@@ -172,7 +172,7 @@
       const passwdInput = document.createElement('input');
       passwdInput.type = 'hidden';
       passwdInput.name = 'passwd';
-      passwdInput.value = '1234'; // 회원 비밀번호 설정
+      passwdInput.value = '1111'; // 회원 비밀번호 설정
 
       form.appendChild(idInput);
       form.appendChild(passwdInput);

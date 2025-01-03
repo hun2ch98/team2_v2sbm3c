@@ -57,14 +57,14 @@ public class MemberProc implements MemberProcInter {
   
   /** 조건에 맞는 회원 수 */
   @Override
-  public int list_memberno_search_count(SearchDTO searchDTO) {
-    return memberDAO.list_memberno_search_count(searchDTO);
+  public int list_search_count(SearchDTO searchDTO) {
+    return memberDAO.list_search_count(searchDTO);
   }
   
   /** 회원 검색 + 목록 페이징 */
   @Override
-  public ArrayList<MemberVO> list_memberno_search_paging(SearchDTO searchDTO) {
-    return memberDAO.list_memberno_search_paging(searchDTO);
+  public ArrayList<MemberVO> list_search_paging(SearchDTO searchDTO) {
+    return memberDAO.list_search_paging(searchDTO);
   }
   
   /** 회원 번호(memberno)로 회원 정보 조회 */
