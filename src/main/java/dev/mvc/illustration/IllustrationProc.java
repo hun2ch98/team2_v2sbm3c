@@ -69,4 +69,10 @@ public class IllustrationProc implements IllustrationProcInter {
       return cnt;
     }
     
+    @Override
+    public int update(IllustrationVO illustrationVO) {
+    	int cnt = this.illustrationDAO.update(illustrationVO);
+    	return cnt;
+    }
+    
 }

@@ -1,152 +1,255 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="java.util.Calendar, java.util.ArrayList" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="web.tool.Tool" %>
-<%@ page import="web.calendar.CalendarDAO, web.calendar.CalendarDTO" %>
-  
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>일정표</title>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
 
-<link href="../css/style.css" rel="Stylesheet" type="text/css">
-
-</head>
-<body>
-<%
-Calendar cal = Calendar.getInstance();
-
-int year = 0;
-int month = 0;
-
-if (request.getParameter("y") != null){
-  year = Integer.parseInt(request.getParameter("y"));  
-}else{
-  year = cal.get(Calendar.YEAR); // 현재 년도 추출
-}
-
-//1월 0부터 시작
-if (request.getParameter("m") != null){
-  month = Integer.parseInt(request.getParameter("m")) - 1;
-}else{
-  month = cal.get(Calendar.MONTH); // 현재 월 추출 0 ~  
-}
-      
-// 시작요일 확인
-// - Calendar MONTH는 0-11까지임
-cal.set(year, month, 1);
-int bgnWeek = cal.get(Calendar.DAY_OF_WEEK);
-
-// 다음/이전월 계산
-// - MONTH 계산시 표기월로 계산하기 때문에 +1을 한 상태에서 계산함
-int prevYear = year;
-int prevMonth = (month + 1) - 1;
-int nextYear = year;
-int nextMonth = (month  + 1) + 1;
-
-// 1월인 경우 이전년 12월로 지정
-if (prevMonth < 1) {
-  prevYear--;
-  prevMonth = 12;
-}
-
-// 12월인 경우 다음년 1월로 지정
-if (nextMonth > 12) {
-  nextYear++;
-  nextMonth = 1;
-}
-%>
-<table style='border: 0px none #FFFFFF; width: 80%;'>
-  <tr>
-    <td style='text-align: center; border: 0px none #FFFFFF;'>
-      <a href="./calendar2.jsp?y=<%=prevYear%>&m=<%=prevMonth%>">[이전달]</a> 
-      <%=year%>년 <%=month+1%>월 
-      <a href="./calendar2.jsp?y=<%=nextYear%>&m=<%=nextMonth%>">[다음달]</a>
-    </td>
-  </tr>    
-  <tr>
-      <td>
-          <table class='calendar'>
-              <tr>
-                    <td class='calendar_td' width='14%'>일</td>
-                    <td class='calendar_td' width='14%'>월</td>
-                    <td class='calendar_td' width='14%'>화</td>
-                    <td class='calendar_td' width='14%'>수</td>
-                    <td class='calendar_td' width='14%'>목</td>
-                    <td class='calendar_td' width='14%'>금</td>
-                    <td class='calendar_td' width='16%'>토</td>
-                </tr>
-                <tr>
-                <%
-        // 시작요일까지 이동
-        for (int i=1; i<bgnWeek; i++){
-          out.println("<td class='calendar_td'> </td>");
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
         }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            table-layout: fixed; /* 고정 레이아웃 설정 */
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 2px;
+            text-align: center;
+            height: 100px;
+            vertical-align: top;
+            word-wrap: break-word; /* 단어 줄바꿈 허용 */
+            width: 15%; /* 모든 열의 너비를 균등하게 설정 */
+        }
+        th {
+            background-color: #f4f4f4;
+            height: 20px;
+        }
+        td div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+        }
+        .weekend {
+            color: red;
+        }
+        .saturday {
+            color: blue;
+        }
+    </style>
 
-        // 첫날~마지막날까지 처리
-        // - 날짜를 하루씩 이동하여 월이 바뀔때까지 그린다
-        String str="";
-        ArrayList list = null;
-        CalendarDAO dao = new CalendarDAO();
-        StringBuffer sb = null;
-    
-        while (cal.get(Calendar.MONTH) == month) {
-          if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
-            out.println("<td class='calendar_td' valign='top' style='color:blue;'>" + cal.get(Calendar.DATE));
-          }else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
-            out.println("<td class='calendar_td' valign='top' style='color:red;'>" + cal.get(Calendar.DATE));
-          }else{
-            out.println("<td class='calendar_td' valign='top'>" + cal.get(Calendar.DATE));
-          }
+    <script>
+        function changeMonth(offset) {
+            // Logic to change the month dynamically
+            console.log('Change month by offset:', offset);
+            // Here you can add fetch requests or DOM updates to reload the calendar
+        }
         
-          // ------------------------------------------------------------------------
-          // 2010-01-01에 해당하는 일정만 DBMS에서 가져옵니다.
-          // ------------------------------------------------------------------------
-          // str = cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.DATE);
-          str = Tool.getDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE));
-          list = dao.listLabel(str);
-      
-          if (list != null){ 
-            sb = new StringBuffer();
-            for(int i=0; i<list.size(); i++){
-              CalendarDTO dto = (CalendarDTO)list.get(i);
-              sb.append("<img src='"+request.getContextPath()+"/calendar/images/bu5.gif'>");
-              sb.append("<a href='./read.jsp?calendarno="+dto.getCalendarno()+"'>"+dto.getLabel()+"</a><br>");
+        async function fetchSchedules(day) {
+            try {
+                const response = await fetch(`/api/schedules?year=2025&month=1&day=${day}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch schedules');
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching schedules:', error);
+                return null;
             }
+        }
+
+        async function displaySchedules(day, cell) {
+            const schedules = await fetchSchedules(day);
+            if (schedules && schedules.length > 0) {
+                const scheduleList = document.createElement('ul');
+                schedules.forEach(schedule => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = schedule;
+                    scheduleList.appendChild(listItem);
+                });
+                cell.appendChild(scheduleList);
+            }
+        }
+
+        // await: 1달의 날짜가 30일 이라면 30번 Ajax 요청을 보내야하며 요청과 수신의 일정해야 함으로 동기 통신을 함.
+        async function fetchCalendarData(date_calendar, contentDiv) {
+            try {
+                // fetch 요청을 동기식으로 처리
+                const response = await fetch("/schedule/list_calendar_day?sdate=" + date_calendar, {
+                    method: "get",
+                });
         
-          }
-          out.println("<br><div style='color:#00AA00'>" + sb.toString() + "</div></td>");
-          // ------------------------------------------------------------------------
-      
-          // 한달의 마지막 날이 아니면서 토요일인 경우 다음줄로 생성
-          // System.out.println(cal.getActualMaximum ( Calendar.DAY_OF_MONTH ));
-          if ((cal.getActualMaximum ( Calendar.DAY_OF_MONTH ) != cal.get(Calendar.DATE))) {
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){ // 토요일인 경우
-              out.println("</tr><tr>");
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+        
+                const data = await response.json();
+        
+                // 데이터 처리, 일정 추가
+                for (let item of data) {
+                    const schedule = document.createElement("span");
+                    // schedule.textContent = item.label;
+                    const item_html = `<a href='/schedule/read/${item.scheduleno}'>${item.label}</a>`;
+                    schedule.innerHTML = item_html;
+                    contentDiv.appendChild(schedule);
+                }
+            } catch (error) {
+                console.error("Error fetching calendar data:", error);
             }
-          }
-
-          // 날짜 증가시키기
-          cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE)+1);
-          // 끝날부터 토요일까지 빈칸으로 처리
-      
+            
         }
-        //System.out.println("cal.get(Calendar.MONTH): " + cal.get(Calendar.MONTH));
-        //System.out.println("cal.get(Calendar.DATE): " + cal.get(Calendar.DATE));
-        //System.out.println("cal.get(Calendar.DATE): " + cal.get(Calendar.DATE));
+
+    window.onload = function() {
+        // const year = 2025;
+        // const month = 0; // January (0-based index)
+        const year = parseInt('[[${year}]]');  // Thymeleaf의 변수 사용, model.addAttribute("year", year);
+        const month = parseInt('[[${month}]]');
+        console.log(year, month);
+        
+        // 태그에 전역 변수의 선언, data-*
+        // <h4 id='month_title' data-current_year='' data-current_month=''>
+        monthTitle = document.getElementById('month_title');
+        monthTitle.setAttribute('data-current_year', year);
+        monthTitle.setAttribute('data-current_month', month); 
+
+        const panel_year_month = document.getElementById("panel_year_month");
+        panel_year_month.innerHTML = `${year}년 ${month+1} 월`; // 제목 출력
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate(); // 1월: 0부터 시작
     
-        if (cal.get(Calendar.DATE) == 1 && (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
-          // 한달의 마지막 날짜 토요일이면 아무일도 안함
-        }else{
-          for (int i=cal.get(Calendar.DAY_OF_WEEK); i<=7; i++) out.println("<td class='calendar_td'> </td>");
+        const calendarBody = document.querySelector("tbody");
+        calendarBody.innerHTML = "";
+    
+        const firstDay = new Date(year, month, 1).getDay();
+    
+        let row = document.createElement("tr");
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement("td");
+            row.appendChild(emptyCell);
+        }
+    
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement("td");
+    
+            // Create a div inside each cell
+            const contentDiv = document.createElement("div");
+            contentDiv.style.display = "flex";
+            contentDiv.style.flexDirection = "column";
+            contentDiv.style.justifyContent = "flex-start";
+            contentDiv.style.height = "100%";
+    
+            // Add full date
+            const fullDateSpan = document.createElement("span");
+            // 셀에 날짜 출력
+            let date_calendar = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            fullDateSpan.textContent = date_calendar;
+            
+            // Append to the div
+            contentDiv.appendChild(fullDateSpan);
+            
+            // fetch Ajax 요청
+            // ---------------------------------------------------------------------------------------------------
+    
+            // Add schedules
+            // const schedule1 = document.createElement("span");
+            // schedule1.textContent = "일정1";
+            // contentDiv.appendChild(schedule1);
+            /*
+            fetch("/calendar/list_calendar_day?labeldate=" + date_calendar , {
+                  "method": "get", 
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              for (let item in data) {
+                const schedule = document.createElement("span");
+                schedule.textContent = item.label;
+                contentDiv.appendChild(schedule);
+              }
+            });
+           */
+           
+            fetchCalendarData(date_calendar, contentDiv);
+                    
+            // ---------------------------------------------------------------------------------------------------
+    
+            // Append the div to the cell
+            cell.appendChild(contentDiv);
+    
+            // Add class for weekends
+            if ((firstDay + day - 1) % 7 === 0) {
+                cell.classList.add("weekend"); // 일요일
+            } else if ((firstDay + day - 1) % 7 === 6) {
+                cell.classList.add("saturday"); // 토요일
+            }
+            row.appendChild(cell);
+    
+            if ((firstDay + day) % 7 === 0) {
+                calendarBody.appendChild(row);
+                row = document.createElement("tr");
+            }
+        }
+    
+        // 마지막 행의 빈 칸 추가, 날짜가 주중에 30일 또는 31일이 걸리는 겨우
+        if (row.children.length > 0 && row.children.length < 7) {
+            while (row.children.length < 7) {
+                const emptyCell = document.createElement("td");
+                const schedule = document.createElement("span");
+                schedule.innerHTML = '&nbsp;';
+                emptyCell.appendChild(schedule);
+                row.appendChild(emptyCell);
+            }
+            calendarBody.appendChild(row);
+        }
+    };
+    
+    // 이전달, 다음달
+    function changeMonth(cnt) {
+        // 'month_title' 요소 가져오기
+        const monthTitle = document.getElementById('month_title');
+
+        // 현재 연도와 월 읽기
+        let currentYear = parseInt(monthTitle.getAttribute('data-current_year'), 10); // 10: 10 진수
+        let currentMonth = parseInt(monthTitle.getAttribute('data-current_month'), 10);
+                
+        // 월 업데이트
+        currentMonth += cnt;
+        
+        // 월이 12보다 크거나 0보다 작으면 연도를 변경
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        } else if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
         }
 
-%>
-              </tr>
-          </table>
-      </td>
-    </tr>
-</table>
-</body>
+        const url = `/schedule/list_calendar?year=${currentYear}&month=${currentMonth+1}`;
+        location.href=url; // 이전달, 다음달 이동
+    }
+
+    </script>
+
+    <h4 id='month_title' data-current_year='' data-current_month=''><a href="#" onclick="changeMonth(-1)">[이전 달]</a> <span id='panel_year_month'></span> <a href="#" onclick="changeMonth(1)">[다음 달]</a></h4>
+    <table>
+        <thead>
+            <tr>
+                <th class="weekend">일요일</th>
+                <th>월요일</th>
+                <th>화요일</th>
+                <th>수요일</th>
+                <th>목요일</th>
+                <th>금요일</th>
+                <th class="saturday">토요일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Calendar rows will be dynamically generated here -->
+        </tbody>
+    </table>
+    
+</div>
 </html>
+

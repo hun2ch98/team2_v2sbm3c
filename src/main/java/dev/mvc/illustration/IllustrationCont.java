@@ -183,10 +183,6 @@ public class IllustrationCont {
       @RequestParam(name="word", defaultValue = "") String word, 
       @RequestParam(name="now_page", defaultValue = "1") int now_page) {
     
-    // -------------------------------------------------------------------
-    // 파일 삭제 시작
-    // -------------------------------------------------------------------
-    // 삭제할 파일 정보를 읽어옴.
     IllustrationVO illustrationVO_read = illustrationProc.read(illustno);
         
     String file1saved = illustrationVO_read.getIllust_saved();
@@ -195,31 +191,13 @@ public class IllustrationCont {
     String uploadDir = Illustration.getUploadDir();
     Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
     Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
-    // -------------------------------------------------------------------
-    // 파일 삭제 종료
-    // -------------------------------------------------------------------
         
     this.illustrationProc.delete(illustno); // DBMS 글 삭제
         
-    // -------------------------------------------------------------------------------------
-    // 마지막 페이지의 마지막 레코드 삭제시의 페이지 번호 -1 처리
-    // -------------------------------------------------------------------------------------    
-    // 마지막 페이지의 마지막 10번째 레코드를 삭제후
-    // 하나의 페이지가 3개의 레코드로 구성되는 경우 현재 9개의 레코드가 남아 있으면
-    // 페이지수를 4 -> 3으로 감소 시켜야함, 마지막 페이지의 마지막 레코드 삭제시 나머지는 0 발생
-    
     HashMap<String, Object> map = new HashMap<String, Object>();
     map.put("illustno", illustno);
     map.put("word", word);
     
-//    if (this.illustrationProc.list_all(map) % IllustrationProc.RECORD_PER_PAGE == 0) {
-//      now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
-//      if (now_page < 1) {
-//        now_page = 1; // 시작 페이지
-//      }
-//    }
-    // -------------------------------------------------------------------------------------
-
     ra.addAttribute("illustno", illustno);
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
@@ -229,8 +207,73 @@ public class IllustrationCont {
   }   
   
 
-    
+  @GetMapping(value="/update")
+  public String update(HttpSession session, Model model, 
+		  @RequestParam(name="illustno", defaultValue="0") int illustno,
+		  @RequestParam(name="now_page", defaultValue="0") int now_page) {
+	  IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
+	  model.addAttribute(illustrationVO);
+	  model.addAttribute(now_page);
+	  
+	  return "/illustration/update";
+  }
   
+  
+  @PostMapping(value="/update")
+  public String update(HttpSession session, Model model,RedirectAttributes ra, 
+		  @ModelAttribute("illustrationVO") IllustrationVO illustrationVO, 
+		  @RequestParam(name="now_page", defaultValue="0") int now_page) {
+	  if (this.memberProc.isMemberAdmin(session)) {
+		  IllustrationVO illustrationVO_old = illustrationProc.read(illustrationVO.getIllustno());
+		  
+		  // 파일 삭제 시
+		  String illust_saved = illustrationVO_old.getIllust_saved();
+		  String illust_thumb = illustrationVO_old.getIllust_thumb();
+		  long illust_size = 0;
+		  
+		  String upDir = Illustration.getUploadDir();
+		  
+		  Tool.deleteFile(upDir, illust_saved);
+		  Tool.deleteFile(upDir, illust_thumb);
+		  // 파일 삭제 종료
+		  
+		  // 파일 전송 시작
+		  String illust = "";
+		  
+		  MultipartFile mf = illustrationVO.getIllustMF();
+		  
+		  illust = mf.getOriginalFilename();
+		  illust_size = mf.getSize();
+		  
+		  if (illust_size > 0) {
+			  illust_saved = Upload.saveFileSpring(mf, upDir);
+			  
+			  if (Tool.isImage(illust_saved)) {
+				  illust_thumb = Tool.preview(upDir, illust_saved, 250, 200);
+			  }
+		  } else {
+			  illust = "";
+			  illust_saved = "";
+			  illust_thumb = "";
+			  illust_size=0;
+		  }
+		  
+		  illustrationVO.setIllust(illust);
+		  illustrationVO.setIllust_saved(illust_saved);
+		  illustrationVO.setIllust_thumb(illust_thumb);
+		  illustrationVO.setIllust_size(illust_size);
+		  // 파일 전송 종료
+		  
+		  this.illustrationProc.update(illustrationVO);
+		  ra.addAttribute("illustno", illustrationVO.getIllustno());
+		  ra.addAttribute("now_page", now_page);
+		  
+		  return "redirect:/contents/read";
+	  } else {
+	      ra.addAttribute("url", "/member/login_cookie_need"); 
+	      return "redirect:/contents/msg"; // GET
+	    }
+  }
   
   
   
