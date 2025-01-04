@@ -20,9 +20,10 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>제목</th>
-          <th>날짜</th>
-          <th>썸네일</th>
+          <th style="width: 25%;">제목</th>
+          <th style="width: 25%;">날짜</th>
+          <th style="width: 35%;">썸네일</th>
+          <th style="width: 15%;">그림 처리</th>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +37,11 @@
                  alt="썸네일" style="width: 50px; height: auto;">
             </div>
           </td>
+          <td>
+            <a th:href="@{/illustration/update/{id}(id=${item['ILLUSTNO']})}" class="btn btn-primary">수정</a>
+            <a th:href="@{|/illustration/delete|}" class="btn btn-danger">삭제</a>
+          </td>
+          
         </tr>
       </tbody>
     </table>

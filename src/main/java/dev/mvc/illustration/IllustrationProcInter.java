@@ -29,5 +29,9 @@ public interface IllustrationProcInter {
     DiaryVO readDiary(int diaryno);
     
     int delete(int illustno);
+ 
+    
+    public int update(IllustrationVO illustrationVO);
+    
     
 }

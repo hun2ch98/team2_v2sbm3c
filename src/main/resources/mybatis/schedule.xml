@@ -38,7 +38,7 @@
   </delete>
   
   <!-- 특정 달의 조회 -->
-  <select id="list_schedule" resultType="dev.mvc.schedule.ScheduleVO" parameterType="String">
+  <select id="list_calendar" resultType="dev.mvc.schedule.ScheduleVO" parameterType="String">
     SELECT scheduleno, sdate, label, seqno
     FROM schedule
     WHERE SUBSTR(sdate, 1, 7) = #{sdate}
@@ -46,7 +46,7 @@
   </select>
   
   <!-- 특정 날짜 조회 -->
-  <select id="list_schedule_day" resultType="dev.mvc.schedule.ScheduleVO" parameterType="String">
+  <select id="list_calendar_day" resultType="dev.mvc.schedule.ScheduleVO" parameterType="String">
     SELECT scheduleno, sdate, label, seqno
     FROM schedule
     WHERE sdate = #{sdate}

@@ -3,7 +3,7 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
-    <div th:text="${calendarVO.title}"></div>
+    <div th:text="${scheduleVO.title}"></div>
   </div>
   
   <aside class="aside_right" th:if="${session.grade == 'admin'}">

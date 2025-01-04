@@ -33,5 +33,8 @@ public interface IllustrationDAOInter {
     Map<String, Object> readDiary(int diaryno);
     
     int delete(int illustno);
+ 
+    public int update(IllustrationVO illustrationVO);
+    
     
 }

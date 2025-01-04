@@ -1,7 +1,10 @@
 package dev.mvc.schedule;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.schedule.ScheduleVO;
@@ -197,32 +201,69 @@ public class ScheduleCont {
   }
   
   
-//  /**
-//   * 특정 날짜의 목록
-//   * @param session
-//   * @param model
-//   * @param date
-//   * @return
-//   */
-//  @GetMapping(value="/list_schedule_date")
-//  public String list_schedule_date(HttpSession session, Model model, 
-//      @RequestParam(name="date", defaultValue="") String date ) {
-//
-//      
-//      ArrayList<ScheduleVO> list_schedule = this.scheduleProc.list_schedule(date);
-//      model.addAttribute("list_schedule", list_schedule);
-//      
-//      return "/schedule/list_schedule";
-//      
-//    
-//    } else {
-//      return "redirect:/schedule/post2get";
-//    }
-//  }
+  /**
+   * 특정 날짜의 목록
+   * @param session
+   * @param model
+   * @param date
+   * @return
+   */
+  @GetMapping(value="/list_calendar")
+  public String list_calendar(HttpSession session, Model model, 
+      @RequestParam(name="year", defaultValue="0") int year, 
+	  @RequestParam(name="month", defaultValue="0") int month) {
+
+      if (year == 0) {
+    	  // 현재 날짜를 가져옴
+    	  LocalDate today  = LocalDate.now();
+    	  
+    	  //연도와 월을 추출
+    	  year = today.getYear();
+    	  month = today.getMonthValue();
+      }
+      
+      String month_str = String.format("%02d", month); // 두 자리 형식으로
+	  System.out.println("-> month: " + month_str);
+	
+	  String date = year + "-" + month;
+	  System.out.println("-> date: " + date);
+	  
+	  model.addAttribute("year", year);
+	  model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
+	    
+	  return "/schedule/list_calendar"; // /templates/calendar/list_calendar.html
+  }
   
-  
-  
-  
+  /**
+   * 특정 날짜의 목록
+   * 
+   * @param model
+   * @return
+   */
+  // http://localhost:9091/calendar/list_calendar_day?labeldate=2025-01-03
+  @GetMapping(value = "/list_calendar_day")
+  @ResponseBody
+  public String list_calendar_day(Model model, @RequestParam(name="sdate", defaultValue = "") String sdate) {
+	System.out.println("-> sdate: " + sdate);
+	
+    ArrayList<ScheduleVO> list = this.scheduleProc.list_calendar_day(sdate);
+    model.addAttribute("list", list);
+
+    JSONArray schedule_list = new JSONArray();
+    
+    for (ScheduleVO scheduleVO: list) {
+        JSONObject schedual = new JSONObject();
+        schedual.put("scheduleno", scheduleVO.getScheduleno());
+        schedual.put("sdate", scheduleVO.getSdate());
+        schedual.put("label", scheduleVO.getLabel());
+        schedual.put("seqno", scheduleVO.getSeqno());
+        
+        schedule_list.put(schedual);
+    }
+
+    return schedule_list.toString();
+    
+  }
   
   
 }
