@@ -11,12 +11,6 @@
 <div layout:fragment="content">
 
   <div class='title_line'>회원 목록(관리자 전용)</div>
-
-  <aside class="aside_right">
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>
-    <a href='/member/logout'>로그아웃</a>
-  </aside>
   
   <!-- 검색 -->
   <div class='search-container'>
@@ -28,6 +22,11 @@
       <button onclick="search()" class="search-button">검색</button>
       <button th:onclick="|location.href='/member/list'|" class="cancel-button">취소</button>
   </div>
+  <aside class="aside_right">
+    <a href="javascript:location.reload();" >새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a href='/member/logout'>로그아웃</a>
+  </aside>
 
   <div class='menu_line'></div>
        

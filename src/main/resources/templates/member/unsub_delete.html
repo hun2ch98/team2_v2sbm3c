@@ -16,11 +16,17 @@
   <div class="title_line">회원 탈퇴 > <span th:text="@{|${memberVO.email} (${memberVO.id})|}"></span></div>
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' >│</span> 
-    <a href='/member/read'>내 정보 보기</a>
-    <span class='menu_divide' >│</span> 
-    <a href='/member/passwd_update'>비밀번호 변경</a>
-  </aside> 
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
+    <a href='/member/read' th:if="${session.id == memberVO.id}">개인정보 보기</a> 
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
+    <a href='/member/update' th:if="${session.id == memberVO.id}">회원정보 수정</a> 
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
+    <a href='/member/update_file' th:if="${session.id == memberVO.id}">프로필 변경</a> 
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
+    <a href='/member/passwd_update' th:if="${session.id == memberVO.id}">비밀번호 변경</a> 
+    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
+    <a href='/member/unsub_delete' th:if="${session.id == memberVO.id}">회원 탈퇴</a>
+  </aside>
 
   <div class='menu_line'></div>
   
@@ -34,7 +40,7 @@
       
       <div class="content_body_bottom">
         <button type="button" onclick="send();" class="btn btn-secondary btn-sm">삭제</button>
-        <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+        <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">돌아가기</button>
       </div>
 
     </form>

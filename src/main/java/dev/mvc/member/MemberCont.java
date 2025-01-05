@@ -110,64 +110,101 @@ public class MemberCont {
   
   /**
    * 회원 가입 처리
+   * @param request
+   * @param session
    * @param model
    * @param memberVO
-   * @param isAdmin
+   * @param ra
    * @return
    */
   @PostMapping(value = "/create")
-  public String create_proc(HttpSession session, Model model, 
-      @ModelAttribute("memberVO") MemberVO memberVO) {
-    
-    int checkID_cnt = this.memberProc.checkID(memberVO.getId());
-    int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
-    
-    if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
-      if ("admin".equals(memberVO.getId())) {
-        memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
-        memberVO.setGradeno(1); // 관리자 gradeno를 1로 설정
-      } else {
-        memberVO.setGrade(11); // 기본 회원 11~20
-        memberVO.setGradeno(2); // 기본 회원 gradeno 2로 설정
-      }
-      
-      // 기본 이미지 설정
-      memberVO.setPf_img("default.png");
-      memberVO.setFile1saved("default.png");
-      memberVO.setThumb1("default_thumb.png");
-      memberVO.setSize1(0);
+  public String create_proc(HttpServletRequest request,
+      HttpSession session,
+      Model model, 
+      @ModelAttribute("memberVO") MemberVO memberVO,
+      RedirectAttributes ra) {
 
-      // 기본 이미지 파일 이름을 세션에 저장
-      session.setAttribute("file1saved", "default.png");
+      String pf_img = "";
+      String file1saved = ""; 
+      String thumb1 = ""; 
+      long size1 = 0;
       
-      // 데이터 베이스 처리
-      int cnt = this.memberProc.create(memberVO);
+      String upDir = Member.getUploadDir();
       
-      // 회원 등록
-      if (cnt == 1) {
-        model.addAttribute("code", "create_success");
-        model.addAttribute("name", memberVO.getName());
-        model.addAttribute("id", memberVO.getId());
-        model.addAttribute("gradeno", memberVO.getGradeno());
-      } else {
-        model.addAttribute("code", "create_fail");
+      // 프로필 이미지 파일 처리
+      MultipartFile mf = memberVO.getFile1MF();
+      if (mf != null && !mf.isEmpty()) {
+          pf_img = mf.getOriginalFilename();
+          size1 = mf.getSize();
+          
+          // 파일 검증 및 저장
+          if (Tool.checkUploadFile(pf_img)) {
+              file1saved = Upload.saveFileSpring(mf, upDir);
+              if (Tool.isImage(file1saved)) {
+                  thumb1 = Tool.preview(upDir, file1saved, 200, 150); // 썸네일 생성
+              }
+          } else {
+              ra.addFlashAttribute("code", "check_upload_file_fail");
+              return "redirect:/member/msg";
+          }
       }
-      
-      model.addAttribute("cnt", cnt);
-    } else { // id 중복
-        // 중복 ID 또는 이메일이 있는 경우
-        if (checkID_cnt > 0) {
-            model.addAttribute("code", "duplicate_id"); // 중복 ID 메시지 추가
-        }
-        if (checkEMAIL_cnt > 0) {
-            model.addAttribute("code", "duplicate_email"); // 중복 이메일 메시지 추가
-        }
-        model.addAttribute("cnt", 0); // 처리된 결과 수 0으로 설정
-     }
-    
-    return "/member/msg";
+
+      // memberVO에 이미지 정보 설정
+      memberVO.setPf_img(pf_img);
+      memberVO.setFile1saved(file1saved);
+      memberVO.setThumb1(thumb1);
+      memberVO.setSize1(size1);
+
+      // ID 및 이메일 중복 체크
+      int checkID_cnt = this.memberProc.checkID(memberVO.getId());
+      int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
+
+      if (checkID_cnt == 0 && checkEMAIL_cnt == 0) {
+          // 회원 등급 설정
+          if ("admin".equals(memberVO.getId())) {
+              memberVO.setGrade(1); // admin 계정은 GRADE 1로 설정
+              memberVO.setGradeno(1); // 관리자 gradeno를 1로 설정
+          } else {
+              memberVO.setGrade(11); // 기본 회원 11~20
+              memberVO.setGradeno(2); // 기본 회원 gradeno 2로 설정
+          }
+          
+          // 기본 이미지 설정 (파일 업로드가 없을 경우)
+          if (file1saved.isEmpty()) {
+              memberVO.setPf_img("default.png");
+              memberVO.setFile1saved("default.png");
+              memberVO.setThumb1("default_thumb.png");
+              memberVO.setSize1(0);
+          }
+
+          // 데이터베이스 처리
+          int cnt = this.memberProc.create(memberVO);
+          
+          // 회원 등록 성공 여부 확인
+          if (cnt == 1) {
+              model.addAttribute("code", "create_success");
+              model.addAttribute("name", memberVO.getName());
+              model.addAttribute("id", memberVO.getId());
+              model.addAttribute("gradeno", memberVO.getGradeno());
+          } else {
+              model.addAttribute("code", "create_fail");
+          }
+          
+          model.addAttribute("cnt", cnt);
+      } else { // id 중복
+          // 중복 ID 또는 이메일이 있는 경우
+          if (checkID_cnt > 0) {
+              model.addAttribute("code", "duplicate_id"); // 중복 ID 메시지 추가
+          }
+          if (checkEMAIL_cnt > 0) {
+              model.addAttribute("code", "duplicate_email"); // 중복 이메일 메시지 추가
+          }
+          model.addAttribute("cnt", 0); // 처리된 결과 수 0으로 설정
+      }
+
+      return "/member/msg"; // 결과 메시지 페이지로 이동
   }
-  //----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
   // 회원가입 폼 및 처리 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
   
@@ -682,176 +719,97 @@ public class MemberCont {
   // 회원 프로필 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
   /**
-   * 프로필 이미지 수정 폼
+   * 프로필 폼
    * @param session
    * @param model
-   * @param memberno
    * @return
    */
-  @GetMapping(value = "/mypage")
-  public String mypage(HttpSession session, Model model,
-      @RequestParam(name="memberno", defaultValue = "0") int memberno) {
-    MemberVO memberVO = this.memberProc.read(memberno);
-    model.addAttribute("memberVO", memberVO);
-    
-    return "/member/mypage";
+  @GetMapping(value = "/update_file")
+  public String update_file(HttpSession session, Model model) {
+      Integer memberno = (Integer) session.getAttribute("memberno");
+      if (memberno == null) {
+          return "redirect:/member/login";
+      }
+
+      MemberVO memberVO = this.memberProc.read(memberno);
+      if (memberVO == null) {
+          return "redirect:/member/login";
+      }
+      model.addAttribute("memberVO", memberVO);
+      return "/member/update_file"; // mypage.html로 이동
   }
-//  
-//  /**
-//   * 프로필 이미지 수정 폼
-//   * @param session
-//   * @param model
-//   * @param memberno
-//   * @param word
-//   * @param now_page
-//   * @return
-//   */
-//  @GetMapping(value = "/update_file")
-//  public String update_file(HttpSession session, Model model, 
-//      @RequestParam(name="memberno", defaultValue="0") int memberno) {
-//      
-//      MemberVO memberVO = this.memberProc.read(memberno);
-//      model.addAttribute("memberVO", memberVO);
-//
-//      return "/member/update_file";
-//  }
-//  
-//  /**
-//   * 프로필 이미지 수정 처리
-//   * @param session
-//   * @param model
-//   * @param ra
-//   * @param memberVO
-//   * @param word
-//   * @param now_page
-//   * @return
-//   */
-//  @PostMapping(value = "/update_file")
-//  public String update_file(HttpSession session, 
-//      Model model, 
-//      RedirectAttributes ra,
-//      @ModelAttribute MemberVO memberVO) {
-//
-//      String upDir = Member.getUploadDir(); // 파일을 업로드할 폴더 준비
-//      MultipartFile mf = memberVO.getFile1MF();
-//      String file1 = mf.getOriginalFilename();
-//      long size1 = mf.getSize();
-//
-//      if (size1 > 0) { // 파일이 업로드된 경우
-//          String file1saved = Upload.saveFileSpring(mf, upDir);
-//          String thumb1 = "";
-//          if (Tool.isImage(file1saved)) { // 이미지인지 검사
-//              thumb1 = Tool.preview(upDir, file1saved, 200, 150);
-//          }
-//          memberVO.setPf_img(file1);
-//          memberVO.setFile1saved(file1saved);
-//          memberVO.setThumb1(thumb1);
-//          memberVO.setSize1(size1);
-//      } else { // 파일이 업로드되지 않은 경우
-//          MemberVO oldMemberVO = this.memberProc.read(memberVO.getMemberno());
-//          memberVO.setFile1saved(oldMemberVO.getFile1saved());
-//          memberVO.setThumb1(oldMemberVO.getThumb1());
-//          memberVO.setSize1(oldMemberVO.getSize1());
-//      }
-//
-//      int cnt = this.memberProc.update(memberVO);
-//      if (cnt == 1) {
-//          ra.addFlashAttribute("code", "update_success");
-//      } else {
-//          ra.addFlashAttribute("code", "update_fail");
-//      }
-//      return "redirect:/member/list";
-//  }
-  
-//  /**
-//   * 프로필 폼
-//   * @param session
-//   * @param model
-//   * @return
-//   */
-//  @GetMapping(value = "/mypage")
-//  public String mypageForm(HttpSession session, Model model) {
-//    Integer memberno = (Integer) session.getAttribute("memberno");
-//    if (memberno == null) {
-//      return "redirect:/member/login";
-//    }
-//
-//    MemberVO memberVO = this.memberProc.read(memberno);
-//    if (memberVO == null) {
-//      return "redirect:/member/login";
-//    }
-//    model.addAttribute("memberVO", memberVO);
-//    return "/member/mypage"; // mypage.html로 이동
-//  }
-//
-//  /**
-//   * 프로필 처리
-//   * @param session
-//   * @param model
-//   * @param memberVO
-//   * @param currentPasswd
-//   * @param newPasswd
-//   * @param ra
-//   * @return
-//   */
-//  @PostMapping(value = "/mypage")
-//  public String mypageProc(HttpSession session,
-//                           Model model,
-//                           @ModelAttribute("memberVO") MemberVO memberVO,
-//                           @RequestParam(value="current_passwd", defaultValue="") String currentPasswd,
-//                           @RequestParam(value="new_passwd", defaultValue="") String newPasswd,
-//                           RedirectAttributes ra) {
-//    int memberno = (int) session.getAttribute("memberno");
-//    HashMap<String, Object> map = new HashMap<>();
-//    map.put("memberno", memberno);
-//    map.put("passwd", currentPasswd);
-//
-//    int passwdCheck = this.memberProc.passwd_check(map);
-//    if (passwdCheck == 0) {
-//      ra.addFlashAttribute("code", "passwd_not_equal");
-//      return "redirect:/member/mypage";
-//    }
-//
-//    String upDir = Member.getUploadDir();
-//    MultipartFile mf = memberVO.getFile1MF();
-//    String file1 = mf.getOriginalFilename();
-//    long size1 = mf.getSize();
-//
-//    if (size1 > 0) {
-//      String file1saved = Upload.saveFileSpring(mf, upDir);
-//      String thumb1 = "";
-//      if (Tool.isImage(file1saved)) {
-//        thumb1 = Tool.preview(upDir, file1saved, 200, 150);
-//      }
-//      memberVO.setPf_img(file1);
-//      memberVO.setFile1saved(file1saved);
-//      memberVO.setThumb1(thumb1);
-//      memberVO.setSize1(size1);
-//      session.setAttribute("file1saved", file1saved);
-//    } else {
-//      MemberVO oldMemberVO = this.memberProc.read(memberno);
-//      memberVO.setPf_img(oldMemberVO.getPf_img());
-//      memberVO.setFile1saved(oldMemberVO.getFile1saved());
-//      memberVO.setThumb1(oldMemberVO.getThumb1());
-//      memberVO.setSize1(oldMemberVO.getSize1());
-//      session.setAttribute("file1saved", oldMemberVO.getFile1saved());
-//    }
-//
-//    if (!newPasswd.isEmpty()) {
-//      memberVO.setPasswd(newPasswd);
-//    } else {
-//      memberVO.setPasswd(currentPasswd);
-//    }
-//
-//    int cnt = this.memberProc.update(memberVO);
-//    if (cnt == 1) {
-//      ra.addFlashAttribute("code", "update_success");
-//    } else {
-//      ra.addFlashAttribute("code", "update_fail");
-//    }
-//    return "redirect:/member/mypage";
-//  }
-//  
+
+  /**
+   * 프로필 처리
+   * @param session
+   * @param memberVO
+   * @param ra
+   * @return
+   */
+  @PostMapping(value = "/update_file")
+  public String update_file(HttpSession session, Model model,
+      RedirectAttributes ra,
+      @ModelAttribute("memberVO") MemberVO memberVO) {
+    
+    MemberVO memberVO_old = memberProc.read(memberVO.getMemberno());
+    
+ // -------------------------------------------------------------------
+    // 파일 삭제 시작
+    // -------------------------------------------------------------------
+    String file1saved = memberVO_old.getFile1saved(); // 실제 저장된 파일명
+    String thumb1 = memberVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
+    
+    long size1 = 0;
+    
+    // C:/kd/deploy/team2/grade/storage/
+    String upDir = Member.getUploadDir();
+    
+    // 실제 저장된 파일삭제
+    Tool.deleteFile(upDir, file1saved);
+    // preview 이미지 삭제
+    Tool.deleteFile(upDir, thumb1);
+    
+    // -------------------------------------------------------------------
+    // 파일 삭제 종료
+    // -------------------------------------------------------------------
+    
+    // -------------------------------------------------------------------
+    // 파일 전송 시작
+    // -------------------------------------------------------------------
+    String pf_img = "";
+    
+    MultipartFile mf = memberVO.getFile1MF();
+    
+    pf_img = mf.getOriginalFilename();
+    size1 = mf.getSize();
+    
+    if (size1 > 0) {
+      file1saved = Upload.saveFileSpring(mf, upDir);
+      
+      if (Tool.isImage(file1saved)) {
+        thumb1 = Tool.preview(upDir, file1saved, 250, 200);
+      }
+    } else {
+      pf_img = "";
+      file1saved = "";
+      thumb1 = "";
+      size1 = 0;
+    }
+    
+    memberVO.setPf_img(pf_img);
+    memberVO.setFile1saved(file1saved);
+    memberVO.setThumb1(thumb1);
+    memberVO.setSize1(size1);
+    // -------------------------------------------------------------------
+    // 파일 전송 코드 종료
+    // -------------------------------------------------------------------
+    
+    this.memberProc.update_file(memberVO);
+    ra.addAttribute("memberno", memberVO.getMemberno());
+    
+    return "redirect:/member/read";
+  }
+
   //----------------------------------------------------------------------------------
   // 로그인 및 로그아웃 메서드 컨트롤러 시작
   // ---------------------------------------------------------------------------------
