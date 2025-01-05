@@ -1,6 +1,7 @@
 package dev.mvc.surveyitem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public interface ItemDAOInter {
@@ -58,7 +59,7 @@ public interface ItemDAOInter {
    * @param word
    * @return
    */
-  public Integer count_by_search(String word);
+  public int count_by_search(String word);
   
   /**
    * 검색 + 페이징 목록

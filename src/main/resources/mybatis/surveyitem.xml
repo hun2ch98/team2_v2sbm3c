@@ -44,28 +44,36 @@
     WHERE itemno = #{itemno}
   </update>
   
-<!-- 카테고리별 검색 목록 -->
+  <!-- 카테고리별 검색 목록 -->
   <select id="list_search" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
     SELECT itemno, surveyno, item_seq, item, item_cnt
     FROM surveyitem
-    WHERE surveyno = #{surveyno}
-    <if test="word != null and word != ''">
-        AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
-    </if>
+    <where>
+      <if test="surveyno != null and surveyno != ''">
+        surveyno = #{surveyno, jdbcType=INTEGER}
+      </if>
+      <if test="word != null and word != ''">
+        AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+      </if>
+    </where>
     ORDER BY itemno ASC
   </select>
-
+  
   <!-- 카테고리별 검색 레코드 갯수 -->
   <select id="count_by_search" resultType="int" parameterType="Map">
     SELECT COUNT(*) as cnt
     FROM surveyitem
-    WHERE surveyno = #{surveyno}
-    <if test="word != null and word != ''">
-        AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
-    </if>
+    <where>
+      <if test="surveyno != null and surveyno != 0">
+        surveyno = #{surveyno, jdbcType=INTEGER}
+      </if>
+      <if test="word != null and word != ''">
+        AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+      </if>
+    </where>
   </select>
-
-  <!-- 회원 카테고리별 검색 + 페이징 목록 -->
+  
+  <!-- 검색 + 페이징 목록 -->
   <select id="list_search_paging" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
     SELECT itemno, surveyno, item_seq, item, item_cnt, r
     FROM (
@@ -73,13 +81,19 @@
         FROM (
             SELECT itemno, surveyno, item_seq, item, item_cnt
             FROM surveyitem
-            WHERE surveyno = #{surveyno}
-            <if test="word != null and word != ''">
-                AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
-            </if>
+            <where>
+              <if test="surveyno != null and surveyno != ''">
+                surveyno = #{surveyno, jdbcType=INTEGER}
+              </if>
+              <if test="word != null and word != ''">
+                AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+              </if>
+            </where>
             ORDER BY itemno ASC
         )
     )
-    WHERE r BETWEEN #{start_num} AND #{end_num}
+    WHERE r BETWEEN #{start_num, jdbcType=INTEGER} AND #{end_num, jdbcType=INTEGER}
   </select>
+
+  
 </mapper>

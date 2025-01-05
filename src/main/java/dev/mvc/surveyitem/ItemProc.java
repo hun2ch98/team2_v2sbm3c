@@ -61,13 +61,13 @@ public class ItemProc implements ItemProcInter{
   }
 
   @Override
-  public Integer count_by_search(String word) {
-    int cnt = this.itemDAO.count_by_search(word);
-    return cnt;
+  public int count_by_search(String word) {
+      int cnt = this.itemDAO.count_by_search(word);
+      return cnt;
   }
   
   @Override
-  public ArrayList<ItemVO> list_search_paging(int surveyno, String word, int now_page, int record_per_page) {
+  public ArrayList<ItemVO> list_search_paging(String word, int now_page, int record_per_page) {
     /*
      페이지당 10개의 레코드 출력
      1 page: WHERE r >= 1 AND r <= 10
@@ -88,7 +88,6 @@ public class ItemProc implements ItemProcInter{
     // System.out.println("WHERE r >= "+start_num+" AND r <= " + end_num);
     
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put("surveyno", surveyno);
     map.put("word", word);
     map.put("start_num", start_num);
     map.put("end_num", end_num);
@@ -112,7 +111,7 @@ public class ItemProc implements ItemProcInter{
    * @return 페이징 생성 문자열
    */ 
   @Override
-  public String pagingBox(int surveyno, int now_page, String word, String list_file_name, int search_count, 
+  public String pagingBox(int now_page, String word, String list_file_name, int search_count, 
                                       int record_per_page, int page_per_block){    
     // 전체 페이지 수: (double)1/10 -> 0.1 -> 1 페이지, (double)12/10 -> 1.2 페이지 -> 2 페이지
     int total_page = (int)(Math.ceil((double)search_count / record_per_page));

@@ -6,7 +6,7 @@
 DROP TABLE surveyitem;
 
 CREATE TABLE surveyitem (
-    itemno      NUMBER(10)      NOT NULL,
+    itemno      NUMBER(10)      NOT NULL    PRIMARY KEY,
     surveyno    NUMBER(10)      NOT NULL,
 --    memberno    NUMBER(10)      NOT NULL,
     item_seq    NUMBER(5)       NOT NULL,
@@ -89,8 +89,7 @@ ORDER BY itemno ASC;
 -- 검색 갯수
 SELECT COUNT(*) as cnt
 FROM surveyitem
-WHERE (UPPER(item) LIKE '%' || UPPER('서비스') || '%')
-ORDER BY itemno ASC;  
+WHERE (UPPER(item) LIKE '%' || UPPER('서비스') || '%');
 
 -- ③ 정렬 -> ROWNUM -> 분할
 SELECT itemno, surveyno, item_seq, item, r
