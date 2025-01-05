@@ -242,42 +242,56 @@ public class ItemCont {
 
 
   /**
-   * 등록 폼 및 검색 목록 + 페이징 
+   * 등록 폼 및 검색 목록 + 페이징
    * @return
    */
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
-                                   @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-                                   @RequestParam(name = "itemno", defaultValue = "0") int itemno,
-                                   @RequestParam(name = "word", defaultValue = "") String word,
-                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+                                  @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                  @RequestParam(name = "word", defaultValue = "") String word,
+                                  @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
+      // 관리자 또는 일반 회원인지 확인
       if (this.memberProc.isMemberAdmin(session) || this.memberProc.isMember(session)) {
-          word = Tool.checkNull(word);
+        SurveyVO surveyVO = new SurveyVO();
+        model.addAttribute("surveyVO", surveyVO);
+        
+        // Null 또는 빈 문자열 처리
+        word = Tool.checkNull(word).trim();
 
-          ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
-          model.addAttribute("list", list);
+        // HashMap에 필요한 매개변수 설정
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("surveyno", surveyno); // 설문조사 번호
+        map.put("word", word);        // 검색어
+        map.put("start_num", (now_page - 1) * record_per_page + 1);
+        map.put("end_num", now_page * record_per_page);
 
-          int search_cnt = this.itemProc.count_by_search(word);
-          model.addAttribute("search_cnt", search_cnt);
+        // 검색 결과 목록 가져오기
+        ArrayList<ItemVO> list = this.itemProc.list_search_paging(word, now_page, this.record_per_page);
+        model.addAttribute("list", list);
 
-          model.addAttribute("word", word);
-          model.addAttribute("surveyno", surveyno);
-          model.addAttribute("itemno", itemno);
+        // 검색 레코드 수 계산
+        int search_count = this.itemProc.count_by_search(word);
+        model.addAttribute("search_count", search_count);
+        model.addAttribute("word", word);
 
-          String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_cnt, 
-                                                  this.record_per_page, this.page_per_block);
-          model.addAttribute("paging", paging);
-          model.addAttribute("now_page", now_page);
+        // 페이징 생성
+        String paging = this.itemProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
+            this.page_per_block);
+        model.addAttribute("paging", paging);
+        model.addAttribute("now_page", now_page);
 
-          int no = search_cnt - ((now_page - 1) * this.record_per_page);
-          model.addAttribute("no", no);
+        // 일련번호 생성
+        int no = search_count - ((now_page - 1) * this.record_per_page);
+        model.addAttribute("no", no);
 
-          return "/surveyitem/list_search";
+        return "/surveyitem/list_search";
       } else {
           return "redirect:/member/login_cookie_need";
       }
   }
+
+
 
 
   

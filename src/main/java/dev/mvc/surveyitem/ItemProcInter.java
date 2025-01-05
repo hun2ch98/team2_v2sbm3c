@@ -1,6 +1,7 @@
 package dev.mvc.surveyitem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public interface ItemProcInter {
@@ -58,14 +59,14 @@ public interface ItemProcInter {
    * @param word
    * @return
    */
-  public Integer count_by_search(String word);
+  public int count_by_search(String word);
   
   /**
    * 검색 + 페이징 목록
    * @param map
    * @return
    */
-  public ArrayList<ItemVO> list_search_paging(int surveyno, String word, int now_page, int record_per_page);
+  public ArrayList<ItemVO> list_search_paging(String word, int now_page, int record_per_page);
   
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 
@@ -79,7 +80,7 @@ public interface ItemProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */
-  String pagingBox(int surveyno, int now_page, String word, String list_file_name, int search_count, int record_per_page,
+  String pagingBox(int now_page, String word, String list_file_name, int search_count, int record_per_page,
       int page_per_block);
   
 
