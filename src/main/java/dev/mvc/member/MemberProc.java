@@ -194,137 +194,18 @@ public class MemberProc implements MemberProcInter {
   // ~~~~~~ 로그인 및 패스워드 인증 관련 메서드 종료
   // ---------------------------------------------------------------------------------
 
-//  //----------------------------------------------------------------------------------
-//  // ~~~~~~ 목록 조회 및 페이지네이션 관련 메서드 시작
-//  // ---------------------------------------------------------------------------------
-//  
-//  @Override
-//  public ArrayList<MemberVO> list_by_memberno_search(HashMap<String, Object> hashMap) {
-//    ArrayList<MemberVO> list = this.memberDAO.list_by_memberno_search_paging(hashMap);
-//    return list;
-//  }
-//  
-//  @Override
-//  public int list_by_memberno_search_count(HashMap<String, Object> map) {
-//    int cnt = this.memberDAO.list_by_memberno_search_count(map); // 검색된 회원 수 조회
-//    return cnt;
-//  }
-//
-//  @Override
-//  public ArrayList<MemberVO> list_by_memberno_search_paging(HashMap<String, Object> map) {
-//    int now_page = (int) map.get("now_page");
-//    int record_per_page = 10; // 페이지당 레코드 수
-//    
-//    int startRow = (now_page - 1) * record_per_page + 1;
-//    int endRow = now_page * record_per_page;
-//
-//    // 계산된 값을 `HashMap`에 추가합니다.
-//    map.put("startRow", startRow);
-//    map.put("endRow", endRow);
-//    
-//    // 데이터베이스 쿼리 실행
-//    ArrayList<MemberVO> list = this.memberDAO.list_by_memberno_search_paging(map);
-//    return list;
-//  }
-//
-//  @Override
-//  public String pagingBox(int now_page, String id, String list_file, int search_count, int record_per_page,
-//        int page_per_block) {
-//    
-//      // 전체 페이지 수 계산
-//      int total_page = (int) Math.ceil((double) search_count / record_per_page);
-//      int total_grp = (int) Math.ceil((double) total_page / page_per_block);
-//      int now_grp = (int) Math.ceil((double) now_page / page_per_block);
-//    
-//      // 현재 그룹의 시작 페이지와 끝 페이지
-//      int start_page = ((now_grp - 1) * page_per_block) + 1;
-//      int end_page = now_grp * page_per_block;
-//    
-//      StringBuffer str = new StringBuffer(); // 문자열 생성
-//      
-//      // 스타일 설정
-//      str.append("<style type='text/css'>");
-//      str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}");
-//      str.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}");
-//      str.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}");
-//      str.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}");
-//      str.append("  .span_box_1{");
-//      str.append("    text-align: center;");
-//      str.append("    font-size: 1em;");
-//      str.append("    border: 1px;");
-//      str.append("    border-style: solid;");
-//      str.append("    border-color: #cccccc;");
-//      str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/");
-//      str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/");
-//      str.append("  }");
-//      str.append("  .span_box_2{");
-//      str.append("    text-align: center;");
-//      str.append("    background-color: #668db4;");
-//      str.append("    color: #FFFFFF;");
-//      str.append("    font-size: 1em;");
-//      str.append("    border: 1px;");
-//      str.append("    border-style: solid;");
-//      str.append("    border-color: #cccccc;");
-//      str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/");
-//      str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/");
-//      str.append("  }");
-//      str.append("</style>");
-//      str.append("<DIV id='paging'>");
-//      
-//      // 이전 그룹 링크
-//      int _now_page = (now_grp - 1) * page_per_block;
-//      if (now_grp >= 2) {
-//        str.append("<span class='span_box_1'><A href='" + list_file + "?id=" + id + "&now_page=" + _now_page + "'>이전</A></span>");
-//      }
-//      
-//      // 중앙의 페이지 목록
-//      for (int i = start_page; i <= end_page; i++) {
-//        if (i > total_page) {
-//          break;
-//        }
-//        
-//        if (now_page == i) {
-//          str.append("<span class='span_box_2'>" + i + "</span>"); // 현재 페이지 강조
-//        } else {
-//          str.append("<span class='span_box_1'><A href='" + list_file + "?id=" + id + "&now_page=" + i + "'>" + i + "</A></span>");
-//        }
-//      }
-//      
-//      // 다음 그룹 링크
-//      _now_page = (now_grp * page_per_block) + 1;
-//      if (now_grp < total_grp) {
-//        str.append("<span class='span_box_1'><A href='" + list_file + "?id=" + id + "&now_page=" + _now_page + "'>다음</A></span>");
-//      }
-//      str.append("</DIV>");
-//
-//      return str.toString();
-//  }
-//
-//  //----------------------------------------------------------------------------------
-//  // ~~~~~~ 목록 조회 및 페이지네이션 관련 메서드 종료
-//  // ---------------------------------------------------------------------------------
+  
+  //----------------------------------------------------------------------------------
+  // ~~~~~~ Mypage 프로필 이미지 수정 메서드 시작
+  // ---------------------------------------------------------------------------------
 
-
-//  //----------------------------------------------------------------------------------
-//  // ~~~~~~ 기타 메서드 시작
-//  // ---------------------------------------------------------------------------------
-//
-//  @Override
-//  public int update_text(MemberVO memberVO) {
-//    int cnt = this.memberDAO.update_text(memberVO); // 회원 텍스트 정보 수정
-//    return cnt;
-//  }
-//  
-//  @Override
-//  public int update_file(MemberVO memberVO) {
-//    int cnt = this.memberDAO.update_file(memberVO); // 회원 파일 정보 수정
-//    return cnt;
-//  }
-//  
-//  //----------------------------------------------------------------------------------
-//  // ~~~~~~ 기타 메서드 종료
-//  // ---------------------------------------------------------------------------------
+  @Override
+  public int update_file(MemberVO memberVO) {
+    int cnt = this.memberDAO.update_file(memberVO); // 회원 파일 정보 수정
+    return cnt;
+  }
   
-  
-  
+  //----------------------------------------------------------------------------------
+  // ~~~~~~ Mypage 프로필 이미지 수정 메서드 종료
+  // --------------------------------------------------------------------------------- 
 }

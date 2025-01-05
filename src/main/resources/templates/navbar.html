@@ -14,17 +14,6 @@
         <!-- 메뉴 시작 -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">  
-                <li class="nav-item dropdown" th:if="${session.memberno == null}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                       role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="회원">                                                            
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{|/member/create|}">회원 가입</a>
-                        </li>
-                    </ul>
-                </li>
-
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="관리자">                                                            
@@ -134,59 +123,32 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item" th:if="${session.memberno != null}">
-                            <a class="nav-link" th:href="@{|/member/mypage|}">프로필 바꾸기</a>
-                        </li>
-                        <li class="nav-item" th:if="${session.memberno != null}">
-                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀번호 변경</a>
-                        </li>
-                        <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/read|}">개인정보 보기</a>
                         </li>
                         <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/update|}">회원 정보 수정</a>
                         </li>
                         <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/update_file|}">프로필 변경</a>
+                        </li>
+                        <li class="nav-item" th:if="${session.memberno != null}">
+                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀번호 변경</a>
+                        </li>
+                        <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/unsub_delete|}">회원 탈퇴</a>
                         </li>
                     </ul>
                 </li>
-                
-                <li class="nav-item">
-                    <tr th:if="${login.size() > 0}" th:each="memberVO, status: ${login}"
-                         th:attr="onclick=|location.href='/member/read?memberno=${memberVO.memberno}'|"
-                         style="cursor: pointer; height: 90px;">
-                        <td class="td_basic" style="vertical-align: middle; text-align: center;">
-                            <!-- 프로필 이미지 추가 -->
-                            <div th:if="${memberVO.pf_img != null}">
-                                <img th:src="@{|/member/storage/${memberVO.thumb1}|}" style="width: 30px; height: 30px; border-radius: 50%;"
-                                     th:alt="Profile Image">
-                            </div>
-                            
-                            <!-- 이미지가 아닌 파일은 파일명만 출력 -->
-                            <div th:if="${((memberVO.pf_img.endsWith('jpg') or memberVO.pf_img.endsWith('png')  or memberVO.pf_img.endsWith('gif')) == false) and (memberVO.size1 > 0)}">
-                                <span th:text="${memberVO.pf_img}"></span>
-                            </div>
-                            
-                            <!-- 파일이 없는 경우 기본 이미지 출력 -->
-                            <div th:if="${memberVO.size1 == 0}">
-                                <img src="/images/default.png" style="width: 30px; height: 30px; border-radius: 50%;" alt="Default Image">
-                            </div>
-                        </td>
-                    </tr>
-                </li>
-                
-                <!-- 프로필 이미지 선택 안했을 시 기본 이미지 설정 -->
-                <li class="nav-item">
-                    <img th:if="${session.memberno != null}" 
-                         th:src="@{${session.file1saved} == 'default.png' ? '/images/default.png' : '/member/storage/' + ${session.file1saved}}" 
-                         alt="Profile Image" 
-                         style="width: 30px; height: 30px; border-radius: 50%;">
-                </li>
-                <!-- 프로필 이미지 선택 안했을 시 기본 이미지 설정 끝 -->
-                
+
                 <li class="nav-item">
                   <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
-                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.id} 로그아웃|}"></a>
+                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.name} 로그아웃|}"></a>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.memberno == null}">
+                  <a class="nav-link" href="#" role="button" aria-expanded="false" th:href="@{|/member/create|}">
+                    회원가입
+                  </a>
                 </li>
                 
                 <!-- 회원과 관리자 버튼 => 나중에 지울 부분 -->

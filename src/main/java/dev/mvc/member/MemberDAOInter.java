@@ -113,21 +113,12 @@ public interface MemberDAOInter {
 //   */
 //  public int find_passwd(String id, String email);
   
-  
-  
-//  /**
-//   * 프로필 이미지 수정
-//   * @param memberVO
-//   * @return
-//   */
-//  public int update_text(MemberVO memberVO);
-//  
-//  /**
-//   * 파일 수정
-//   * @param memberVO
-//   * @return
-//   */
-//  public int update_file(MemberVO memberVO);
+  /**
+   * 파일 수정
+   * @param memberVO
+   * @return
+   */
+  public int update_file(MemberVO memberVO);
   
 //  /**
 //   * 회원번호별 검색 목록
