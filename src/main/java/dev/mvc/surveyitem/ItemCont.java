@@ -242,16 +242,13 @@ public class ItemCont {
 
 
   /**
-   * 등록 폼 및 검색 목록 + 페이징 http://localhost:9091/cate/list_search
-   * http://localhost:9091/cate/list_search?word=&now_page=
-   * http://localhost:9091/cate/list_search?word=까페&now_page=1
-   * 
-   * @param model
+   * 등록 폼 및 검색 목록 + 페이징 
    * @return
    */
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
                                    @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                   @RequestParam(name = "itemno", defaultValue = "0") int itemno,
                                    @RequestParam(name = "word", defaultValue = "") String word,
                                    @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
@@ -266,6 +263,7 @@ public class ItemCont {
 
           model.addAttribute("word", word);
           model.addAttribute("surveyno", surveyno);
+          model.addAttribute("itemno", itemno);
 
           String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_cnt, 
                                                   this.record_per_page, this.page_per_block);
