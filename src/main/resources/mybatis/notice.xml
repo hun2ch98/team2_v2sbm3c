@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.notice.NoticeDAOInter">
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.notice.NoticeVO">
+    INSERT INTO notice(noticeno, memberno, title, content, cnt, rdate)
+    VALUES(notice_seq.nextval, #{memberno}, #{title}, #{content}, 0, sysdate)
+  </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list_all" resultType="dev.mvc.notice.NoticeVO">
+    SELECT noticeno, memberno, title, content, cnt, rdate
+    FROM notice
+    ORDER BY noticeno DESC
+  </select>
+  
+  <!-- 일반적인 조회 -->
+  <select id="read" resultType="dev.mvc.notice.NoticeVO" parameterType="int">
+    SELECT noticeno, memberno, title, content, cnt, rdate
+    FROM notice
+    WHERE noticeno = #{noticeno}
+  </select>
+  
+  <!-- 조회수 증가 -->
+  <update id="increaseCnt" parameterType="int">
+    UPDATE notice
+    SET cnt = cnt + 1
+    WHERE noticeno = #{noticeno}
+  </update>
+  
+  <!-- 글 수정 -->
+  <update id="update" parameterType="dev.mvc.notice.NoticeVO">
+    UPDATE notice
+    SET title = #{title}, content = #{content}
+    WHERE noticeno = #{noticeno}
+  </update>
+</mapper>
