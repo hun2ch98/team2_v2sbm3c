@@ -40,8 +40,8 @@ public interface IllustrationDAOInter {
     
     List<IllustrationVO> getIllustrationsByDiaryNo(int diaryno);
     
-    public ArrayList<IllustrationVO> list_search_paging(Map<String, Object> map);
-
+    List<Map<String, Object>> list_search_paging(Map<String, Object> paramMap);
+    
     int list_search_count(String title, String date);
 
     ArrayList<IllustrationVO> list_search(String title, String date);

@@ -150,41 +150,22 @@ public class IllustrationCont {
   }
   
 
-  @GetMapping("/list_all")
+  @GetMapping(value="/list_all")
   public String listAll(Model model, @RequestParam(name="illustno", defaultValue="1") int illustno, 
       @RequestParam(value = "title", required = false, defaultValue = "") String title,
       @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
       @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
-      @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage) {
+      @RequestParam(value = "now_page", required = false, defaultValue = "1") int now_page) {
     
       title = title.trim();
       start_date = start_date.trim();
       end_date = end_date.trim();
       
-      int startNum = (nowPage - 1) * record_per_page + 1;
-      int endNum = nowPage * record_per_page;
+      int startNum = (now_page - 1) * record_per_page + 1;
+      int endNum = now_page * record_per_page;
       int searchCount = illustrationProc.countSearchResults(title, start_date, end_date);
-   // 날짜가 비어있는 경우 전체 목록 조회
-      if (start_date.isEmpty() && end_date.isEmpty()) {
-        List<Map<String, Object>> list = illustrationProc.listAllWithDiaryDetails();
-        model.addAttribute("illustrations", list);
-        System.out.println(list);
-      } else {
-        ArrayList<IllustrationVO> list = illustrationProc.list_search_paging(title, start_date, end_date, startNum, endNum);
-        model.addAttribute("illustrations", list);
-        System.out.println(list);
-      }
-      
-   // 날짜 값 출력 (디버깅)
-      
-      
-      
-      System.out.println("start_date: " + start_date);
-      System.out.println("end_date: " + end_date);
-
-      System.out.println("startNum: " + startNum + ", endNum: " + endNum);
-      
-      String paging = illustrationProc.pagingBox(nowPage, title, start_date, end_date, list_file_name, searchCount, record_per_page, page_per_block);
+   
+      String paging = illustrationProc.pagingBox(now_page, title, start_date, end_date, list_file_name, searchCount, record_per_page, page_per_block);
       
       model.addAttribute("illustno", illustno);
       model.addAttribute("title", title);
@@ -192,7 +173,22 @@ public class IllustrationCont {
       model.addAttribute("end_date", end_date);
       model.addAttribute("paging", paging);
       model.addAttribute("search_count", searchCount);
-      model.addAttribute("now_page", nowPage);
+      model.addAttribute("now_page", now_page);
+      
+      if (start_date.isEmpty() && end_date.isEmpty()) {
+        List<Map<String, Object>> illustrations = illustrationProc.listAllWithDiaryDetails();
+        model.addAttribute("illustrations", illustrations);
+        System.out.println(illustrations);
+      } else {
+    	List<Map<String, Object>> illustrations = illustrationProc.list_search_paging(title, now_page, record_per_page, startNum, endNum);
+		model.addAttribute("illustrations", illustrations);
+        System.out.println(illustrations);
+      }
+      
+      System.out.println("start_date: " + start_date);
+      System.out.println("end_date: " + end_date);
+      System.out.println("startNum: " + startNum + ", endNum: " + endNum);
+      
       
       return "/illustration/list_all";
   }
