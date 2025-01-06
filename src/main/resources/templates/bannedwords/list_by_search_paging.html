@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+
+    목록 조회 검색
+    
+    <span th:if="${type != ''}" th:text="|> ${type} (${search_count} 건)|" class="title_line_text"></span>
+
+  </div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{/bannedwords/create?wordno=${bannedwordsVO?.wordno}|}">등록</a>
+      <span class="menu_devide">│</span>    
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>│</span>    
+      <a th:href="@{|./list_by_wordno_search_paging?wordno=${bannedwordsVO?.wordno }&word=${word }&now_page=${now_page}|}">목록</a>    
+    </aside> 
+  
+  <div th:replace="~{/bannedwords/list_search_com :: list_search_fragment}"></div>
+     
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 90%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>금지 단어</th>
+      <th class='th_bs'>이유</th>
+    </tr>
+   
+    <tr th:if="${list != null and list.size() > 0}" th:each="bannedwordsVO, status:${list}" 
+         th:attr="onclick=|location.href='/bannedwords/read?wordno=${bannedwordsVO.wordno}&now_page=${now_page}'|"
+         style="cursor: pointer; height: 90px;">
+      </td>
+      <td class='td_left'>
+        <span th:text="${bannedwordsVO.word}" style="font-weight: bold;"></span><br>
+
+        <span th:if="${bannedwordsVO.reason.length() > 50 }" 
+                  th:text="|${bannedwordsVO.reason.substring(0, 50) }...|"></span>
+        <span th:if="${bannedwordsVO.reason.length() <= 50 }" 
+                  th:text="|${bannedwordsVO.reason}|"></span>
+        
+      </td>
+    </tr>
+
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    </tr> 
+
+  </table>
+   
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+  
+</div>
+</html>
