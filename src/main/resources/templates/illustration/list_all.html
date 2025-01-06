@@ -15,6 +15,25 @@
 
   <div class="menu_line"></div>
 
+  <!-- 검색 및 날짜 범위 설정 -->
+  <form name="searchForm" method="get" action="/illustration/list_all" style="margin: 20px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+    
+    <!-- 검색어 -->
+      <input type="text" name="title" th:value="${title}" class="form-control" placeholder="검색어 입력">
+
+      
+      <!-- 시작 날짜 -->
+      <input type="date" name="start_date" th:value="${start_date}" class="form-control">
+
+      <!-- 종료 날짜 -->
+      <input type="date" name="end_date" th:value="${end_date}" class="form-control">
+
+      <!-- 검색 버튼 -->
+      <button type="submit" class="btn btn-secondary btn-sm">검색</button>
+    </div>
+  </form>
+
   <!-- 목록 출력 -->
   <div>
     <table class="table table-bordered">
@@ -29,7 +48,9 @@
       <tbody>
         <!-- 데이터 반복 출력 -->
         <tr th:each="item : ${illustrations}">
-          <td th:text="${item['TITLE']}"></td>
+          <td>
+            <a th:href="@{/illustration/read/{id}(id=${item['ILLUSTNO']})}" th:text="${item['TITLE']}"></a>
+          </td>
           <td th:text="${#dates.format(item['DDATE'], 'yyyy-MM-dd')}"></td>
           <td>
             <div style="text-align: center;">
@@ -39,7 +60,7 @@
           </td>
           <td>
             <a th:href="@{/illustration/update/{id}(id=${item['ILLUSTNO']})}" class="btn btn-primary">수정</a>
-            <a th:href="@{|/illustration/delete|}" class="btn btn-danger">삭제</a>
+            <a th:href="@{/illustration/delete/{id}(id=${item['ILLUSTNO']})}" class="btn btn-danger">삭제</a>
           </td>
           
         </tr>

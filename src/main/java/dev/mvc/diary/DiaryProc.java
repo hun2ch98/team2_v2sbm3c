@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,6 @@ public class DiaryProc implements DiaryProcInter {
   @Override
   public DiaryVO read(Integer diaryno) {
     DiaryVO diaryVO = this.diaryDAO.read(diaryno);
-    
     return diaryVO;
   }
 
@@ -123,7 +123,10 @@ public class DiaryProc implements DiaryProcInter {
   }
 
 
-
+  @Override
+  public List<DiaryVO> readList(int diaryno) {
+    return sqlSession.selectList("dev.mvc.diary.DiaryDAOInter.getReadList", diaryno);
+  }
 
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 
@@ -265,7 +268,7 @@ public class DiaryProc implements DiaryProcInter {
       paramMap.put("start_date", startDate != null ? startDate.trim() : null);
       paramMap.put("end_date", endDate != null ? endDate.trim() : null);
 
-      return sqlSession.selectOne("countSearchResults", paramMap);
+      return sqlSession.selectOne("dev.mvc.diary.DiaryDAOInter.countSearchResults", paramMap);
   }
 
 
@@ -282,6 +285,12 @@ public class DiaryProc implements DiaryProcInter {
   public int getDiaryNoByDate(Date ddate) {
       String sql = "SELECT diaryno FROM diary WHERE ddate = ?";
       return jdbcTemplate.queryForObject(sql, Integer.class, ddate);
+  }
+  
+  
+  @Override
+  public DiaryVO getDiaryByDiaryNo(int diaryno) {
+      return diaryDAO.getDiaryByDiaryNo(diaryno);
   }
   
   

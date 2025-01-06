@@ -2,6 +2,8 @@ package dev.mvc.diary;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -28,13 +30,14 @@ public class DiaryVO {
   private String title="";
   
   /** 일기 날짜  */
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date ddate;
   
   /** 날씨 테이블과 연결 */
   private int weatherno;
   
   /** 감정번호 */
-  private int emno;
+  private int emono;
   
   /** 요약일기  */
   private String summary;

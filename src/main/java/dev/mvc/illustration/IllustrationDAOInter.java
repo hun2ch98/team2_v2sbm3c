@@ -32,9 +32,18 @@ public interface IllustrationDAOInter {
      */
     Map<String, Object> readDiary(int diaryno);
     
-    int delete(int illustno);
+    public int delete(int illustno);
  
     public int update(IllustrationVO illustrationVO);
     
+    int cntcount(int illustno);
+    
+    List<IllustrationVO> getIllustrationsByDiaryNo(int diaryno);
+    
+    public ArrayList<IllustrationVO> list_search_paging(Map<String, Object> map);
+
+    int list_search_count(String title, String date);
+
+    ArrayList<IllustrationVO> list_search(String title, String date);
     
 }
