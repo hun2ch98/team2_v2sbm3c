@@ -3,11 +3,8 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-
-    목록 조회
-
-    검색
-
+    날씨 목록 조회
+    <span th:text="|>(${search_count} 건)|" class="title_line_text"></span>
   </div>
 
   <aside class="aside_right">

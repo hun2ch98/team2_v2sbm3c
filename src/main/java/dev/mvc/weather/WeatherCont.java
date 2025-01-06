@@ -238,7 +238,7 @@ public class WeatherCont {
       HttpSession session, 
       Model model, 
       @ModelAttribute("weatherVO") WeatherVO weatherVO,
-      @RequestParam(name = "weatherno", defaultValue = "0") int weatherno,
+      @RequestParam(name = "memberno", defaultValue = "0") int memberno,
       @RequestParam(name = "type", defaultValue = "") String type,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
@@ -246,6 +246,13 @@ public class WeatherCont {
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
+      // grade_name을 NULL 또는 빈 문자열 처리
+      type = Tool.checkNull(type).trim();
+      // grade_name이 빈 문자열인 경우 기본값으로 설정 (예: null 또는 특정 문자열)
+      if (type.isEmpty()) {
+          type = ""; // 또는 원하는 기본값 설정
+      }
+      
 //      int diaryno = (int) session.getAttribute("diaryno");
 //      DiaryVO diaryVO = this.diaryProc.read(diaryno);
 //      if (diaryVO == null) {
@@ -253,7 +260,7 @@ public class WeatherCont {
 //          diaryVO.setDiaryno(0);
 //          model.addAttribute("message", "일기 정보가 없습니다.");
 //      }
-      int memberno = (int) session.getAttribute("memberno");
+      memberno = (int) session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       if (memberVO == null) {
           memberVO = new MemberVO();
@@ -262,12 +269,15 @@ public class WeatherCont {
       }
 //      model.addAttribute("diaryVO", diaryVO);
       model.addAttribute("memberVO", memberVO);
-      model.addAttribute("weatherno", weatherno);
+//      model.addAttribute("weatherno", weatherno);
+      model.addAttribute("type",type);
       model.addAttribute("now_page", now_page);
 
       HashMap<String, Object> map = new HashMap<>();
 //      map.put("diaryno", diaryno);
       map.put("memberno", memberno);
+//      map.put("weatherno", weatherno);
+      map.put("type", type);
       map.put("now_page", now_page);
       map.put("startRow", startRow);
       map.put("endRow", endRow);
@@ -280,13 +290,12 @@ public class WeatherCont {
       }
 
       int search_count = this.weatherProc.count_by_weatherno_search(map);
-//      String type = WeatherVO.getType(); // WeatherVO에서 type 값을 가져옴
       String paging = this.weatherProc.pagingBox(memberno, now_page, type, "/weather/list_by_weatherno_search_paging", search_count,
     		  Weather.RECORD_PER_PAGE, Weather.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
+      model.addAttribute("type", type);
       model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
-
 
       int no = search_count - ((now_page - 1) * Weather.RECORD_PER_PAGE);
       model.addAttribute("no", no);
