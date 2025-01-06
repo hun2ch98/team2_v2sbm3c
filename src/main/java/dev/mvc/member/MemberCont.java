@@ -19,12 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dev.mvc.diary.DiaryProcInter;
 import dev.mvc.dto.PageDTO;
 import dev.mvc.dto.SearchDTO;
-import dev.mvc.grade.Grade;
 import dev.mvc.grade.GradeProcInter;
-import dev.mvc.grade.GradeVO;
 //import dev.mvc.loginlog.LoginlogProcInter;
 import dev.mvc.member.MemberVO.UpdateValidationGroup;
 import dev.mvc.tool.Tool;
@@ -306,7 +303,7 @@ public class MemberCont {
     memberno = (int) session.getAttribute("memberno");
     
     if (this.memberProc.isMember(session) && memberno == (int) session.getAttribute("memberno")) {
-      System.out.println("memberno: " + memberno);
+      System.out.println("-> memberno: " + memberno);
       MemberVO memberVO = this.memberProc.read(memberno);
       model.addAttribute("memberVO", memberVO);
       
@@ -334,149 +331,32 @@ public class MemberCont {
   @PostMapping(value = "/update")
   public String update_proc(HttpSession session, Model model,
       @Validated(UpdateValidationGroup.class) @ModelAttribute("memberVO") MemberVO memberVO) {
+    String grade = (String)session.getAttribute("grade");
     
-    String emailSession = (String) session.getAttribute("email");
+    System.out.println("-> update-proc called");
+    System.out.println("-> grade: " + grade);
+    System.out.println("-> memberno: " + memberVO.getMemberno());
+    System.out.println("-> session memberno: " + (int)session.getAttribute("memberno"));
     
     // 회원 본인일 때
-    if (this.memberProc.isMember(session) && memberVO.getMemberno() == (int) session.getAttribute("memberno")) {
-      int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
-      // 이메일 중복되지 않았을 경우
-      if (checkEMAIL_cnt == 0) {
-        memberVO.setMemberno(memberVO.getMemberno());
-        memberVO.setEmail(memberVO.getEmail().trim());
-        memberVO.setName(memberVO.getName().trim());
-        memberVO.setNickname(memberVO.getNickname().trim());
-        memberVO.setBirth(memberVO.getBirth().trim());
-        memberVO.setZipcode(memberVO.getZipcode().trim());
-        memberVO.setAddress1(memberVO.getAddress1().trim());
-        memberVO.setAddress2(memberVO.getAddress2().trim());
+    if ((grade.equals("member") && memberVO.getMemberno() == (int)session.getAttribute("memberno")) || grade.equals("admin")) {
+      int cnt = this.memberProc.update(memberVO);
+      System.out.println("update cnt1: " + cnt);
+      
+      if (cnt == 1) {
+        model.addAttribute("code", "update_success");
+        model.addAttribute("name", memberVO.getName());
+        model.addAttribute("id", memberVO.getId());
         
-        int cnt = this.memberProc.update(memberVO);
-        System.out.println("update cnt1: " + cnt);
-        
-        if (cnt == 1) {
-          model.addAttribute("code", "update_success");
-          model.addAttribute("memberno", memberVO.getMemberno());
-          model.addAttribute("email", memberVO.getEmail());
-          model.addAttribute("name", memberVO.getName());
-          model.addAttribute("nickname", memberVO.getNickname());
-          model.addAttribute("birth", memberVO.getBirth());
-          model.addAttribute("zipcode", memberVO.getZipcode());
-          model.addAttribute("address1", memberVO.getAddress1());
-          model.addAttribute("address2", memberVO.getAddress2());
-          
-        } else {
-          model.addAttribute("code", "update_fail");
-          System.out.println("update_fail");
-        }
-        
-        model.addAttribute("cnt", cnt);
-        System.out.println("update_success_cnt: " + cnt);
+      } else {
+        model.addAttribute("code", "update_fail");
+        System.out.println("update_fail");
       }
-      // 이메일 중복됐지만 기존 회원 이메일이랑 같을 경우
-      else if (checkEMAIL_cnt == 1 && emailSession.equals(memberVO.getEmail())) {
-        memberVO.setMemberno(memberVO.getMemberno());
-        memberVO.setEmail(memberVO.getEmail().trim());
-        memberVO.setName(memberVO.getName().trim());
-        memberVO.setNickname(memberVO.getNickname().trim());
-        memberVO.setBirth(memberVO.getBirth().trim());
-        memberVO.setZipcode(memberVO.getZipcode().trim());
-        memberVO.setAddress1(memberVO.getAddress1().trim());
-        memberVO.setAddress2(memberVO.getAddress2().trim());
-        
-        int cnt = this.memberProc.update(memberVO);
-        System.out.println("update cnt: " + cnt);
-        
-        if (cnt == 1) {
-          model.addAttribute("code", "update_success");
-          model.addAttribute("memberno", memberVO.getMemberno());
-          model.addAttribute("email", memberVO.getEmail());
-          model.addAttribute("name", memberVO.getName());
-          model.addAttribute("nickname", memberVO.getNickname());
-          model.addAttribute("birth", memberVO.getBirth());
-          model.addAttribute("zipcode", memberVO.getZipcode());
-          model.addAttribute("address1", memberVO.getAddress1());
-          model.addAttribute("address2", memberVO.getAddress2());
-          
-        } else {
-          model.addAttribute("code", "update_fail");
-          System.out.println("update_fail");
-        }
-        
-        model.addAttribute("cnt", cnt);
-        System.out.println("update_success_cnt: " + cnt);
-      }
-      return "redirect:/member/read";
-    } // 관리자 본인일 경우
-    else if (this.memberProc.isMemberAdmin(session) && memberVO.getMemberno() == (int) session.getAttribute("memberno")) {
-      int checkEMAIL_cnt = this.memberProc.checkEMAIL(memberVO.getEmail());
-      // 이메일 중복되지 않았을 경우
-      if (checkEMAIL_cnt == 0) {
-        memberVO.setMemberno(memberVO.getMemberno());
-        memberVO.setEmail(memberVO.getEmail().trim());
-        memberVO.setName(memberVO.getName().trim());
-        memberVO.setNickname(memberVO.getNickname().trim());
-        memberVO.setBirth(memberVO.getBirth().trim());
-        memberVO.setZipcode(memberVO.getZipcode().trim());
-        memberVO.setAddress1(memberVO.getAddress1().trim());
-        memberVO.setAddress2(memberVO.getAddress2().trim());
-        
-        int cnt = this.memberProc.update(memberVO);
-        System.out.println("update cnt: " + cnt);
-        
-        if (cnt == 1) {
-          model.addAttribute("code", "update_success");
-          model.addAttribute("memberno", memberVO.getMemberno());
-          model.addAttribute("email", memberVO.getEmail());
-          model.addAttribute("name", memberVO.getName());
-          model.addAttribute("nickname", memberVO.getNickname());
-          model.addAttribute("birth", memberVO.getBirth());
-          model.addAttribute("zipcode", memberVO.getZipcode());
-          model.addAttribute("address1", memberVO.getAddress1());
-          model.addAttribute("address2", memberVO.getAddress2());
-          
-        } else {
-          model.addAttribute("code", "update_fail");
-          System.out.println("update_fail");
-        }
-        
-        model.addAttribute("cnt", cnt);
-        System.out.println("update_success_cnt: " + cnt);
-      }
-      // 이메일 중복됐지만 기존 회원 이메일이랑 같을 경우
-      else if (checkEMAIL_cnt == 1 && emailSession.equals(memberVO.getEmail())) {
-        memberVO.setMemberno(memberVO.getMemberno());
-        memberVO.setEmail(memberVO.getEmail().trim());
-        memberVO.setName(memberVO.getName().trim());
-        memberVO.setNickname(memberVO.getNickname().trim());
-        memberVO.setBirth(memberVO.getBirth().trim());
-        memberVO.setZipcode(memberVO.getZipcode().trim());
-        memberVO.setAddress1(memberVO.getAddress1().trim());
-        memberVO.setAddress2(memberVO.getAddress2().trim());
-        
-        int cnt = this.memberProc.update(memberVO);
-        System.out.println("update cnt: " + cnt);
-        
-        if (cnt == 1) {
-          model.addAttribute("code", "update_success");
-          model.addAttribute("memberno", memberVO.getMemberno());
-          model.addAttribute("email", memberVO.getEmail());
-          model.addAttribute("name", memberVO.getName());
-          model.addAttribute("nickname", memberVO.getNickname());
-          model.addAttribute("birth", memberVO.getBirth());
-          model.addAttribute("zipcode", memberVO.getZipcode());
-          model.addAttribute("address1", memberVO.getAddress1());
-          model.addAttribute("address2", memberVO.getAddress2());
-          
-        } else {
-          model.addAttribute("code", "update_fail");
-          System.out.println("update_fail");
-        }
-        
-        model.addAttribute("cnt", cnt);
-        System.out.println("update_success_cnt: " + cnt);
-      }
-      return "redirect:/member/read";
+      
+      model.addAttribute("cnt", cnt);
+      System.out.println("update_success_cnt: " + cnt);
+      
+      return "/member/msg";
     } else {
       return "redirect:/member/login_cookie_need";
     }
@@ -672,40 +552,25 @@ public class MemberCont {
   public String unsub_delete_process(HttpSession session, Model model, @ModelAttribute("memberVO") MemberVO memberVO) {
 //    System.out.println(session.getAttribute("memberno"));
     // 회원 및 회원 본인일 경우
-    System.out.println("asdasd" + memberVO.getMemberno());
-    if (this.memberProc.isMember(session) && memberVO.getMemberno() == (int) session.getAttribute("memberno")) {
+    System.out.println("-> memberno: " + memberVO.getMemberno());
+    
+    if (memberVO.getMemberno() == (int) session.getAttribute("memberno")) {
       int cnt = this.memberProc.unsub_delete(memberVO);
-      
+      model.addAttribute("cnt", cnt);
+
       if (cnt == 1) {
-        model.addAttribute("code", "unsub_delete_success");
+        model.addAttribute("code", "unsub_success");
         model.addAttribute("memberno", memberVO.getMemberno());
         model.addAttribute("grade", memberVO.getGrade());
         
-        System.out.println("memberno: " + memberVO.getMemberno() + ", id: " + memberVO.getId() + "email: " + memberVO.getEmail() + " has unsub_delete");
+        System.out.println("-> memberno: " + memberVO.getMemberno() + ", id: " + memberVO.getId() + "email: " + memberVO.getEmail() + " has unsub_delete");
         
         session.invalidate();
-        return "redirect:/";
+        model.addAttribute("code", "unsub_success");
+        return "/member/msg"; // templates/member/msg.html
       } else {
-        model.addAttribute("code", "unsub_delete_fail");
-        return "/member/error";
-      }
-    }
-    // 관리자 및 관리자 본인일 경우
-    else if (this.memberProc.isMemberAdmin(session) && memberVO.getMemberno() == (int) session.getAttribute("memberno")) {
-      int cnt = this.memberProc.unsub_delete(memberVO);
-      
-      if (cnt == 1) {
-        model.addAttribute("code", "unsub_delete_success");
-        model.addAttribute("memberno", memberVO.getMemberno());
-        model.addAttribute("grade", memberVO.getGrade());
-        
-        System.out.println("memberno: " + memberVO.getMemberno() + ", id: " + memberVO.getId() + "email: " + memberVO.getEmail() + " has unsub_delete");
-        
-        session.invalidate();
-        return "redirect:/";
-      } else {
-        model.addAttribute("code", "unsub_delete_fail");
-        return "/member/error";
+        model.addAttribute("code", "unsub_fail");
+        return "/member/msg";
       }
     } else {
       return "redirect:/member/login_cookie_need";
@@ -928,15 +793,11 @@ public class MemberCont {
       } else if (memberVO.getGrade() >= 41 && memberVO.getGrade() <= 49) {
         session.setAttribute("grade", "stopped");
       }
-//      if (memberVO.getGradeno() == null) {
-//        session.setAttribute("grade", "admin");
-//      } else if (memberVO.getGradeno() >= 3 && memberVO.getGradeno() <= 16) {
-//        session.setAttribute("grade", "member"); // 기본 회원
-//      } else if (memberVO.getGrade() >= 21) {
-//        session.setAttribute("grade", "guest");
-//      }
       
-      // Cookie 관련 코드---------------------------------------------------------
+      // cancel
+      
+      
+      // Cookie 관련 코드-----------------------------------------------------
       // -------------------------------------------------------------------
       // id 관련 쿠기 저장
       // -------------------------------------------------------------------
@@ -983,11 +844,10 @@ public class MemberCont {
       
       return "redirect:/";
     } else { // 로그인 실패
-      ra.addFlashAttribute("cnt", cnt);
+      model.addAttribute("cnt", cnt);
       model.addAttribute("code", "login_fail");
-      System.out.println("login_fail");
-      return "redirect:/member/login";
-//      return "/member/msg";
+      System.out.println("-> login_fail");
+      return "/member/msg";
     }
   }
   

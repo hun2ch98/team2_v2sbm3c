@@ -113,3 +113,8 @@ WHERE id = 'admin' AND memberno NOT IN (
     FROM member
     WHERE id = 'admin'
 );
+
+8. 회원 탈퇴
+UPDATE member
+SET grade = 99
+WHERE memberno=10;
