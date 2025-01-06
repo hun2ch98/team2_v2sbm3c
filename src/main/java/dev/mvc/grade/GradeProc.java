@@ -52,7 +52,7 @@ public class GradeProc implements GradeProcInter {
     public ArrayList<GradeVO> list_by_gradeno_search_paging(HashMap<String, Object> map) {
       // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
       int now_page = (int) map.get("now_page");
-      int record_per_page = 10; // 페이지당 레코드 수
+      int record_per_page = 5; // 페이지당 레코드 수
 
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
@@ -174,58 +174,4 @@ public class GradeProc implements GradeProcInter {
         int cnt = this.gradeDAO.delete(gradeno);
         return cnt;
     }
-    
-//    @Override
-//    public ArrayList<GradeVO> list_by_gradeno_search(HashMap<String, Object> hashMap) {
-//      ArrayList<GradeVO> list = this.gradeDAO.list_by_gradeno_search(hashMap);
-//      return list;
-//    }
-//    
-//    @Override
-//    public int count_by_gradeno_search(HashMap<String, Object> map) {
-//      int cnt = this.gradeDAO.count_by_gradeno_search(map);
-//      return cnt;
-//    }
-//    
-//    @Override
-//    public ArrayList<GradeVO> list_by_gradeno_search_paging(HashMap<String, Object> map) {
-//      /*
-//       * 예) 페이지당 10개의 레코드 출력 1 page: WHERE r >= 1 AND r <= 10 2 page: WHERE r >= 11
-//       * AND r <= 20 3 page: WHERE r >= 21 AND r <= 30
-//       * 
-//       * 페이지에서 출력할 시작 레코드 번호 계산 기준값, nowPage는 1부터 시작 1 페이지 시작 rownum: now_page = 1, (1
-//       * - 1) * 10 --> 0 2 페이지 시작 rownum: now_page = 2, (2 - 1) * 10 --> 10 3 페이지 시작
-//       * rownum: now_page = 3, (3 - 1) * 10 --> 20
-//       */
-//      int begin_of_page = ((int)map.get("now_page") - 1) * Grade.RECORD_PER_PAGE;
-//      
-//      // 시작 rownum 결정
-//      // 1 페이지 = 0 + 1: 1
-//      // 2 페이지 = 10 + 1: 11
-//      // 3 페이지 = 20 + 1: 21
-//      int start_num = begin_of_page + 1;
-//      
-//   // 종료 rownum
-//      // 1 페이지 = 0 + 10: 10
-//      // 2 페이지 = 10 + 10: 20
-//      // 3 페이지 = 20 + 10: 30
-//      int end_num = begin_of_page + Grade.RECORD_PER_PAGE;
-//      /*
-//       * 1 페이지: WHERE r >= 1 AND r <= 10 2 페이지: WHERE r >= 11 AND r <= 20 3 페이지: WHERE
-//       * r >= 21 AND r <= 30
-//       */
-//
-//      // System.out.println("begin_of_page: " + begin_of_page);
-//      // System.out.println("WHERE r >= "+start_num+" AND r <= " + end_num);
-//      
-//      // 계산된 값을 `HashMap`에 추가합니다.
-//      map.put("start_num", start_num);
-//      map.put("end_num", end_num);
-//      
-//      // 데이터베이스 쿼리 실행
-//      ArrayList<GradeVO> list = this.gradeDAO.list_by_gradeno_search_paging(map);
-//      
-//      return list;
-//    }
-
 }

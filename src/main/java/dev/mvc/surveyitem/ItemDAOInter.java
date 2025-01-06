@@ -1,5 +1,7 @@
 package dev.mvc.surveyitem;
 
+import java.util.ArrayList;
+
 public interface ItemDAOInter {
   
   /**
@@ -15,6 +17,12 @@ public interface ItemDAOInter {
    * @return
    */
   public ItemVO read(int itemno);
+  
+  /**
+   * 목록
+   * @return
+   */
+  public ArrayList<ItemVO> list_all();
   
   /**
    * 수정

@@ -24,7 +24,7 @@ public interface MemberProcInter {
    * 회원 전체 목록
    * @return
    */
-  public ArrayList<MemberVO> list();
+  public ArrayList<MemberVO> list_all();
 
   /**
    * memberno로 회원 정보 조회
@@ -135,8 +135,14 @@ public interface MemberProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */ 
-  public String pagingBox(int memberno, int now_page, String word, String list_file, int search_count, 
+  public String pagingBox(int now_page, String name, String list_file, int search_count, 
                                         int record_per_page, int page_per_block);
 
 
+  /**
+   * Member의 nickname 가져오기
+   * @param memberno
+   * @return nickname
+   */
+  String getNickname(int memberno);
 }

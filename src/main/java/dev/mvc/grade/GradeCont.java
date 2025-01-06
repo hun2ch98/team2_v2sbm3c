@@ -152,10 +152,16 @@ public class GradeCont {
     int startRow = (now_page - 1) * record_per_page + 1;
     int endRow = now_page * record_per_page;
     
+    // grade_name을 NULL 또는 빈 문자열 처리
     grade_name = Tool.checkNull(grade_name).trim();
     // grade_name이 빈 문자열인 경우 기본값으로 설정 (예: null 또는 특정 문자열)
     if (grade_name.isEmpty()) {
         grade_name = ""; // 또는 원하는 기본값 설정
+    }
+    
+    // gradeno가 0이면 기본값으로 설정
+    if (gradeno < 0) {
+      gradeno = 0;
     }
     
     model.addAttribute("gradeno", gradeno);
@@ -163,6 +169,7 @@ public class GradeCont {
     model.addAttribute("now_page", now_page);
     
     HashMap<String, Object> map = new HashMap<>();
+    map.put("gradeno", gradeno);
     map.put("grade_name", grade_name);
     map.put("now_page", now_page);
     map.put("startRow", startRow);
@@ -174,7 +181,7 @@ public class GradeCont {
     } else {
       model.addAttribute("list", list);
     }
-    
+
     int search_count = this.gradeProc.count_by_gradeno_search(map);
     String paging = this.gradeProc.pagingBox(now_page, grade_name, "/grade/list_by_gradeno_search_paging", search_count, Grade.RECORD_PER_PAGE, Grade.PAGE_PER_BLOCK);
     model.addAttribute("paging", paging);

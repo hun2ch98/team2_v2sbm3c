@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/diary")
 public class DiaryCont {
+	
   @Autowired
   @Qualifier("dev.mvc.diary.DiaryProc")
   private DiaryProcInter diaryProc;

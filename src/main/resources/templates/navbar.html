@@ -31,7 +31,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">다이어리 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/member/list_by_memberno_search_paging?word=${word}|}">회원 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?grade_name=${grade_name != null ? grade_name : ''}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
@@ -75,6 +75,26 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/weather/create|}">날씨 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/weather/list_by_weatherno_search_paging?is_continue=${is_continue ?: ''}|}">날씨 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="날씨">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/bannedwords/create|}">금지단어 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/bannedwords/list_by_wordrno_search_paging?is_continue=${is_continue ?: ''}|}">금지단어 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="그림">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/illustration/create|}">그림 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/illustration/list_by_illustno_search_paging_grid?is_continue=${is_continue ?: ''}|}">그림 목록</a></li>
                     </ul>
                 </li>
                 
@@ -153,7 +173,7 @@
       const passwdInput = document.createElement('input');
       passwdInput.type = 'hidden';
       passwdInput.name = 'passwd';
-      passwdInput.value = '1109'; // 회원 비밀번호 설정
+      passwdInput.value = '1234'; // 회원 비밀번호 설정
 
       form.appendChild(idInput);
       form.appendChild(passwdInput);

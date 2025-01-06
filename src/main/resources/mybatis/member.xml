@@ -12,35 +12,43 @@
   
   <!-- 회원 등록 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-    INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade)
-    VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade})
+      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade <if test="gradeno != null">, gradeno</if>)
+      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade} <if test="gradeno != null">, #{gradeno}</if>)
   </insert>
   
   <!-- 회원 목록 -->
-  <select id="list" resultType="dev.mvc.member.MemberVO">
-    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+  <select id="list_all" resultType="dev.mvc.member.MemberVO"> 
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
     FROM member
     ORDER BY grade ASC, id ASC
   </select>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
     FROM member
     WHERE memberno = #{memberno}
   </select>
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
     FROM member
     WHERE id = #{id}
   </select>
   
+  <!-- 로그인 처리 (1: 성공, 0: 실패) -->
+  <select id="login" resultType="int" parameterType="HashMap">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE id=#{id} AND passwd=#{passwd}
+  </select>
+  
+  
   <!-- 회원 정보 수정 -->
   <update id="update" parameterType="dev.mvc.member.MemberVO">
     UPDATE member 
-    SET name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}, passwd=#{passwd}
+    SET id=#{id}, name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
     WHERE memberno=#{memberno}
   </update>
   
@@ -49,45 +57,53 @@
     DELETE FROM member
     WHERE memberno=#{memberno}
   </delete>
-
-  <!-- 로그인 처리 (1: 성공, 0: 실패) -->
-  <select id="login" resultType="int" parameterType="HashMap">
-    SELECT COUNT(memberno) as cnt
-    FROM member
-    WHERE id=#{id} AND passwd=#{passwd}
-  </select>
   
-  <!-- 현재 패스워드 검사 -->
+  <!-- 현재 패스워드 검사 
   <select id="passwd_check" parameterType="HashMap" resultType="int">
     SELECT COUNT(memberno) as cnt
     FROM member
     WHERE memberno=#{memberno} AND passwd=#{passwd}
-  </select>
+  </select> -->
    
-  <!-- 패스워드 변경 -->
+  <!-- 패스워드 변경 
   <update id="passwd_update" parameterType="HashMap">
     UPDATE member
     SET passwd=#{passwd}
     WHERE memberno=#{memberno}
-  </update>
+  </update> -->
   
-  <!-- 회원 목록을 검색어로 페이징 처리하여 반환 -->
-  <select id="list_by_memberno_search_paging" parameterType="hashmap" resultType="dev.mvc.member.MemberVO">
-      SELECT *
-      FROM (
-          SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade,
-                 ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
-          FROM member
-          WHERE name LIKE '%' || #{word} || '%'
-      )
-      WHERE rnum BETWEEN #{start_num} AND #{end_num}
-  </select>
+  <!-- 검색 목록 
+  <select id="list_by_memberno_search" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
+      SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade
+      FROM grade
+      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+      ORDER BY gradeno DESC
+      OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+  </select> -->
   
-  <!-- 회원번호별 검색된 레코드 갯수 -->
-  <select id="list_by_memberno_search_count" parameterType="hashmap" resultType="int">
+  <!-- 검색된 레코드 갯수 
+  <select id="list_by_memberno_search_count" resultType="int" parameterType="HashMap">
       SELECT COUNT(*)
       FROM member
-      WHERE name LIKE '%' || #{word} || '%'
-  </select>
+      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+  </select> -->
   
+  <!-- 등급별 검색 + 페이징 목록 
+  <select id="list_by_memberno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
+      SELECT *
+      FROM (
+          SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade,
+                 ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
+          FROM grade
+          WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select> -->
+  
+  <select id="getNickname" parameterType="int" resultType="string">
+    SELECT nickname
+    FROM member
+    WHERE memberno = #{memberno}
+  </select>
+    
 </mapper>

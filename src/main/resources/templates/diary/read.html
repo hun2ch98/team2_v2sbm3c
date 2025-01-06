@@ -1,0 +1,71 @@
+<!DOCTYPE html> 
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    <span th:text="${diaryVO.title }" class="title_line_text"></span > 
+    > <span th:text="${diaryVO.ddate}" class="title_line_text"></span > 
+    > 글 조회
+  </div>
+  
+  <aside class="aside_right" th:if="${session.grade == 'admin'}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>    
+    <a th:href="@{|./list_by_diaryno?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록형</a>    
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/contents/create?diaryno=${diaryVO.diaryno}|}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/contents/update?diaryno=${diaryVO.diaryno}&now_page=${now_page}&word=${word }|}">글 수정</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./update_file?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}|}">파일 수정</a>  
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./delete?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}&diaryno=${diaryVO.diaryno}|}">삭제</a>  
+ </aside> 
+
+  <aside class="aside_right" th:if="${session.grade != 'admin'}">
+     <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./list_by_diaryno?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록형</a>    
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|./list_by_diaryno_grid?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">갤러리형</a>
+  </aside> 
+ 
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div style="width: 100%; word-break: break-all;">
+        
+          <div th:if="${illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')}">
+            <img th:src="@{|/contents/storage/${illustrationVO.illust_saved}|}" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
+          </div>
+
+          <span style="font-size: 1.5em; font-weight: bold;" th:text="${diaryVO.title}"></span>
+          <span style="font-size: 1em;" th:text="${diaryVO.ddate }"></span><br><br>
+          <div style="white-space: pre-wrap;"><span th:text="${diaryVO.content}"></span></div>
+        </div>
+      </li>
+
+      <li class="li_none" th:text="|검색어(키워드): ${diaryVO.word }|">
+      </li>
+      
+      <li class="li_none" th:if="${diaryVO.size1 > 0}">
+        <div>
+            첨부 파일: 
+            <a th:href='@{|/download?dir=/contents/storage&filename=${diaryVO.file1saved}&downname=${diaryVO.file1}|}'
+               th:text='|${diaryVO.file1}|'></a> 
+            <span th:text="|(${diaryVO.size1_label})|"></span>  
+            <a th:href='@{|/download?dir=/contents/storage&filename=${diaryVO.file1saved}&downname=${diaryVO.file1}|}'>
+                <img th:src="@{/contents/images/download.png}" class="icon" title="download">
+            </a>
+        </div>
+
+      </li>   
+    </ul>
+  </fieldset>
+
+</div>
+
+</html>
+

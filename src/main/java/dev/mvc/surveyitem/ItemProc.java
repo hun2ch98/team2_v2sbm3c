@@ -1,5 +1,7 @@
 package dev.mvc.surveyitem;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,12 @@ public class ItemProc implements ItemProcInter{
   public ItemVO read(int itemno) {
     ItemVO itemVO = this.itemDAO.read(itemno);
     return itemVO;
+  }
+  
+  @Override
+  public ArrayList<ItemVO> list_all(){
+    ArrayList<ItemVO> list = this.itemDAO.list_all();
+    return list;
   }
   
   @Override

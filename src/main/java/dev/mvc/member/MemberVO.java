@@ -9,6 +9,8 @@ import lombok.Setter;
 public class MemberVO {
     /** 회원 번호 */
     private int memberno;
+    /** 등급 번호 */
+    private Integer gradeno;
     /** 아이디(이메일) */
     private String id = "";
     /** 패스워드 */
@@ -34,7 +36,9 @@ public class MemberVO {
     
     // -----------------------------------------------------------------------------------
     /** 파일 업로드 관련 */
-    private MultipartFile pf_imgMF = null;
+    private MultipartFile file1MF = null;
+    /** 메인 이미지 크기 단위,  파일 크기 */
+    private String size1_label = "";
     /** 프로필 이미지 */
     private String pf_img = "";
     /** 실제 저장된 프로필 이미지 */
@@ -53,7 +57,5 @@ public class MemberVO {
     private String passwd_save = "";
     /** 이동할 주소 저장 */
     private String url_address = "";
-    
-    
 }
 
