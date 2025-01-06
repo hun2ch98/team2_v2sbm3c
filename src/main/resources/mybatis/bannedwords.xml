@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.bannedwords.BannedwordsDAOInter">
+
+  <!-- 금지 단어 글 추가 -->
+  <insert id="create" parameterType="dev.mvc.bannedwords.BannedwordsVO">
+    INSERT INTO bannedwords (wordno, word, reason, rdate, goodcnt)
+    VALUES (bannedwords_seq.nextval, #{word}, #{reason}, sysdate, 0)
+  </insert>
+  
+  <!-- 금지 단어 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.bannedwords.BannedwordsVO">
+    SELECT wordno, word, reason, goodcnt, rdate
+    FROM bannedwords
+    WHERE wordno = #{wordno}
+  </select>
+  
+  <!-- 모든 목록 -->
+  <select id="list_all" parameterType="dev.mvc.bannedwords.BannedwordsVO">
+    SELECT wordno, word, reason, goodcnt, rdate
+    FROM bannedwords
+    ORDER BY wordno DESC
+  </select>
+  
+  <!-- 등록된 목록 -->
+  <select id="list_by_wordno" resultType="dev.mvc.bannedwords.BannedwordsVO">
+    SELECT wordno, word, reason, goodcnt, rdate
+    FROM bannedwords
+    ORDER BY wordno DESC
+  </select>
+  
+  <!-- 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.bannedwords.BannedwordsVO">
+    UPDATE bannedwords
+    SET word=#{word}, reason=#{reason}, rdate=sysdate 
+    WHERE wordno = #{wordno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM bannedwords
+    WHERE wordno = #{wordno}
+  </delete>
+  
+  <!-- 검색 목록 -->
+  <select id="list_by_wordno_search" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+        SELECT wordno, word, goodcnt, reason
+               ROW_NUMBER() OVER (ORDER BY wordno DESC) AS rnum
+        FROM bannedwords
+        WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 검색 레코드 갯수 -->
+  <select id="count_by_wordno_search" resultType="int" parameterType="HashMap">
+      SELECT COUNT(*)
+      FROM bannedwords
+      WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
+  </select>
+   
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM bannedwords
+  </select>
+  
+  <!-- 금지 단어별 검색 + 페이징 목록 -->
+  <select id="list_by_wordno_search_paging" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="HashMap">
+      SELECT *
+      FROM (
+          SELECT wordno, word, reason, goodcnt, rdate,
+                 ROW_NUMBER() OVER (ORDER BY wordno DESC) AS rnum
+          FROM bannedwords
+          WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 특정 달의 조회 -->
+  <select id="list_goodcnt" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="int">
+    SELECT wordno, word, reason, goodcnt, rdate
+    FROM bannedwords
+    WHERE SUBSTR(wordno, 1, 10) = #{wordno}
+    ORDER BY wordno ASC
+  </select>
+
+</mapper>
