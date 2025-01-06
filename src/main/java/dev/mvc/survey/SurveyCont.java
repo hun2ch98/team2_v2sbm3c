@@ -319,7 +319,7 @@ public class SurveyCont {
   @GetMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
       Model model, 
-      @RequestParam("surveyno") int surveyno, 
+      @PathVariable("surveyno") int surveyno,
       RedirectAttributes ra, 
       @RequestParam(name="is_continue", defaultValue="") String is_continue,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
@@ -354,6 +354,7 @@ public class SurveyCont {
   public String update_text(HttpSession session, 
       Model model, 
       @ModelAttribute("surveyVO") SurveyVO surveyVO, 
+      @PathVariable("surveyno") int surveyno,
       RedirectAttributes ra,
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
@@ -386,7 +387,7 @@ public class SurveyCont {
    */
   @GetMapping(value = "/update_file/{surveyno}")
   public String update_file(HttpSession session, Model model, 
-         @RequestParam(name="surveyno", defaultValue="0") int surveyno,
+         @PathVariable("surveyno") int surveyno,
          @RequestParam(name="is_continue", defaultValue="") String is_continue, 
          @RequestParam(name="now_page", defaultValue="1") int now_page) {
     
@@ -414,6 +415,7 @@ public class SurveyCont {
   @PostMapping(value = "/update_file/{surveyno}")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,
                             @ModelAttribute("surveyVO") SurveyVO surveyVO,
+                            @PathVariable("surveyno") int surveyno,
                             @RequestParam(name="is_continue", defaultValue="") String is_continue, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
@@ -495,7 +497,7 @@ public class SurveyCont {
   @GetMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
                                @RequestParam(name="memberno", defaultValue="1") int memberno, 
-                               @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
+                               @PathVariable("surveyno") int surveyno,
                                @RequestParam(name="is_continue", defaultValue="") String is_continue, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
@@ -527,7 +529,7 @@ public class SurveyCont {
   @PostMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, RedirectAttributes ra,
       @RequestParam(name="memberno", defaultValue="1") int memberno, 
-      @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
+      @PathVariable("surveyno") int surveyno,
       @RequestParam(name="is_continue", defaultValue="") String is_continue, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
     

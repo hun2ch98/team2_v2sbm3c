@@ -56,6 +56,9 @@ public class SurveyVO {
   @Pattern(regexp="^[YN]$", message="Y 또는 N만 입력 가능합니다.")
   private String is_continue;
   
+  /** 추천 */
+  private int goodcnt;
+  
 //파일 업로드 관련
   // -----------------------------------------------------------------------------------
   /**

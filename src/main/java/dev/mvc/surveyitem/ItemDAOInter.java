@@ -52,7 +52,7 @@ public interface ItemDAOInter {
    * 검색 목록
    * @return
    */
-  public ArrayList<ItemVO> list_search(String word);
+  public ArrayList<ItemVO> list_search(int surveyno, String word);
   
   /**
    * 검색 갯수
@@ -67,6 +67,20 @@ public interface ItemDAOInter {
    * @return
    */
   public ArrayList<ItemVO> list_search_paging(Map<String, Object> map);
+  
+  /**
+   * 특정 카테고리에 속한 레코드 갯수 산출
+   * @param surveyno
+   * @return
+   */
+  public int count_by_surveyno(int surveyno);
+  
+  /**
+   * 특정 레코드 삭제
+   * @param surveyno
+   * @return
+   */
+  public int delete_by_surveyno(int surveyno);
 
 
 }

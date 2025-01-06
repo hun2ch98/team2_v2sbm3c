@@ -49,28 +49,26 @@
     SELECT itemno, surveyno, item_seq, item, item_cnt
     FROM surveyitem
     <where>
-      <if test="surveyno != null and surveyno != ''">
-        surveyno = #{surveyno, jdbcType=INTEGER}
+      <if test="surveyno != null">
+        surveyno = #{surveyno}
       </if>
       <if test="word != null and word != ''">
-        AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+        AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
       </if>
     </where>
     ORDER BY itemno ASC
   </select>
-  
+
   <!-- 카테고리별 검색 레코드 갯수 -->
   <select id="count_by_search" resultType="int" parameterType="Map">
     SELECT COUNT(*) as cnt
     FROM surveyitem
     <where>
-      <if test="surveyno != null and surveyno != 0">
-        surveyno = #{surveyno, jdbcType=INTEGER}
-      </if>
       <if test="word != null and word != ''">
-        AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+        UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
       </if>
     </where>
+    ORDER BY itemno ASC
   </select>
   
   <!-- 검색 + 페이징 목록 -->
@@ -81,19 +79,32 @@
         FROM (
             SELECT itemno, surveyno, item_seq, item, item_cnt
             FROM surveyitem
-            <where>
-              <if test="surveyno != null and surveyno != ''">
-                surveyno = #{surveyno, jdbcType=INTEGER}
-              </if>
-              <if test="word != null and word != ''">
-                AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
-              </if>
-            </where>
+            <choose>
+              <when test="word == null or word == ''">
+                WHERE surveyno=#{surveyno}
+              </when>
+              <otherwise>
+                WHERE surveyno=#{surveyno} AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
+              </otherwise>
+            </choose>
             ORDER BY itemno ASC
         )
     )
-    WHERE r BETWEEN #{start_num, jdbcType=INTEGER} AND #{end_num, jdbcType=INTEGER}
+    WHERE r BETWEEN #{start_num} AND #{end_num}
   </select>
+  
+  <!-- 특정 카테고리에 속한 레코드 갯수를 리턴 -->
+  <select id="count_by_surveyno" resultType="int" parameterType="int">
+    SELECT COUNT(*) as cnt 
+    FROM surveyitem 
+    WHERE surveyno=#{surveyno}
+  </select>
+  
+  <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->
+  <delete id="delete_by_surveyno" parameterType="int">
+    DELETE FROM surveyitem
+    WHERE surveyno=#{surveyno}
+  </delete>
 
   
 </mapper>
