@@ -4,10 +4,10 @@
 
   <div class='title_line'>
 
-    목록 조회
-
-    검색
-
+    목록 조회 검색
+    
+   <span th:if="${type != ''}" th:text="|> ${type} (${search_count} 건)|" class="title_line_text"></span>
+  
   </div>
 
   <aside class="aside_right">
@@ -15,7 +15,6 @@
       <a th:href="@{|/weather/create?weatherno=${weatherVO?.weatherno}|}">등록</a>
       <span class="menu_devide">│</span>    
     </span>
-    
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>    
     <a th:href="@{|./list_by_weatherno_search_paging?weatherno=${weatherVO?.weatherno }&now_page=${now_page}|}">목록</a>    
@@ -36,7 +35,7 @@
     </tr>
    
     <tr th:if="${list != null and list.size() > 0}" th:each="weatherVO, status:${list}" 
-         th:attr="onclick=|location.href='/weather/read?weatherno=${weatherVO.weatherno}&now_page=${now_page}'|"
+         th:attr="onclick=|location.href='/weather/read?weatherno=${weatherVO.weatherno}&type=${type}&now_page=${now_page}'|"
          style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
         <div th:if="${weatherVO.file1.endsWith('jpg') or weatherVO.file1.endsWith('png')  or weatherVO.file1.endsWith('gif')}">

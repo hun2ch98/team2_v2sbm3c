@@ -261,13 +261,16 @@ public class WeatherCont {
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
 //      model.addAttribute("diaryVO", diaryVO);
+      type = Tool.checkNull(type).trim();
       model.addAttribute("memberVO", memberVO);
       model.addAttribute("weatherno", weatherno);
+      model.addAttribute("type", type);
       model.addAttribute("now_page", now_page);
 
       HashMap<String, Object> map = new HashMap<>();
 //      map.put("diaryno", diaryno);
       map.put("memberno", memberno);
+      map.put("type", type);
       map.put("now_page", now_page);
       map.put("startRow", startRow);
       map.put("endRow", endRow);
@@ -589,7 +592,6 @@ public class WeatherCont {
                                @RequestParam(name="weatherno", defaultValue="0") int weatherno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
@@ -604,12 +606,7 @@ public class WeatherCont {
       model.addAttribute("memberVO", memberVO);
       
       return "/weather/delete"; // forward
-      
-    } else {
-      ra.addAttribute("url", "/member/login_cookie_need");
-      return "redirect:/weather/msg"; 
-    }
-
+     
   }
   
   /**

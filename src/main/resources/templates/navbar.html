@@ -87,6 +87,16 @@
                 
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="금지단어">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/bannedwords/create|}">금지단어 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/bannedwords/list_by_wordno_search_paging?is_continue=${is_continue ?: ''}|}">금지단어 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="일기">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
