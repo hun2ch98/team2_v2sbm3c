@@ -3,10 +3,10 @@
   <form name="frm_search" method="get" action="/weather/list_by_weatherno_search_paging">
     <input type="hidden" name="memberno" id="memberno" th:value="${memberVO.memberno}" >
     
-    <input type="text" name="weather" id="weather" th:value="${weather}" >
+    <input type="text" name="type" id="type" th:value="${type}" >
     <button type='submit' class='btn btn-secondary btn-sm' 
                  style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
-    <span th:if="${weather != null and weather != ''}">
+    <span th:if="${type != null and type != ''}">
       <button type='button' class='btn btn-secondary btn-sm' 
                    style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
                    th:onclick="|location.href='/weather/list_by_weatherno_search_paging?weatherno=${weatherVO.weatherno}'|">검색 취소</button>
