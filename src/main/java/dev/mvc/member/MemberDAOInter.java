@@ -3,7 +3,7 @@ package dev.mvc.member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import dev.mvc.board.BoardVO;
+import dev.mvc.dto.SearchDTO;
 
 public interface MemberDAOInter {
   
@@ -15,6 +15,13 @@ public interface MemberDAOInter {
   public int checkID(String id);
   
   /**
+   * 이메일 중복 검사
+   * @param email
+   * @return
+   */
+  public int checkEMAIL(String email);
+  
+  /**
    * 회원 가입
    * @param memberVO
    * @return
@@ -22,10 +29,18 @@ public interface MemberDAOInter {
   public int create(MemberVO memberVO);
   
   /**
-   * 회원 전체 목록
+   * 검색 회원 수
+   * @param memberVO
    * @return
    */
-  public ArrayList<MemberVO> list_all();
+  public int list_search_count(SearchDTO searchDTO);
+  
+  /**
+   * 회원 검색 + 페이징 목록
+   * @param memberVO
+   * @return
+   */
+  public ArrayList<MemberVO> list_search_paging(SearchDTO searchDTO);
 
   /**
    * memberno로 회원 정보 조회
@@ -42,18 +57,11 @@ public interface MemberDAOInter {
   public MemberVO readById(String id);
   
   /**
-   * 수정 처리
+   * 회원 정보 수정 처리
    * @param memberVO
    * @return
    */
   public int update(MemberVO memberVO);
-  
-  /**
-   * 프로필 이미지 수정
-   * @param memberVO
-   * @return
-   */
-  public int update_text(MemberVO memberVO);
   
   /**
    * 파일 수정
@@ -61,13 +69,18 @@ public interface MemberDAOInter {
    * @return
    */
   public int update_file(MemberVO memberVO);
- 
+  
   /**
-   * 회원 삭제 처리
-   * @param memberno
+   * 회원 탈퇴 처리 -> grade(등급) 99: 탈퇴 회원 번호로 변경
+   * @param memberVO
    * @return
    */
-  public int delete(int memberno);
+  public int unsub_delete(MemberVO memberVO);
+  
+  /**
+   * 로그인 처리
+   */
+  public int login(HashMap<String, Object> map);
   
   /**
    * 현재 패스워드 검사
@@ -84,30 +97,25 @@ public interface MemberDAOInter {
   public int passwd_update(HashMap<String, Object> map);
   
   /**
-   * 로그인 처리
+   * 문자 인증 성공 시 비밀번호 수정 처리
+   * @param map
+   * @return 수정한 비밀번호 개수
    */
-  public int login(HashMap<String, Object> map);
+  public int update_passwd_find(HashMap<String, Object> map);
   
   /**
-   * 회원번호별 검색 목록
-   * @param hashMap
+   * 이메일, 이름 입력받아서 일치하는 회원이 있는지 검사
+   * @param email
+   * @param name
    * @return
    */
-  public ArrayList<MemberVO> list_by_memberno_search(HashMap<String, Object> hashMap);
-
+  public int find_id_check(HashMap<String, String> map);
+  
   /**
-   * 회원번호별 검색된 레코드 갯수
-   * @param hashMap
+   * 아이디, 이메일 입력받아서 일치하는 회원이 있는지 검사
+   * @param id
+   * @param email
    * @return
    */
-  public int list_by_memberno_search_count(HashMap<String, Object> hashMap);
-
-  /**
-   * 회원번호별 검색 목록 + 페이징
-   * @param map
-   * @return
-   */
-  public ArrayList<MemberVO> list_by_memberno_search_paging(HashMap<String, Object> map);
-
-  public String getNickname(int memberno);
+  public int find_passwd(String id, String phone);
 }

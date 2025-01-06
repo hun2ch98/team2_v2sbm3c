@@ -7,132 +7,30 @@
   <!-- 이미지 등록 -->
   <insert id="create" parameterType="dev.mvc.illustration.IllustrationVO">
     INSERT INTO illustration (
-      illustno, illust, illust_saved, illust_thumb, illust_size, conversationno, memberno
+      illustno, illust, illust_saved, illust_thumb, illust_size, conversationno, diaryno
     )
     VALUES (
-      illustration_seq.nextval, #{illust}, #{illust_saved}, #{illust_thumb}, #{illust_size}, #{conversationno}, #{memberno}
+      illustration_seq.nextval, #{illust}, #{illust_saved}, #{illust_thumb}, #{illust_size}, #{conversationno}, #{diaryno}
     )
   </insert>
 
-  <!-- 모든 일러스트 목록 -->
-  <select id="list_all" resultType="dev.mvc.illustration.IllustrationVO">
-    SELECT illustno, illust, illust_saved, illust_thumb, illust_size, conversationno
-    FROM illustration
-    ORDER BY illustno DESC
-  </select>
-
-  <!-- 특정 일러스트 조회 -->
-  <select id="read" resultType="dev.mvc.illustration.IllustrationVO" parameterType="int">
-    SELECT illustno, illust, illust_saved, illust_thumb, illust_size, conversationno
-    FROM illustration
-    WHERE illustno = #{illustno}
-  </select>
-
-  <!-- 파일 수정 -->
-  <update id="update_file" parameterType="dev.mvc.illustration.IllustrationVO">
-    UPDATE illustration
-    SET 
-      illust = #{illust},
-      illust_saved = #{illust_saved},
-      illust_thumb = #{illust_thumb},
-      illust_size = #{illust_size}
-    WHERE illustno = #{illustno}
-  </update>
-
-  <!-- 글 삭제 -->
-  <delete id="delete" parameterType="int">
-    DELETE FROM illustration
-    WHERE illustno = #{illustno}
-  </delete>
-
-  <!-- 페이지네이션 적용 목록 -->
-  <select id="list_by_paging" resultType="dev.mvc.illustration.IllustrationVO" parameterType="HashMap">
-    SELECT illustno, illust, illust_saved, illust_thumb, illust_size, conversationno, r
-    FROM (
-      SELECT illustno, illust, illust_saved, illust_thumb, illust_size, conversationno, rownum AS r
-      FROM (
-        SELECT illustno, illust, illust_saved, illust_thumb, illust_size, conversationno
-        FROM illustration
-        ORDER BY illustno DESC
-      )
-      WHERE rownum &lt;= #{end_num}
-    )
-    WHERE r &gt;= #{start_num}
-  </select>
-
-  <!-- 일러스트 갯수 확인 -->
-  <select id="count_all" resultType="int">
-    SELECT COUNT(*)
-    FROM illustration
-  </select>
-
-  <select id="getDiaryDateByIllustNo" parameterType="int" resultType="java.util.Date">
-    SELECT d.ddate
-    FROM diary d
-    WHERE d.illustno = #{illustno}
-  </select>
-
-  <select id="listByIllustNoSearchPaging" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
-    SELECT *
-    FROM (
-        SELECT A.*, ROWNUM AS rnum
-        FROM (
-            SELECT i.illustno, i.illust, i.illust_saved, i.illust_thumb, i.illust_size, i.conversationno, d.ddate
-            FROM illustration i
-            INNER JOIN diary d ON i.illustno = d.illustno
-            WHERE 1=1
-            <if test="start_date != null and start_date != ''">
-                AND TRUNC(d.ddate) >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
-            </if>
-            <if test="end_date != null and end_date != ''">
-                AND TRUNC(d.ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
-            </if>
-            ORDER BY d.ddate DESC
-        ) A
-        WHERE ROWNUM &lt;= #{endNum}
-    )
-    WHERE rnum >= #{startNum}
-  </select>
-
-
-
-
-  <select id="countByDateRange" parameterType="HashMap" resultType="int">
-    SELECT COUNT(*)
+  <select id="listAllWithDiaryDetails" resultType="map">
+    SELECT 
+        i.illustno,
+        i.illust_thumb,
+        i.illust_size,
+        d.diaryno,
+        d.title,
+        d.ddate
     FROM illustration i
-    INNER JOIN diary d ON i.illustno = d.illustno
-    WHERE 1=1
-    <if test="start_date != null and start_date != ''">
-        AND TRUNC(d.ddate) >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
-    </if>
-    <if test="end_date != null and end_date != ''">
-        AND TRUNC(d.ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
-    </if>
+    LEFT JOIN diary d ON i.diaryno = d.diaryno
+    ORDER BY d.ddate ASC
   </select>
-  
-  <!-- 검색 + 페이징 목록 -->
-	<select id="list_search_paging" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
-	    SELECT *
-	    FROM (
-	        SELECT A.*, ROWNUM AS rnum
-	        FROM (
-	            SELECT i.illustno, i.illust, i.illust_saved, i.illust_thumb, i.illust_size, i.conversationno
-	            FROM illustration i
-	            INNER JOIN diary d ON i.illustno = d.illustno
-	            WHERE 1=1
-	            <if test="start_date != null">
-	                AND TRUNC(d.ddate) >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
-	            </if>
-	            <if test="end_date != null">
-	                AND TRUNC(d.ddate) &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
-	            </if>
-	            ORDER BY d.ddate DESC
-	        ) A
-	        WHERE ROWNUM &lt;= #{endNum}
-	    )
-	    WHERE rnum >= #{startNum}
-	</select>
 
+  
+  
+  
+  
 
 
 

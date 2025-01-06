@@ -9,8 +9,8 @@ CREATE TABLE survey (
 	surveyno	    NUMBER(10)		NOT NULL    PRIMARY KEY,
     memberno        NUMBER(10)      NOT NULL,
 	topic	        VARCHAR(100)	NOT NULL,
-	sdate	        VARCHAR(10)		    NULL,
-	edate	        VARCHAR(10)		    NULL,
+	sdate	        VARCHAR(10)		NOT NULL,
+	edate	        VARCHAR(10)		NOT NULL,
 	s_number	    NUMBER(7)		NOT NULL,
 	is_continue	    VARCHAR(100)	NOT NULL,
     file1           VARCHAR(200)        NULL,
@@ -20,7 +20,7 @@ CREATE TABLE survey (
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
-ALTER TABLE survey MODIFY visible CHAR(1);
+
 
 COMMENT ON TABLE SURVEY is '설문조사';
 COMMENT ON COLUMN SURVEY.SURVEYNO is '설문 조사 번호';
@@ -36,7 +36,7 @@ COMMENT ON COLUMN SURVEY.S_NUMBER is '참여 인원';
 COMMENT ON COLUMN SURVEY.IS_CONTINUE is '진행 여부';
 
 DROP SEQUENCE survey_seq;
-
+-- ALTER TABLE survey MODIFY visible CHAR(1);
 CREATE SEQUENCE survey_seq
   START WITH 1              -- 시작 번호
   INCREMENT BY 1            -- 증가값
@@ -47,8 +47,30 @@ CREATE SEQUENCE survey_seq
 COMMIT;
 
 -- create
-INSERT INTO survey(surveyno, topic, sdate, edate, s_number, is_continue, poster, poster_saved, poster_thumb, poster_size)
-VALUES (survey_seq.nextval, 'test', '2024/12/23', '2025/01/01', 5, 'Y', 'test1.jpg', 'test1_1.jpg', 'test1_t.jpg', 1000);
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '교육적 가치', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '언어와 표현', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '다양한 콘텐츠', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '에러 및 장애', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, 'AI 정확성', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '저장 및 관리', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '데이터 신뢰도', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, 'UI/UX 편리성', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '아이의 반응', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '추가 기능 요청', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '기능 만족도', '2024/12/23', '2025/01/01', 5, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '사용 빈도', '2024/12/23', '2025/01/01', 5, 'Y');
 
 -- read
 SELECT * FROM survey;
@@ -62,8 +84,12 @@ UPDATE survey SET topic = 'test2' WHERE surveyno = 1;
 ---------- ---------------------------------------------------------------------------------------------------- ---------- ---------- ---------- - ---------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------- ----------- ----------------------------------------------------------------------------------------------------
          1 test2                                                                                                2024/12/23 2025/01/01          5 Y test1.jpg                                                                                            test1_1.jpg                                                                                                 1000 test1_t.jpg                                                                                         
 
+UPDATE survey SET topic = '앱이 아이들에게 긍정적인 표현을 학습하는 데 도움된다고 느끼시나요?' WHERE surveyno = 42;
+
 -- delete
 DELETE FROM survey;
+
+DELETE FROM survey WHERE topic='교육적 가치';
 
 COMMIT;
 
@@ -118,4 +144,13 @@ FROM (
 WHERE rnum >= 1; -- 여기서 1~10번 행만 가져옴
 
 COMMIT;
+
+
+-- cateno FK 특정 그룹에 속한 레코드 모두 삭제
+DELETE FROM surveyitem
+WHERE surveyno=11;
+
+
+
+
 

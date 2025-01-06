@@ -9,25 +9,26 @@
     INSERT INTO surveyitem(itemno, surveyno, item_seq, item, item_cnt)
     VALUES (surveyitem_seq.nextval, #{surveyno}, #{item_seq}, #{item}, #{item_cnt})
   </insert>
-
-  <!-- 일반적인 조회 -->
-  <select id="read" resultType="dev.mvc.surveyitem.ItemVO" parameterType="int">
+  
+  <select id="read" parameterType="int" resultType="dev.mvc.surveyitem.ItemVO">
     SELECT itemno, surveyno, item_seq, item, item_cnt
     FROM surveyitem
     WHERE itemno = #{itemno}
   </select>
+
   
-  <!-- 전체 조회 -->
-  <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
+  <!-- 회원 전체 조회 -->
+  <select id="list_all_com" parameterType="int" resultType="dev.mvc.surveyitem.ItemVO">
     SELECT itemno, surveyno, item_seq, item, item_cnt
     FROM surveyitem
-    ORDER BY itemno DESC
+    WHERE surveyno = #{surveyno}
+    ORDER BY item_seq ASC
   </select>
   
   <!-- 수정 -->
   <update id="update" parameterType="dev.mvc.surveyitem.ItemVO">
     UPDATE surveyitem
-    SET surveyno = #{surveyno}, item_seq = #{item_seq}, item = #{item}, item_cnt = #{item_cnt}
+    SET item_seq = #{item_seq}, item = #{item}, item_cnt = #{item_cnt}
     WHERE itemno = #{itemno}
   </update>
   
@@ -35,5 +36,64 @@
   <delete id="delete" parameterType="int">
     DELETE FROM surveyitem WHERE itemno=#{itemno}
   </delete>
+  
+  <!-- 설문조사 참여 수 -->
+  <update id="update_cnt" parameterType="int">
+    UPDATE surveyitem
+    SET item_cnt = item_cnt + 1
+    WHERE itemno = #{itemno}
+  </update>
+  
+  <!-- 카테고리별 검색 목록 -->
+  <select id="list_search" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
+    SELECT itemno, surveyno, item_seq, item, item_cnt
+    FROM surveyitem
+    <where>
+      <if test="surveyno != null and surveyno != ''">
+        surveyno = #{surveyno, jdbcType=INTEGER}
+      </if>
+      <if test="word != null and word != ''">
+        AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+      </if>
+    </where>
+    ORDER BY itemno ASC
+  </select>
+  
+  <!-- 카테고리별 검색 레코드 갯수 -->
+  <select id="count_by_search" resultType="int" parameterType="Map">
+    SELECT COUNT(*) as cnt
+    FROM surveyitem
+    <where>
+      <if test="surveyno != null and surveyno != 0">
+        surveyno = #{surveyno, jdbcType=INTEGER}
+      </if>
+      <if test="word != null and word != ''">
+        AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+      </if>
+    </where>
+  </select>
+  
+  <!-- 검색 + 페이징 목록 -->
+  <select id="list_search_paging" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
+    SELECT itemno, surveyno, item_seq, item, item_cnt, r
+    FROM (
+        SELECT itemno, surveyno, item_seq, item, item_cnt, rownum as r
+        FROM (
+            SELECT itemno, surveyno, item_seq, item, item_cnt
+            FROM surveyitem
+            <where>
+              <if test="surveyno != null and surveyno != ''">
+                surveyno = #{surveyno, jdbcType=INTEGER}
+              </if>
+              <if test="word != null and word != ''">
+                AND UPPER(item) LIKE '%' || UPPER(#{word, jdbcType=VARCHAR}) || '%'
+              </if>
+            </where>
+            ORDER BY itemno ASC
+        )
+    )
+    WHERE r BETWEEN #{start_num, jdbcType=INTEGER} AND #{end_num, jdbcType=INTEGER}
+  </select>
+
   
 </mapper>

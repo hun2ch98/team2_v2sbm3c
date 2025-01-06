@@ -1,11 +1,14 @@
 package dev.mvc.diary;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 // 알고리즘 구현
@@ -266,6 +269,21 @@ public class DiaryProc implements DiaryProcInter {
   }
 
 
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+
+  @Override
+  public List<Date> getAvailableDates() {
+      String sql = "SELECT DISTINCT ddate FROM diary";
+      return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getDate("ddate"));
+  }
+  
+  @Override
+  public int getDiaryNoByDate(Date ddate) {
+      String sql = "SELECT diaryno FROM diary WHERE ddate = ?";
+      return jdbcTemplate.queryForObject(sql, Integer.class, ddate);
+  }
+  
   
 }
 

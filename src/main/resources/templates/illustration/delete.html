@@ -1,55 +1,46 @@
 <!DOCTYPE html>
-
-<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
   <div class='title_line'>
-    <span th:text="${illustVO.genre }" class="title_line_text"></span > 
-    > <span th:text="${illustVO.name}" class="title_line_text"></span > 
-    > 삭제
+   삭제
   </div>
-  
+
   <aside class="aside_right">
-    <a th:href="@{|./create?illustno=${illustVO.illustno }|}">등록</a>
-    <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_illustno_grid?illustno=${illustVO.illustno }&word=${word }&now_page=${now_page}|}">갤러리형</a>
+    <a th:href="@{/illustration/list_all}">목록으로 돌아가기</a>    
   </aside>
-  
+
   <div class='menu_line'></div>
-  
+
   <fieldset class="fieldset_basic">
     <ul>
       <li class="li_none">
-        <div th:if="${illustVO.file1.endsWith('jpg') or illustVO.file1.endsWith('png')  or illustVO.file1.endsWith('gif')}"
-               style="text-align: center; width: 50%; float: left;">
-          <img th:src="@{|/contents/storage/${illustVO.file1saved}|}" style="width: 90%;">
+        <div th:if="${illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')}"
+             style="text-align: center; width: 100%;">
+          <img th:src="@{|/upload/${illustrationVO.illust_saved}|}" style="width: 50%; max-width: 500px;">
         </div>
 
-        <div th:if="${((illustVO.file1.endsWith('jpg') or illustVO.file1.endsWith('png')  or illustVO.file1.endsWith('gif')) == false) and (illustVO.size1 > 0)}"
-               class="display_table" style="float: left; width: 50%;">
+        <div th:if="${((illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')) == false) and (illustrationVO.illust_size > 0)}"
+             class="display_table" style="text-align: center; width: 100%;">
             <div class="display_table_cell">
-              <span th:text="${illustVO.file1}"></span>
+              <span th:text="${illustrationVO.illust}"></span>
             </div>
         </div>
 
-        <div th:if="${illustVO.size1 == 0}" style="text-align: center; width: 50%; float: left;">
-          <img src="/illustration/images/none1.png" style="width: 90%;">
+        <div th:if="${illustrationVO.illust_size == 0}" style="text-align: center; width: 100%;">
+          <img src="/images/none1.png" style="width: 50%; max-width: 500px;">
         </div>
   
-        <div style='text-align: left; width: 47%; float: left;'>
-          <span style='font-size: 1.5em;' th:text="${illustVO.title}"></span>
-          <br>
-          <form name='frm' method='POST' action='./delete'>
-            <input type="hidden" name="illustno" th:value="${illustVO.illustno }">
+        <div style='text-align: left; width: 100%;'>
+          <form name='frm' method='POST' th:action="@{/illustration/delete}">
+            <input type="hidden" name="illustno" th:value="${illustrationVO.illustno}">
             <input type="hidden" name="now_page" th:value="${now_page}">
-            <input type="hidden" name="search_word" th:value="${word}">
                 
-            <br> 
-            <div style='margin-top: 20px; clear: both;'>
+            <div style='margin-top: 20px;'>
               <span style="color: #FF0000; font-weight: bold;">삭제를 진행 하시겠습니까? 삭제하시면 복구 할 수 없습니다.</span>
               <br><br><br>  
-              <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+              <button type="submit" class="btn btn-danger btn-sm">삭제</button>
               <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
             </div>  
           </form>
@@ -57,7 +48,5 @@
       </li>
     </ul>
   </fieldset>  
-
 </div>
-
 </html>

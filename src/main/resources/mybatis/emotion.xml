@@ -57,6 +57,7 @@
   <select id="count_by_emono_search" resultType="int" parameterType="HashMap">
     SELECT COUNT(*)
     FROM emotion
+    WHERE (#{type} IS NULL OR #{type} = '' OR type = #{type})
   </select>
   
   <!-- 검색 및 페이징 -->
@@ -66,6 +67,7 @@
         SELECT emono, type, explan, file1, file1saved, thumb1, size1, 
                ROW_NUMBER() OVER (ORDER BY emono DESC) AS rnum
         FROM emotion
+        WHERE (#{type} IS NULL OR #{type} = '' OR type = #{type})
     )
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>

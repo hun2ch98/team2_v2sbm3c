@@ -93,7 +93,7 @@ public class SurveyCont {
       BindingResult bindingResult, 
       RedirectAttributes ra) {
     
-    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+//    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
    // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
@@ -183,9 +183,9 @@ public class SurveyCont {
         ra.addFlashAttribute("url", "/survey/msg"); // msg.html, redirect parameter 적용
         return "redirect:/survey/msg"; // Post -> Get - param...
       }
-    } else { // 로그인 실패 한 경우
-      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-    }
+//    } else { // 로그인 실패 한 경우
+//      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
+//    }
   }
   
   /**
@@ -196,16 +196,16 @@ public class SurveyCont {
   @GetMapping(value = "/list_all")
   public String list_all(HttpSession session, Model model) {
     
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
+//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
   
       ArrayList<SurveyVO> list = this.surveyProc.list_all();
       model.addAttribute("list", list);
   
       return "/survey/list_all"; // /templates/cate/list_all.html
-      } else {
-        return "redirect:/member/login_cookie_need";
-  
-      }
+//      } else {
+//        return "redirect:/member/login_cookie_need";
+//  
+//      }
     }
   
   /**
@@ -221,7 +221,7 @@ public class SurveyCont {
       @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    if (this.memberProc.isMember(session)) { // 회원 로그인한경우
+    if (this.memberProc.isMember(session) || this.memberProc.isMemberAdmin(session)) { // 회원 또는 관리자 로그인한 경우
 
       int record_per_page = 10;
       int startRow = (now_page - 1) * record_per_page + 1;
@@ -316,16 +316,17 @@ public class SurveyCont {
    * 글 수정 폼
    *
    */
-  @GetMapping(value = "/update_text")
+  @GetMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
       Model model, 
-      @RequestParam(name="surveyno", defaultValue="") int surveyno, 
+      @RequestParam("surveyno") int surveyno, 
       RedirectAttributes ra, 
       @RequestParam(name="is_continue", defaultValue="") String is_continue,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
     model.addAttribute("is_continue", is_continue);
     model.addAttribute("now_page", now_page);
+    model.addAttribute("surveyno", surveyno);
 
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       SurveyVO surveyVO = this.surveyProc.read(surveyno);
@@ -339,8 +340,6 @@ public class SurveyCont {
       // model.addAttribute("content", content);
 
     } else {
-//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
       return "member/login_cookie_need";
     }
 
@@ -351,7 +350,7 @@ public class SurveyCont {
    * 
    * @return
    */
-  @PostMapping(value = "/update_text")
+  @PostMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
       Model model, 
       @ModelAttribute("surveyVO") SurveyVO surveyVO, 
@@ -372,7 +371,7 @@ public class SurveyCont {
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
-          return "redirect:/survey/read"; // @GetMapping(value = "/read")
+          return "redirect:/survey/list_by_surveyno_search_paging"; // @GetMapping(value = "/read")
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
           ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
@@ -385,7 +384,7 @@ public class SurveyCont {
    * 파일 수정 폼 
    * @return
    */
-  @GetMapping(value = "/update_file")
+  @GetMapping(value = "/update_file/{surveyno}")
   public String update_file(HttpSession session, Model model, 
          @RequestParam(name="surveyno", defaultValue="0") int surveyno,
          @RequestParam(name="is_continue", defaultValue="") String is_continue, 
@@ -393,22 +392,26 @@ public class SurveyCont {
     
     model.addAttribute("is_continue", is_continue);
     model.addAttribute("now_page", now_page);
+    model.addAttribute("surveyno", surveyno);
     
-    SurveyVO surveyVO = this.surveyProc.read(surveyno);
-    model.addAttribute("surveyVO", surveyVO);
+    if (memberProc.isMemberAdmin(session)) {
+      SurveyVO surveyVO = surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
 
-    MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
+      MemberVO memberVO = memberProc.read(surveyVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
 
-    return "/survey/update_file";
-
+      return "/survey/update_file";
+    } else {
+        return "member/login_cookie_need";
+    }
   }
-
+  
   /**
    * 파일 수정 처리 
    * @return
    */
-  @PostMapping(value = "/update_file")
+  @PostMapping(value = "/update_file/{surveyno}")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,
                             @ModelAttribute("surveyVO") SurveyVO surveyVO,
                             @RequestParam(name="is_continue", defaultValue="") String is_continue, 
@@ -476,7 +479,7 @@ public class SurveyCont {
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
       
-      return "redirect:/survey/read";
+      return "redirect:/survey/list_by_surveyno_search_paging";
     } else {
       ra.addAttribute("url", "/member/login_cookie_need"); 
       return "redirect:/survey/post2get"; // GET
@@ -489,7 +492,7 @@ public class SurveyCont {
    * 
    * @return
    */
-  @GetMapping(value = "/delete")
+  @GetMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
                                @RequestParam(name="memberno", defaultValue="1") int memberno, 
                                @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
@@ -497,6 +500,7 @@ public class SurveyCont {
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       model.addAttribute("memberno", memberno);
+      model.addAttribute("surveyno", surveyno);
       model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
       
@@ -520,7 +524,7 @@ public class SurveyCont {
    * 
    * @return
    */
-  @PostMapping(value = "/delete")
+  @PostMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, RedirectAttributes ra,
       @RequestParam(name="memberno", defaultValue="1") int memberno, 
       @RequestParam(name="surveyno", defaultValue="0") int surveyno, 
@@ -568,6 +572,7 @@ public class SurveyCont {
       ra.addAttribute("memberno", memberno);
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
+      ra.addAttribute("surveyno", surveyno);
       
       return "redirect:/survey/list_by_surveyno_search_paging";    
       

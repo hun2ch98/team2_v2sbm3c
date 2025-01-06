@@ -40,11 +40,20 @@ public interface SurveyDAOInter {
   public int count_by_surveyno_search(HashMap<String, Object> hashMap);
   
   /**
+   * 회원
    * 검색 및 페이징
    * @param hashMap
    * @return
    */
   public ArrayList<SurveyVO> list_by_surveyno_search_paging(HashMap<String, Object> hashMap);
+  
+  /**
+   * 관리자
+   * 검색 및 페이징
+   * @param hashMap
+   * @return
+   */
+  public ArrayList<SurveyVO> admin_list_surveyno_search_paging(HashMap<String, Object> hashMap);
   
   /**
    * 조회

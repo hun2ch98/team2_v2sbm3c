@@ -3,107 +3,145 @@
 <!-- SB가 자동으로 구현하여 연동하는 interface -->
 <mapper namespace="dev.mvc.member.MemberDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
 
-  <!-- ID 중복 검사 -->
+  <!-- ID 중복 확인 -->
   <select id="checkID" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
     WHERE id = #{id}
   </select>
   
-  <!-- 회원 등록 -->
-  <insert id="create" parameterType="dev.mvc.member.MemberVO">
-      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade <if test="gradeno != null">, gradeno</if>)
-      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade} <if test="gradeno != null">, #{gradeno}</if>)
-  </insert>
-  
-  <!-- 회원 목록 -->
-  <select id="list_all" resultType="dev.mvc.member.MemberVO"> 
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+  <!-- EMAIL 중복 확인 -->
+  <select id="checkEMAIL" resultType="int" parameterType="String">
+    SELECT COUNT(id) as cnt
     FROM member
-    ORDER BY grade ASC, id ASC
+    WHERE email=#{email}
   </select>
+  
+  <!-- 회원 가입 -->
+  <insert id="create" parameterType="dev.mvc.member.MemberVO">
+      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade, gradeno)
+      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, #{replycnt}, sysdate, #{grade}, #{gradeno})
+  </insert>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade
     FROM member
     WHERE memberno = #{memberno}
   </select>
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade
     FROM member
     WHERE id = #{id}
   </select>
+  
+  <!-- 회원 정보 수정 -->
+  <update id="update" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member 
+    SET email=#{email}, name=#{name}, nickname=#{nickname}, phone=#{phone}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
+    WHERE memberno=#{memberno}
+  </update>
+  
+  <!-- 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member
+    SET pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
+    WHERE memberno = #{memberno}
+  </update> 
+  
+  <!-- 회원 탈퇴 -->
+  <delete id="unsub_delete" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member
+    SET grade=99
+    WHERE memberno=#{memberno}
+  </delete>
   
   <!-- 로그인 처리 (1: 성공, 0: 실패) -->
   <select id="login" resultType="int" parameterType="HashMap">
     SELECT COUNT(memberno) as cnt
     FROM member
-    WHERE id=#{id} AND passwd=#{passwd}
+    WHERE id=#{id} AND passwd=#{passwd} AND grade &lt;= 90
   </select>
   
-  
-  <!-- 회원 정보 수정 -->
-  <update id="update" parameterType="dev.mvc.member.MemberVO">
-    UPDATE member 
-    SET id=#{id}, name=#{name}, email=#{email}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
-    WHERE memberno=#{memberno}
-  </update>
-  
-  <!-- 회원 삭제 -->
-  <delete id="delete" parameterType="int">
-    DELETE FROM member
-    WHERE memberno=#{memberno}
-  </delete>
-  
-  <!-- 현재 패스워드 검사 
+  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 -->
   <select id="passwd_check" parameterType="HashMap" resultType="int">
     SELECT COUNT(memberno) as cnt
     FROM member
     WHERE memberno=#{memberno} AND passwd=#{passwd}
-  </select> -->
-   
-  <!-- 패스워드 변경 
+  </select> 
+  
+  <!-- 회원 정보 수정(passwd) - 로그인 상태일 때-->
   <update id="passwd_update" parameterType="HashMap">
     UPDATE member
     SET passwd=#{passwd}
     WHERE memberno=#{memberno}
-  </update> -->
+  </update>
+
+  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때 -->
+  <update id="update_passwd_find" parameterType="HashMap">
+    UPDATE member
+    SET passwd=#{passwd}
+    WHERE id=#{id}
+  </update> 
   
-  <!-- 검색 목록 
-  <select id="list_by_memberno_search" resultType="dev.mvc.member.MemberVO" parameterType="HashMap">
-      SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade
-      FROM grade
-      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
-      ORDER BY gradeno DESC
-      OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-  </select> -->
-  
-  <!-- 검색된 레코드 갯수 
-  <select id="list_by_memberno_search_count" resultType="int" parameterType="HashMap">
-      SELECT COUNT(*)
-      FROM member
-      WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
-  </select> -->
-  
-  <!-- 등급별 검색 + 페이징 목록 
-  <select id="list_by_memberno_search_paging" resultType="dev.mvc.grade.GradeVO" parameterType="HashMap">
-      SELECT *
-      FROM (
-          SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, LOWER(pf_img) AS pf_img, file1saved, thumb1, size1, mdate, grade,
-                 ROW_NUMBER() OVER (ORDER BY memberno DESC) AS rnum
-          FROM grade
-          WHERE (#{name} IS NULL OR #{name} = '' OR LOWER(name) LIKE LOWER('%' || #{name} || '%'))
-      )
-      WHERE rnum BETWEEN #{startRow} AND #{endRow}
-  </select> -->
-  
-  <select id="getNickname" parameterType="int" resultType="string">
-    SELECT nickname
+  <!-- 아이디 찾기 회원 정보 일치 검증(name, email) -->
+  <select id="find_id_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(id) as cnt
     FROM member
-    WHERE memberno = #{memberno}
+    WHERE name=#{name} AND tel=#{email}
+  </select> 
+  
+  <!-- 비밀번호 찾기 회원 정보 일치 검증(id, phone) -->
+  <select id="find_passwd_check" resultType="int" parameterType="String">
+    SELECT COUNT(id) as cnt
+    FROM member
+    WHERE id=#{id} AND tel=#{phone}
   </select>
-    
+  
+  <!-- 회원 검색 목록 + 페이징 -->
+  <select id="list_search_paging" parameterType="dev.mvc.dto.SearchDTO" resultType="dev.mvc.member.MemberVO" >
+    SELECT *
+      FROM(
+        SELECT a.*, ROWNUM rnum
+        FROM(
+          SELECT *
+          FROM member
+          <where>
+            <if test="searchType != null and keyword != null">
+              <choose>
+                <when test="searchType == 'id'">
+                  AND id LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="searchType == 'email'">
+                  AND email LIKE '%' || #{keyword} || '%'
+                </when>
+              </choose>
+            </if>
+          </where>
+          ORDER BY memberno DESC
+         ) a
+         WHERE ROWNUM &lt;= #{size}
+        )
+        WHERE rnum &gt; #{offset}
+  </select>
+  
+  <!-- 회원 검색 레코드 갯수 -->
+  <select id="list_search_count" parameterType="dev.mvc.dto.SearchDTO" resultType="int">
+    SELECT COUNT(*)
+    FROM member
+    <where>
+      <if test="searchType != null and keyword != null">
+        <choose>
+          <when test = "searchType == 'id'">
+            AND id LIKE '%' || #{keyword} || '%'
+          </when>
+          <when test = "searchType == 'nickname'">
+            AND email LIKE '%' || #{keyword} || '%'
+          </when>
+        </choose>
+      </if>
+    </where>
+  </select>
 </mapper>

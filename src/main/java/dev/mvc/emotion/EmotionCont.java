@@ -239,7 +239,7 @@ public class EmotionCont {
       Model model, 
       @ModelAttribute("emotionVO") EmotionVO emotionVO,
       @RequestParam(name = "emono", defaultValue = "0") int emono,
-      @RequestParam(name = "word", defaultValue = "") String word,
+      @RequestParam(name = "type", defaultValue = "") String type,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
       int record_per_page = 10;
@@ -261,16 +261,16 @@ public class EmotionCont {
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
 //      model.addAttribute("diaryVO", diaryVO);
-      word = Tool.checkNull(word).trim();
+      type = Tool.checkNull(type).trim();
       model.addAttribute("memberVO", memberVO);
       model.addAttribute("emono", emono);
-      model.addAttribute("type", word);
+      model.addAttribute("type", type);
       model.addAttribute("now_page", now_page);
 
       HashMap<String, Object> map = new HashMap<>();
 //      map.put("diaryno", diaryno);
       map.put("memberno", memberno);
-      map.put("word",word);
+      map.put("type",type);
       map.put("now_page", now_page);
       map.put("startRow", startRow);
       map.put("endRow", endRow);
@@ -280,12 +280,12 @@ public class EmotionCont {
           model.addAttribute("message", "게시물이 없습니다.");
       } else {
           model.addAttribute("list", list);
-          model.addAttribute("word", word);
+          model.addAttribute("type", type);
       }
 
       int search_count = this.emotionProc.count_by_emono_search(map);
 //      String type = emotionVO.getType(); // EmotionVO에서 type 값을 가져옴
-      String paging = this.emotionProc.pagingBox(memberno, now_page, word, "/emotion/list_by_emono_search_paging", search_count,
+      String paging = this.emotionProc.pagingBox(memberno, now_page, type, "/emotion/list_by_emono_search_paging", search_count,
     		  Emotion.RECORD_PER_PAGE, Emotion.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
@@ -592,13 +592,9 @@ public class EmotionCont {
                                @RequestParam(name="emono", defaultValue="0") int emono, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    if (this.memberProc.isMember(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("word", word);
       model.addAttribute("now_page", now_page);
-      
-//      ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//      model.addAttribute("menu", menu);
       
       EmotionVO emotionVO = this.emotionProc.read(emono);
       model.addAttribute("emotionVO", emotionVO);
@@ -607,11 +603,6 @@ public class EmotionCont {
       model.addAttribute("memberVO", memberVO);
       
       return "/emotion/delete"; // forward
-      
-    } else {
-      ra.addAttribute("url", "/member/login_cookie_need");
-      return "redirect:/emotion/msg"; 
-    }
 
   }
   

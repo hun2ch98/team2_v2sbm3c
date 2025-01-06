@@ -7,24 +7,40 @@
   </div>
 
   <aside class="aside_right">
-    <a th:href="@{|./create|}">등록</a>
+    <a th:href="@{|/illutration/create|}">등록</a>
     <span class='menu_divide'>│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|./list_by_illustno_grid?now_page=${now_page}|}">목록</a>
+    <a th:href="@{|illustration/list_by_illustno_paging_grid|}">목록</a>
   </aside>
 
   <div class='menu_line'></div>
 
-  <form name='frm' method='post' th:object="${illustVO}" action='./create' enctype="multipart/form-data">
+  <form name="frm" method="post" action="./create" enctype="multipart/form-data">
     <div>
-       <label>이미지</label>
-       <input type='file' class="form-control" name='illustMF' id='illustMF' required="required" placeholder="파일 선택">
-    </div>   
-    <div class="content_body_bottom">
-      <button type="submit" class="btn btn-secondary btn-sm">등록</button>
-      <button type="button" th:attr="onclick=|location.href='./list_by_illustno_search_paging_grid?now_page=${now_page}'|" class="btn btn-secondary btn-sm">목록</button>
+        <label>이미지</label>
+        <input type="file" class="form-control" name="illustMF" required="required" placeholder="파일 선택">
     </div>
-  </form>
+    <div>
+        <label>날짜 선택</label>
+        <select name="selectedDate" class="form-control" required>
+            <option value="" disabled selected>날짜를 선택하세요</option>
+            <option th:each="date : ${availableDates}" th:value="${#dates.format(date, 'yyyy-MM-dd')}" th:text="${#dates.format(date, 'yyyy-MM-dd')}"></option>
+        </select>
+    </div>
+    <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+    </div>
+</form>
+
+
+
+<script>
+    function selectDate(button) {
+        const date = button.getAttribute('data-date');
+        document.getElementById('selectedDate').value = date;
+    }
+</script>
+
 
 </div>

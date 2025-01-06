@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+  <!-- 제목 영역 -->
+  <div class="title_line">
+    일기와 일러스트 목록
+  </div>
+
+  <!-- 메뉴 -->
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로 고침</a>
+    <span class="menu_divide">│</span>
+    <a th:href="@{/illustration/create}">새 일러스트 등록</a>
+  </aside>
+
+  <div class="menu_line"></div>
+
+  <!-- 목록 출력 -->
+  <div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th style="width: 25%;">제목</th>
+          <th style="width: 25%;">날짜</th>
+          <th style="width: 35%;">썸네일</th>
+          <th style="width: 15%;">그림 처리</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 데이터 반복 출력 -->
+        <tr th:each="item : ${illustrations}">
+          <td th:text="${item['TITLE']}"></td>
+          <td th:text="${#dates.format(item['DDATE'], 'yyyy-MM-dd')}"></td>
+          <td>
+            <div style="text-align: center;">
+              <img th:src="@{'/upload/' + ${item['ILLUST_THUMB']}}" 
+                 alt="썸네일" style="width: 50px; height: auto;">
+            </div>
+          </td>
+          <td>
+            <a th:href="@{/illustration/update/{id}(id=${item['ILLUSTNO']})}" class="btn btn-primary">수정</a>
+            <a th:href="@{|/illustration/delete|}" class="btn btn-danger">삭제</a>
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 페이징 처리 (필요 시 추가 가능) -->
+  <div class="bottom_menu">
+    <span>총 <span th:text="${totalCount}"></span>개의 기록이 있습니다.</span>
+  </div>
+</div>
+</html>

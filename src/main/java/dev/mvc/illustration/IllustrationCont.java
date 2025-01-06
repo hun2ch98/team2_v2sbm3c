@@ -3,9 +3,11 @@ package dev.mvc.illustration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,12 +18,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import dev.mvc.diary.DiaryProcInter;
+import dev.mvc.diary.DiaryVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -33,6 +38,10 @@ public class IllustrationCont {
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") // @Service("dev.mvc.member.MemberProc")
   private MemberProcInter memberProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.diary.DiaryProc") // @Service("dev.mvc.member.MemberProc")
+  private DiaryProcInter diaryProc;
   
   @Autowired
   @Qualifier("dev.mvc.illustration.IllustrationProc")
@@ -47,224 +56,227 @@ public class IllustrationCont {
   /** 페이징 목록 주소 */
   private String list_file_name = "/illustration/list_by_illustno_search_paging_grid";
 
-    /**
-     * 등록 폼
-     */
-    @GetMapping("/create")
-    public String create(Model model, @ModelAttribute("illustrationVO") IllustrationVO illustrationVO) {
-        model.addAttribute("illustrationVO", illustrationVO);
-        return "/illustration/create"; // /templates/illustration/create.html
-    }
-
-    /**
-     * Create: 그림만 넣어도 처리
-     */
-    @PostMapping("/create")
-    public String create(@ModelAttribute IllustrationVO illustrationVO, 
-                                     RedirectAttributes ra, HttpSession session, 
-                                     Model model,  HttpServletRequest request) {
-      if (memberProc.isMemberAdmin(session)) {
-        String illust = "";
-        String illust_saved = "";
-        String illust_thumb = "";
-        
-        String upDir = Illustration.getUploadDir();
-        
-        MultipartFile mf = illustrationVO.getIllustMF();
-        illust = mf.getOriginalFilename();
-        
-        long illust_size = mf.getSize();
-        
-        if (illust_size > 0) {
-          if (Tool.checkUploadFile(illust) == true) {
-            illust_saved = Upload.saveFileSpring(mf, upDir);
-            
-            if (Tool.isImage(illust_saved)) {
-              illust_thumb = Tool.preview(upDir, illust_saved, 200, 150);
-            }
-            illustrationVO.setIllust(illust);
-            illustrationVO.setIllust_saved(illust_saved);
-            illustrationVO.setIllust_thumb(illust_thumb);
-            illustrationVO.setIllust_size(illust_size);
-          } else {
-            ra.addFlashAttribute("code", "check_upload_file_fail");
-            ra.addFlashAttribute("url", "/illustration/msg");
-            ra.addFlashAttribute("cnt", 0);
-          }
-        }
-        
-        int memberno = (int) session.getAttribute("memberno");
-        illustrationVO.setMemberno(memberno);
-        
-        int cnt = this.illustrationProc.create(illustrationVO);
-        
-        if (cnt == 1) {
-          ra.addAttribute("illustno", illustrationVO.getIllustno());
-          return "redirect:/illustration/list_by_illustno_search_paging_grid";
-        } else {
-          ra.addFlashAttribute("code", "check_upload_file_fail");
-          ra.addFlashAttribute("url", "/illustration/msg");
-          ra.addFlashAttribute("cnt", 0);
-          return "redirect:/illustration/msg";
-        }
-      } else {
-        return "redirect:/member/login_cookie_need";
-      }
-    }
-
-    /**
-     * Delete: 파일 및 레코드 삭제
-     */
-    @PostMapping("/delete")
-    public String delete(@RequestParam int illustno, 
-                         @RequestParam(name = "now_page", defaultValue = "1") int now_page,
-                         RedirectAttributes ra) {
-        IllustrationVO vo = illustrationProc.read(illustno);
-        if (vo != null) {
-            String upDir = Illustration.getUploadDir();
-            Tool.deleteFile(upDir, vo.getIllust_saved());
-            Tool.deleteFile(upDir, vo.getIllust_thumb());
-            illustrationProc.delete(illustno);
-        }
-
-        ra.addAttribute("now_page", now_page);
-        return "redirect:/illustration/list_by_illustno_search_paging_grid";
-    }
-
-    /**
-     * Read: 일러스트 세부 정보 출력
-     */
-    @GetMapping("/read")
-    public String read(@RequestParam int illustno, 
-                       @RequestParam(name = "now_page", defaultValue = "1") int now_page,
-                       Model model) {
-        IllustrationVO illustrationVO = illustrationProc.read(illustno);
-        if (illustrationVO != null) {
-            model.addAttribute("illustrationVO", illustrationVO);
-        }
-
-        model.addAttribute("now_page", now_page);
-        return "/illustration/read";
-    }
+  /**
+   * 등록 폼
+   */
+  @GetMapping("/create")
+  public String create(Model model, @ModelAttribute("illustrationVO") IllustrationVO illustrationVO) {
+      // Diary 테이블에서 날짜 리스트를 가져옵니다.
+      List<Date> availableDates = diaryProc.getAvailableDates(); // DiaryProc 호출
+      availableDates.sort(Comparator.naturalOrder());
+      model.addAttribute("availableDates", availableDates);
+      model.addAttribute("illustrationVO", illustrationVO);
+      return "/illustration/create"; // /templates/illustration/create.html
+  }
 
   /**
-   * Update_File: 기존 파일 갱신
+   * Create: 그림, 날짜별로 등록
    */
-  @PostMapping("/update_file")
-  public String updateFile(@ModelAttribute IllustrationVO illustrationVO, 
-                           @RequestParam(name = "now_page", defaultValue = "1") int now_page,
-                           RedirectAttributes ra) {
-      IllustrationVO oldVO = illustrationProc.read(illustrationVO.getIllustno());
-      if (oldVO != null) {
+  @PostMapping("/create")
+  public String create(@ModelAttribute IllustrationVO illustrationVO, 
+                       @RequestParam("selectedDate") String selectedDate, // 선택된 날짜
+                       RedirectAttributes ra, HttpSession session, 
+                       Model model, HttpServletRequest request) {
+      if (memberProc.isMemberAdmin(session)) {
+          String illust = "";
+          String illust_saved = "";
+          String illust_thumb = "";
+
           String upDir = Illustration.getUploadDir();
-          Tool.deleteFile(upDir, oldVO.getIllust_saved());
-          Tool.deleteFile(upDir, oldVO.getIllust_thumb());
-      }
 
-      MultipartFile mf = illustrationVO.getIllustMF();
-      if (mf != null && !mf.isEmpty()) {
-          String upDir = Illustration.getUploadDir();
-          String originalFileName = mf.getOriginalFilename();
-          long fileSize = mf.getSize();
+          MultipartFile mf = illustrationVO.getIllustMF();
+          illust = mf.getOriginalFilename();
 
-          if (Tool.checkUploadFile(originalFileName)) {
-              String savedFileName = Upload.saveFileSpring(mf, upDir);
-              String thumbnailFileName = Tool.preview(upDir, savedFileName, 250, 200);
+          long illust_size = mf.getSize();
 
-              illustrationVO.setIllust(originalFileName);
-              illustrationVO.setIllust_saved(savedFileName);
-              illustrationVO.setIllust_thumb(thumbnailFileName);
-              illustrationVO.setIllust_size(fileSize);
+          if (illust_size > 0) {
+              if (Tool.checkUploadFile(illust)) {
+                  illust_saved = Upload.saveFileSpring(mf, upDir);
+
+                  if (Tool.isImage(illust_saved)) {
+                      illust_thumb = Tool.preview(upDir, illust_saved, 200, 150);
+                  }
+                  illustrationVO.setIllust(illust);
+                  illustrationVO.setIllust_saved(illust_saved);
+                  illustrationVO.setIllust_thumb(illust_thumb);
+                  illustrationVO.setIllust_size(illust_size);
+              } else {
+                  ra.addFlashAttribute("code", "check_upload_file_fail");
+                  ra.addFlashAttribute("url", "/illustration/msg");
+                  ra.addFlashAttribute("cnt", 0);
+                  return "redirect:/illustration/msg";
+              }
+          }
+
+          // ddate로 diaryno 가져오기
+          java.sql.Date ddate = java.sql.Date.valueOf(selectedDate); // String -> Date 변환
+          int diaryno = diaryProc.getDiaryNoByDate(ddate);
+          illustrationVO.setDiaryno(diaryno);
+
+          int cnt = this.illustrationProc.create(illustrationVO);
+
+          if (cnt == 1) {
+              ra.addAttribute("illustno", illustrationVO.getIllustno());
+              return "redirect:/illustration/list_all";
           } else {
-              ra.addFlashAttribute("code", "invalid_file_type");
+              ra.addFlashAttribute("code", "check_upload_file_fail");
+              ra.addFlashAttribute("url", "/illustration/msg");
+              ra.addFlashAttribute("cnt", 0);
               return "redirect:/illustration/msg";
           }
+      } else {
+          return "redirect:/member/login_cookie_need";
+      }
+  }
+
+  @GetMapping("/read")
+  public String read(Model model, 
+                     @RequestParam(name="illustno", defaultValue = "0") int illustno) {
+      IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
+      model.addAttribute("illustrationVO", illustrationVO);
+
+      if (illustrationVO.getDiaryno() > 0) {
+          DiaryVO diaryVO = this.illustrationProc.readDiary(illustrationVO.getDiaryno());
+          model.addAttribute("diaryVO", diaryVO);
       }
 
-      illustrationProc.update_file(illustrationVO);
-      ra.addAttribute("illustno", illustrationVO.getIllustno());
-      ra.addAttribute("now_page", now_page);
-      return "redirect:/illustration/read";
+      return "/illustration/read";
   }
-    
-//  @GetMapping("/list_by_illustno_search_paging_grid")
-//  public String listByIllustNoSearchPagingGrid(HttpSession session, Model model,
-//                                               @RequestParam(name = "start_date", required = false) String startDate,
-//                                               @RequestParam(name = "end_date", required = false) String endDate,
-//                                               @RequestParam(name = "now_page", defaultValue = "1") int nowPage) {
-//    int memberno = (int) session.getAttribute("memberno");
-//    String nickname = memberProc.getNickname(memberno);
-//    model.addAttribute("nickname", nickname);
-//
-//    // 기본 날짜 설정
-//    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//    if (startDate == null || startDate.trim().isEmpty()) {
-//        startDate = "2015-01-01";
-//    }
-//    if (endDate == null || endDate.trim().isEmpty()) {
-//        endDate = LocalDate.now().format(formatter); // 오늘 날짜로 설정
-//    }
-//
-//    // 페이징 처리
-//    int startNum = (nowPage - 1) * record_per_page + 1;
-//    int endNum = nowPage * record_per_page;
-//
-//    HashMap<String, Object> paramMap = new HashMap<>();
-//    paramMap.put("start_date", startDate);
-//    paramMap.put("end_date", endDate);
-//    paramMap.put("startNum", startNum);
-//    paramMap.put("endNum", endNum);
-//
-//    ArrayList<IllustrationVO> list = illustrationProc.listByIllustNoSearchPaging(paramMap);
-//    model.addAttribute("list", list);
-//
-//    int searchCount = illustrationProc.countByDateRange(paramMap);
-//    String paging = illustrationProc.pagingBox(nowPage, startDate, endDate, list_file_name, searchCount, record_per_page, page_per_block);
-//
-//    model.addAttribute("list", list);
-//    model.addAttribute("paging", paging);
-//
-//    model.addAttribute("start_date", startDate);
-//    model.addAttribute("end_date", endDate);
-//    model.addAttribute("search_count", searchCount);
-//    model.addAttribute("now_page", nowPage);
-//    
-//    IllustrationVO illustrationVO = new IllustrationVO();
-//    model.addAttribute("illustrationVO", illustrationVO);
-//
-//    return "/illustration/list_by_illustno_search_paging_grid";
-//  }
   
-  @GetMapping("/list_by_illustno_search_paging_grid")
-  public String listByIllustNoSearchPagingGrid(HttpSession session, Model model,
-                                                                    @RequestParam(value = "start_date", required = false, defaultValue = "2000-01-01") String startDate,
-                                                                    @RequestParam(value = "end_date", required = false, defaultValue = "2030-12-31") String endDate,
-                                                                    @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage) {
-    if (this.memberProc.isMemberAdmin(session)) {
-      startDate = startDate.trim();
-      endDate = endDate.trim();
-      int startNum = (nowPage - 1) * record_per_page + 1;
-      int endNum = nowPage * record_per_page;
-      
-      int searchCount = illustrationProc.countSearchResults(startDate, endDate);
-      ArrayList<IllustrationVO> illustList = illustrationProc.list_search_paging(startDate, endDate, startNum, endNum);
 
-      String paging = illustrationProc.pagingBox(nowPage, startDate, endDate, list_file_name, searchCount, record_per_page, page_per_block);
-
-      model.addAttribute("illustList", illustList);
-      model.addAttribute("start_date", startDate);
-      model.addAttribute("end_date", endDate);
-      model.addAttribute("paging", paging);
-      model.addAttribute("search_count", searchCount);
-      model.addAttribute("now_page", nowPage);
-      
-      
-      
-      return "redirect:/illustration/list_by_illustno_search_paging_grid";
-    } else {
-      return "redirect:/member/login_cookie_need";
-    }
-    
+  @GetMapping("/list_all")
+  public String listAll(Model model) {
+      List<Map<String, Object>> list = illustrationProc.listAllWithDiaryDetails();
+      System.out.println("Illustrations: " + list); // 로그 출력
+      model.addAttribute("illustrations", list);
+      return "/illustration/list_all";
   }
+
+
+  @GetMapping(value="/delete")
+  public String delete(HttpSession session, Model model, RedirectAttributes ra,
+                                  @RequestParam(name="illustno", defaultValue = "0") int illustno, 
+                                  @RequestParam(name="title", defaultValue = "title") String title,
+                                  @RequestParam(name="now_page", defaultValue = "1") int now_page) {
+    if (this.memberProc.isMemberAdmin(session)) {
+      model.addAttribute("illustno", illustno);
+      model.addAttribute("title", title);
+      model.addAttribute("now_page", now_page);
+      
+      IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
+      model.addAttribute(illustrationVO);
+      return "/illustration/delete";
+    } else {
+      ra.addAttribute("url", "/admin/login_cookie_need");
+      return "redirect:/contents/msg"; 
+    }
+  }
+  
+  /**
+   * 삭제 처리 http://localhost:9091/contents/delete
+   * 
+   * @return
+   */
+  @PostMapping(value = "/delete")
+  public String delete(RedirectAttributes ra,
+      @RequestParam(name="illustno", defaultValue = "0") int illustno,
+      @RequestParam(name="word", defaultValue = "") String word, 
+      @RequestParam(name="now_page", defaultValue = "1") int now_page) {
     
+    IllustrationVO illustrationVO_read = illustrationProc.read(illustno);
+        
+    String file1saved = illustrationVO_read.getIllust_saved();
+    String thumb1 = illustrationVO_read.getIllust_thumb();
+    
+    String uploadDir = Illustration.getUploadDir();
+    Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
+    Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
+        
+    this.illustrationProc.delete(illustno); // DBMS 글 삭제
+        
+    HashMap<String, Object> map = new HashMap<String, Object>();
+    map.put("illustno", illustno);
+    map.put("word", word);
+    
+    ra.addAttribute("illustno", illustno);
+    ra.addAttribute("word", word);
+    ra.addAttribute("now_page", now_page);
+    
+    return "redirect:/contents/list_all";    
+    
+  }   
+  
+
+  @GetMapping(value="/update")
+  public String update(HttpSession session, Model model, 
+		  @RequestParam(name="illustno", defaultValue="0") int illustno,
+		  @RequestParam(name="now_page", defaultValue="0") int now_page) {
+	  IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
+	  model.addAttribute(illustrationVO);
+	  model.addAttribute(now_page);
+	  
+	  return "/illustration/update";
+  }
+  
+  
+  @PostMapping(value="/update")
+  public String update(HttpSession session, Model model,RedirectAttributes ra, 
+		  @ModelAttribute("illustrationVO") IllustrationVO illustrationVO, 
+		  @RequestParam(name="now_page", defaultValue="0") int now_page) {
+	  if (this.memberProc.isMemberAdmin(session)) {
+		  IllustrationVO illustrationVO_old = illustrationProc.read(illustrationVO.getIllustno());
+		  
+		  // 파일 삭제 시
+		  String illust_saved = illustrationVO_old.getIllust_saved();
+		  String illust_thumb = illustrationVO_old.getIllust_thumb();
+		  long illust_size = 0;
+		  
+		  String upDir = Illustration.getUploadDir();
+		  
+		  Tool.deleteFile(upDir, illust_saved);
+		  Tool.deleteFile(upDir, illust_thumb);
+		  // 파일 삭제 종료
+		  
+		  // 파일 전송 시작
+		  String illust = "";
+		  
+		  MultipartFile mf = illustrationVO.getIllustMF();
+		  
+		  illust = mf.getOriginalFilename();
+		  illust_size = mf.getSize();
+		  
+		  if (illust_size > 0) {
+			  illust_saved = Upload.saveFileSpring(mf, upDir);
+			  
+			  if (Tool.isImage(illust_saved)) {
+				  illust_thumb = Tool.preview(upDir, illust_saved, 250, 200);
+			  }
+		  } else {
+			  illust = "";
+			  illust_saved = "";
+			  illust_thumb = "";
+			  illust_size=0;
+		  }
+		  
+		  illustrationVO.setIllust(illust);
+		  illustrationVO.setIllust_saved(illust_saved);
+		  illustrationVO.setIllust_thumb(illust_thumb);
+		  illustrationVO.setIllust_size(illust_size);
+		  // 파일 전송 종료
+		  
+		  this.illustrationProc.update(illustrationVO);
+		  ra.addAttribute("illustno", illustrationVO.getIllustno());
+		  ra.addAttribute("now_page", now_page);
+		  
+		  return "redirect:/contents/read";
+	  } else {
+	      ra.addAttribute("url", "/member/login_cookie_need"); 
+	      return "redirect:/contents/msg"; // GET
+	    }
+  }
+  
+  
+  
+  
+  
 }
