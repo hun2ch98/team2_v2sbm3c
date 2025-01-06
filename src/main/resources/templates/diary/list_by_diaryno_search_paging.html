@@ -47,10 +47,12 @@
       </thead>
       <tbody>
         <tr th:each="diary : ${diaryList}">
-          <td th:text="${diary.title}"></td>
+          <td>
+              <a th:href="@{/diary/read/{id}(id=${diary.diaryno})}" th:text="${diary.title}"></a>
+          </td>
           <td th:text="${diary.ddate != null ? #dates.format(diary.ddate, 'yyyy-MM-dd') : 'N/A'}"></td>
           <td th:text="${diary.weatherno}"></td>
-          <td th:text="${diary.emno}"></td>
+          <td th:text="${diary.emono}"></td>
           <td>
             <span th:if="${diary.summary.length() > 15}" 
                 th:text="|${diary.summary.substring(0, 15)}...|"></span>

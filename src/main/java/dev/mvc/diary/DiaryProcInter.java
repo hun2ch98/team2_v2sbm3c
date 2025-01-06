@@ -140,7 +140,9 @@ public interface DiaryProcInter {
 
   int getDiaryNoByDate(Date ddate);
   
-  
+  DiaryVO getDiaryByDiaryNo(int diaryno);
+
+  public List<DiaryVO> readList(int diaryno);
 }
 
 

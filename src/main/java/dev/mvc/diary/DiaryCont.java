@@ -21,7 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.emotion.EmotionVO;
+import dev.mvc.illustration.IllustrationProcInter;
+import dev.mvc.illustration.IllustrationVO;
 import dev.mvc.tool.Tool;
+import dev.mvc.weather.WeatherVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -36,6 +39,10 @@ public class DiaryCont {
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") 
   private MemberProcInter memberProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.illustration.IllustrationProc")
+  private IllustrationProcInter illustrationProc;  // IllustrationProc 인터페이스
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 10;
@@ -60,19 +67,24 @@ public class DiaryCont {
   @GetMapping(value = "/create")
   public String create(Model model, 
                                   @RequestParam(name="title", defaultValue="오늘의 제목") String title, 
-                                  @RequestParam(name="emotion", defaultValue="0") int emotion, 
+                                  @RequestParam(name="emono", defaultValue="1") int emono, 
+                                  @RequestParam(name="weatherno", defaultValue="1") int weatherno, 
                                   @RequestParam(name="summary", defaultValue="오늘의 일기") String summary) {
     // create method에 사용될 테이블
     // summary를 가져올 테이블
     DiaryVO diaryVO = new DiaryVO();
     EmotionVO emotionVO = new EmotionVO();
+    WeatherVO weatherVO = new WeatherVO();
+    
+    diaryVO.setTitle(title);
+    diaryVO.setEmono(emono);
+    diaryVO.setWeatherno(weatherno);
+    diaryVO.setSummary(summary);
     
     model.addAttribute("diaryVO", diaryVO);
     model.addAttribute("emotionVO", emotionVO);
+    model.addAttribute("weatherVO", weatherVO);
 
-    diaryVO.setTitle(title);
-    diaryVO.setSummary(summary);
-    diaryVO.setEmno(emotion);
     
     return "/diary/create"; // /templates/diary/create.html
   }
@@ -93,12 +105,16 @@ public class DiaryCont {
                        BindingResult bindingResult, RedirectAttributes ra) {
       if (bindingResult.hasErrors()) { 
           // 에러 발생 시 폼으로 돌아가기
-          return "/diary/create";
+        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+        return "/diary/create";
       }
 
       // 제목 및 내용 트림 처리
       diaryVO.setTitle(diaryVO.getTitle().trim());
       diaryVO.setSummary(diaryVO.getSummary().trim());
+      diaryVO.setEmono(diaryVO.getEmono());
+      diaryVO.setWeatherno(diaryVO.getWeatherno());
+      
 
       // ddate 설정
       if (diaryVO.getDdate() == null) {
@@ -124,10 +140,35 @@ public class DiaryCont {
           return "/diary/msg";
       }
   }
+  
+  
+  @GetMapping(path="/read/{diaryno}")
+  public String readDiary(@PathVariable("diaryno") int diaryno, 
+      @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
+    
+      // 일기 번호에 해당하는 일기 데이터 조회
+      DiaryVO diaryVO = diaryProc.getDiaryByDiaryNo(diaryno);  // DiaryProc에서 일기 데이터 조회
+
+      // 일기 번호에 해당하는 일러스트 데이터 조회
+      List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
+
+      List<DiaryVO> diaryList = diaryProc.readList(diaryno);
+      
+      // 모델에 일기 데이터와 일러스트 목록 추가
+      model.addAttribute("diaryVO", diaryVO);  // 일기 데이터
+      model.addAttribute("diaryList", diaryList);  
+      model.addAttribute("illustrationList", illustrationList);  // 일러스트 목록
+      model.addAttribute("now_page", now_page);  // 현재 페이지
+
+      return "/diary/read";  // "diary/read" 뷰로 이동
+  }
+  
+  
 
   
   @GetMapping("/list_by_diaryno_search_paging")
-  public String listSearch(@RequestParam(value = "title", required = false, defaultValue = "") String title,
+  public String listSearch(@RequestParam(name="diaryno", defaultValue="1") int diaryno, 
+                           @RequestParam(value = "title", required = false, defaultValue = "") String title,
                            @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
                            @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
                            @RequestParam(value = "now_page", required = false, defaultValue = "1") int nowPage,
@@ -144,6 +185,7 @@ public class DiaryCont {
 
       String paging = diaryProc.pagingBox(nowPage, title, startDate, endDate, list_file_name, searchCount, record_per_page, page_per_block);
 
+      model.addAttribute("diaryno", diaryno);
       model.addAttribute("diaryList", diaryList);
       model.addAttribute("title", title);
       model.addAttribute("start_date", startDate);
@@ -257,87 +299,5 @@ public class DiaryCont {
   }
 
 
- 
-  /**
-   * 우선 순위 높임, 10 등 -> 1 등, http://localhost:9093/diary/update_seqno_forward/1
-   * 
-   * @param model Controller -> Thymeleaf HTML로 데이터 전송에 사용
-   * @return
-   */
-  @GetMapping(value = "/update_seqno_forward/{diaryno}")
-  public String update_seqno_forward(Model model, @PathVariable("diaryno") Integer diaryno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "") int now_page, RedirectAttributes ra) {
-    this.diaryProc.update_seqno_forward(diaryno);
-
-    ra.addAttribute("word", word); // redirect로 데이터 전송
-    ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-
-    return "redirect:/diary/list_by_diaryno_search_paging"; // @GetMapping(value="/list_by_diaryno_search_paging")
-  }
-
-  /**
-   * 우선 순위 낮춤, 1 등 -> 10 등, http://localhost:9093/diary/update_seqno_backward/1
-   * 
-   * @param model Controller -> Thymeleaf HTML로 데이터 전송에 사용
-   * @return
-   */
-  @GetMapping(value = "/update_seqno_backward/{diaryno}")
-  public String update_seqno_backward(Model model, @PathVariable("diaryno") Integer diaryno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "") int now_page, RedirectAttributes ra) {
-    this.diaryProc.update_seqno_backward(diaryno);
-
-    ra.addAttribute("word", word); // redirect로 데이터 전송
-    ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-
-    return "redirect:/diary/list_by_diaryno_search_paging"; // @GetMapping(value="/list_by_diaryno_search_paging")
-  }
-
-  /**
-   * 카테고리 공개 설정, http://localhost:9093/diary/update_visible_y/1
-   * 
-   * @param model Controller -> Thymeleaf HTML로 데이터 전송에 사용
-   * @return
-   */
-  @GetMapping(value = "/update_visible_y/{diaryno}")
-  public String update_visible_y(HttpSession session, Model model, @PathVariable("diaryno") Integer diaryno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "") int now_page, RedirectAttributes ra) {
-    
-    if (this.memberProc.isMemberAdmin(session)) {
-      this.diaryProc.update_visible_y(diaryno);
-
-      ra.addAttribute("word", word); // redirect로 데이터 전송
-      ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-
-      return "redirect:/diary/list_by_diaryno_search_paging"; // @GetMapping(value="/list_by_diaryno_search_paging")
-    } else {
-      return "redirect:/member/login_cookie_need";  // redirect
-    }
-  }
-
-  /**
-   * 카테고리 비공개 설정, http://localhost:9093/diary/update_visible_n/1
-   * 
-   * @param model Controller -> Thymeleaf HTML로 데이터 전송에 사용
-   * @return
-   */
-  @GetMapping(value = "/update_visible_n/{diaryno}")
-  public String update_visible_n(HttpSession session, Model model, @PathVariable("diaryno") Integer diaryno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "") int now_page, RedirectAttributes ra) {
-    
-    if (this.memberProc.isMemberAdmin(session)) {
-      this.diaryProc.update_visible_n(diaryno);
-
-      ra.addAttribute("word", word); // redirect로 데이터 전송
-      ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-
-      return "redirect:/diary/list_by_diaryno_search_paging"; // @GetMapping(value="/list_by_diaryno_search_paging")
-    } else {
-      return "redirect:/member/login_cookie_need";  // redirect
-    }
-  }
 
 }

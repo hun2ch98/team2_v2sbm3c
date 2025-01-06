@@ -6,21 +6,21 @@
 
   <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
   <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
-    INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emno, memberno)
-    VALUES(diary_seq.nextval, #{title}, TRUNC(#{ddate}), #{summary}, #{weatherno}, #{emno}, #{memberno})
+    INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emono, memberno)
+    VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weatherno}, #{emono}, #{memberno})
   </insert>
 
 
   <!-- 모든 카테고리의 등록된 글목록 -->
   <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, ddate, summary, weatherno, emno
+    SELECT diaryno, title, ddate, summary, weatherno, emono
     FROM diary
     ORDER BY diaryno DESC
   </select>
   
-  <select id="cntcount" parameterType="int" resultType="int">
+  <select id="dev.mvc.diary.DiaryDAOInter.cntcount" parameterType="int" resultType="int">
     SELECT COUNT(*) FROM diary WHERE diaryno = #{diaryno}
-</select>
+  </select>
 
   <select id="listSearch" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
     SELECT *
@@ -37,7 +37,7 @@
 
 
 
-  <select id="list_search_count" resultType="int">
+  <select id="dev.mvc.diary.DiaryDAOInter.list_search_count" resultType="int">
     SELECT COUNT(*) FROM diary
   </select>
 
@@ -69,7 +69,7 @@
 
 
 
-  <delete id="delete" parameterType="int">
+  <delete id="dev.mvc.diary.DiaryDAOInter.delete" parameterType="int">
     DELETE FROM diary
     WHERE diaryno=#{diaryno}
   </delete>
@@ -79,17 +79,17 @@
     SET title = #{title},
         summary = #{summary},
         weatherno = #{weatherno},
-        emno = #{emno}
+        emono = #{emono}
     WHERE diaryno = #{diaryno}
   </update>
 
   <select id="read" parameterType="int" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, summary, weatherno, emno, ddate
+    SELECT diaryno, title, summary, weatherno, emono, ddate
     FROM diary
     WHERE diaryno = #{diaryno}
   </select>
 
-  <select id="countSearchResults" resultType="int" parameterType="map">
+  <select id="dev.mvc.diary.DiaryDAOInter.countSearchResults" resultType="int" parameterType="map">
     SELECT COUNT(*) 
     FROM diary 
     WHERE 1=1
@@ -104,18 +104,30 @@
     </if>
   </select>
 
-  <select id="selectAvailableDates" resultType="java.util.Date">
+  <select id="dev.mvc.diary.DiaryDAOInter.selectAvailableDates" resultType="java.util.Date">
     SELECT DISTINCT ddate 
     FROM diary
     ORDER BY ddate ASC
   </select>
 
 
-  <select id="getDiaryNoByDate" parameterType="java.util.Date" resultType="int">
+  <select id="dev.mvc.diary.DiaryDAOInter.getDiaryNoByDate" parameterType="java.util.Date" resultType="int">
     SELECT diaryno 
     FROM diary
     WHERE ddate = #{ddate}
   </select>
+  
+    <select id="getDiaryByDiaryNo" resultType="dev.mvc.diary.DiaryVO">
+        SELECT * FROM diary WHERE diaryno = #{diaryno}
+    </select>
+    
+  <select id="getReadList" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
+    SELECT diaryno, title, summary, ddate, weatherno, emono, summary
+    FROM diary
+    WHERE diaryno = #{diaryno} <!-- 파라미터 이름 명시 -->
+    ORDER BY ddate DESC
+  </select>
+
 
     
 </mapper> 

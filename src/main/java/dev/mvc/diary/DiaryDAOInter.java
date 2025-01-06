@@ -134,4 +134,8 @@ public interface DiaryDAOInter {
 
   public List<Date> getAvailableDates();
   
+  DiaryVO getDiaryByDiaryNo(int diaryno);
+  
+  public List<DiaryVO> readList(int diaryno);
+  
 }
