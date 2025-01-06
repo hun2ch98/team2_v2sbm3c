@@ -40,7 +40,7 @@
   <!-- 회원 정보 수정 -->
   <update id="update" parameterType="dev.mvc.member.MemberVO">
     UPDATE member 
-    SET email=#{email}, name=#{name}, nickname=#{nickname}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
+    SET email=#{email}, name=#{name}, nickname=#{nickname}, phone=#{phone}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
     WHERE memberno=#{memberno}
   </update>
   
@@ -62,7 +62,7 @@
   <select id="login" resultType="int" parameterType="HashMap">
     SELECT COUNT(memberno) as cnt
     FROM member
-    WHERE id=#{id} AND passwd=#{passwd}
+    WHERE id=#{id} AND passwd=#{passwd} AND grade &lt;= 90
   </select>
   
   <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 -->
@@ -79,12 +79,12 @@
     WHERE memberno=#{memberno}
   </update>
 
-  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때
+  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때 -->
   <update id="update_passwd_find" parameterType="HashMap">
     UPDATE member
     SET passwd=#{passwd}
     WHERE id=#{id}
-  </update> -->
+  </update> 
   
   <!-- 아이디 찾기 회원 정보 일치 검증(name, email) -->
   <select id="find_id_check" resultType="int" parameterType="HashMap">
@@ -93,12 +93,12 @@
     WHERE name=#{name} AND tel=#{email}
   </select> 
   
-  <!-- 비밀번호 찾기 회원 정보 일치 검증(id, tel) 
+  <!-- 비밀번호 찾기 회원 정보 일치 검증(id, phone) -->
   <select id="find_passwd_check" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
-    WHERE id=#{id} AND tel=#{tel}
-  </select>-->
+    WHERE id=#{id} AND tel=#{phone}
+  </select>
   
   <!-- 회원 검색 목록 + 페이징 -->
   <select id="list_search_paging" parameterType="dev.mvc.dto.SearchDTO" resultType="dev.mvc.member.MemberVO" >
