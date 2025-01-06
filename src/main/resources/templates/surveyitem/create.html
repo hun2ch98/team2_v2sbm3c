@@ -15,30 +15,23 @@
     
   <div style="width: 50%; margin: 0px auto;">        
     <h3>항목 추가</h3>
-    <form method="post" th:action="@{/surveyitem/create}" th:object="${itemVO}">
-      <input type="hidden" th:field="*{surveyno}" th:value="${surveyno}" />
+    <form name="frm" method="post" action="/surveyitem/create">
+      <input type="hidden" name="surveyno" th:value="${surveyVO.surveyno}" />
 
+      <div>
+        <label>설문조사 주제</label>
+        <span th:text="${surveyVO.topic}"></span>
+        
       <div>
         <label>항목 내용</label>
         <input type="text" name="item" value="" autofocus="autofocus"
-              class="form-control" style="width: 50%;" th:field="*{item}" />
-          <div th:if="${#fields.hasErrors('item')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
-          <div th:each="err: ${#lists.sort(#fields.errors('item'))}" th:text="${err}"></div>
+              class="form-control" style="width: 50%;" />
       </div>
       <div>
         <label>출력 순서</label>
         <input type="number" name="item_seq" value="1" min="1" max="10000" step="1"
-              class="form-control" style="width:50%;" th:field="*{item_seq}"  />
-          <div th:if="${#fields.hasErrors('item_seq')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
-          <div th:each="err: ${#lists.sort(#fields.errors('item_seq'))}" th:text="${err}"></div>
+              class="form-control" style="width:50%;" />
       </div>
-      <!-- <div>
-        <label>참여 인원</label>
-        <input type="number" name="item_cnt" value="1" min="0" max="10000" step="1"
-              class="form-control" style="width:50%;" th:field="*{item_cnt}"  />
-          <div th:if="${#fields.hasErrors('item_cnt')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
-          <div th:each="err: ${#lists.sort(#fields.errors('item_cnt'))}" th:text="${err}"></div>
-      </div> -->
 
       <div class="content_body_bottom">
         <button type="submit" class="btn btn-secondary btn-sm">등록</button>

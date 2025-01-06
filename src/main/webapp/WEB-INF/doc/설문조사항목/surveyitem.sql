@@ -57,6 +57,15 @@ VALUES (surveyitem_seq.nextval, 2, 3, '사용된 문구가 아이들에게 친�
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 2, 4, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?');
 
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 14, 1, '테스트항목');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 14, 2, '테스트항목');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 14, 3, '테스트항목');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 14, 4, '테스트항목');
+
 -- 조회
 SELECT * FROM surveyitem;
     ITEMNO   SURVEYNO   ITEM_SEQ ITEM                                                                                                                                                                                                       ITEM_CNT
@@ -79,7 +88,7 @@ WHERE itemno = 17;
 
 
 COMMIT;
-
+SELECT * FROM surveyitem;
 -- 검색
 SELECT itemno, surveyno, item_seq, item
 FROM surveyitem
@@ -104,6 +113,45 @@ FROM (
 )
 WHERE r >= 1 AND r <= 2;
 
+SELECT COUNT(*) 
+    FROM surveyitem 
+    WHERE surveyno = 12;
 
+-- JOIN
+SELECT survey.surveyno, survey.topic,
+        surveyitem.itemno, surveyitem.item, surveyitem.item_seq, surveyitem.item_cnt
+FROM survey s, surveyitem i
+ORDER BY itemno ASC;
 
+SELECT s.surveyno, s.topic,
+        i.itemno, i.item, i.item_seq, i.item_cnt
+FROM survey s, surveyitem i
+WHERE s.surveyno = i.surveyno
+ORDER BY itemno ASC;
 
+SELECT s.surveyno, s.topic as s.surveyno
+        i.surveyno, i.itemno, i.item, i.item_seq, i.item_cnt as i.surveyno
+FROM survey s, surveyitem i
+WHERE (s.surveyno = i.surveyno) AND s.topic='사용 빈도'
+ORDER BY itemno ASC;
+        
+SELECT 
+    s.surveyno AS survey_number, 
+    s.topic AS topic_name,
+    i.surveyno AS item_survey_number, 
+    i.itemno AS item_number, 
+    i.item AS item_name, 
+    i.item_seq AS item_sequence, 
+    i.item_cnt AS item_count
+FROM 
+    survey s
+JOIN 
+    surveyitem i
+ON 
+    s.surveyno = i.surveyno
+WHERE 
+    s.topic = '사용 빈도'
+ORDER BY 
+    i.itemno ASC;
+
+        

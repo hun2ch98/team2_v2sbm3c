@@ -32,8 +32,6 @@ public class ItemVO {
   private int item_seq;
   
   /** 항목 */
-  @NotEmpty(message="항목 입력은 필수 사항입니다.")
-  @Size(min=1, max=200)
   private String item="";
   
   /** 항목 선택 인원 */
