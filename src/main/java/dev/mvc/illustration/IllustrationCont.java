@@ -132,6 +132,9 @@ public class IllustrationCont {
   @GetMapping(path="/read/{illustno}")
   public String read(Model model, 
                      @PathVariable("illustno") int illustno, 
+                     @RequestParam(value = "title", required = false, defaultValue = "") String title,
+                     @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
+                     @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
                      @RequestParam(name="now_page", defaultValue = "1") int now_page) {
       IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
       model.addAttribute("illustrationVO", illustrationVO);
@@ -145,6 +148,9 @@ public class IllustrationCont {
       String illust_size_label = Tool.unit(size1);
       illustrationVO.setIllust_size_label(illust_size_label);
       model.addAttribute("now_page", now_page);
+      model.addAttribute("title", title);
+      model.addAttribute("start_date", start_date);
+      model.addAttribute("end_date", end_date);
 
       return "/illustration/read";
   }
@@ -199,10 +205,16 @@ public class IllustrationCont {
   @GetMapping(path="/delete/{illustno}")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
                                   @PathVariable("illustno") int illustno, 
+                                  @RequestParam(value = "title", required = false, defaultValue = "") String title,
+                                  @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
+                                  @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
                                   @RequestParam(name="now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) {
       model.addAttribute("illustno", illustno);
       model.addAttribute("now_page", now_page);
+      model.addAttribute("title", title);
+      model.addAttribute("start_date", start_date);
+      model.addAttribute("end_date", end_date);
       
       IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
       model.addAttribute("illustrationVO", illustrationVO);
@@ -220,6 +232,9 @@ public class IllustrationCont {
   @PostMapping(value = "/delete")
   public String delete(RedirectAttributes ra, Model model, 
       @RequestParam(name="illustno", defaultValue = "0") int illustno,
+      @RequestParam(value = "title", required = false, defaultValue = "") String title,
+      @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
+      @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue = "1") int now_page) {
     
     IllustrationVO illustrationVO_read = illustrationProc.read(illustno);
@@ -232,6 +247,9 @@ public class IllustrationCont {
     Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
         
     this.illustrationProc.delete(illustno); 
+    model.addAttribute("title", title);
+    model.addAttribute("start_date", start_date);
+    model.addAttribute("end_date", end_date);
     
     return "redirect:/illustration/list_all";    
     
@@ -241,10 +259,16 @@ public class IllustrationCont {
   @GetMapping(path="/update/{illustno}")
   public String update(HttpSession session, Model model, 
       @PathVariable("illustno") int illustno,
+      @RequestParam(value = "title", required = false, defaultValue = "") String title,
+      @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
+      @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue="0") int now_page) {
     IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
     model.addAttribute(illustrationVO);
     model.addAttribute(now_page);
+    model.addAttribute("title", title);
+    model.addAttribute("start_date", start_date);
+    model.addAttribute("end_date", end_date);
     
     return "/illustration/update";
   }
@@ -253,6 +277,9 @@ public class IllustrationCont {
   @PostMapping(value="/update")
   public String update(HttpSession session, Model model,RedirectAttributes ra, 
       @ModelAttribute("illustrationVO") IllustrationVO illustrationVO, 
+      @RequestParam(value = "title", required = false, defaultValue = "") String title,
+      @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
+      @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue="0") int now_page, 
       @RequestParam(name="illustno", defaultValue="0") int illustno ) {
     if (this.memberProc.isMemberAdmin(session)) {
@@ -300,6 +327,10 @@ public class IllustrationCont {
       ra.addAttribute("illustno", illustrationVO.getIllustno());
       ra.addAttribute("now_page", now_page);
       model.addAttribute("illustno", illustno);
+      model.addAttribute("now_page", now_page);
+      model.addAttribute("title", title);
+      model.addAttribute("start_date", start_date);
+      model.addAttribute("end_date", end_date);
       return "redirect:/illustration/list_all";
     } else {
         
