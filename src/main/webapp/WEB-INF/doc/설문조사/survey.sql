@@ -21,6 +21,8 @@ CREATE TABLE survey (
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 ALTER TABLE survey ADD GOODCNT NUMBER(7) DEFAULT 0;
+ALTER TABLE survey MODIFY (goodcnt NUMBER(7) NOT NULL);
+
 
 DESC SURVEY;
 -- ALTER TABLE survey MODIFY goodcnt NUMBER(7);
