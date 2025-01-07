@@ -37,8 +37,15 @@ public class NoticeProc implements NoticeProcInter{
   
   /** 추천수 증가 */
   @Override
-  public int goodCnt(int noticeno) {
-    int cnt = this.noticeDAO.goodCnt(noticeno);
+  public int increaseGoodcnt(int noticeno) {
+    int cnt = this.noticeDAO.increaseGoodcnt(noticeno);
+    return cnt;
+  }
+  
+  /** 추천수 감소 */
+  @Override
+  public int decreaseGoodcnt(int noticeno) {
+    int cnt = this.noticeDAO.decreaseGoodcnt(noticeno);
     return cnt;
   }
   
