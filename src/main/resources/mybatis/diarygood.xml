@@ -5,7 +5,7 @@
 <mapper namespace="dev.mvc.diarygood.DiaryGoodDAOInter">
 
   <!-- 등록 -->
-  <insert id="create" parameterType="dev.mvc.diarygood.DiarygoodVO">
+  <insert id="create" parameterType="dev.mvc.diarygood.DiaryGoodVO">
     INSERT INTO diarygood(goodno, diaryno, memberno, rdate)
     VALUES (diarygood_seq.nextval, #{diaryno}, #{memberno}, sysdate)
   </insert>
