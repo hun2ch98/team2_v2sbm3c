@@ -1,5 +1,7 @@
 package dev.mvc.diarygood;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,12 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
   public int create(DiaryGoodVO diaryGoodVO) {
     int cnt = this.diaryGoodDAO.create(diaryGoodVO);
     return cnt;
+  }
+
+  @Override
+  public ArrayList<DiaryGoodVO> list_all() {
+    ArrayList<DiaryGoodVO> list = this.diaryGoodDAO.list_all();
+    return list;
   }
   
 }

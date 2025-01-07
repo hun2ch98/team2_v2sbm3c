@@ -32,7 +32,8 @@
                           role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="공지사항">                                                            
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                      <li class="nav-item"><a class="nav-link"th:href="@{|/notice/list_all|}">공지사항 목록</a></li>
+                      <li class="nav-item"><a class="nav-link"th:href="@{|/notice/list_all|}">공지사항 목록</a></li>\
+                      <li class="nav-item"><a class="nav-link"th:href="@{|/noticegood/list_all|}">공지사항 추천</a></li>
                   </ul>
                 </li>
                 
@@ -53,6 +54,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/surveygood/list_all|}">설문조사 추천</a></li>
                     </ul>
                 </li>
                 
@@ -92,6 +94,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/bannedwords/create|}">금지단어 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/bannedwords/list_by_wordno_search_paging?is_continue=${is_continue ?: ''}|}">금지단어 목록</a></li>
+                                                <li class="nav-item"><a class="nav-link" th:href="@{|/bannedwordsgood/list_all|}">금지단어 추천</a></li>
                     </ul>
                 </li>
                 
@@ -102,6 +105,8 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/create|}">일기 작성</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">일기 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/diarygood/list_all|}">일기 좋아요</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_calendar|}">일기 달력</a></li>
                     </ul>
                 </li>
                 
