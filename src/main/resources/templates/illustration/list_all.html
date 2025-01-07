@@ -51,7 +51,7 @@
           <td>
             <a th:href="@{/illustration/read/{id}(id=${item['ILLUSTNO']})}" th:text="${item['TITLE']}"></a>
           </td>
-          <td th:text="${#dates.format(item['DDATE'], 'yyyy-MM-dd')}"></td>
+          <td th:text="${item['DDATE']}"></td>
           <td>
             <div style="text-align: center;">
               <img th:src="@{'/upload/' + ${item['ILLUST_THUMB']}}" 
@@ -70,7 +70,8 @@
 
   <!-- 페이징 처리 (필요 시 추가 가능) -->
   <div class="bottom_menu">
-    <span>총 <span th:text="${totalCount}"></span>개의 기록이 있습니다.</span>
+    <span>총 <span th:text="${search_count}"></span>개의 기록이 있습니다.</span>
   </div>
+  <div th:utext="${paging}"></div>
 </div>
 </html>

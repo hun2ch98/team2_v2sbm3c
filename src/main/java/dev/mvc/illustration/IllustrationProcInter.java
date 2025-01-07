@@ -37,7 +37,7 @@ public interface IllustrationProcInter {
     // 일기 번호에 해당하는 일러스트 썸네일을 가져오는 메서드 선언
     List<IllustrationVO> getIllustrationsByDiaryNo(int diaryno);
     
-    List<Map<String, Object>> list_search_paging(String title, int now_page, int record_per_page, int start_num, int end_num);
+    List<Map<String, Object>> list_search_paging(String title, int now_page, int record_per_page, int start_num, int end_num, String stat_date, String end_date);
     
     /** 
      * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 

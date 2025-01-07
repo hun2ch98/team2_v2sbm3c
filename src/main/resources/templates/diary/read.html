@@ -13,6 +13,8 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/update?diaryno=${diaryVO.diaryno}&now_page=${now_page}&word=${word }|}">글 수정</a>
     <span class='menu_divide' >│</span>
+    <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록</a>    
+    <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/delete?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}&diaryno=${diaryVO.diaryno}|}">삭제</a>  
  </aside> 
 

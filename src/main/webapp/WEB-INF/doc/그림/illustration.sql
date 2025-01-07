@@ -72,3 +72,23 @@ FROM (
     WHERE ROWNUM <= ?
 )
 WHERE rnum >= ?
+;
+
+
+SELECT * 
+FROM (
+    SELECT 
+        i.illustno, 
+        i.illust_thumb, 
+        d.diaryno, 
+        d.title, 
+        TO_CHAR(d.ddate, 'YYYY-MM-DD') AS ddate,
+        ROW_NUMBER() OVER (ORDER BY d.ddate ASC) AS rnum
+    FROM illustration i
+    LEFT JOIN diary d ON i.diaryno = d.diaryno
+    WHERE 1 = 1
+    AND SUBSTR(d.ddate, 1, 10) >= '2024-01-01'
+    AND SUBSTR(d.ddate, 1, 10) <= '2025-01-07'
+)
+WHERE rnum BETWEEN 1 AND 10;
+
