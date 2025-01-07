@@ -1,5 +1,7 @@
 package dev.mvc.surveygood;
 
+import java.util.ArrayList;
+
 public interface SurveygoodProcInter {
   
   /**
@@ -8,5 +10,11 @@ public interface SurveygoodProcInter {
    * @return
    */
   public int create(SurveygoodVO surveygoodVO);
+  
+  /**
+   * 목록
+   * @return
+   */
+  public ArrayList<SurveygoodVO> list_all();
 
 }

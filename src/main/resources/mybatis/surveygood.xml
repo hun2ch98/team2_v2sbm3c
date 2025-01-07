@@ -9,5 +9,12 @@
     INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
     VALUES (surveygood_seq.nextval, #{surveyno}, #{memberno}, sysdate)
   </insert>
+  
+  <!-- 목록 -->
+  <select id="list_all" parameterType="dev.mvc.surveygood.SurveygoodVO">
+    SELECT goodno, surveyno, memberno, rdate
+    FROM surveygood
+    ORDER BY goodno DESC
+  </select>
 
 </mapper>
