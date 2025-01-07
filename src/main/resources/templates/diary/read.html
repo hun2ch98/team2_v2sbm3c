@@ -2,6 +2,18 @@
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
+  <script>
+    window.onload = function() {
+      //<img src = "/diarygood/images/file_name" style="" title="">
+      //<img src = "/diarygood/images/file_name" style="" title="">
+      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+      if (heartCnt == 1) {
+        document.querySelector('#heart_panel').innerHTML = '<img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요">'; 
+      } else {
+        document.querySelector('#heart_panel').innerHTML = '<img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제">'; 
+      }
+    }
+  </script>
   <div class='title_line'>
     일기 조회
   </div>
@@ -44,7 +56,11 @@
                alt="썸네일" style="width: 200px; height: auto;">
         </div>
       </li>
-      
+      <li class="li_none">
+        <div>
+          <span id="heart_panel"></span>
+        </div>
+      </li>
     </ul>
   </fieldset>
 

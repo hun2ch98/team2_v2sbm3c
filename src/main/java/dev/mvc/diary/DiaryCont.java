@@ -3,6 +3,7 @@ package dev.mvc.diary;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
+import dev.mvc.diarygood.DiaryGoodProcInter;
 import dev.mvc.emotion.EmotionVO;
 import dev.mvc.illustration.IllustrationProcInter;
 import dev.mvc.illustration.IllustrationVO;
@@ -44,6 +46,10 @@ public class DiaryCont {
   @Autowired
   @Qualifier("dev.mvc.illustration.IllustrationProc")
   private IllustrationProcInter illustrationProc;  // IllustrationProc 인터페이스
+  
+  @Autowired
+  @Qualifier("dev.mvc.diarygood.DiaryGoodProc")
+  private DiaryGoodProcInter diaryGoodProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 10;
@@ -144,24 +150,42 @@ public class DiaryCont {
   
   
   @GetMapping(path="/read/{diaryno}")
-  public String readDiary(@PathVariable("diaryno") int diaryno, 
-      @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
+  public String readDiary(@PathVariable("diaryno") int diaryno, HttpSession session,
+    @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
     
-      // 일기 번호에 해당하는 일기 데이터 조회
-      DiaryVO diaryVO = diaryProc.getDiaryByDiaryNo(diaryno);  // DiaryProc에서 일기 데이터 조회
+    
+    // 일기 번호에 해당하는 일기 데이터 조회
+    DiaryVO diaryVO = diaryProc.getDiaryByDiaryNo(diaryno);  // DiaryProc에서 일기 데이터 조회
 
-      // 일기 번호에 해당하는 일러스트 데이터 조회
-      List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
+    // 일기 번호에 해당하는 일러스트 데이터 조회
+    List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
 
-      List<DiaryVO> diaryList = diaryProc.readList(diaryno);
-      
-      // 모델에 일기 데이터와 일러스트 목록 추가
-      model.addAttribute("diaryVO", diaryVO);  // 일기 데이터
-      model.addAttribute("diaryList", diaryList);  
-      model.addAttribute("illustrationList", illustrationList);  // 일러스트 목록
-      model.addAttribute("now_page", now_page);  // 현재 페이지
+    List<DiaryVO> diaryList = diaryProc.readList(diaryno);
+    
+    // 모델에 일기 데이터와 일러스트 목록 추가
+    model.addAttribute("diaryVO", diaryVO);  // 일기 데이터
+    model.addAttribute("diaryList", diaryList);  
+    model.addAttribute("illustrationList", illustrationList);  // 일러스트 목록
+    model.addAttribute("now_page", now_page);  // 현재 페이지
+    
+    //-----------------------------------------------------------------------------------
+    // 좋아요 수 관련 코드
+    //-----------------------------------------------------------------------------------
+    HashMap<String, Object> map = new HashMap<String, Object>();
+    map.put("diaryno", diaryno);
 
-      return "/diary/read";  // "diary/read" 뷰로 이동
+    int heartCnt = 0;
+    if (session.getAttribute("memberno") != null) {
+      int memberno = (int) session.getAttribute("memberno");
+      map.put("memberno", memberno);
+      heartCnt = this.diaryGoodProc.heartCnt(map);
+    }
+    
+    model.addAttribute(heartCnt);
+    //-----------------------------------------------------------------------------------
+    
+    
+    return "/diary/read";
   }
   
   
