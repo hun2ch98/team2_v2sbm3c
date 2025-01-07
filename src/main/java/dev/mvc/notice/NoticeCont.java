@@ -96,4 +96,23 @@ public class NoticeCont {
     
     return "/notice/read";
   }
+  
+  /** 수정 폼 http://localhost:9093/notice/update?noticeno0=1 */
+  @GetMapping(value = "/update")
+  public String update_text(HttpSession session,
+      Model model,
+      @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) {
+      NoticeVO noticeVO = this.noticeProc.read(noticeno);
+      model.addAttribute("noticeVO", noticeVO);
+      
+      return "/notice/update";
+    } else {
+      return "/member/login_cookie_need";
+    }
+  }
+  
+  /** 수정 처리 http://localhost:9093/notice/update?noticeno0=1 */
 }
