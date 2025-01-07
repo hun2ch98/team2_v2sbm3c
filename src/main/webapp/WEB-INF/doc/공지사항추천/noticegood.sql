@@ -22,13 +22,13 @@ commit;
 
 -- 데이터 삽입
 INSERT INTO noticegood(noticegoodno, rdate, memberno, noticeno)
-VALUES (noticegood_seq.nextval, sysdate, 1, 1);
+VALUES (noticegood_seq.nextval, sysdate, 1, 4);
 
 INSERT INTO noticegood(noticegoodno, rdate, memberno, noticeno)
-VALUES (noticegood_seq.nextval, sysdate, 3, 3);
+VALUES (noticegood_seq.nextval, sysdate, 3, 8);
 
 INSERT INTO noticegood(noticegoodno, rdate, memberno, noticeno)
-VALUES (noticegood_seq.nextval, sysdate, 4, 4);
+VALUES (noticegood_seq.nextval, sysdate, 4, 9);
 
 COMMIT;
 
@@ -50,13 +50,14 @@ WHERE noticegoodno = 1;
 
 -- 삭제
 DELETE FROM noticegood
-WHERE noticegoodno = 3;
+WHERE noticegoodno = 8;
        CNT
 ----------
          1
 
 commit;
 
+-- 특정 공지사항의 특정 회원 추천 갯수 산출
 SELECT COUNT(*) as cnt
 FROM noticegood
 WHERE noticeno=3 AND memberno=3;

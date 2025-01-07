@@ -1,6 +1,7 @@
 package dev.mvc.noticegood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,12 @@ public class NoticegoodProc implements NoticegoodProcInter {
   @Override
   public int delete(int noticegoodVO) {
     int cnt = this.noticegoodDAO.delete(noticegoodVO);
+    return cnt;
+  }
+  
+  @Override
+  public int heart_Cnt(HashMap<String, Object> map) {
+    int cnt = this.noticegoodDAO.heart_Cnt(map);
     return cnt;
   }
 
