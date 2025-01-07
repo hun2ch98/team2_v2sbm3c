@@ -25,23 +25,23 @@
     
     <div>
        <label>주제</label>
-       <input type='text' name='topic' value='' required="required" 
+       <input type='text' name='topic' th:value="${surveyVO.topic}" required="required" 
                  autofocus="autofocus" class="form-control" style='width: 100%;'>
     </div>
     
     <div>
       <label>시작 날짜</label>
-      <input type="date" name="sdate" th:value="*{sdate}" required="required" class="form-control" style="width: 100%;">
+      <input type="date" name="sdate" th:value="${surveyVO.sdate}" required="required" class="form-control" style="width: 100%;">
     </div>
     
     <div>
       <label>종료 날짜</label>
-      <input type="date" name="edate" th:value="*{edate}" required="required" class="form-control" style="width: 100%;">
+      <input type="date" name="edate" th:value="${surveyVO.edate}" required="required" class="form-control" style="width: 100%;">
     </div>
     
     <div>
       <label>참여 인원</label>
-      <input type="intger" name="s_number" th:value="*{s_number}" required="required" class="form-control" style="width: 100%;">
+      <input type="intger" name="s_number" th:value="${surveyVO.s_number}" required="required" class="form-control" style="width: 100%;">
     </div>
     
     <div>

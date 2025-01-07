@@ -55,8 +55,8 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public ArrayList<ItemVO> list_search(String word) {
-    ArrayList<ItemVO> list = this.itemDAO.list_search(word);
+  public ArrayList<ItemVO> list_search(int surveyno, String word) {
+    ArrayList<ItemVO> list = this.itemDAO.list_search(surveyno, word);
     return list;
   }
 
@@ -67,7 +67,7 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public ArrayList<ItemVO> list_search_paging(String word, int now_page, int record_per_page) {
+  public ArrayList<ItemVO> list_search_paging(int surveyno, String word, int now_page, int record_per_page) {
     /*
      페이지당 10개의 레코드 출력
      1 page: WHERE r >= 1 AND r <= 10
@@ -89,8 +89,16 @@ public class ItemProc implements ItemProcInter{
     
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("word", word);
+    map.put("surveyno", surveyno);
     map.put("start_num", start_num);
     map.put("end_num", end_num);
+    
+//    System.out.println("->word : " + word);
+//    System.out.println("->surveyno: " + surveyno);
+//    System.out.println("->now_page: " + now_page);
+//    System.out.println("->record_per_page: " + record_per_page);
+//    System.out.println("->start_num: " + start_num);
+//    System.out.println("->end_num: " + end_num);
     
     ArrayList<ItemVO> list = this.itemDAO.list_search_paging(map);
     // System.out.println("-> " + list.size());
@@ -111,7 +119,7 @@ public class ItemProc implements ItemProcInter{
    * @return 페이징 생성 문자열
    */ 
   @Override
-  public String pagingBox(int now_page, String word, String list_file_name, int search_count, 
+  public String pagingBox(int surveyno, int now_page, String word, String list_file_name, int search_count, 
                                       int record_per_page, int page_per_block){    
     // 전체 페이지 수: (double)1/10 -> 0.1 -> 1 페이지, (double)12/10 -> 1.2 페이지 -> 2 페이지
     int total_page = (int)(Math.ceil((double)search_count / record_per_page));
@@ -195,6 +203,18 @@ public class ItemProc implements ItemProcInter{
     str.append("</div>"); 
      
     return str.toString(); 
+  }
+  
+  @Override
+  public int count_by_surveyno(int surveyno) {
+    int cnt = this.itemDAO.count_by_surveyno(surveyno);
+    return cnt;
+  }
+  
+  @Override
+  public int delete_by_surveyno(int surveyno) {
+    int cnt = this.itemDAO.delete_by_surveyno(surveyno);
+    return cnt;
   }
 
 

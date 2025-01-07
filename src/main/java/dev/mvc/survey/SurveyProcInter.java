@@ -47,14 +47,6 @@ public interface SurveyProcInter {
    */
   public ArrayList<SurveyVO> list_by_surveyno_search_paging(HashMap<String, Object> hashMap);
   
-  /**
-   * 관리자
-   * 검색 및 페이징
-   * @param hashMap
-   * @return
-   */
-  public ArrayList<SurveyVO> admin_list_surveyno_search_paging(HashMap<String, Object> hashMap);
-  
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 
    * 현재 페이지: 11 / 22   [이전] 11 12 13 14 15 16 17 18 19 20 [다음] 
@@ -99,5 +91,20 @@ public interface SurveyProcInter {
    * @return
    */
   public int delete(int surveyno);
+  
+  /**
+   * 자료수 산출
+   * @param surveyno
+   * @return
+   */
+  public int cntcount(int surveyno);
+  
+  /**
+   * 추천 
+   * @param surveyno
+   * @return
+   */
+  public int goodcnt(int surveyno);
+
 
 }

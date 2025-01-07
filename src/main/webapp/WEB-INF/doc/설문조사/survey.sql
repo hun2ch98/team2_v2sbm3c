@@ -17,9 +17,13 @@ CREATE TABLE survey (
     file1saved      VARCHAR2(100)		 NULL,
 	thumb1          VARCHAR2(100)		 NULL,
 	size1           NUMBER(10)		     NULL,
+    goodcnt         NUMBER(7)       NOT  NULL,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
+ALTER TABLE survey ADD GOODCNT NUMBER(7) DEFAULT 0;
 
+DESC SURVEY;
+-- ALTER TABLE survey MODIFY goodcnt NUMBER(7);
 
 
 COMMENT ON TABLE SURVEY is '설문조사';
@@ -34,6 +38,7 @@ COMMENT ON COLUMN SURVEY.THUMB1 is '메인 이미지 Preview';
 COMMENT ON COLUMN SURVEY.SIZE1 is '메인 이미지 크기';
 COMMENT ON COLUMN SURVEY.S_NUMBER is '참여 인원';
 COMMENT ON COLUMN SURVEY.IS_CONTINUE is '진행 여부';
+COMMENT ON COLUMN SURVEY.GOODCNT is '추천';
 
 DROP SEQUENCE survey_seq;
 -- ALTER TABLE survey MODIFY visible CHAR(1);
@@ -148,9 +153,14 @@ COMMIT;
 
 -- cateno FK 특정 그룹에 속한 레코드 모두 삭제
 DELETE FROM surveyitem
-WHERE surveyno=11;
+WHERE surveyno=14;
 
+SELECT COUNT(*) 
+FROM surveyitem 
+WHERE surveyno = 14;
 
+-- 추천
+UPDATE survey SET goodcnt=goodcnt+1 WHERE surveyno=12;
 
 
 

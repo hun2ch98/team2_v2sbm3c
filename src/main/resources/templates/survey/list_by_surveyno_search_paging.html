@@ -12,9 +12,7 @@
       <a th:href="@{/survey/create}">등록</a>
       <span class="menu_divide">│</span>    
     </span>
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>    
-    <a th:href="@{/survey/list_by_surveyno_search_paging?now_page=${now_page}}">목록</a>    
+    <a href="javascript:location.reload();">새로고침</a>  
   </aside> 
   
   <!-- /survey/list_search_com.html 파일의 list_search_fragment import -->
@@ -26,8 +24,9 @@
     <colgroup>
       <col style='width: 10%;'/>
       <col style='width: 40%;'/>
-      <col style='width: 17%;'/>
-      <col style='width: 17%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 5%;'/>
       <col style='width: 5%;'/>
       <col style='width: 5%;'/>
     </colgroup>
@@ -38,6 +37,7 @@
       <th class='th_bs'>종료일</th>
       <th class='th_bs'>참여인원</th>
       <th class='th_bs'>진행여부</th>
+      <th class='th_bs'>추천</th>
     </tr>
     </thead>
     
@@ -76,14 +76,18 @@
       <td class='td_left'>
         <span th:text="| ${surveyVO.is_continue}|"></span>
       </td>
+      <td class='td_left'>
+        <a th:text="|${surveyVO.goodcnt}|"></a>
+      </td>
       <td>
         <span th:if="${session.grade == 'admin'}">
+        <!--
           <a th:href="@{|/survey/update_text/${surveyVO.surveyno}|}">
             <img src="/survey/images/update_text.png" class="icon" title="글수정">
           </a> 
           <a th:href="@{|/survey/update_file/${surveyVO.surveyno}|}">
             <img src="/survey/images/update_file.png" class="icon" title="파일수정">
-          </a> 
+          </a> -->
           <a th:href="@{|/survey/delete/${surveyVO.surveyno}|}">
             <img src="/survey/images/delete.png" class="icon" title="삭제">
           </a> 

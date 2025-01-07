@@ -11,8 +11,8 @@ public class BannedwordsVO {
 //	CREATE TABLE bannedwords (
 //			wordno	    NUMBER(10)		        NOT NULL,
 //			word	    VARCHAR(100)		    NOT NULL,
-//		    reason      VARCHAR(100)            NOT NULL,
-//		    goodcnt     NUMBER(7)               NULL,
+//		    reason      VARCHAR(500)            NOT NULL,
+//		    goodcnt     NUMBER(7)               NOT NULL,
 //			rdate       DATE    NOT NULL
 //		);
 	

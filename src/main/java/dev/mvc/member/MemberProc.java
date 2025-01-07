@@ -165,15 +165,15 @@ public class MemberProc implements MemberProcInter {
     return cnt;
   }
   
-//  @Override
-//  public int update_passwd_find(HashMap<String, Object> map) {
-//    String passwd = (String)map.get("passwd");
-//    passwd = this.security.aesEncode(passwd);
-//    map.put("passwd", passwd);
-//    
-//    int cnt = this.memberDAO.update_passwd_find(map);
-//    return cnt;
-//  }
+  @Override
+  public int update_passwd_find(HashMap<String, Object> map) {
+    String passwd = (String)map.get("passwd");
+    passwd = this.security.aesEncode(passwd);
+    map.put("passwd", passwd);
+    
+    int cnt = this.memberDAO.update_passwd_find(map);
+    return cnt;
+  }
   
   /** 이름, 이메일 일치하는 회원 검사 */
   @Override
@@ -182,13 +182,13 @@ public class MemberProc implements MemberProcInter {
     return cnt;
   }
   
-//  /** 아이디, 이메일 일치하는 회원 검사 */
-//  @Override
-//  public int find_passwd(String id, String email) {
-//    int cnt = this.memberDAO.find_passwd(id, email);
-//    
-//    return cnt;
-//  }
+  /** 아이디, 이메일 일치하는 회원 검사 */
+  @Override
+  public int find_passwd(String id, String phone) {
+    int cnt = this.memberDAO.find_passwd(id, phone);
+    
+    return cnt;
+  }
 
   //----------------------------------------------------------------------------------
   // ~~~~~~ 로그인 및 패스워드 인증 관련 메서드 종료

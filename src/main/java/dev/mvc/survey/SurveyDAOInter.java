@@ -37,7 +37,7 @@ public interface SurveyDAOInter {
    * @param hashMap
    * @return
    */
-  public int count_by_surveyno_search(HashMap<String, Object> hashMap);
+  public int count_by_surveyno_search(HashMap<String, Object> map);
   
   /**
    * 회원
@@ -46,14 +46,6 @@ public interface SurveyDAOInter {
    * @return
    */
   public ArrayList<SurveyVO> list_by_surveyno_search_paging(HashMap<String, Object> hashMap);
-  
-  /**
-   * 관리자
-   * 검색 및 페이징
-   * @param hashMap
-   * @return
-   */
-  public ArrayList<SurveyVO> admin_list_surveyno_search_paging(HashMap<String, Object> hashMap);
   
   /**
    * 조회
@@ -82,5 +74,20 @@ public interface SurveyDAOInter {
    * @return
    */
   public int delete(int surveyno);
+ 
+  
+  /**
+   * 자료수 산출
+   * @param surveyno
+   * @return
+   */
+  public int cntnount(int surveyno);
+  
+  /**
+   * 추천 
+   * @param surveyno
+   * @return
+   */
+  public int goodcnt(int surveyno);
 
 }

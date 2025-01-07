@@ -25,3 +25,23 @@ VALUES (0, 'test', 'test', '1', 'test', 0);
 INSERT INTO illustration(illustno, illust, illust_saved, illust_size, illust_thumb, conversationno)
 VALUES (1, 'test', 'test', '1', 'test', 0);
 commit;
+
+
+SELECT 
+    i.illustno,
+    i.illust_thumb,
+    i.diaryno,
+    d.title,
+    d.ddate
+FROM 
+    illustration i
+LEFT JOIN 
+    diary d
+ON 
+    i.diaryno = d.diaryno
+ORDER BY d.ddate ASC;
+
+SELECT *
+FROM user_constraints
+WHERE table_name = 'ILLUSTRATION'
+AND constraint_type = 'R';

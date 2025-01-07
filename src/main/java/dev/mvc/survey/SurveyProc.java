@@ -67,24 +67,6 @@ public class SurveyProc implements SurveyProcInter {
   }
   
   @Override
-  public ArrayList<SurveyVO> admin_list_surveyno_search_paging(HashMap<String, Object> map) {
-      // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
-      int now_page = (int) map.get("now_page");
-      int record_per_page = 10; // 페이지당 레코드 수
-
-      int startRow = (now_page - 1) * record_per_page + 1;
-      int endRow = now_page * record_per_page;
-
-      // 계산된 값을 `HashMap`에 추가합니다.
-      map.put("startRow", startRow);
-      map.put("endRow", endRow);
-
-      // 데이터베이스 쿼리 실행
-      ArrayList<SurveyVO> list = this.surveyDAO.admin_list_surveyno_search_paging(map);
-      return list;
-  }
-  
-  @Override
   public String pagingBox(int memberno, int now_page, String is_continue, String list_file, int search_count,
           int record_per_page, int page_per_block) {
       int total_page = (int) Math.ceil((double) search_count / record_per_page);
@@ -154,6 +136,18 @@ public class SurveyProc implements SurveyProcInter {
   @Override
   public int delete(int surveyno) {
     int cnt = this.surveyDAO.delete(surveyno);
+    return cnt;
+  }
+  
+  @Override
+  public int goodcnt(int surveyno) {
+    int cnt = this.surveyDAO.goodcnt(surveyno);
+    return cnt;
+  }
+  
+  @Override
+  public int cntcount(int surveyno) {
+    int cnt = this.surveyDAO.cntnount(surveyno);
     return cnt;
   }
 
