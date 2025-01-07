@@ -4,10 +4,17 @@
 
 <mapper namespace="dev.mvc.bannedwordsgood.BannedwordsgoodDAOInter">
 
-	<!--등록-->
-	<insert id="create" parameterType="dev.mvc.bannedwordsgood.BannedwordsgoodVO">
-	    INSERT INTO bannedwordsgood (goodno, rdate, wordno, memberno)
-	    VALUES (bannedwordsgood_seq.nextval, #{goodno}, #{rdate}, #{wordno}, #{memberno})
-	</insert>
+  <!--등록-->
+  <insert id="create" parameterType="dev.mvc.bannedwordsgood.BannedwordsgoodVO">
+  	  INSERT INTO bannedwordsgood (goodno, rdate, wordno, memberno)
+	  VALUES (bannedwordsgood_seq.nextval, #{goodno}, #{rdate}, #{wordno}, #{memberno})
+  </insert>
+	
+  <!-- 전체 목록 -->
+  <select id="list_all" resultType="dev.mvc.bannedwordsgood.BannedwordsgoodVO">
+    SELECT goodno, rdate, wordno, memberno
+    FROM bannedwordsgood
+    ORDER BY goodno DESC
+  </select>
 
 </mapper>
