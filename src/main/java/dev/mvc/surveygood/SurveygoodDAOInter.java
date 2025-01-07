@@ -1,6 +1,7 @@
 package dev.mvc.surveygood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface SurveygoodDAOInter {
   
@@ -23,5 +24,12 @@ public interface SurveygoodDAOInter {
    * @return
    */
   public int delete(int goodno);
+  
+  /**
+   * 특정 개수 산출
+   * @param map
+   * @return
+   */
+  public int heartCnt(HashMap<String, Object> map);
 
 }
