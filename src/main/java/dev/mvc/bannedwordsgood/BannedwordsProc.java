@@ -1,6 +1,7 @@
 package dev.mvc.bannedwordsgood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,4 +29,10 @@ public class BannedwordsProc implements BannedwordsgoodProcInter {
         int cnt = this.bannedwordsgoodDAO.delete(goodno);
         return cnt;
     }
+	
+	@Override
+	public int heartCnt(HashMap<String, Object> map) {
+		 int cnt = this.bannedwordsgoodDAO.heartCnt(map);
+	     return cnt;
+	}
 }
