@@ -15,4 +15,10 @@
     ORDER BY noticegoodno DESC
   </select>
   
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM noticegood
+    WHERE noticegoodno = #{noticegoodno};
+  </delete>
+  
 </mapper>

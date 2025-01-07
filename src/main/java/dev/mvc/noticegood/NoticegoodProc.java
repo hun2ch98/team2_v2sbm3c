@@ -24,5 +24,11 @@ public class NoticegoodProc implements NoticegoodProcInter {
     
     return list;
   }
+  
+  @Override
+  public int delete(int noticegoodVO) {
+    int cnt = this.noticegoodDAO.delete(noticegoodVO);
+    return cnt;
+  }
 
 }
