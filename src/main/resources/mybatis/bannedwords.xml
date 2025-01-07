@@ -6,27 +6,27 @@
 
   <!-- 금지 단어 글 추가 -->
   <insert id="create" parameterType="dev.mvc.bannedwords.BannedwordsVO">
-    INSERT INTO bannedwords (wordno, word, reason, rdate, goodcnt)
-    VALUES (bannedwords_seq.nextval, #{word}, #{reason}, sysdate, 0)
+    INSERT INTO bannedwords (wordno, word, reason, goodcnt, memberno, rdate)
+    VALUES (bannedwords_seq.nextval, #{word}, #{reason}, #{goodcnt}, #{memberno}, sysdate)
   </insert>
   
   <!-- 금지 단어 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.bannedwords.BannedwordsVO">
-    SELECT wordno, word, reason, goodcnt, rdate
+    SELECT wordno, word, reason, goodcnt, memberno, rdate
     FROM bannedwords
     WHERE wordno = #{wordno}
   </select>
   
   <!-- 모든 목록 -->
   <select id="list_all" parameterType="dev.mvc.bannedwords.BannedwordsVO">
-    SELECT wordno, word, reason, goodcnt, rdate
+    SELECT wordno, word, reason, goodcnt, memberno, rdate
     FROM bannedwords
     ORDER BY wordno DESC
   </select>
   
   <!-- 등록된 목록 -->
   <select id="list_by_wordno" resultType="dev.mvc.bannedwords.BannedwordsVO">
-    SELECT wordno, word, reason, goodcnt, rdate
+    SELECT wordno, word, reason, goodcnt, memberno, rdate
     FROM bannedwords
     ORDER BY wordno DESC
   </select>
@@ -34,7 +34,7 @@
   <!-- 내용 수정 -->
   <update id="update_text" parameterType="dev.mvc.bannedwords.BannedwordsVO">
     UPDATE bannedwords
-    SET word=#{word}, reason=#{reason}, rdate=sysdate 
+    SET word=#{word}, reason=#{reason}, goodcnt=#{goodcnt}, memberno=#{memberno}, rdate=sysdate 
     WHERE wordno = #{wordno}
   </update>
   
@@ -48,7 +48,7 @@
   <select id="list_by_wordno_search" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="HashMap">
     SELECT *
     FROM (
-        SELECT wordno, word, goodcnt, reason
+        SELECT wordno, word, goodcnt, memberno, reason
                ROW_NUMBER() OVER (ORDER BY wordno DESC) AS rnum
         FROM bannedwords
         WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
@@ -71,7 +71,7 @@
   <select id="list_by_wordno_search_paging" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="HashMap">
       SELECT *
       FROM (
-          SELECT wordno, word, reason, goodcnt, rdate,
+          SELECT wordno, word, reason, goodcnt, memberno, rdate,
                  ROW_NUMBER() OVER (ORDER BY wordno DESC) AS rnum
           FROM bannedwords
           WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
@@ -81,7 +81,7 @@
   
   <!-- 특정 달의 조회 -->
   <select id="list_goodcnt" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="int">
-    SELECT wordno, word, reason, goodcnt, rdate
+    SELECT wordno, word, reason, goodcnt, memberno, rdate
     FROM bannedwords
     WHERE SUBSTR(wordno, 1, 10) = #{wordno}
     ORDER BY wordno ASC
