@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
 //알고리즘 구현
-@Service("dev.mvc.bannedwords.BannedwordsProc")
+@Component("dev.mvc.bannedwords.BannedwordsProc")
 public class BannedwordsProc implements BannedwordsProcInter {
 	
 	@Autowired // bannedwordsVOInter를 구현한 클래스의 객체를 자동으로 생성하여 bannedwordsVO 객체에 할당
