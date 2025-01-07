@@ -15,4 +15,7 @@ public interface NoticegoodProcInter {
    * @return
    */
   public ArrayList<NoticegoodVO> list_all();
+  
+  /** 삭제 */
+  public int delete(int noticegoodno);
 }
