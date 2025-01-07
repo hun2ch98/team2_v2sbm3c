@@ -9,6 +9,7 @@ import lombok.ToString;
 //    memberno    NUMBER(10)                  NOT NULL,
 //    title       VARCHAR(300)                NOT NULL,
 //    content     VARCHAR(4000)               NOT NULL,
+//    goodcnt     NUMBER(7)                   NOT NULL,
 //    cnt         NUMBER(7)                   NOT NULL,
 //    rdate       DATE                        NOT NULL,
 //    FOREIGN KEY (memberno)  REFERENCES member (memberno)
@@ -28,6 +29,9 @@ public class NoticeVO {
   
   /** 공지사항 내용 */
   private String content;
+  
+  /** 추천수 */
+  private int goodcnt = 0;
   
   /** 조회수 */
   private int cnt = 0;

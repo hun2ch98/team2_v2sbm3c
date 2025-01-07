@@ -56,25 +56,37 @@
       WHERE diaryno = #{diaryno}
   </select>
   
-  <select id="list_search_paging" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
+  <select id="list_search_paging" parameterType="map" resultType="map">
     SELECT * 
     FROM (
-        SELECT A.*, ROWNUM AS rnum
-        FROM (
-            SELECT i.*, d.ddate
-            FROM illustration i
-            JOIN diary d ON i.diaryno = d.diaryno
-            WHERE 1=1
-            <if test="start_date != null and start_date != ''">
-                AND d.ddate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
-            </if>
-            <if test="end_date != null and end_date != ''">
-                AND d.ddate &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
-            </if>
-            ORDER BY d.ddate DESC
-        ) A
+        SELECT 
+            i.illustno, 
+            i.illust_thumb, 
+            d.diaryno, 
+            d.title, 
+            TO_CHAR(d.ddate, 'YYYY-MM-DD') AS ddate,
+            ROW_NUMBER() OVER (ORDER BY d.ddate ASC) AS rnum
+        FROM illustration i
+        LEFT JOIN diary d ON i.diaryno = d.diaryno
+        WHERE 1 = 1
+         <if test="title != null and title != ''">
+            AND LOWER(d.title) LIKE '%' || LOWER(#{title}) || '%'
+        </if>
+        <if test="start_date != null and start_date != ''">
+            AND TO_CHAR(d.ddate, 'YYYY-MM-DD') >= #{start_date}
+        </if>
+        <if test="end_date != null and end_date != ''">
+            AND TO_CHAR(d.ddate, 'YYYY-MM-DD') &lt;= #{end_date}
+        </if>
     )
+    WHERE rnum BETWEEN #{startNum} AND #{endNum}
   </select>
+
+
+
+
+
+
 
 
     <select id="listSearch" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">

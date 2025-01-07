@@ -13,7 +13,7 @@ import lombok.ToString;
 //CREATE TABLE diary(
 //DIARYNO                            NUMBER(10)     NOT NULL     PRIMARY KEY,
 //TITLE                            VARCHAR2(20)  NOT NULL,  
-//DATE                             VARCHAR2(30)  NOT NULL,
+//DDATE                             VARCHAR2(30)  NOT NULL,
 //WEATHER_CODE                           CHAR(1)      DEFAULT 'N'    NOT NULL,
 //SUMMARY                             NUMBER(5)     DEFAULT 1     NOT NULL
 //);

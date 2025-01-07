@@ -31,14 +31,7 @@ public class IllustrationProc implements IllustrationProcInter {
         return illustrationDAO.create(illustrationVO);
     }
 
-    /**
-     * Illustration과 Diary 데이터 가져오기
-     *
-     * @return illustration 및 diary 데이터를 포함한 리스트
-     */
-    public List<Map<String, Object>> listAllWithDiaryDetails() {
-        return illustrationDAO.listAllWithDiaryDetails();
-    }
+    
 
     @Override
     public IllustrationVO read(int illustno) {
@@ -84,7 +77,6 @@ public class IllustrationProc implements IllustrationProcInter {
     }
     
     public List<IllustrationVO> getIllustrationsByDiaryNo(int diaryno) {
-      // MyBatis 매퍼 메서드를 호출하여 DB에서 가져온 결과를 반환
       return illustrationDAO.getIllustrationsByDiaryNo(diaryno);
   }
     
@@ -201,15 +193,24 @@ public class IllustrationProc implements IllustrationProcInter {
         return pagingHtml.toString();
     }
 
-    @Override
-    public ArrayList<IllustrationVO> list_search_paging(String title, String now_page, String record_per_page, int start_num, int end_num) {
+  public List<Map<String, Object>> listAllWithDiaryDetails() {
+    return illustrationDAO.listAllWithDiaryDetails();
+  }
+    
+  @Override
+  public List<Map<String, Object>> list_search_paging(String title, int now_page, int record_per_page, int start_num, int end_num, String start_date, String end_date) {
       Map<String, Object> paramMap = new HashMap<>();
       paramMap.put("title", title != null ? title.trim() : "");
       paramMap.put("startNum", start_num);
       paramMap.put("endNum", end_num);
+      paramMap.put("start_date", start_date != null && !start_date.isEmpty() ? start_date : null);
+      paramMap.put("end_date", end_date != null && !end_date.isEmpty() ? end_date : null);
 
-      return illustrationDAO.list_search_paging(paramMap);
-    }
+      List<Map<String, Object>> result = sqlSession.selectList("dev.mvc.illustration.IllustrationDAOInter.list_search_paging", paramMap);
+      return result;
+  }
+
+
     
     @Autowired
     private SqlSession sqlSession;
