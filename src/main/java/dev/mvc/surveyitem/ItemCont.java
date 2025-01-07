@@ -21,6 +21,7 @@ import dev.mvc.member.MemberVO;
 import dev.mvc.survey.Survey;
 import dev.mvc.survey.SurveyProcInter;
 import dev.mvc.survey.SurveyVO;
+import dev.mvc.surveygood.SurveygoodProcInter;
 import dev.mvc.tool.Tool;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -41,6 +42,10 @@ public class ItemCont {
   @Qualifier("dev.mvc.survey.SurveyProc")
   private SurveyProcInter surveyProc;
   
+  @Autowired
+  @Qualifier("dev.mvc.surveygood.SurveygoodProc")
+  SurveygoodProcInter surveygoodProc;
+  
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 10;
 
@@ -48,7 +53,7 @@ public class ItemCont {
   public int page_per_block = 10;
 
   /** 페이징 목록 주소 */
-  private String list_file_name = "/cate/list_search";
+  private String list_file_name = "/surveyitem/list_search";
 
   public ItemCont() {
     System.out.println("-> ItemCont created.");
@@ -177,21 +182,18 @@ public class ItemCont {
   @GetMapping(value = "/delete/{itemno}")
   public String delete(HttpSession session, 
                            Model model, 
-                           @PathVariable("itemno") int itemno, 
-                           @PathVariable("surveyno") int surveyno, 
+                           @PathVariable("itemno") int itemno,
                            RedirectAttributes ra) {
 
       if (this.memberProc.isMemberAdmin(session)|| this.memberProc.isMember(session)) { 
-        model.addAttribute("surveyno", surveyno);        
         
-          ItemVO itemVO = this.itemProc.read(itemno);
-          if (itemVO == null) { 
-              ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
-              return "redirect:/surveyitem/msg";
-          }
+        ItemVO itemVO = this.itemProc.read(itemno);
+        if (itemVO == null) {
+            ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
+            return "redirect:/surveyitem/msg";
+        }
 
-          SurveyVO surveyVO = this.surveyProc.read(itemVO.getSurveyno());
-          model.addAttribute("itemVO", itemVO);
+        model.addAttribute("itemVO", itemVO);
           return "/surveyitem/delete";
       } else {
           return "member/login_cookie_need";
@@ -294,6 +296,24 @@ public class ItemCont {
         int search_cnt = search_count;
         model.addAttribute("search_cnt", search_cnt);
         model.addAttribute("word", word);
+        
+//      -------------------------------------------------------------------
+//      추천 관련
+//      -------------------------------------------------------------------
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("surveyno", surveyno);
+        
+        int heartCnt = 0;
+        if(session.getAttribute("memberno") != null) {  // 회원인 경우만 카운트 처리
+          int memberno = (int)session.getAttribute("memberno");
+          map.put("memberno", memberno);
+          
+          heartCnt = this.surveygoodProc.heartCnt(map);
+        } 
+        
+        
+        model.addAttribute("heartCnt", heartCnt);
+//    -------------------------------------------------------------------
 
         return "/surveyitem/list_search";
       } else {

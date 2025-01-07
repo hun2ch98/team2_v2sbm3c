@@ -140,14 +140,20 @@ public class SurveyProc implements SurveyProcInter {
   }
   
   @Override
-  public int goodcnt(int surveyno) {
-    int cnt = this.surveyDAO.goodcnt(surveyno);
-    return cnt;
-  }
-  
-  @Override
   public int cntcount(int surveyno) {
     int cnt = this.surveyDAO.cntnount(surveyno);
+    return cnt;
+  }
+
+  @Override
+  public int increasegoodcnt(int surveyno) {
+    int cnt = this.surveyDAO.increasegoodcnt(surveyno);
+    return cnt;
+  }
+
+  @Override
+  public int decreasegoodcnt(int surveyno) {
+    int cnt = this.surveyDAO.decreasegoodcnt(surveyno);
     return cnt;
   }
 

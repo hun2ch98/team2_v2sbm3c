@@ -28,7 +28,6 @@
       <col style='width: 15%;'/>
       <col style='width: 5%;'/>
       <col style='width: 5%;'/>
-      <col style='width: 5%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
@@ -37,7 +36,6 @@
       <th class='th_bs'>종료일</th>
       <th class='th_bs'>참여인원</th>
       <th class='th_bs'>진행여부</th>
-      <th class='th_bs'>추천</th>
     </tr>
     </thead>
     
@@ -76,9 +74,7 @@
       <td class='td_left'>
         <span th:text="| ${surveyVO.is_continue}|"></span>
       </td>
-      <td class='td_left'>
-        <a th:text="|${surveyVO.goodcnt}|"></a>
-      </td>
+
       <td>
         <span th:if="${session.grade == 'admin'}">
         <!--

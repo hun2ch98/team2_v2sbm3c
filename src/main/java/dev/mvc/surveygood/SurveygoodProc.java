@@ -1,6 +1,7 @@
 package dev.mvc.surveygood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,4 +29,9 @@ public class SurveygoodProc implements SurveygoodProcInter {
     return cnt;
   }
 
+  @Override
+  public int heartCnt(HashMap<String, Object> map) {
+    int cnt = this.surveygoodDAO.heartCnt(map);
+    return cnt;
+  }
 }

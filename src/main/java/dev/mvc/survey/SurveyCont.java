@@ -227,7 +227,8 @@ public class SurveyCont {
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
-      int memberno = 1;
+//      int memberno = 1;
+      int memberno = (int)session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       if (memberVO == null) {
           memberVO = new MemberVO();
