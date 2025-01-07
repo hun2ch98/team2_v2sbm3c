@@ -35,6 +35,19 @@ public class NoticegoodCont {
   }
   
   /**
+   * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
+   * 전송
+   * 
+   * @return
+   */
+  @GetMapping(value = "/post2get")
+  public String post2get(Model model, 
+      @RequestParam(name="url", defaultValue = "") String url) {
+
+    return url; // forward, /templates/...
+  }
+  
+  /**
    * 등록
    * @param session
    * @param noticegoodVO
@@ -72,48 +85,25 @@ public class NoticegoodCont {
     return "/noticegood/list_all"; // /templates/noticegood/list_all.html
   }
   
-//  /**
-//   * 삭제 폼 http://localhost:9093/noticegood/delete?noticegoodno=1
-//   *
-//   */
-//  @GetMapping(path = "/delete/{noticegoodno}")
-//  public String delete(HttpSession session, 
-//      Model model, 
-//      @PathVariable("noticegoodno") int noticegoodno, 
-//      RedirectAttributes ra) {    
-//    
-//    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
-//      NoticegoodVO noticegoodVO = this.noticegoodProc.read(noticegoodVO);
-//      model.addAttribute("noticegoodVO", noticegoodVO);
-//
-//      return "/noticegood/delete"; // /templates/calendar/delete.html
-//    } else {
-//      // ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      // return "redirect:/contents/msg"; // @GetMapping(value = "/msg")
-//      return "/member/login_cookie_need"; // /templates/member/login_cookie_need.html
-//    }
-//  }
-//  
-//  /**
-//   * 삭제 처리 http://localhost:9091/calendar/delete?calendarno=1
-//   * 
-//   * @return
-//   */
-//  @PostMapping(value = "/delete")
-//  public String delete_proc(HttpSession session, 
-//      Model model, 
-//      @RequestParam(name="noticegoodno", defaultValue = "0") int noticegoodno, 
-//      RedirectAttributes ra) {    
-//    
-//    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
-//      this.noticegoodProc.delete(noticegoodno);
-//
-//      return "redirect:/calendar/list_all";
-//
-//    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-//      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-//      return "redirect:/calendar/post2get"; // @GetMapping(value = "/msg")
-//    }
-//
-//  }
+  /**
+   * 삭제 처리 http://localhost:9093/noticegood/delete?noticegoodno=1
+   * 
+   * @return
+   */
+  @PostMapping(value = "/delete")
+  public String delete_proc(HttpSession session, 
+      Model model, 
+      @RequestParam(name="noticegoodno", defaultValue = "0") int noticegoodno, 
+      RedirectAttributes ra) {    
+    
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
+      this.noticegoodProc.delete(noticegoodno); // 삭제
+
+      return "redirect:/noticegood/list_all";
+
+    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+      return "redirect:/noticegood/post2get"; // @GetMapping(value = "/msg")
+    }
+  }
 }

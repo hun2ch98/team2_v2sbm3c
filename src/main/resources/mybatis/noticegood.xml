@@ -18,7 +18,7 @@
   <!-- 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM noticegood
-    WHERE noticegoodno = #{noticegoodno};
+    WHERE noticegoodno = #{noticegoodno}
   </delete>
   
 </mapper>
