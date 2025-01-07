@@ -5,6 +5,14 @@
   <!-- 등록 -->
   <insert id="create" parameterType="dev.mvc.noticegood.NoticegoodVO">
     INSERT INTO noticegood(noticegoodno, rdate, memberno, noticeno)
-    VALUES (noticegood_seq.nextval, sysdate, #{memberno}, #{noticeno});
+    VALUES (noticegood_seq.nextval, sysdate, #{memberno}, #{noticeno})
   </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list_all" resultType="dev.mvc.noticegood.NoticegoodVO">
+    SELECT noticegoodno, rdate, memberno, noticeno
+    FROM noticegood
+    ORDER BY noticegoodno DESC
+  </select>
+  
 </mapper>

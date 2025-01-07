@@ -9,5 +9,19 @@
     INSERT INTO diarygood(goodno, diaryno, memberno, rdate)
     VALUES (diarygood_seq.nextval, #{diaryno}, #{memberno}, sysdate)
   </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list_all" resultType="dev.mvc.diarygood.DiaryGoodVO">
+    SELECT goodno, rdate, diaryno, memberno
+    FROM diarygood
+    ORDER BY goodno DESC
+  </select>
+  
+  <!-- 일반적인 조회 -->
+  <select id="read" resultType="dev.mvc.diarygood.DiaryGoodVO" parameterType="int">
+    SELECT goodno, rdate, diaryno, memberno
+    FROM diarygood
+    WHERE goodno = #{goodno}
+  </select>
 
 </mapper>

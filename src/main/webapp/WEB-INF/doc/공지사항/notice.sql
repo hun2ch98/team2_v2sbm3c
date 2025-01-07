@@ -44,8 +44,11 @@ VALUES (notice_seq.nextval, 1, '긴급 공지!', '어린아이를 위한 그림�
 
 commit;
 
--- 목록 -> List
-SELECT noticeno, memberno, title, content, goodcnt, cnt, rdate FROM notice ORDER BY noticeno ASC;
+-- 전체 목록 -> List
+SELECT noticeno, memberno, title, content, goodcnt, cnt, rdate 
+FROM notice 
+ORDER BY noticeno ASC;
+
   NOTICENO  MEMBERNO     TITLE       CONTENT                       CNT       RDATE
 ---------- ----------   -------      --------                   ---------   ------
     1          1        긴급 공지!  오늘은 날씨가 갑자기 확 추워지면서,    0       2025-01-06 03:50:42

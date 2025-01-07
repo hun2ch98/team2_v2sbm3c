@@ -36,6 +36,7 @@ COMMIT;
 SELECT noticegoodno, rdate, memberno, noticeno
 FROM noticegood
 ORDER BY noticegoodno DESC;
+
 NOTICEGOODNO RDATE                 MEMBERNO   NOTICENO
 ------------ ------------------- ---------- ----------
            3 2025-01-07 10:57:56          4          4

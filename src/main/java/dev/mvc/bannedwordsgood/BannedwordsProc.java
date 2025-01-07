@@ -23,4 +23,9 @@ public class BannedwordsProc implements BannedwordsgoodProcInter {
         return list;
     }
 
+	@Override
+    public int delete(int goodno) {
+        int cnt = this.bannedwordsgoodDAO.delete(goodno);
+        return cnt;
+    }
 }
