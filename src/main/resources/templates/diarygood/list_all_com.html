@@ -5,16 +5,16 @@
 <div th:fragment="list_all_fragment"> 
   <table class="table table-hover" style="width: 100%;">
     <colgroup>
-      <col style='width: 15%;'/>
-      <col style='width: 25%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 15%;'/>    
+      <col style='width: 10%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
       <col style='width: 30%;'/>
     </colgroup>
     <thead>
       <tr>
         <th class="th_bs">순서</th>
-        <th class="th_bs">추천한 날짜</th>
+        <th class="th_bs">등록일(추천일)</th>
         <th class="th_bs">일기 번호</th>
         <th class="th_bs">회원 번호</th>
         <th class="th_bs">기타</th>
@@ -23,16 +23,20 @@
     <tbody>
       <tr th:each="diarygoodVO, status:${list}">
         <td class="td_bs" th:text="|${status.index+1}|"></td>
-        <td class="td_bs" th:text="${diarygoodVO.regdate.substring(0, 10)}"></td>
-        <td class="td_bs" th:text="${diarygoodVO.diaryno}"></td>
+        <td class="td_bs" th:text="${diarygoodVO.rdate.substring(0, 10)}"></td>
+        <td class="td_bs" th:text="${diarygoodVO.goodno}"></td>
         <td class="td_bs" th:text="${diarygoodVO.memberno}"></td>
         
         <td class="td_bs">
-          <a th:href="@{|/diarygood/delete/${diarygoodVO.goodno}|}"><img src="/diarygood/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+      <a href="#" th:onclick="'delete(event, ' + ${diarygoodVO.goodno} + ');'"><img src="/diarygood/images/delete.png" class="icon" title="삭제"></a>
         </td>
       </tr>
     </tbody>
   </table>
+  
+  <form name='frm' method='post' action='/diarygood/delete'>
+    <input type='hidden' name='goodno' id='goodno'>
+  </form>
   
 </div>
 
