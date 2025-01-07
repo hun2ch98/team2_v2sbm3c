@@ -27,12 +27,20 @@
         <td class="td_bs" th:text="${noticegoodVO.noticeno}"></td>
         <td class="td_bs" th:text="${noticegoodVO.memberno}"></td>
         <td class="td_bs">
-          <a href="#" th:onclick="'delete(event, ' + ${noticegoodVO.noticegoodno} + ');'"><img src="/noticegood/images/delete.png" class="icon" title="삭제"></a>
+          <a href="#" th:onclick="'delete_good(event, ' + ${noticegoodVO.noticegoodno} + ');'"><img src="/noticegood/images/delete.png" class="icon" title="삭제"></a>
         </td>
       </tr>
     </tbody>
   </table>
-  
+  <script>
+    function delete_good(e, noticegoodno) {
+      let sw = confirm(noticegoodno + '번 글 삭제를 하시겠습니까?\n삭제하면 복구 할 수 없습니다.');
+      if (sw == true) {
+        document.querySelector('#noticegoodno').value = noticegoodno;
+        document.querySelector('#frm').submit();
+      }
+    }
+  </script>
   <form name="frm" id="frm" method="post" action="/noticegood/delete">
     <input type="hidden" name="noticegoodno" id="noticegoodno">
   </form>

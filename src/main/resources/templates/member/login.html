@@ -53,10 +53,6 @@
     <div class="title_line">로그인(*: 필수)</div>
     <aside class="aside_right">
       <a href="javascript:location.reload();">새로고침</a>
-      <span class='menu_divide'>│</span>
-      <a href='./create'>회원 가입</a>
-      <span class='menu_divide'>│</span>
-      <a href='./list'>목록</a>
     </aside>
 
     <div class='menu_line'></div>
@@ -80,6 +76,8 @@
         <div class="content_body_bottom">
           <button type="button" onclick="send();" class="btn btn-secondary btn-sm">로그인</button>
           <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+          <button type="button" onclick="frm.id.value='test'; frm.passwd.value='1234'" class="btn btn-secondary btn-sm">회원</button>
+          <button type="button" onclick="frm.id.value='admin'; frm.passwd.value='1234'" class="btn btn-secondary btn-sm">관리자</button>
         </div>
       </form>
     </div>
