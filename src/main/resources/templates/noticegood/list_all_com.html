@@ -27,7 +27,7 @@
         <td class="td_bs" th:text="${noticegoodVO.noticeno}"></td>
         <td class="td_bs" th:text="${noticegoodVO.memberno}"></td>
         <td class="td_bs">
-          <a th:href="@{|/noticegood/delete/${noticegoodVO.noticegoodno}|}"><img src="/noticegood/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+          <a href="#" th:onclick="'delete(event, ' + ${noticegoodVO.noticegoodno} + ');'"><img src="/noticegood/images/delete.png" class="icon" title="삭제"></a>
         </td>
       </tr>
     </tbody>
