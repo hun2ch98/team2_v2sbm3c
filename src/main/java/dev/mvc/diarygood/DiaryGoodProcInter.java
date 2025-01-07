@@ -9,4 +9,7 @@ public interface DiaryGoodProcInter {
   
   
   public ArrayList<DiaryGoodVO> list_all();
+  
+  
+  public int delete(int goodno);
 }

@@ -52,5 +52,11 @@ public class DiaryGoodCont {
     return "/diarygood/list_all";
   }
   
+  @PostMapping(value="/delete")
+  public String delelete(Model model) {
+    
+    
+    return "";
+  }
   
 }

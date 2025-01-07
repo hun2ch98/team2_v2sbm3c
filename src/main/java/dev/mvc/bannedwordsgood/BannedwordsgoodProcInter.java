@@ -1,6 +1,7 @@
 package dev.mvc.bannedwordsgood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dev.mvc.bannedwords.BannedwordsVO;
 
@@ -25,5 +26,12 @@ public interface BannedwordsgoodProcInter {
    * @return 삭제된 레코드 갯수
    */
   public int delete(int goodno);
+  
+  /**
+   * 특정 금지단어의 특정 회원 추천 갯수 산출
+   * @param map
+   * @return
+   */
+  public int heartCnt(HashMap<String, Object> map);
 
 }

@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
+  <script>
+  	window.onload = function() {
+		    // img src="/bannedwords/images/heart_on.png" style="width: 22px;"
+		    // img src="/bannedwords/images/heart_off.png" style="width: 22px;"
+		    // 현재 로그인한 사용자의 추천 여부 반영
+		    //  let memberno =  '[[${session.memberno}]]'; //  javascript -> Thymeleaf -> session
+		   let heartCnt =  '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+		   if (heartCnt == 1) {
+			   document.querySelector('#heart_panel').innerHTML = '<img src="/bannedwords/images/heart_on.png" style="width: 22px" title="추천">'; 
+      	  } else {
+        	  document.querySelector('#heart_panel').innerHTML = '<img src="/bannedwords/images/heart_off.png" style="width: 22px" title="비추천">'; 
+		  }
+	  }
+  </script>
   <div class='title_line'>
     > 금지단어 조회
   </div>
@@ -21,9 +35,7 @@
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{/bannedwords/list_by_wordno_search_paging}">금지단어 보기</a>
-    <span class='menu_divide' >│</span>    
-    <a th:href="@{|/bannedwords/list_goodcnt|}">좋아요 수</a>    
-    <span class='menu_divide'>│</span>
+    <span class='menu_divide' >│</span>   
   </aside>
 
   <div class='menu_line'></div>
@@ -41,10 +53,17 @@
           <!-- 등록 날짜 -->
           <div style="white-space: pre-wrap;"><span th:text="${bannedwordsVO.rdate}"></span></div>
           <br><br>
-          <!-- 좋아요 수 -->
-          <div style="white-space: pre-wrap;">좋아요 수: <span th:text="${bannedwordsVO.goodcnt}"></span></div>
         </div>
       </li>
+      
+      <li class="li_none">
+  		<div>
+    		<span th:text="|조회수: ${bannedwordsVO.goodcnt }|"></span>
+    		<span id="heart_panel"></span>
+  		</div>
+	  </li>
+
+      
     </ul>
   </fieldset>
 </div>

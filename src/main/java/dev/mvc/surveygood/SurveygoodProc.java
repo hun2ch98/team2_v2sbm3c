@@ -21,5 +21,11 @@ public class SurveygoodProc implements SurveygoodProcInter {
     ArrayList<SurveygoodVO> list = this.surveygoodDAO.list_all();
     return list;
   }
+  
+  @Override
+  public int delete(int goodno) {
+    int cnt = this.surveygoodDAO.delete(goodno);
+    return cnt;
+  }
 
 }

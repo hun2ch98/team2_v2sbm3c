@@ -17,11 +17,15 @@
     ORDER BY goodno DESC
   </select>
   
-  <!-- 일반적인 조회 -->
-  <select id="read" resultType="dev.mvc.diarygood.DiaryGoodVO" parameterType="int">
+  <!-- 일반적인 조회  <select id="read" resultType="dev.mvc.diarygood.DiaryGoodVO" parameterType="int">
     SELECT goodno, rdate, diaryno, memberno
     FROM diarygood
     WHERE goodno = #{goodno}
-  </select>
+  </select> -->
 
+
+  <delete id="dev.mvc.diarygood.DiaryGoodDAOInter.delete" parameterType="int">
+    DELETE FROM diarygood
+    WHERE goodno=#{goodno}
+  </delete>
 </mapper>

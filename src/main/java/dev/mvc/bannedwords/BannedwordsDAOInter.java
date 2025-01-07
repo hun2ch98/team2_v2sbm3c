@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
+
 public interface BannedwordsDAOInter {
 	
 /**
@@ -67,11 +68,19 @@ public interface BannedwordsDAOInter {
    * @return
    */
   public int delete(int wordno);
- 
+  
   /**
-   * 좋아요 수 조회
-   * @return
+   * 추천수 증가
+   * @param bannedwordsVO
+   * @return 처리된 레코드 갯수
    */
-  public ArrayList<BannedwordsVO> list_goodcnt(int wordno);
+  public int increaseGoodcnt(int wordno);
+  
+  /**
+   * 추천수 감소
+   * @param bannedwordsVO
+   * @return 처리된 레코드 갯수
+   */
+  public int decreaseGoodcnt(int wordno);
 
 }

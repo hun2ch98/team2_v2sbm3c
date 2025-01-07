@@ -170,9 +170,15 @@ public class BannedwordsProc implements BannedwordsProcInter {
     }
     
     @Override
-    public ArrayList<BannedwordsVO> list_goodcnt(int wordno) {
-      ArrayList<BannedwordsVO> list = this.bannedwordsDAO.list_goodcnt(wordno);
-      return list;
+    public int increaseGoodcnt(int wordno) {
+    	int cnt = this.bannedwordsDAO.increaseGoodcnt(wordno);
+    	return cnt;
+    }
+    
+    @Override
+    public int decreaseGoodcnt(int wordno) {
+    	int cnt = this.bannedwordsDAO.decreaseGoodcnt(wordno);
+    	return cnt;
     }
     
 }
