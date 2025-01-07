@@ -16,5 +16,11 @@
     FROM bannedwordsgood
     ORDER BY goodno DESC
   </select>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM bannedwordsgood
+    WHERE goodno = #{goodno}
+  </delete>
 
 </mapper>
