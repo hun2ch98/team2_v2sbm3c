@@ -14,7 +14,7 @@ import lombok.ToString;
 //  );
 
 @Getter @Setter @ToString
-public class NoticeGoodVO {
+public class NoticegoodVO {
   
   /** 공지사항 추천 번호 */
   private int noticegoodno;
