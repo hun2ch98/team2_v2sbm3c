@@ -45,3 +45,30 @@ SELECT *
 FROM user_constraints
 WHERE table_name = 'ILLUSTRATION'
 AND constraint_type = 'R';
+
+
+SELECT i.illustno,
+       i.illust_thumb,
+       i.illust_size,
+       d.diaryno AS d_diaryno,  -- diaryno 컬럼에 별칭 추가
+       d.title AS d_title,      -- title 컬럼에 별칭 추가
+       d.ddate AS d_ddate       -- ddate 컬럼에 별칭 추가
+FROM (
+    SELECT A.*, ROWNUM AS rnum
+    FROM (
+        SELECT 
+            i.*, d.*  -- illustration 테이블과 diary 테이블의 모든 컬럼을 가져옴
+        FROM illustration i
+        LEFT JOIN diary d ON i.diaryno = d.diaryno
+        WHERE 1=1
+        <if test="start_date != null and start_date != ''">
+            AND d.ddate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+        </if>
+        <if test="end_date != null and end_date != ''">
+            AND d.ddate <= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+        </if>
+        ORDER BY d.ddate ASC
+    ) A
+    WHERE ROWNUM <= ?
+)
+WHERE rnum >= ?

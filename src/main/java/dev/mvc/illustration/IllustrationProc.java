@@ -202,14 +202,18 @@ public class IllustrationProc implements IllustrationProcInter {
     }
 
     @Override
-    public ArrayList<IllustrationVO> list_search_paging(String title, String now_page, String record_per_page, int start_num, int end_num) {
-      Map<String, Object> paramMap = new HashMap<>();
-      paramMap.put("title", title != null ? title.trim() : "");
-      paramMap.put("startNum", start_num);
-      paramMap.put("endNum", end_num);
-
-      return illustrationDAO.list_search_paging(paramMap);
+    public List<Map<String, Object>> list_search_paging(String title, int now_page, int record_per_page, int start_num, int end_num) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("title", title != null ? title.trim() : "");
+        paramMap.put("startNum", start_num);
+        paramMap.put("endNum", end_num);
+        
+        // illustrationDAO 메소드에서 반환값을 List<Map<String, Object>>로 수정
+        List<Map<String, Object>> list = illustrationDAO.list_search_paging(paramMap);
+        return list;
     }
+
+
     
     @Autowired
     private SqlSession sqlSession;

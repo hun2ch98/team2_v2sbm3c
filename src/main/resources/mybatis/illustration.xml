@@ -57,24 +57,25 @@
   </select>
   
   <select id="list_search_paging" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
-    SELECT * 
-    FROM (
-        SELECT A.*, ROWNUM AS rnum
-        FROM (
-            SELECT i.*, d.ddate
-            FROM illustration i
-            JOIN diary d ON i.diaryno = d.diaryno
-            WHERE 1=1
-            <if test="start_date != null and start_date != ''">
-                AND d.ddate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
-            </if>
-            <if test="end_date != null and end_date != ''">
-                AND d.ddate &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
-            </if>
-            ORDER BY d.ddate DESC
-        ) A
-    )
+    SELECT 
+        i.illustno, 
+        i.illust_thumb, 
+        d.diaryno, 
+        d.title, 
+        d.ddate
+    FROM illustration i
+    LEFT JOIN diary d ON i.diaryno = d.diaryno
+    WHERE 1=1
+    <if test="start_date != null and start_date != ''">
+        AND d.ddate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+    </if>
+    <if test="end_date != null and end_date != ''">
+        AND d.ddate &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+    </if>
+    ORDER BY d.ddate ASC
   </select>
+
+
 
 
     <select id="listSearch" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
