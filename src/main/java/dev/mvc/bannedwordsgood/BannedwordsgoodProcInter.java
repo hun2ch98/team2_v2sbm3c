@@ -18,5 +18,12 @@ public interface BannedwordsgoodProcInter {
    * @return
    */
   public ArrayList<BannedwordsgoodVO> list_all();
+  
+  /**
+   * 삭제
+   * @param wordno 삭제할 레코드 PK
+   * @return 삭제된 레코드 갯수
+   */
+  public int delete(int goodno);
 
 }
