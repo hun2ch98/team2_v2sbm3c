@@ -47,10 +47,10 @@ public class ItemCont {
   SurveygoodProcInter surveygoodProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
-  public int record_per_page = 10;
+  public int record_per_page = 5;
 
   /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
-  public int page_per_block = 10;
+  public int page_per_block = 5;
 
   /** 페이징 목록 주소 */
   private String list_file_name = "/surveyitem/list_search";
@@ -287,15 +287,14 @@ public class ItemCont {
             this.page_per_block);
         model.addAttribute("paging", paging);
         model.addAttribute("now_page", now_page);
+        model.addAttribute("search_count", search_count);
+        model.addAttribute("word", word);
 
         // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
         int no = search_count - ((now_page - 1) * this.record_per_page);
         model.addAttribute("no", no);
         // --------------------------------------------------------------------------------------
         
-        int search_cnt = search_count;
-        model.addAttribute("search_cnt", search_cnt);
-        model.addAttribute("word", word);
         
 //      -------------------------------------------------------------------
 //      추천 관련

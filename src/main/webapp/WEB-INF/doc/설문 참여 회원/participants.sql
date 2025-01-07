@@ -29,3 +29,56 @@ CREATE SEQUENCE participants_seq
   NOCYCLE;  
 
 COMMIT;
+
+-- 데이터 삽입
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 1, 2, sysdate);
+
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 2, sysdate);
+
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 3, 2, sysdate);
+
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 5, 2, sysdate);
+
+COMMIT;
+
+-- 전체 목록
+SELECT pno, itemno, memberno, pdate
+FROM participants
+ORDER BY pno DESC;
+
+-- 조회
+SELECT pno, itemno, memberno, pdate
+FROM participants
+WHERE pno = 1;
+   GOODNO   SURVEYNO   MEMBERNO RDATE            
+---------- ---------- ---------- -----------------
+         1          1          1 25/01/07 10:58:38
+
+-- 삭제
+DELETE FROM participants
+WHERE pno = 5;
+  GOODNO   SURVEYNO   MEMBERNO RDATE            
+---------- ---------- ---------- -----------------
+         3          3          3 25/01/07 10:58:38
+         2          2          2 25/01/07 10:58:38
+         1          1          1 25/01/07 10:58:38
+
+COMMIT;
+
+SELECT COUNT (*) as cnt
+FROM participants
+WHERE itemno=1 AND memberno =2;
+       CNT
+----------
+         0
+
+SELECT COUNT (*) as cnt
+FROM participants
+WHERE surveyno=1 AND memberno =1;
+      CNT
+----------
+         1

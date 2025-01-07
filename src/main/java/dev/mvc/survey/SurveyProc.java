@@ -52,7 +52,7 @@ public class SurveyProc implements SurveyProcInter {
   public ArrayList<SurveyVO> list_by_surveyno_search_paging(HashMap<String, Object> map) {
       // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
       int now_page = (int) map.get("now_page");
-      int record_per_page = 10; // 페이지당 레코드 수
+      int record_per_page = 7; // 페이지당 레코드 수
 
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
@@ -136,6 +136,12 @@ public class SurveyProc implements SurveyProcInter {
   @Override
   public int delete(int surveyno) {
     int cnt = this.surveyDAO.delete(surveyno);
+    return cnt;
+  }
+  
+  @Override
+  public int delete_survey(int surveyno) {
+    int cnt = this.surveyDAO.delete_survey(surveyno);
     return cnt;
   }
   

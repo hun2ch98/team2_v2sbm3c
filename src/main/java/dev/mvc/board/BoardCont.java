@@ -177,7 +177,7 @@ public class BoardCont {
       @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
    
-    if (memberProc.isMember(session)) { // 회원 로그인한경우
+    if (memberProc.isMember(session) || memberProc.isMemberAdmin(session)) { // 회원 로그인한경우
 
       int record_per_page = 10;
       int startRow = (now_page - 1) * record_per_page + 1;
@@ -461,7 +461,7 @@ public class BoardCont {
                                @RequestParam(name="boardno", defaultValue="0") int boardno, 
                                @RequestParam(name="board_cate", defaultValue="") String board_cate, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    if (this.memberProc.isMember(session)) { // 로그인한경우
+    if (this.memberProc.isMember(session) || memberProc.isMemberAdmin(session)) { // 로그인한경우
       model.addAttribute("memberno", memberno);
       model.addAttribute("board_cate", board_cate);
       model.addAttribute("now_page", now_page);
