@@ -21,5 +21,11 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
     ArrayList<DiaryGoodVO> list = this.diaryGoodDAO.list_all();
     return list;
   }
+
+  @Override
+  public int delete(int goodno) {
+    int cnt = this.diaryGoodDAO.delete(goodno);
+    return cnt;
+  }
   
 }
