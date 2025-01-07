@@ -166,6 +166,7 @@ public class IllustrationCont {
       int searchCount = illustrationProc.countSearchResults(title, start_date, end_date);
    
       String paging = illustrationProc.pagingBox(now_page, title, start_date, end_date, list_file_name, searchCount, record_per_page, page_per_block);
+      System.out.println("Generated Paging HTML: " + paging);
       
       model.addAttribute("illustno", illustno);
       model.addAttribute("title", title);
@@ -173,26 +174,27 @@ public class IllustrationCont {
       model.addAttribute("end_date", end_date);
       model.addAttribute("paging", paging);
       model.addAttribute("search_count", searchCount);
+      System.out.println("-> searchCount : " + searchCount);
       model.addAttribute("now_page", now_page);
-      
-      if (start_date.isEmpty() && end_date.isEmpty()) {
-        List<Map<String, Object>> illustrations = illustrationProc.listAllWithDiaryDetails();
-        model.addAttribute("illustrations", illustrations);
-        System.out.println(illustrations);
-      } else {
-    	List<Map<String, Object>> illustrations = illustrationProc.list_search_paging(title, now_page, record_per_page, startNum, endNum);
-		model.addAttribute("illustrations", illustrations);
-        System.out.println(illustrations);
-      }
       
       System.out.println("start_date: " + start_date);
       System.out.println("end_date: " + end_date);
       System.out.println("startNum: " + startNum + ", endNum: " + endNum);
       
+      if (title.isEmpty() && start_date.isEmpty() && end_date.isEmpty()) {
+        List<Map<String, Object>> illustrations = illustrationProc.listAllWithDiaryDetails();
+        model.addAttribute("illustrations", illustrations);
+        System.out.println(illustrations);
+      } else {
+      	List<Map<String, Object>> illustrations = illustrationProc.list_search_paging(title, now_page, record_per_page, startNum, endNum, start_date, end_date);
+      	model.addAttribute("illustrations", illustrations);
+        System.out.println(illustrations);
+      }
       
       return "/illustration/list_all";
   }
 
+  
 
   @GetMapping(path="/delete/{illustno}")
   public String delete(HttpSession session, Model model, RedirectAttributes ra,
@@ -229,14 +231,8 @@ public class IllustrationCont {
     Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
     Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
         
-    this.illustrationProc.delete(illustno); // DBMS 글 삭제
-        
-//    HashMap<String, Object> map = new HashMap<String, Object>();
-//    map.put("illustno", illustno);
-//    
-//    ra.addAttribute("illustno", illustno);
-//    ra.addAttribute("now_page", now_page);
-//    
+    this.illustrationProc.delete(illustno); 
+    
     return "redirect:/illustration/list_all";    
     
   }   
@@ -313,7 +309,6 @@ public class IllustrationCont {
   
   @RequestMapping("/diary/read")
   public String getDiaryIllustrations(@RequestParam int diaryno, Model model) {
-      // `diaryno`를 바탕으로 일러스트 데이터 가져오기
       List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);
       model.addAttribute("illustrationList", illustrationList);  // 데이터를 Model에 추가
 
