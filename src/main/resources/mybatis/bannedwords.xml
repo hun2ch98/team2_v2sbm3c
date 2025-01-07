@@ -78,13 +78,19 @@
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
-  
-  <!-- 특정 달의 조회 -->
-  <select id="list_goodcnt" resultType="dev.mvc.bannedwords.BannedwordsVO" parameterType="int">
-    SELECT wordno, word, reason, goodcnt, memberno, rdate
-    FROM bannedwords
-    WHERE SUBSTR(wordno, 1, 10) = #{wordno}
-    ORDER BY wordno ASC
-  </select>
+    
+  <!-- 추천 수 증가 -->
+  <update id="increaseGoodcnt" parameterType="int">
+    UPDATE bannedwords
+    SET goodcnt = goodcnt + 1
+    WHERE wordno = #{wordno}
+  </update>
+
+  <!-- 추천 수 감소 -->
+  <update id="decreaseGoodcnt" parameterType="int">
+    UPDATE bannedwords
+    SET goodcnt = goodcnt - 1
+    WHERE wordno = #{wordno}
+  </update>
 
 </mapper>

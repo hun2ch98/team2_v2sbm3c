@@ -7,7 +7,7 @@
   <!--등록-->
   <insert id="create" parameterType="dev.mvc.bannedwordsgood.BannedwordsgoodVO">
   	  INSERT INTO bannedwordsgood (goodno, rdate, wordno, memberno)
-	  VALUES (bannedwordsgood_seq.nextval, #{goodno}, #{rdate}, #{wordno}, #{memberno})
+	  VALUES (bannedwordsgood_seq.nextval, sysdate, #{wordno}, #{memberno})
   </insert>
 	
   <!-- 전체 목록 -->
@@ -22,5 +22,12 @@
     DELETE FROM bannedwordsgood
     WHERE goodno = #{goodno}
   </delete>
+  
+  <!-- 특정 컨텐츠의 특정 회원 추천 갯수 산출 -->
+  <select id="heartCnt" resultType="int" parameterType="HashMap">
+	SELECT COUNT(*) as cnt
+	FROM bannedwordsgood
+	WHERE wordno=#{wordno} AND memberno=#{memberno}
+  </select>
 
 </mapper>

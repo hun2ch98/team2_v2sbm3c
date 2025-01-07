@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.bannedwords.BannedwordsVO;
+import dev.mvc.bannedwordsgood.BannedwordsgoodProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,10 @@ public class BannedwordsCont {
   @Autowired
   @Qualifier("dev.mvc.bannedwords.BannedwordsProc")
   private BannedwordsProcInter bannedwordsProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.bannedwordsgood.BannedwordsgoodProc")
+  private BannedwordsgoodProcInter bannedwordsgoodProc;
   
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") 
@@ -189,7 +194,7 @@ public class BannedwordsCont {
    * @return
    */
   @GetMapping(value = "/read")
-  public String read(Model model,
+  public String read(HttpSession session, Model model,
       @RequestParam(name = "wordno", defaultValue = "0") int wordno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
@@ -203,6 +208,23 @@ public class BannedwordsCont {
     
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
+    
+    // ---------------------------------------------------------------------------------
+    //추천 관련
+    // ---------------------------------------------------------------------------------
+    HashMap<String, Object> map = new HashMap<String, Object>();
+    map.put("wordno", wordno);
+    
+    int heartCnt = 0;
+    if (session.getAttribute("memberno") != null) {  //회원인 경우만 카운트 처리
+    	int memberno = (int)session.getAttribute("memberno");
+        map.put("memberno", memberno);
+
+        heartCnt = this.bannedwordsgoodProc.heartCnt(map);
+     }
+    
+    model.addAttribute("heartCnt", heartCnt);
+    // ---------------------------------------------------------------------------------
 
     return "/bannedwords/read";
   }
@@ -381,33 +403,4 @@ public class BannedwordsCont {
       }
   }
   
-  /**
-   * 좋아요 수
-   * @param model
-   * @return
-   */
-   @GetMapping(value = "/list_goodcnt")
-   @ResponseBody
-  public String list_goodcnt(
-      Model model,
-      @RequestParam(name = "wordno", defaultValue = "0") int wordno) {
-	   
-      ArrayList<BannedwordsVO> list = this.bannedwordsProc.list_goodcnt(wordno);
-      model.addAttribute("list", list);
-      
-      JSONArray bannedwords_list = new JSONArray();
-      
-      for (BannedwordsVO bannedwordsVO: list) {
-          JSONObject bannedwords = new JSONObject();
-          bannedwords.put("wordno", bannedwordsVO.getWordno());
-          bannedwords.put("word", bannedwordsVO.getWord());
-          bannedwords.put("reason", bannedwordsVO.getReason());
-          bannedwords.put("goodcnt", bannedwordsVO.getGoodcnt());
-
-          
-          bannedwords_list.put(wordno);
-      }
-      
-      return bannedwords_list.toString();
-   }      
 }

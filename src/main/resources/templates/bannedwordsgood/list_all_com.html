@@ -24,7 +24,7 @@
       <tr th:each="bannedwordsgoodVO, status:${list}">
         <td class="td_bs" th:text="|${status.index+1}|"></td>
         <td class="td_bs" th:text="${bannedwordsgoodVO.rdate.substring(0, 10)}"></td>
-        <td class="td_bs" th:text="${bannedwordsgoodVO.goodno}"></td>
+        <td class="td_bs" th:text="${bannedwordsgoodVO.wordno}"></td>
         <td class="td_bs" th:text="${bannedwordsgoodVO.memberno}"></td>
         <td class="td_bs">
           <a href="#" th:onclick="'delete_good(event, ' + ${bannedwordsgoodVO.goodno} + ');'"><img src="/bannedwordsgood/images/delete.png" class="icon" title="삭제"></a>
