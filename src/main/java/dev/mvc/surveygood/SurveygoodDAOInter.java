@@ -16,5 +16,12 @@ public interface SurveygoodDAOInter {
    * @return
    */
   public ArrayList<SurveygoodVO> list_all();
+  
+  /**
+   * 삭제
+   * @param goodno
+   * @return
+   */
+  public int delete(int goodno);
 
 }
