@@ -225,6 +225,7 @@ public class DiaryCont {
 
   /**
    * 삭제 처리
+   * 
    */
   @PostMapping(value = "/delete")
   public String deleteProcess(HttpSession session,

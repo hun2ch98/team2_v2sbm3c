@@ -16,4 +16,12 @@ public interface BannedwordsgoodDAOInter {
    * @return
    */
   public ArrayList<BannedwordsgoodVO> list_all();
+  
+  /**
+   * 금지 단어 삭제
+   * @param wordno
+   * @return
+   */
+  public int delete(int goodno);
+  
 }
