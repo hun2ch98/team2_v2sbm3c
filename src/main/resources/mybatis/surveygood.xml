@@ -16,5 +16,11 @@
     FROM surveygood
     ORDER BY goodno DESC
   </select>
+  
+    <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM surveygood
+    WHERE goodno = #{goodno}
+  </delete>
 
 </mapper>
