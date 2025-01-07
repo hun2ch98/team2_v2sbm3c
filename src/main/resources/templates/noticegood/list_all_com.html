@@ -1,0 +1,36 @@
+<!--/* 
+<div th:replace="~{calendar/list_all_com::list_all_fragment}"></div> 
+'/calendar/list_all_com.html' 파일의 list_all_fragment를 가져다 사용
+*/-->
+<div th:fragment="list_all_fragment"> 
+  <table class="table table-hover" style="width: 100%;">
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>    
+      <col style='width: 30%;'/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">순서</th>
+        <th class="th_bs">등록일(추천일)</th>
+        <th class="th_bs">공지사항 번호</th>
+        <th class="th_bs">회원 번호</th>
+        <th class="th_bs">기타</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="noticegoodVO, status:${list}">
+        <td class="td_bs" th:text="|${status.index+1}|"></td>
+        <td class="td_bs" th:text="${noticegoodVO.rdate.substring(0, 10)}"></td>
+        <td class="td_bs" th:text="${noticegoodVO.noticeno}"></td>
+        <td class="td_bs" th:text="${noticegoodVO.memberno}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/noticegood/delete/${noticegoodVO.noticegoodno}|}"><img src="/noticegood/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+</div>

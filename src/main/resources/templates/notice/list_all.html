@@ -6,8 +6,8 @@
   <aside class="aside_right">
     <a href="javascript: location.reload();">새로 고침</a>
     <span class='menu_divide'>│</span>
-    <a href='./create'>공지 등록</a>
-    <span class='menu_divide'>│</span>
+    <span th:if="${session.grade == 'admin'}">
+    <a href='./create'>공지 등록</a></span>
   </aside>
   <div class="menu_line"></div>
   
