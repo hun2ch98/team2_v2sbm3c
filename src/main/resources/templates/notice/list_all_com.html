@@ -3,7 +3,8 @@
     <colgroup>
       <col style='width: 5%;'/>
       <col style='width: 20%;'/>
-      <col style='width: 20%;'/>    
+      <col style='width: 20%;'/>  
+      <col style='width: 10%;'/>
       <col style='width: 10%;'/>
       <col style='width: 10%;'/>
       <col style='width: 10%;'/>
@@ -14,6 +15,7 @@
         <th class="th_bs">제목</th>
         <th class="th_bs">내용</th>
         <th class="th_bs">등록일</th>
+        <th class="th_bs">추천</th>
         <th class="th_bs">조회</th>
         <th class="th_bs">기타</th>
       </tr>
@@ -28,6 +30,9 @@
           <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.content}"></a>
         </td>
         <td class="td_bs" th:text="${noticeVO.rdate.substring(0, 10)}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.goodcnt}"></a>
+        </td>
         <td class="td_bs">
           <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.cnt}"></a>
         </td>

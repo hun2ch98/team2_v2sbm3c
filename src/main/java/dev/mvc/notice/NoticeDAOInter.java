@@ -12,6 +12,9 @@ public interface NoticeDAOInter {
   /** 조회 */
   public NoticeVO read(int noticeno);
   
+  /** 추천수 증가 */
+  public int goodCnt(int noticeno);
+  
   /** 조회수 증가 */
   public int increaseCnt(int noticeno);
   

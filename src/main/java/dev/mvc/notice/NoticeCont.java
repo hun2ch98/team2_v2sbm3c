@@ -84,9 +84,16 @@ public class NoticeCont {
     return "/notice/list_all"; // /templates/notice/list_all.html
   }
   
-//  /** 조회 */
-//  @GetMapping(path = "/read/{noticeno}")
-//  public String read(Model model, @PathVariable("noticeno") int noticeno) {
-//    
-//  }
+  /** 조회 http://localhost:9093/notice/read/1 */
+  @GetMapping(path = "/read/{noticeno}")
+  public String read(Model model, @PathVariable("noticeno") int noticeno) {
+    
+    this.noticeProc.increaseCnt(noticeno); // 조회수 증가
+    
+    NoticeVO noticeVO = this.noticeProc.read(noticeno);
+    
+    model.addAttribute("noticeVO", noticeVO);
+    
+    return "/notice/read";
+  }
 }
