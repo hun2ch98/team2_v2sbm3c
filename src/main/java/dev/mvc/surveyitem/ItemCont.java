@@ -60,42 +60,15 @@ public class ItemCont {
    * @param model
    * @return
    */
-//  @GetMapping("/create/{surveyno}")
-//  public String create(
-//      HttpSession session, 
-//      Model model, 
-//      RedirectAttributes ra,
-//      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-//      @PathVariable("itemno") int itemno) {
-//
-//      if (this.memberProc.isMember(session) || this.memberProc.isMemberAdmin(session)) {
-//          ItemVO itemVO = this.itemProc.read(itemno);
-//          if (itemVO == null) {
-//              ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
-//              return "redirect:/surveyitem/msg";
-//          }
-//          SurveyVO surveyVO = this.surveyProc.read(surveyno);
-//          itemVO.setSurveyno(surveyno);
-//          model.addAttribute("itemVO", itemVO );
-//          model.addAttribute("surveyVO", surveyVO);
-//
-//          return "surveyitem/create"; // 뷰 이름과 템플릿 경로 일치
-//      } else {
-//          return "member/login_cookie_need";
-//      }
-//  }
-  
-  @GetMapping(value = "/create/{surveyno}")
-  public String create(Model model,
-      @ModelAttribute("ItemVO") ItemVO itemVO,
-      @PathVariable("surveyno")int surveyno) {
-    SurveyVO surveyVO = this.surveyProc.read(surveyno);
-    model.addAttribute("surveyVO", surveyVO);
-    
-//    model.addAttribute("itemVO", itemVO);
-    
-    return "/surveyitem/create";
-  }
+    @GetMapping(value = "/create/{surveyno}")
+    public String create(Model model,
+        @ModelAttribute("ItemVO") ItemVO itemVO,
+        @PathVariable("surveyno")int surveyno) {
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
+      
+      return "/surveyitem/create";
+    }
 
 
   /**
