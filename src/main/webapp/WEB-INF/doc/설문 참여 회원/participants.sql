@@ -82,3 +82,12 @@ WHERE surveyno=1 AND memberno =1;
       CNT
 ----------
          1
+         
+-- memberno FK 특정 관리자에 속한 레코드 모두 삭제
+DELETE FROM surveyitem
+WHERE memberno=1;         
+         
+         
+         
+         
+         

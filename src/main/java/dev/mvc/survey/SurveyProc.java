@@ -2,6 +2,7 @@ package dev.mvc.survey;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,28 +44,47 @@ public class SurveyProc implements SurveyProcInter {
   }
   
   @Override
-  public int count_by_surveyno_search(HashMap<String, Object> map) {
-      int cnt = this.surveyDAO.count_by_surveyno_search(map);
+  public int count_by_surveyno_search(HashMap<String, Object> hashMap) {
+      int cnt = this.surveyDAO.count_by_surveyno_search(hashMap);
       return cnt;
   }
   
   @Override
-  public ArrayList<SurveyVO> list_by_surveyno_search_paging(HashMap<String, Object> map) {
-      // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
-      int now_page = (int) map.get("now_page");
-      int record_per_page = 7; // 페이지당 레코드 수
+  public ArrayList<SurveyVO> list_by_surveyno_search_paging(HashMap<String, Object> hashMap) {
+    
+    int now_page = 1; // 기본 페이지
+    if (hashMap.get("now_page") != null) {
+        now_page = (int) hashMap.get("now_page"); // 정상 값이 있을 경우 사용
+    }
+//    int begin_of_page = ((int)hashMap.get("now_page") - 1) * Survey.RECORD_PER_PAGE;
 
-      int startRow = (now_page - 1) * record_per_page + 1;
-      int endRow = now_page * record_per_page;
+    // 시작 rownum 결정
+    // 1 페이지 = 0 + 1: 1
+    // 2 페이지 = 10 + 1: 11
+    // 3 페이지 = 20 + 1: 21
+//    int start_num = begin_of_page + 1;
 
-      // 계산된 값을 `HashMap`에 추가합니다.
-      map.put("startRow", startRow);
-      map.put("endRow", endRow);
+    // 종료 rownum
+    // 1 페이지 = 0 + 10: 10
+    // 2 페이지 = 10 + 10: 20
+    // 3 페이지 = 20 + 10: 30
+//    int end_num = begin_of_page + Survey.RECORD_PER_PAGE;
+    /*
+     * 1 페이지: WHERE r >= 1 AND r <= 10 2 페이지: WHERE r >= 11 AND r <= 20 3 페이지: WHERE
+     * r >= 21 AND r <= 30
+     */
 
-      // 데이터베이스 쿼리 실행
-      ArrayList<SurveyVO> list = this.surveyDAO.list_by_surveyno_search_paging(map);
-      return list;
+    // System.out.println("begin_of_page: " + begin_of_page);
+    // System.out.println("WHERE r >= "+start_num+" AND r <= " + end_num);
+
+//    hashMap.put("start_num", start_num);
+//    hashMap.put("end_num", end_num);
+
+    ArrayList<SurveyVO> list = this.surveyDAO.list_by_surveyno_search_paging(hashMap);
+
+    return list;
   }
+
   
   @Override
   public String pagingBox(int memberno, int now_page, String is_continue, String list_file, int search_count,
@@ -87,7 +107,7 @@ public class SurveyProc implements SurveyProcInter {
       // 이전 그룹 링크
       int _now_page = (now_grp - 1) * page_per_block;
       if (now_grp > 1) {
-          str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
+          str.append("<span class='span_box_1'><a href='" + list_file + "?memberno="+memberno+
                   "&is_continue=" + is_continue + "&now_page=" + _now_page + "'>이전</a></span>");
       }
 
@@ -97,7 +117,7 @@ public class SurveyProc implements SurveyProcInter {
           if (i == now_page) {
               str.append("<span class='span_box_2'>" + i + "</span>");
           } else {
-              str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
+              str.append("<span class='span_box_1'><a href='" + list_file +"?memberno="+memberno+
                       "&is_continue=" + is_continue + "&now_page=" + i + "'>" + i + "</a></span>");
           }
       }
@@ -105,7 +125,7 @@ public class SurveyProc implements SurveyProcInter {
       // 다음 그룹 링크
       _now_page = now_grp * page_per_block + 1;
       if (now_grp < total_grp) {
-          str.append("<span class='span_box_1'><a href='" + list_file + "?memberno=" + memberno +
+          str.append("<span class='span_box_1'><a href='" + list_file + "?memberno="+memberno+
                   "&is_continue=" + is_continue + "&now_page=" + _now_page + "'>다음</a></span>");
       }
 
@@ -140,14 +160,8 @@ public class SurveyProc implements SurveyProcInter {
   }
   
   @Override
-  public int delete_survey(int surveyno) {
-    int cnt = this.surveyDAO.delete_survey(surveyno);
-    return cnt;
-  }
-  
-  @Override
   public int cntcount(int surveyno) {
-    int cnt = this.surveyDAO.cntnount(surveyno);
+    int cnt = this.surveyDAO.cntcount(surveyno);
     return cnt;
   }
 

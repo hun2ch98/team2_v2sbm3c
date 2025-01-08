@@ -206,14 +206,14 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public int count_by_surveyno(int surveyno) {
-    int cnt = this.itemDAO.count_by_surveyno(surveyno);
+  public int count_survey(int surveyno) {
+    int cnt = this.itemDAO.count_survey(surveyno);
     return cnt;
   }
   
   @Override
-  public int delete_by_surveyno(int surveyno) {
-    int cnt = this.itemDAO.delete_by_surveyno(surveyno);
+  public int delete_survey(int surveyno) {
+    int cnt = this.itemDAO.delete_survey(surveyno);
     return cnt;
   }
 
