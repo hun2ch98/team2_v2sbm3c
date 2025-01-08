@@ -85,6 +85,8 @@ public class NoticegoodCont {
     return "/noticegood/list_all"; // /templates/noticegood/list_all.html
   }
   
+  
+  
   /**
    * 삭제 처리 http://localhost:9093/noticegood/delete?noticegoodno=1
    * 
