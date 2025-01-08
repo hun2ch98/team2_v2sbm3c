@@ -271,7 +271,7 @@ public class ItemCont {
     
       model.addAttribute("surveyno", surveyno);
       
-      // 관리자 또는 일반 회원인지 확인
+      // 관리자 또는 일반 회원인지 확인 
       if (this.memberProc.isMember(session) || this.memberProc.isMemberAdmin(session)) {
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
