@@ -23,7 +23,7 @@
     WHERE goodno = #{goodno}
   </delete>
 
-  <!-- 특정 컨텐츠의 특정 회원 추천 개수 산출 -->
+  <!-- 특정 컨텐츠의 특정 회원 추천 개수 산출 --> 
   <select id="heartCnt" resultType="int" parameterType="HashMap">
     SELECT COUNT (*) as cnt
     FROM surveygood
