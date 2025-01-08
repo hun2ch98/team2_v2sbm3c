@@ -181,4 +181,10 @@ public class BannedwordsProc implements BannedwordsProcInter {
     	return cnt;
     }
     
+    @Override
+    public int good(int wordno) {
+    	int cnt = this.bannedwordsDAO.good(wordno);
+    	return cnt;
+    }
+    
 }

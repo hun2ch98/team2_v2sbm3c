@@ -33,5 +33,18 @@ public interface BannedwordsgoodProcInter {
    * @return
    */
   public int heartCnt(HashMap<String, Object> map);
-
+  
+  /**
+   * 조회
+   * @param wordno
+   * @return
+   */
+  public BannedwordsgoodVO read(int goodno);
+  
+  /**
+   * wordno, memberno로 조회
+   * @param wordno
+   * @return
+   */
+  public BannedwordsgoodVO read(HashMap<String, Object> map);
 }
