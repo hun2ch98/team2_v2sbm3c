@@ -96,4 +96,11 @@ public interface BannedwordsProcInter {
      */
     public int decreaseGoodcnt(int wordno);
     
+    /**
+     * 추천
+     * @param wordno
+     * @return
+     */
+    public int good(int wordno);
+    
 }

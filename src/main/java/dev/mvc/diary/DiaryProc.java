@@ -41,7 +41,17 @@ public class DiaryProc implements DiaryProcInter {
     DiaryVO diaryVO = this.diaryDAO.read(diaryno);
     return diaryVO;
   }
+  
+  public int increaseGoodCnt(int goodno) {
+    int cnt = this.increaseGoodCnt(goodno);
+    return cnt;
+  }
 
+  public int decreaseGoodCnt(int goodno) {
+    int cnt = this.decreaseGoodCnt(goodno);
+    return cnt;
+  }
+  
   @Override
   public int update(DiaryVO diaryVO) {
     int cnt = this.diaryDAO.update(diaryVO);
@@ -56,44 +66,11 @@ public class DiaryProc implements DiaryProcInter {
   }
 
   @Override
-  public int update_seqno_forward(int diaryno) {
-    int cnt = this.diaryDAO.update_seqno_forward(diaryno);
+  public int good(int diaryno) {
+    int cnt = this.diaryDAO.good(diaryno);
     return cnt;
   }
-
-  @Override
-  public int update_seqno_backward(int diaryno) {
-    int cnt = this.diaryDAO.update_seqno_backward(diaryno);
-    return cnt;
-  }
-
-  @Override
-  public int update_visible_y(int diaryno) {
-    int cnt = this.diaryDAO.update_visible_y(diaryno);
-    return cnt;
-  }
-
-  @Override
-  public int update_visible_n(int diaryno) {
-    int cnt = this.diaryDAO.update_visible_n(diaryno);
-    return cnt;
-  }
-
-  @Override
-  public ArrayList<DiaryVO> list_all_diarygrp_y() {
-    ArrayList<DiaryVO> list = this.diaryDAO.list_all_diarygrp_y();
-    
-    return list;
-  }
-
-  @Override
-  public ArrayList<DiaryVO> list_all_diary_y(String genre) {
-    ArrayList<DiaryVO> list = this.diaryDAO.list_all_diary_y(genre);
-    
-    return list;
-  }
-
-
+  
   @Override
   public ArrayList<String> genreset() {
     ArrayList<String> list = this.diaryDAO.genreset();

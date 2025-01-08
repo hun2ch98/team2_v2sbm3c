@@ -43,10 +43,15 @@ NOTICEGOODNO RDATE                 MEMBERNO   NOTICENO
            9 2025-01-07 06:43:58          4          9
            7 2025-01-07 06:43:58          1          4
 
--- 조회
+-- PK 조회
 SELECT noticegoodno, rdate, memberno, noticeno
 FROM noticegood
 WHERE noticegoodno = 1;
+
+-- noticeno, memberno로 조회
+SELECT noticegoodno, rdate, memberno, noticeno
+FROM noticegood
+WHERE noticeno=4 AND memberno=1;
 
 -- 삭제
 DELETE FROM noticegood

@@ -27,6 +27,12 @@ public interface DiaryProcInter {
    */
   public DiaryVO read(Integer diaryno);
   
+  
+  public int increaseGoodCnt(int goodno);
+  
+  
+  public int decreaseGoodCnt(int goodno);
+  
   /**
    * 수정
    * @param diaryVO 수정할 내용
@@ -41,49 +47,7 @@ public interface DiaryProcInter {
    */
   public int delete(int diaryno);
 
-  /**
-   * 우선 순위 높임, 10 등 -> 1 등
-   * @param diaryno
-   * @return
-   */
-  public int update_seqno_forward(int diaryno);
-  
-  /**
-   * 우선 순위 낮춤, 1 등 -> 10 등
-   * @param diaryno
-   * @return
-   */
-  public int update_seqno_backward(int diaryno);
-
-  /**
-   * 카테고리 공개 설정
-   * @param diaryno
-   * @return
-   */
-  public int update_visible_y(int diaryno);
-  
-  /**
-   * 카테고리 비공개 설정
-   * @param diaryno
-   * @return
-   */
-  public int update_visible_n(int diaryno);
-  
-  /**
-   * 숨긴 '카테고리 그룹'을 제외하고 접속자에게 공개할 '카테고리 그룹' 출력
-   * SQL -> DiaryVO 객체 레코드 수 만큼 생성 -> ArrayList<diaryVO> 객체 생성되어 DiaryDAOInter로 리턴 
-   * @return
-   */
-  public ArrayList<DiaryVO> list_all_diarygrp_y();    
-
-  /**
-   * 숨긴 '카테고리 그룹'을 제외하고 접속자에게 공개할 '카테고리' 출력
-   * SQL -> DiaryVO 객체 레코드 수 만큼 생성 -> ArrayList<diaryVO> 객체 생성되어 DiaryDAOInter로 리턴 
-   * select id="list_all_diary_y" resultType="dev.mvc.diary.DiaryVO"
-   * @return
-   */
-  public ArrayList<DiaryVO> list_all_diary_y(String genre);  
-  
+  public int good(int diaryno);
   
   /**
    * 장르 목록

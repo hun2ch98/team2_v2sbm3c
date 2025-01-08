@@ -49,6 +49,13 @@ public class NoticeProc implements NoticeProcInter{
     return cnt;
   }
   
+  /** 추천 */
+  @Override
+  public int good(int noticeno) {
+    
+    return 0;
+  }
+  
   /** 조회수 증가 */
   @Override
   public int increaseCnt(int noticeno) {

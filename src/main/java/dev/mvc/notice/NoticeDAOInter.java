@@ -18,6 +18,9 @@ public interface NoticeDAOInter {
   /** 추천수 감소 */
   public int decreaseGoodcnt(int noticeno);
   
+  /** 추천 */
+  public int good(int noticeno);
+  
   /** 조회수 증가 */
   public int increaseCnt(int noticeno);
   
@@ -26,5 +29,7 @@ public interface NoticeDAOInter {
   
   /** 삭제 */
   public int delete(int noticeno);
+  
+  
 
 }

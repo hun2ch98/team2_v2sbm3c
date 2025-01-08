@@ -12,6 +12,12 @@ public interface DiaryGoodDAOInter {
   
   
   public int delete(int goodno);
+  
+  
+  public DiaryGoodVO read(int goodno);
+  
+  
+  public DiaryGoodVO read(HashMap<String, Object> map);
 
   /**
    * 특정 일기의 특정 회원 좋아요 수 산출

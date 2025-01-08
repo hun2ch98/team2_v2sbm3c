@@ -19,6 +19,7 @@ import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.bannedwords.BannedwordsVO;
 import dev.mvc.bannedwordsgood.BannedwordsgoodProcInter;
+import dev.mvc.bannedwordsgood.BannedwordsgoodVO;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
 import jakarta.servlet.http.HttpServletRequest;
@@ -400,6 +401,68 @@ public class BannedwordsCont {
         ra.addAttribute("url", "/member/login_cookie_need"); // /templates/diary/login_cookie_need.html
 //        return "redirect:/contents/msg"; // @GetMapping(value = "/read")
         return "member/login_cookie_need";
+      }
+  }
+
+  /**
+   * 금지 단어 수정 처리
+   * @return
+   */
+  @PostMapping(value = "/good")
+  @ResponseBody
+  public String update_text(
+      HttpSession session,
+      Model model,
+      RedirectAttributes ra,
+      @RequestBody String json_src) {
+	  
+	  System.out.println("-> json_src: " + json_src); // json_src: {"wordno":"1"}
+	  JSONObject src = new JSONObject(json_src); // String -> JSON
+	  int wordno = (int)src.get("wordno"); // 값 가져오기
+	  System.out.println("-> wordno: " + wordno);
+	  
+      if (this.memberProc.isMember(session) ) {
+    	  //추천을 한 상태인지 확인
+    	  int memberno = (int)session.getAttribute("memberno");
+    	  
+    	  HashMap<String, Object> map = new HashMap<String, Object>();
+    	  map.put("wordno", wordno);
+    	  map.put("memberno", memberno);
+    	  
+    	  int goodcnt = this.bannedwordsgoodProc.heartCnt(map);
+    	  System.out.println("-> goodcnt: " + goodcnt);
+    	  
+    	  if (goodcnt == 1) {
+    		  System.out.println("-> 추천 해제: " + wordno + ' ' + memberno);
+    		  
+    		  BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodProc.read(map);
+    		  //추천 해제
+    		  this.bannedwordsgoodProc.delete(bannedwordsgoodVO.getGoodno());
+    		  this.bannedwordsProc.decreaseGoodcnt(wordno);
+    		  
+    	  }else {
+    		  //추천
+    		  BannedwordsgoodVO bannedwordsgoodVO_new = new BannedwordsgoodVO();
+    		  bannedwordsgoodVO_new.setMemberno(memberno);
+    		  bannedwordsgoodVO_new.setWordno(wordno);
+    		  
+    		  this.bannedwordsgoodProc.create(bannedwordsgoodVO_new);
+    	  }
+    	  //추천 여부가 변경되어 다시 새로운 값을 읽어옴.
+    	  int heartCnt = this.bannedwordsgoodProc.heartCnt(map);
+    	  int recom = this.bannedwordsProc.read(wordno).getGoodcnt();
+    	  
+    	 JSONObject result = new JSONObject();
+    	 result.put("isMember", 1); // 로그인:1, 비회원:0
+    	 result.put("heartCnt", heartCnt); //추천 여부, 추천:1, 비추천:0
+    	 result.put("recom", recom); // 추천인수
+    	  
+    	  return result.toString();
+      }else {
+     	 JSONObject result = new JSONObject();
+     	 result.put("isMember", 0); 
+     	 
+     	 return result.toString();
       }
   }
   
