@@ -96,7 +96,7 @@ public class MemberProc implements MemberProcInter {
     String grade = (String)session.getAttribute("grade");
     
     if (grade != null) {
-      if (grade.equals("member")) {
+      if (grade.equals("admin") || grade.equals("member")) {
         sw = true;  // 로그인 한 경우
       }      
     }
