@@ -92,6 +92,7 @@ UPDATE survey SET topic = 'test2' WHERE surveyno = 1;
          1 test2                                                                                                2024/12/23 2025/01/01          5 Y test1.jpg                                                                                            test1_1.jpg                                                                                                 1000 test1_t.jpg                                                                                         
 
 UPDATE survey SET topic = '앱이 아이들에게 긍정적인 표현을 학습하는 데 도움된다고 느끼시나요?' WHERE surveyno = 42;
+UPDATE survey SET s_number=0 WHERE surveyno != 14;
 
 -- delete
 DELETE FROM survey;

@@ -21,6 +21,7 @@ import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.survey.Survey;
 import dev.mvc.survey.SurveyVO;
+import dev.mvc.surveyitem.ItemProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,10 @@ public class SurveyCont {
   private SurveyProcInter surveyProc;
   
   @Autowired
+  @Qualifier("dev.mvc.surveyitem.ItemProc")
+  private ItemProcInter itemProc;
+  
+  @Autowired
   @Qualifier("dev.mvc.member.MemberProc") // @Service("dev.mvc.member.MemberProc")
   private MemberProcInter memberProc;
   
@@ -43,6 +48,9 @@ public class SurveyCont {
 
   /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
   public int page_per_block = 7;
+  
+  /** 페이징 목록 주소 */
+  private String list_file_name = "/survey/list_by_surveyno_search_paging";
   
   public SurveyCont() {
     System.out.println("-> SurveyCont created.");
@@ -94,7 +102,7 @@ public class SurveyCont {
       RedirectAttributes ra) {
     
 //    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
-   // ------------------------------------------------------------------------------
+      // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
       String file1 = ""; // 원본 파일명 image
@@ -227,7 +235,8 @@ public class SurveyCont {
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
-      int memberno = 1;
+//      int memberno = 1;
+      int memberno = (int)session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       if (memberVO == null) {
           memberVO = new MemberVO();
@@ -522,6 +531,31 @@ public class SurveyCont {
   }
   
   /**
+   * 카테고리 및 연관 자료 삭제 처리
+   */
+  @PostMapping(value = "/delete_all_confirm")
+  public String delete_survey(@RequestParam (name="surveyno", defaultValue="0") int surveyno,
+                                                       RedirectAttributes redirectAttributes) {
+    // 콘텐츠 삭제
+    itemProc.delete(surveyno);
+
+    // 카테고리 삭제
+    surveyProc.delete_survey(surveyno);
+
+    redirectAttributes.addFlashAttribute("msg", "카테고리와 관련된 모든 자료가 삭제되었습니다.");
+    return "redirect:/survey/list_by_surveyno_search_paging";
+  }
+
+  /**
+   * 카테고리 삭제 폼
+   */
+  @GetMapping(value = "/delete")
+  public String delete(Model model) {
+    // 기본 삭제 폼
+    return "/survey/delete";  // cate/delete.html로 이동
+  }
+  
+  /**
    * 삭제 처리 http://localhost:9091/contents/delete
    * 
    * @return
@@ -529,7 +563,8 @@ public class SurveyCont {
   @PostMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, RedirectAttributes ra,
       @RequestParam(name="memberno", defaultValue="1") int memberno, 
-      @PathVariable("surveyno") int surveyno,
+      @RequestParam(name="surveyno", defaultValue="1") int surveyno, 
+//      @PathVariable("surveyno") int surveyno,
       @RequestParam(name="is_continue", defaultValue="") String is_continue, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
     
@@ -550,6 +585,31 @@ public class SurveyCont {
       // 파일 삭제 종료
       // -------------------------------------------------------------------
           
+      
+//    --------------------------------------------------------------------------------------
+//    자식 삭제
+//  --------------------------------------------------------------------------------------
+ 
+//      int cnt = this.surveyProc.cntcount(surveyno);
+//      
+//      if (cnt == 0) {
+//        int deleteCnt = this.surveyProc.delete(surveyno);
+//        System.out.println("-> deleteCnt: " + deleteCnt);
+//        
+//        if(deleteCnt == 1) {
+//          ra.addAttribute("is_continue", is_continue);
+//          
+////          int search_cnt = this.surveyProc.count_by_surveyno_search(is_continue);
+//          if(search_cnt % this.record_per_page == 0) {
+//            now_page = now_page - 1;
+//            if(now_page < 1) {
+//              now_page = 1;
+//            }
+//          }
+//          ra.addAttribute("now_page", now_page);
+//        }
+//      }
+      
       this.surveyProc.delete(surveyno); // DBMS 삭제
           
       // -------------------------------------------------------------------------------------
@@ -569,11 +629,11 @@ public class SurveyCont {
           now_page = 1; // 시작 페이지
         }
       }
-      // -------------------------------------------------------------------------------------
-  
+      // -------------------------------------------------------------------------------------   
+      
       ra.addAttribute("memberno", memberno);
-      ra.addAttribute("is_continue", is_continue);
-      ra.addAttribute("now_page", now_page);
+      
+      
       ra.addAttribute("surveyno", surveyno);
       
       return "redirect:/survey/list_by_surveyno_search_paging";    

@@ -21,7 +21,7 @@ public class SurveygoodVO {
   /** 추천 번호 */
   public int goodno;
   
-  /** 컨텐츠 번호 */
+  /** 설문조사 번호 */
   public int surveyno;
   
   /** 회원 번호 */

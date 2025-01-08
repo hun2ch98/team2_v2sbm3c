@@ -93,6 +93,13 @@ public interface SurveyProcInter {
   public int delete(int surveyno);
   
   /**
+   * 자식 무시하고 삭제
+   * @param surveyno
+   * @return
+   */
+  public int delete_survey(int surveyno);
+  
+  /**
    * 자료수 산출
    * @param surveyno
    * @return
@@ -100,11 +107,18 @@ public interface SurveyProcInter {
   public int cntcount(int surveyno);
   
   /**
-   * 추천 
+   * 추천 증가
    * @param surveyno
    * @return
    */
-  public int goodcnt(int surveyno);
+  public int increasegoodcnt(int surveyno);
+  
+  /**
+   * 추천 감소
+   * @param surveyno
+   * @return
+   */
+  public int decreasegoodcnt(int surveyno);
 
 
 }

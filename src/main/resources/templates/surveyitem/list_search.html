@@ -2,10 +2,29 @@
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
+
+  <script>
+    window.onload = function(){
+    //  <img src="/contents/images/good.png" style="width: 22px;" title="추천">
+    //  <img src="/contents/images/bad.png" style="width: 22px;" title="비추천">
+    // 현재 로그인한 사용자의 추천 여부 반영
+    // let memberno =  '[[${session.memberno}]]'; //  javascript -> Thymeleaf -> session
+    
+      let heartCnt = '[[${heartCnt}]]';
+      if(heartCnt == 1){
+        document.querySelector('#heart_panel').innerHTML = '<img src="/survey/images/good.png" style="width: 24px;" title="추천">'; 
+      }else{
+        document.querySelector('#heart_panel').innerHTML = '<img src="/survey/images/bad.png" style="width: 24px;" title="비추천">'; 
+      }
+    }
+    
+  </script>
   <div class="title_line">
-    설문조사 항목 >
+    <span id="heart_panel" style="text-align: right;"></span>
+    설문조사 항목 > 
     <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
   </div>
+
   <aside class="aside_right">
     <span th:if="${session.grade == 'admin'}">
       <a th:href="@{|/surveyitem/create/${surveyno}|}">항목 추가</a>
@@ -64,13 +83,13 @@
   <!-- 회원 모드 -->
   <div th:if="${session.grade != 'admin'}">
     <form method="post" th:action="@{/surveyitem/finish}">
-      <input type="hidden" name="surveyno" th:value="${surveyno}" />
+      <input type="hidden" name="itemno" th:value="${itemno}" />
       <table class="table table-hover" style="width: 100%;">
         <colgroup>
           <col style='width: 10%;'/>
           <col style='width: 10%;'/>
-          <col style='width: 70%;'/>
-          <col style='width: 10%;'/>
+          <col style='width: 65%;'/>
+          <col style='width: 15%;'/>
         </colgroup>
         <thead>
           <tr>

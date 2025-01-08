@@ -1,4 +1,4 @@
-package dev.mvc.surveygood;
+package dev.mvc.participants;
 
 import java.util.ArrayList;
 
@@ -16,21 +16,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
+import dev.mvc.surveygood.SurveygoodProcInter;
+import dev.mvc.surveygood.SurveygoodVO;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping(value = "/surveygood")
-public class SurveygoodCont {
+@RequestMapping(value = "/participants")
+public class PartCont {
+  
   @Autowired
-  @Qualifier("dev.mvc.surveygood.SurveygoodProc")
-  SurveygoodProcInter surveygoodProc;
+  @Qualifier("dev.mvc.participants.PartProc")
+  PartProcInter partProc;
   
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") // @Service("dev.mvc.member.MemberProc")
   private MemberProcInter memberProc;
   
-  public SurveygoodCont() {
-    System.out.println("-> SurveygoodCont 생성됨.");
+  public PartCont() {
+    System.out.println("-> PartCont created.");
   }
   
   /**
@@ -42,22 +45,26 @@ public class SurveygoodCont {
   @GetMapping(value = "/post2get")
   public String post2get(Model model, 
       @RequestParam(name="url", defaultValue = "") String url) {
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
 
-    return url; // forward, /templates/...
+    return url; 
   }
   
+  /**
+   * 등록
+   * @param session
+   * @param surveygoodVO
+   * @return
+   */
   @PostMapping(value="/create")
   @ResponseBody
-  public String create(HttpSession session, @RequestBody SurveygoodVO surveygoodVO) {
-    System.out.println("-> 수신 데이터: " + surveygoodVO.toString());
+  public String create(HttpSession session, @RequestBody PartVO partVO) {
+    System.out.println("-> 수신 데이터: " + partVO.toString());
     
     int memberno = 2;
 //    int memberno = (int)session.getAttribute("memberno");
-    surveygoodVO.setMemberno(memberno);
+    partVO.setMemberno(memberno);
     
-    int cnt = this.surveygoodProc.create(surveygoodVO);
+    int cnt = this.partProc.create(partVO);
     
     JSONObject json = new JSONObject();
     json.put("res", cnt);
@@ -70,36 +77,35 @@ public class SurveygoodCont {
    * @param model
    * @return
    */
-  // http://localhost:9091/cate/list_all
   @GetMapping(value = "/list_all")
   public String list_all(Model model) {
-    ArrayList<SurveygoodVO> list = this.surveygoodProc.list_all();
+    ArrayList<PartVO> list = this.partProc.list_all();
     model.addAttribute("list", list);
 
-    return "/surveygood/list_all"; // /templates/calendar/list_all.html
+    return "/participants/list_all"; 
   }
   
   /**
-   * 삭제 처리 http://localhost:9091/contentsgood/delete?goodno=1
-   * 
+   * 삭제 처리 
    * @return
    */
   @PostMapping(value = "/delete")
   public String delete_proc(HttpSession session, 
       Model model, 
-      @RequestParam(name="goodno", defaultValue = "0") int goodno, 
+      @RequestParam(name="pno", defaultValue = "0") int pno, 
       RedirectAttributes ra) {    
     
     if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
-      this.surveygoodProc.delete(goodno);   // 삭제
+      this.partProc.delete(pno);   // 삭제
 
-      return "redirect:/surveygood/list_all";
+      return "redirect:/participants/list_all";
 
     } else { // 정상적인 로그인이 아닌 경우 로그인 유도
       ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-      return "redirect:/surveygood/post2get"; // @GetMapping(value = "/msg")
+      return "redirect:/participants/post2get"; // @GetMapping(value = "/msg")
     }
 
   }
+
 
 }
