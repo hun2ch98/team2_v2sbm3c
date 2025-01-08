@@ -42,4 +42,12 @@
     WHERE noticeno=#{noticeno} AND memberno=#{memberno}
   </select>
   
+  <!-- 전체 목록, 테이블 3개 join -->
+  <select id="list_all_join" resultType="dev.mvc.noticegood.NoticeNoticegoodMemberVO">
+    SELECT r.noticegoodno, r.rdate, r.noticeno, c.title as n_title, r.memberno, m.id, m.name
+    FROM notice c, noticegood r, member m
+    WHERE c.noticeno = r.noticeno AND r.memberno = m.memberno
+    ORDER BY noticegoodno DESC
+  </select>
+  
 </mapper>

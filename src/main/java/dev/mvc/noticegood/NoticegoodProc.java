@@ -52,5 +52,11 @@ public class NoticegoodProc implements NoticegoodProcInter {
     NoticegoodVO noticegoodVO = this.noticegoodDAO.readByNoticeMember(map);
     return noticegoodVO;
   }
+  
+  @Override
+  public ArrayList<NoticeNoticegoodMemberVO> list_all_join() {
+    ArrayList<NoticeNoticegoodMemberVO> list = this.noticegoodDAO.list_all_join();
+    return list;
+  }
 
 }

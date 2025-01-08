@@ -23,11 +23,14 @@
     <tbody>
       <tr th:each="noticeVO, status:${list}">
         <td class="td_bs" th:text="|${status.index+1}|"></td>
-        <td class="td_bs">
-          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.title}"></a>
+        <td class='td_left'>
+          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block; font-weight: bold;" th:text="${noticeVO.title}"></a>
         </td>
-        <td class="td_bs">
-          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.content}"></a>
+        <td class="td_left">
+          <span th:if="${noticeVO.content.length() > 30 }" 
+                  th:text="|${noticeVO.content.substring(0, 30) }...|"></span>
+          <span th:if="${noticeVO.content.length() <= 30 }" 
+                  th:text="|${noticeVO.content}|"></span>
         </td>
         <td class="td_bs" th:text="${noticeVO.rdate.substring(0, 10)}"></td>
         <td class="td_bs">

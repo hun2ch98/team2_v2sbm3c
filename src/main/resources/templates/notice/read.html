@@ -23,7 +23,9 @@
     function good(noticeno) {
       console.log('-> noticeno: ' + noticeno);
       
-      fetch("http://localhost:9093/notice/good", {
+      // http://192.168.12.144:9093/notice/good
+      // http://localhost:9093/notice/good
+      fetch("/notice/good", {
         "method": "post",
         "headers": {
           "Content-Type": "application/json"

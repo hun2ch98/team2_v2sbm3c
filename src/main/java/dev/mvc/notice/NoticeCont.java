@@ -125,7 +125,7 @@ public class NoticeCont {
   }
   
   /** 수정 폼 http://localhost:9093/notice/update?noticeno0=1 */
-  @GetMapping(value = "/update")
+  @GetMapping(value = "/update{noticeno}")
   public String update_text(HttpSession session,
       Model model,
       @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
@@ -138,6 +138,58 @@ public class NoticeCont {
       return "/notice/update";
     } else {
       return "/member/login_cookie_need";
+    }
+  }
+  
+  /** 수정 처리 */
+  @PostMapping(value = "/update")
+  public String update(HttpSession session,
+      Model model,
+      @ModelAttribute("noticeVO") NoticeVO noticeVO,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) {
+      this.noticeProc.update(noticeVO); // 글수정
+      
+      return "redirect:/notice/read/" + noticeVO.getNoticeno();
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/notice/post2get";
+    }
+  }
+  
+  /** 삭제 폼 */
+  @GetMapping(path = "/delete/{noticeno}")
+  public String delete(HttpSession session,
+      Model model,
+      @PathVariable("noticeno") int noticeno,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한 경우
+      NoticeVO noticeVO = this.noticeProc.read(noticeno);
+      model.addAttribute("noticeVO", noticeVO);
+      
+      return "/notice/delete";
+    } else {
+      
+      return "/member/login_cookie_need";
+    }
+  }
+  
+  /** 삭제 처리 */
+  @PostMapping(value = "/delete")
+  public String delete_proc(HttpSession session,
+      Model model,
+      @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
+      this.noticeProc.delete(noticeno);
+      
+      return "redirect:/notice/list_all";
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/notice/post2get";
     }
   }
   
