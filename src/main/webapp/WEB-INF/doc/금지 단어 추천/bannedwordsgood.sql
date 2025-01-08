@@ -42,6 +42,10 @@ VALUES(bannedwordsgood_seq.nextval, sysdate, '1', 3);
 INSERT INTO bannedwordsgood(goodno, rdate, wordno, memberno)
 VALUES(bannedwordsgood_seq.nextval, sysdate, '1', 4);
 
+INSERT INTO bannedwordsgood(goodno, rdate, wordno, memberno)
+VALUES(bannedwordsgood_seq.nextval, sysdate, '1', 1);
+
+
 SELECT goodno, rdate, wordno, memberno
 FROM bannedwordsgood
 ORDER BY goodno DESC;
