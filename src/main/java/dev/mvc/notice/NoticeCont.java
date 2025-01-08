@@ -126,8 +126,7 @@ public class NoticeCont {
   
   /** 수정 폼 http://localhost:9093/notice/update?noticeno0=1 */
   @GetMapping(value = "/update{noticeno}")
-  public String update_text(HttpSession session,
-      Model model,
+  public String update_text(HttpSession session, Model model,
       @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
       RedirectAttributes ra) {
     
@@ -137,7 +136,7 @@ public class NoticeCont {
       
       return "/notice/update";
     } else {
-      return "/member/login_cookie_need";
+      return "redirect:/member/login_cookie_need";
     }
   }
   
@@ -184,7 +183,8 @@ public class NoticeCont {
       RedirectAttributes ra) {
     
     if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
-      this.noticeProc.delete(noticeno);
+      this.noticegoodProc.n_delete(noticeno); // 자식
+      this.noticeProc.delete(noticeno); // 부모
       
       return "redirect:/notice/list_all";
     } else {

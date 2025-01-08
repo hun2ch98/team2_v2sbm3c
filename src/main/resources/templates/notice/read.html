@@ -71,7 +71,7 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/notice/update?noticeno=${noticeVO.noticeno}|}">수정</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/notice/delete|}">삭제</a>
+    <a th:href="@{|/notice/delete?noticeno=${noticeVO.noticeno}|}">삭제</a>
   </aside>
   
   <aside class="aside_right" th:if="${session.grade != 'admin'}">

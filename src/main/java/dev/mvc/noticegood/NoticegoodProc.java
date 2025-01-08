@@ -35,6 +35,12 @@ public class NoticegoodProc implements NoticegoodProcInter {
   }
   
   @Override
+  public int n_delete(int noticeno) {
+    int cnt = this.noticegoodDAO.n_delete(noticeno);
+    return cnt;
+  }
+  
+  @Override
   public int heart_Cnt(HashMap<String, Object> map) {
     int cnt = this.noticegoodDAO.heart_Cnt(map);
     return cnt;
