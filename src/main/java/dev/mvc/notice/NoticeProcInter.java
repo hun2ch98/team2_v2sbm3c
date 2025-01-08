@@ -23,6 +23,9 @@ public interface NoticeProcInter {
   /** 추천수 감소 */
   public int decreaseGoodcnt(int noticeno);
   
+  /** 추천 */
+  public int good(int noticeno);
+  
   /** 조회수 증가 */
   public int increaseCnt(int noticeno);
   
