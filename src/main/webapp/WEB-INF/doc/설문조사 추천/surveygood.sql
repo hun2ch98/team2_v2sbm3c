@@ -25,7 +25,7 @@ INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
 VALUES (surveygood_seq.nextval, 1, 1, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 2, 2, sysdate);
+VALUES (surveygood_seq.nextval, 12, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
 VALUES (surveygood_seq.nextval, 3, 3, sysdate);
