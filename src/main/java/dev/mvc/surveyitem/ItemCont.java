@@ -324,22 +324,20 @@ public class ItemCont {
       }
   }
   
+  
   /**
    * 추천 처리 http://localhost:9093/surveyitem/good
-   * 
    * @return
    */
   @PostMapping(value = "/good")
   @ResponseBody
-  public String update_text(HttpSession session,
-      Model model, @RequestBody String json_src) {
-    System.out.println("-> json_src: " + json_src); // json_src: {"surveyno":"12"}
+  public String good(HttpSession session, Model model, @RequestBody String json_src) {
+    System.out.println("-> json_src: " + json_src); // json_src: {"noticeno":"4"} 검증
     
     JSONObject src = new JSONObject(json_src); // String -> JSON
     int surveyno = (int)src.get("surveyno"); // 값 가져오기
-    System.out.println("-> surveyno: " + surveyno);
+    System.out.println("-> surveyno: " + surveyno); // 검증
     
-   
     if (this.memberProc.isMember(session)) { // 회원 로그인 확인
       // 추천을 한 상태인지 확인
       int memberno = (int)session.getAttribute("memberno");
@@ -348,44 +346,42 @@ public class ItemCont {
       map.put("memberno", memberno);
       
       int good_cnt = this.surveygoodProc.heartCnt(map);
-      System.out.println("-> good_cnt: " + good_cnt);
+      System.out.println("-> good_cnt: " + good_cnt); // 검증
       
-      if(good_cnt == 1) {
+      if (good_cnt == 1) {
         System.out.println("-> 추천 해제: " + surveyno + ' ' + memberno);
         SurveygoodVO surveygoodVO = this.surveygoodProc.readBysurveymember(map);
-        
-        this.surveygoodProc.delete(surveygoodVO.getGoodno());  // 추천 삭제
-        this.surveyProc.decreasegoodcnt(surveyno);    // 카운트 감소
-        
-      }else {
+        this.surveygoodProc.delete(surveygoodVO.getGoodno()); // 추천 삭제
+        this.surveyProc.decreasegoodcnt(surveyno); // 카운트 감소
+      } else {
         System.out.println("-> 추천: " + surveyno + ' ' + memberno);
-        
         SurveygoodVO surveygoodVO_new = new SurveygoodVO();
         surveygoodVO_new.setSurveyno(surveyno);
         surveygoodVO_new.setMemberno(memberno);
-        
         this.surveygoodProc.create(surveygoodVO_new);
-        this.surveyProc.increasegoodcnt(surveyno);
+        this.surveyProc.increasegoodcnt(surveyno); // 카운트 증가
       }
       
-      // 추천 여부가 변경되어 다시 새로운 값을 읽어옴
+      // 추천 여부가 변경되어 다시 새로운 값을 읽어옴.
       int heartCnt = this.surveygoodProc.heartCnt(map);
       int goodcnt = this.surveyProc.read(surveyno).getGoodcnt();
-      
+          
       JSONObject result = new JSONObject();
-      result.put("isMember", 1);  // 로그인:1, 비회원:0
-      result.put("heartCnt", heartCnt);  // 추천 여부, 추천:1, 비추천:0
-      result.put("goodcnt", goodcnt);   // 추천인수
+      result.put("isMember", 1); // 로그인: 1, 비회원: 0
+      result.put("heartCnt", heartCnt); // 추천 여부, 추천: 1, 비추천: 0
+      result.put("goodcnt", goodcnt); //추천인수
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      
+      return result.toString();
+      
+    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+      JSONObject result = new JSONObject();
+      result.put("isMember", 0); // 로그인: 1, 비회원: 0
       
       System.out.println("-> result.toString(): " + result.toString());
       return result.toString();
-
-    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-      JSONObject result = new JSONObject();
-      result.put("isMember", 1);  // 로그인:1, 비회원:0
-      
-      return result.toString();
     }
-
   }  
+  
 }

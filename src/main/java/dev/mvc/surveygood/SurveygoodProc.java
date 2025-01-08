@@ -46,5 +46,11 @@ public class SurveygoodProc implements SurveygoodProcInter {
     SurveygoodVO surveygoodVO = this.surveygoodDAO.readBysurveymember(map);
     return surveygoodVO;
   }
+
+  @Override
+  public ArrayList<SurveySurveygoodMemberVO> list_all_join() {
+    ArrayList<SurveySurveygoodMemberVO> list = this.surveygoodDAO.list_all_join();
+    return list;
+  }
   
 }
