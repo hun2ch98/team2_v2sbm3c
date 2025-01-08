@@ -37,7 +37,7 @@
     ORDER BY goodno = #{goodno}
   </select>
   
-  <!-- surveyno, memberno로 조회 -->
+  <!-- surveyno, memberno로 조회! -->
   <select id="readBysurveymember" resultType="dev.mvc.surveygood.SurveygoodVO" parameterType="HashMap">
     SELECT goodno, surveyno, memberno, rdate
     FROM surveygood
@@ -49,7 +49,7 @@
     SELECT g.goodno, g.rdate, g.surveyno, s.topic as s_topic, g.memberno, m.id, m.email
     FROM survey s, surveygood g, member m
     WHERE s.surveyno = g.surveyno AND g.surveyno = m.memberno
-    ORDER BY goodno DESC
+    ORDER BY goodno DESC 
   </select>
   
 </mapper>

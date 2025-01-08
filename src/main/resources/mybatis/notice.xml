@@ -49,4 +49,10 @@
     SET title = #{title}, content = #{content}
     WHERE noticeno = #{noticeno}
   </update>
+
+  <!-- 공지사항(notice) 부모 삭제 --> 
+  <delete id="delete" parameterType="int">
+    DELETE FROM notice WHERE noticeno = #{noticeno}
+  </delete>
+  
 </mapper>
