@@ -37,7 +37,7 @@
     ORDER BY goodno = #{goodno}
   </select>
   
-  <!-- surveyno, memberno로 조회 -->
+  <!-- surveyno, memberno로 조회! -->
   <select id="readBysurveymember" resultType="dev.mvc.surveygood.SurveygoodVO" parameterType="HashMap">
     SELECT goodno, surveyno, memberno, rdate
     FROM surveygood
