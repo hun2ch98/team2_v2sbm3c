@@ -80,5 +80,12 @@ public interface BannedwordsDAOInter {
    * @return 처리된 레코드 갯수
    */
   public int decreaseGoodcnt(int wordno);
+  
+  /**
+   * 추천
+   * @param wordno
+   * @return
+   */
+  public int good(int wordno);
 
 }

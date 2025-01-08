@@ -51,7 +51,7 @@ FROM bannedwordsgood
 ORDER BY goodno DESC;
 
 DELETE FROM bannedwordsgood
-WHERE goodno = 5;
+WHERE goodno = 6;
 
 SELECT COUNT(*) as cnt 
 FROM bannedwordsgood
@@ -61,9 +61,14 @@ SELECT COUNT(*) as cnt
 FROM bannedwordsgood
 WHERE goodno=1 AND memberno=4;
 
-
-
-
+-- 조회
+SELECT goodno, rdate, wordno, memberno
+FROM bannedwordsgood
+WHERE goodno = 1;
+-- wordno, memberno로 조회 
+SELECT goodno, rdate, wordno, memberno
+FROM bannedwordsgood
+WHERE wordno = 1 AND memberno=1;
 
 
 
