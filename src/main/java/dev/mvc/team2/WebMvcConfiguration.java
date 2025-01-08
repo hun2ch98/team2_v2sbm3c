@@ -28,8 +28,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
       // C:/kd/deploy/team2/survey/storage ->  /survey/storage -> http://localhost:9093/survey/storage;
       registry.addResourceHandler("/survey/storage/**").addResourceLocations("file:///" +  Survey.getUploadDir());
       
-      System.out.println("Upload Directory: " + Board.getUploadDir());
-      
       // C:/kd/deploy/team2/member/storage ->  /board/storage -> http://localhost:9093/board/storage;
       registry.addResourceHandler("/member/storage/**").addResourceLocations("file:///" +  Member.getUploadDir());
       

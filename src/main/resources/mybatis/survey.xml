@@ -27,7 +27,7 @@
   </select>
   
   <!-- 카테고리별 검색 목록 -->
-  <select id="list_by_surveyno_search" resultType="dev.mvc.survey.SurveyVO" parameterType="HashMap">
+  <select id="list_by_surveyno_search" resultType="dev.mvc.survey.SurveyVO" parameterType="String">
       SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
       FROM survey
       WHERE is_continue = #{is_continue, jdbcType=VARCHAR}
@@ -36,7 +36,7 @@
   </select>
   
   <!-- 카테고리별 검색 레코드 갯수 -->
-  <select id="count_by_surveyno_search" resultType="int" parameterType="HashMap">
+  <select id="count_by_surveyno_search" resultType="int" parameterType="String">
     SELECT COUNT(*)
     FROM survey
     WHERE (#{is_continue} IS NULL OR #{is_continue} = '' OR is_continue = #{is_continue})
@@ -78,11 +78,6 @@
   <!-- 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM survey WHERE surveyno=#{surveyno}
-  </delete>
-  
-  <!-- 자식 무시하고 주제 삭제 -->
-  <delete id="delete_survey" parameterType="int">
-    DELETE FROM surveyitem WHERE surveyno = #{surveyno}
   </delete>
   
   <!-- 자료수 산출 -->
