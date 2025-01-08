@@ -106,4 +106,6 @@ public class NoticegoodCont {
       return "redirect:/noticegood/post2get"; // @GetMapping(value = "/msg")
     }
   }
+  
+  
 }

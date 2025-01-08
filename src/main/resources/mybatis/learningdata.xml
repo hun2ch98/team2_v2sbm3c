@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.learningdata.LearningdataDAOInter">
+
+  <!-- 학습 데이터 글 추가 -->
+  <insert id="create" parameterType="dev.mvc.learningdata.LearningdataVO">
+    INSERT INTO learningdata (datano, ethical, create_at, ques, ans)
+    VALUES (learningdata_seq.nextval, #{ethical}, sysdate, #{ques}, #{ans})
+  </insert>
+  
+  <!-- 학습 데이터 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.learningdata.LearningdataVO">
+    SELECT datano, ethical, create_at, ques, ans
+    FROM learningdata
+    WHERE datano = #{datano}
+  </select>
+  
+  <!-- 모든 목록 -->
+  <select id="list_all" parameterType="dev.mvc.learningdata.LearningdataVO">
+    SELECT datano, ethical, create_at, ques, ans
+    FROM learningdata
+    ORDER BY datano DESC
+  </select>
+  
+  <!-- 등록된 목록 -->
+  <select id="list_by_datano" resultType="dev.mvc.learningdata.LearningdataVO">
+    SELECT datano, ethical, create_at, ques, ans
+    FROM learningdata
+    ORDER BY datano DESC
+  </select>
+  
+  <!-- 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.learningdata.LearningdataVO">
+    UPDATE learningdata
+    SET ethical=#{ethical}, ques=#{ques}, ans=#{ans}, create_at=sysdate 
+    WHERE datano = #{datano}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM learningdata
+    WHERE datano = #{datano}
+  </delete>
+  
+  <!-- 검색 목록 -->
+  <select id="list_by_datano_search" resultType="dev.mvc.learningdata.LearningdataVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+        SELECT datano, ethical, create_at, ques, ans
+               ROW_NUMBER() OVER (ORDER BY datano DESC) AS rnum
+        FROM learningdata
+        WHERE (#{ans} IS NULL OR #{ans} = '' OR word = #{ans})
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 검색 레코드 갯수 -->
+  <select id="count_by_datano_search" resultType="int" parameterType="HashMap">
+      SELECT COUNT(*)
+      FROM learningdata
+      WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
+  </select>
+   
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM learningdata
+  </select>
+  
+  <!-- 학습 데이터별 검색 + 페이징 목록 -->
+  <select id="list_by_datano_search_paging" resultType="dev.mvc.learningdata.LearningdataVO" parameterType="HashMap">
+      SELECT *
+      FROM (
+          SELECT datano, ethical, create_at, ques, ans
+                 ROW_NUMBER() OVER (ORDER BY datano DESC) AS rnum
+          FROM learningdata
+          WHERE (#{ans} IS NULL OR #{ans} = '' OR word = #{ans})
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+
+</mapper>

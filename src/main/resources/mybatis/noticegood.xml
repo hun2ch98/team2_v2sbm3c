@@ -27,4 +27,11 @@
     WHERE noticeno=#{noticeno} AND memberno=#{memberno}
   </select>
   
+    <!-- 조회 -->
+  <select id="read" resultType="dev.mvc.noticegood.NoticegoodVO" parameterType="int">
+    SELECT noticegoodno, rdate, memberno, noticeno
+    FROM noticegood
+    WHERE noticegoodno = #{noticegoodno};
+  </select>
+  
 </mapper>
