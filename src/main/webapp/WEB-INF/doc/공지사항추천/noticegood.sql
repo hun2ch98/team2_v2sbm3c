@@ -84,7 +84,7 @@ FROM notice c, noticegood r, member m
 WHERE c.noticeno = r.noticeno AND r.memberno = m.memberno
 ORDER BY noticegoodno DESC;
 
-
+-- 
 
 
 
