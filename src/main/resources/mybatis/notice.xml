@@ -4,30 +4,44 @@
 <mapper namespace="dev.mvc.notice.NoticeDAOInter">
   <!-- 등록 -->
   <insert id="create" parameterType="dev.mvc.notice.NoticeVO">
-    INSERT INTO notice(noticeno, memberno, title, content, cnt, rdate)
-    VALUES(notice_seq.nextval, #{memberno}, #{title}, #{content}, 0, sysdate)
+    INSERT INTO notice(noticeno, memberno, title, content, goodcnt, cnt, rdate)
+    VALUES(notice_seq.nextval, #{memberno}, #{title}, #{content}, 0, 0, sysdate)
   </insert>
   
   <!-- 전체 목록 -->
   <select id="list_all" resultType="dev.mvc.notice.NoticeVO">
-    SELECT noticeno, memberno, title, content, cnt, rdate
+    SELECT noticeno, memberno, title, content, goodcnt, cnt, rdate
     FROM notice
     ORDER BY noticeno DESC
   </select>
   
   <!-- 일반적인 조회 -->
   <select id="read" resultType="dev.mvc.notice.NoticeVO" parameterType="int">
-    SELECT noticeno, memberno, title, content, cnt, rdate
+    SELECT noticeno, memberno, title, content, goodcnt, cnt, rdate
     FROM notice
     WHERE noticeno = #{noticeno}
   </select>
+  
+  <!-- 추천수 증가 -->
+  <update id="increaseGoodcnt" parameterType="int">
+    UPDATE notice
+    SET goodcnt = goodcnt + 1
+    WHERE noticeno = #{noticeno}
+  </update> 
+  
+  <!-- 추천수 감소 -->
+  <update id="decreaseGoodcnt" parameterType="int">
+    UPDATE notice
+    SET goodcnt = goodcnt - 1
+    WHERE noticeno = #{noticeno}
+  </update> 
   
   <!-- 조회수 증가 -->
   <update id="increaseCnt" parameterType="int">
     UPDATE notice
     SET cnt = cnt + 1
     WHERE noticeno = #{noticeno}
-  </update>
+  </update> 
   
   <!-- 글 수정 -->
   <update id="update" parameterType="dev.mvc.notice.NoticeVO">

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.noticegood.NoticegoodDAOInter">
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.noticegood.NoticegoodVO">
+    INSERT INTO noticegood(noticegoodno, rdate, memberno, noticeno)
+    VALUES (noticegood_seq.nextval, sysdate, #{memberno}, #{noticeno})
+  </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list_all" resultType="dev.mvc.noticegood.NoticegoodVO">
+    SELECT noticegoodno, rdate, memberno, noticeno
+    FROM noticegood
+    ORDER BY noticegoodno DESC
+  </select>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM noticegood
+    WHERE noticegoodno = #{noticegoodno}
+  </delete>
+  
+  <select id="heart_Cnt" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM noticegood
+    WHERE noticeno=#{noticeno} AND memberno=#{memberno}
+  </select>
+  
+</mapper>

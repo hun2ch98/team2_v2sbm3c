@@ -3,11 +3,12 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class="title_line">
-    설문조사 항목 > <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
+    설문조사 항목 >
+    <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
   </div>
   <aside class="aside_right">
     <span th:if="${session.grade == 'admin'}">
-      <a th:href="@{/surveyitem/create(surveyno=${surveyno})}">항목 추가</a>
+      <a th:href="@{|/surveyitem/create/${surveyno}|}">항목 추가</a>
       <span class='menu_divide'>│</span> 
     </span>
     <a href="javascript:location.reload();">새로고침</a>
@@ -85,10 +86,7 @@
           </tr>
           <tr th:each="itemVO : ${list}" >
             <td align="center" valign="middle">
-              <label style="display: inline-flex; align-items: center; cursor: pointer;">
-                <input type="radio" name="itemno" th:value="${itemVO.itemno}" required style="display: none;" />
-                <span style="width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%; display: inline-block; position: relative; margin-right: 8px;"></span>
-              </label>
+              <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" th:value="${itemVO.itemno}" required />
             </td>
             <td th:text="${itemVO.itemno}"></td>
             <td th:text="${itemVO.item}"></td>

@@ -24,6 +24,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
       // C:/kd/deploy/team2/illustration/storage ->  /illustration/storage -> http://localhost:9093/grade/storage;
       registry.addResourceHandler("/upload/**") // HTTP 요청 경로
       .addResourceLocations("file:C:/kd/deploy/team2/illustration/storage/");
+      
       // C:/kd/deploy/team2/survey/storage ->  /survey/storage -> http://localhost:9093/survey/storage;
       registry.addResourceHandler("/survey/storage/**").addResourceLocations("file:///" +  Survey.getUploadDir());
       

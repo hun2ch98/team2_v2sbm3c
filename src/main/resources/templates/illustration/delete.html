@@ -16,16 +16,17 @@
   <fieldset class="fieldset_basic">
     <ul>
       <li class="li_none">
-        <div th:if="${illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')}"
-             style="text-align: center; width: 100%;">
-          <img th:src="@{|/upload/${illustrationVO.illust_saved}|}" style="width: 50%; max-width: 500px;">
-        </div>
 
         <div th:if="${((illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')) == false) and (illustrationVO.illust_size > 0)}"
              class="display_table" style="text-align: center; width: 100%;">
             <div class="display_table_cell">
               <span th:text="${illustrationVO.illust}"></span>
             </div>
+        </div>
+        
+        <div th:if="${illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')}"
+             style="text-align: center; width: 100%;">
+          <img th:src="@{|/upload/${#strings.urlEncode(illustrationVO.illust)}|}" style="width: 50%; max-width: 500px;">
         </div>
 
         <div th:if="${illustrationVO.illust_size == 0}" style="text-align: center; width: 100%;">

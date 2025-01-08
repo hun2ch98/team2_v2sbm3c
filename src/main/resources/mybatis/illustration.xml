@@ -14,6 +14,13 @@
     )
   </insert>
 
+<!-- 일반적인 조회 -->
+  <select id="read" resultType="dev.mvc.illustration.IllustrationVO" parameterType="int">
+    SELECT illustno, diary, conversationno, illust, illust_saved, illust_thumb, illust_size
+    FROM illustration
+    WHERE illustno = #{illustno}
+  </select>
+
   <select id="listAllWithDiaryDetails" resultType="map">
     SELECT 
         i.illustno,
@@ -27,11 +34,95 @@
     ORDER BY d.ddate ASC
   </select>
 
+  <!-- 글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM illustration
+    WHERE illustno=#{illustno}
+  </delete>
   
   
-  
+  <!-- 파일 수정 -->
+  <update id="update" parameterType="dev.mvc.illustration.IllustrationVO">
+    UPDATE illustration
+    SET illust=#{illust}, illust_saved=#{illust_saved}, illust_thumb=#{illust_thumb}, illust_size=#{illust_size}
+    WHERE illustno = #{illustno}
+  </update>  
+
   
 
+  <select id="getIllustrationsByDiaryNo" resultType="dev.mvc.illustration.IllustrationVO">
+      SELECT *
+      FROM illustration
+      WHERE diaryno = #{diaryno}
+  </select>
+  
+  <select id="list_search_paging" parameterType="map" resultType="map">
+    SELECT * 
+    FROM (
+        SELECT 
+            i.illustno, 
+            i.illust_thumb, 
+            d.diaryno, 
+            d.title, 
+            TO_CHAR(d.ddate, 'YYYY-MM-DD') AS ddate,
+            ROW_NUMBER() OVER (ORDER BY d.ddate ASC) AS rnum
+        FROM illustration i
+        LEFT JOIN diary d ON i.diaryno = d.diaryno
+        WHERE 1 = 1
+         <if test="title != null and title != ''">
+            AND LOWER(d.title) LIKE '%' || LOWER(#{title}) || '%'
+        </if>
+        <if test="start_date != null and start_date != ''">
+            AND TO_CHAR(d.ddate, 'YYYY-MM-DD') >= #{start_date}
+        </if>
+        <if test="end_date != null and end_date != ''">
+            AND TO_CHAR(d.ddate, 'YYYY-MM-DD') &lt;= #{end_date}
+        </if>
+    )
+    WHERE rnum BETWEEN #{startNum} AND #{endNum}
+  </select>
 
+
+
+
+
+
+
+
+    <select id="listSearch" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
+      SELECT *
+      FROM diary d
+      JOIN illustration i ON d.diaryno = i.diaryno
+      WHERE 1=1
+      <if test="start_date != null and start_date != ''">
+          AND SUBSTR(TO_CHAR(d.ddate), 1, 10) >= #{start_date}
+      </if>
+      <if test="end_date != null and end_date != ''">
+          AND SUBSTR(TO_CHAR(d.ddate), 1, 10) &lt;= #{end_date}
+      </if>
+      ORDER BY ddate DESC
+    </select>
+
+
+  <select id="dev.mvc.illustration.IllustrationDAOInter.countSearchResults" resultType="int" parameterType="map">
+    SELECT COUNT(*)
+    FROM diary d
+    JOIN illustration i ON d.diaryno = i.diaryno
+    WHERE 1=1
+    <if test="start_date != null and start_date != ''">
+        AND SUBSTR(TO_CHAR(d.ddate), 1, 10) >= #{start_date}
+    </if>
+    <if test="end_date != null and end_date != ''">
+        AND SUBSTR(TO_CHAR(d.ddate), 1, 10) &lt;= #{end_date}
+    </if>
+  </select>
+
+  <select id="dev.mvc.illustration.IllustrationDAOInter.cntcount" parameterType="int" resultType="int">
+    SELECT COUNT(*) FROM illustration WHERE illustno = #{illustno}
+  </select>
+
+  <select id="dev.mvc.illustration.IllustrationDAOInter.list_search_count" resultType="int">
+    SELECT COUNT(*) FROM illustration
+  </select>
 
 </mapper>

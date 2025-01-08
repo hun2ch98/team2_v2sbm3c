@@ -60,43 +60,49 @@ public class ItemCont {
    * @param model
    * @return
    */
-  @GetMapping(value = "/create")
-  public String create(@RequestParam("surveyno") int surveyno, Model model) {
-
-      ItemVO itemVO = new ItemVO();
-      itemVO.setSurveyno(surveyno); // 설문조사 번호 설정
-      model.addAttribute("itemVO", itemVO);
-
+    @GetMapping(value = "/create/{surveyno}")
+    public String create(Model model,
+        @ModelAttribute("ItemVO") ItemVO itemVO,
+        @PathVariable("surveyno")int surveyno) {
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
+      
       return "/surveyitem/create";
-  }
+    }
 
 
   /**
    * 설문조사 항목 추가 처리
-   * @param itemVO
-   * @param bindingResult
-   * @param ra
    * @return
    */
   @PostMapping(value = "/create")
-  public String create(@Valid @ModelAttribute("itemVO") ItemVO itemVO, 
-                       BindingResult bindingResult, 
-                       RedirectAttributes ra) {
-    if (bindingResult.hasErrors()) {
-      return "/surveyitem/create"; // 에러가 있으면 폼으로 복귀
-    }
+  public String create(
+      @ModelAttribute("itemVO") ItemVO itemVO,
+      BindingResult bindingResult,
+      RedirectAttributes ra,
+      HttpSession session) {
+//    System.out.println("surveyno: " + surveyno);
+    if (this.memberProc.isMember(session) || memberProc.isMemberAdmin(session)) { 
+      if (bindingResult.hasErrors()) {
+        return "/surveyitem/create";
+      }
 
-    int cnt = this.itemProc.create(itemVO); // 항목 추가
-    if (cnt == 1) {
-      ra.addAttribute("surveyno", itemVO.getSurveyno());
-      return "redirect:/surveyitem/list_search"; // 성공 시 목록으로 이동
-    } else {
-      return "redirect:/surveyitem/msg"; // 실패 시 메시지
+//      itemVO.setSurveyno(surveyno); // 경로 변수에서 가져온 surveyno 설정
+      int cnt = this.itemProc.create(itemVO); // 항목 추가
+
+      if (cnt == 1) {
+        ra.addAttribute("surveyno", itemVO.getSurveyno());
+        return "redirect:/surveyitem/list_search"; // 성공 시 목록으로 이동
+      } else {
+        return "redirect:/surveyitem/msg"; // 실패 시 메시지
+      }
+    } else { // 로그인 실패 한 경우
+      return "redirect:/member/login_cookie_need";
     }
   }
+
   
   /**
-   * 회원
    * 설문조사 항목 목록 보기
    * @param surveyno
    * @param model
@@ -172,15 +178,19 @@ public class ItemCont {
   public String delete(HttpSession session, 
                            Model model, 
                            @PathVariable("itemno") int itemno, 
+                           @PathVariable("surveyno") int surveyno, 
                            RedirectAttributes ra) {
 
       if (this.memberProc.isMemberAdmin(session)|| this.memberProc.isMember(session)) { 
+        model.addAttribute("surveyno", surveyno);        
+        
           ItemVO itemVO = this.itemProc.read(itemno);
           if (itemVO == null) { 
               ra.addFlashAttribute("msg", "잘못된 항목 번호입니다.");
               return "redirect:/surveyitem/msg";
           }
 
+          SurveyVO surveyVO = this.surveyProc.read(itemVO.getSurveyno());
           model.addAttribute("itemVO", itemVO);
           return "/surveyitem/delete";
       } else {
@@ -197,7 +207,10 @@ public class ItemCont {
                        @RequestParam("surveyno") int surveyno, // surveyno 값 추가
                        RedirectAttributes ra) {
       if (this.memberProc.isMemberAdmin(session)|| this.memberProc.isMember(session)) {
-          this.itemProc.delete(itemno); // 항목 삭제
+          this.itemProc.delete(itemno);// 항목 삭제
+          
+          HashMap<String, Object> map = new HashMap<String, Object>();
+          map.put("surveyno", surveyno);
 
           // Redirect 시 surveyno 값 추가
           ra.addAttribute("surveyno", surveyno);
@@ -214,7 +227,7 @@ public class ItemCont {
   @GetMapping("/finish")
   public String finish(Model model) {
       model.addAttribute("message", "설문조사가 완료되었습니다.");
-      return "/surveyitem/finish"; // finish.html 템플릿으로 이동
+      return "/surveyitem/finish"; // finish.html 템플릿
   }
 
   
@@ -223,22 +236,21 @@ public class ItemCont {
    * @return
    */
   @PostMapping("/finish")
-  public String finish(@RequestParam("surveyno") int surveyno,
-                            @RequestParam("itemno") int itemno,
-                            HttpSession session,
-                            RedirectAttributes ra) {
-//       사용자 인증 확인
+  public String finish(
+      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+      @RequestParam("itemno") int itemno,
+      HttpSession session,
+      RedirectAttributes ra) {
       if (session.getAttribute("memberno") == null) {
           ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
           return "redirect:/member/login";
       }
 
-      // 설문 항목 참여 처리
       this.itemProc.update_cnt(itemno); // item_cnt 증가
-
       ra.addFlashAttribute("msg", "설문조사 완료!");
-      return "redirect:/surveyitem/finish"; // 완료 페이지로 리다이렉트
+      return "redirect:/surveyitem/finish";
   }
+
 
 
   /**
@@ -250,40 +262,38 @@ public class ItemCont {
                                   @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
                                   @RequestParam(name = "word", defaultValue = "") String word,
                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
+    
+      model.addAttribute("surveyno", surveyno);
+      
       // 관리자 또는 일반 회원인지 확인
       if (this.memberProc.isMemberAdmin(session) || this.memberProc.isMember(session)) {
-        SurveyVO surveyVO = new SurveyVO();
+        SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
-        
-        // Null 또는 빈 문자열 처리
-        word = Tool.checkNull(word).trim();
 
-        // HashMap에 필요한 매개변수 설정
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("surveyno", surveyno); // 설문조사 번호
-        map.put("word", word);        // 검색어
-        map.put("start_num", (now_page - 1) * record_per_page + 1);
-        map.put("end_num", now_page * record_per_page);
+        word = Tool.checkNull(word);
 
-        // 검색 결과 목록 가져오기
-        ArrayList<ItemVO> list = this.itemProc.list_search_paging(word, now_page, this.record_per_page);
+        ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
+//        System.out.println("-> listsize: " + list.size());
         model.addAttribute("list", list);
-
-        // 검색 레코드 수 계산
+        
+        // --------------------------------------------------------------------------------------
+        // 페이지 번호 목록 생성
+        // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(word);
-        model.addAttribute("search_count", search_count);
-        model.addAttribute("word", word);
-
-        // 페이징 생성
-        String paging = this.itemProc.pagingBox(now_page, word, this.list_file_name, search_count, this.record_per_page,
+//        System.out.println("->search_count : " + search_count);
+        String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_count, this.record_per_page,
             this.page_per_block);
         model.addAttribute("paging", paging);
         model.addAttribute("now_page", now_page);
 
-        // 일련번호 생성
+        // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
         int no = search_count - ((now_page - 1) * this.record_per_page);
         model.addAttribute("no", no);
+        // --------------------------------------------------------------------------------------
+        
+        int search_cnt = search_count;
+        model.addAttribute("search_cnt", search_cnt);
+        model.addAttribute("word", word);
 
         return "/surveyitem/list_search";
       } else {

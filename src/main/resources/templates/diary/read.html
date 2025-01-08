@@ -2,24 +2,32 @@
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
+  <script>
+    window.onload = function() {
+      //<img src = "/diarygood/images/file_name" style="" title="">
+      //<img src = "/diarygood/images/file_name" style="" title="">
+      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+      if (heartCnt == 1) {
+        document.querySelector('#heart_panel').innerHTML = '<img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요">'; 
+      } else {
+        document.querySelector('#heart_panel').innerHTML = '<img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제">'; 
+      }
+    }
+  </script>
   <div class='title_line'>
-    <span th:text="${diaryVO.title }" class="title_line_text"></span > 
-    > <span th:text="${diaryVO.ddate}" class="title_line_text"></span > 
-    > 글 조회
+    일기 조회
   </div>
   
   <aside class="aside_right" th:if="${session.grade == 'admin'}">
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' >│</span>    
-    <a th:href="@{|./list_by_diaryno?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록형</a>    
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/contents/create?diaryno=${diaryVO.diaryno}|}">등록</a>
+    <a th:href="@{|/diary/create|}">등록</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/contents/update?diaryno=${diaryVO.diaryno}&now_page=${now_page}&word=${word }|}">글 수정</a>
+    <a th:href="@{|/diary/update?diaryno=${diaryVO.diaryno}&now_page=${now_page}&word=${word }|}">글 수정</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./update_file?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}|}">파일 수정</a>  
+    <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록</a>    
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./delete?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}&diaryno=${diaryVO.diaryno}|}">삭제</a>  
+    <a th:href="@{|/diary/delete?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}&diaryno=${diaryVO.diaryno}|}">삭제</a>  
  </aside> 
 
   <aside class="aside_right" th:if="${session.grade != 'admin'}">
@@ -34,30 +42,25 @@
 
   <fieldset class="fieldset_basic">
     <ul>
-      <li class="li_none">
-        <div style="width: 100%; word-break: break-all;">
-
-          <span style="font-size: 1.5em; font-weight: bold;" th:text="${diaryVO.title}"></span>
-          <span style="font-size: 1em;" th:text="${diaryVO.ddate }"></span><br><br>
-          <div style="white-space: pre-wrap;"><span th:text="${diaryVO.content}"></span></div>
-        </div>
-      </li>
-
-      <li class="li_none" th:text="|검색어(키워드): ${diaryVO.word }|">
+      <li th:if="${diaryVO != null}">
+        <strong>일기 제목:</strong> <span th:text="${diaryVO.title}"></span><br>
+        <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span>
+        <strong>일기:</strong> <span th:text="${diaryVO.summary}"></span><br>      
       </li>
       
-      <li class="li_none" th:if="${diaryVO.size1 > 0}">
-        <div>
-            첨부 파일: 
-            <a th:href='@{|/download?dir=/contents/storage&filename=${diaryVO.file1saved}&downname=${diaryVO.file1}|}'
-               th:text='|${diaryVO.file1}|'></a> 
-            <span th:text="|(${diaryVO.size1_label})|"></span>  
-            <a th:href='@{|/download?dir=/contents/storage&filename=${diaryVO.file1saved}&downname=${diaryVO.file1}|}'>
-                <img th:src="@{/contents/images/download.png}" class="icon" title="download">
-            </a>
+       <!-- 썸네일 출력 반복문 추가 -->
+      <li>
+        <strong>썸네일:</strong>
+        <div th:each="illustration : ${illustrationList}">
+          <img th:src="@{'/upload/' + ${illustration.illust}}" 
+               alt="썸네일" style="width: 200px; height: auto;">
         </div>
-
-      </li>   
+      </li>
+      <li class="li_none">
+        <div>
+          <span id="heart_panel"></span>
+        </div>
+      </li>
     </ul>
   </fieldset>
 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.surveygood.SurveygoodDAOInter">
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.surveygood.SurveygoodVO">
+    INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+    VALUES (surveygood_seq.nextval, #{surveyno}, #{memberno}, sysdate)
+  </insert>
+  
+  <!-- 목록 -->
+  <select id="list_all" parameterType="dev.mvc.surveygood.SurveygoodVO">
+    SELECT goodno, surveyno, memberno, rdate
+    FROM surveygood
+    ORDER BY goodno DESC
+  </select>
+  
+    <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM surveygood
+    WHERE goodno = #{goodno}
+  </delete>
+
+</mapper>
