@@ -41,3 +41,21 @@ SELECT goodno, diaryno, memberno, rdate
 FROM diarygood
 ORDER BY goodno DESC;
 
+-- 조회1
+SELECT goodno, rdate, diaryno, memberno
+FROM diarygood
+WHERE goodno = 6
+
+-- 조회2
+SELECT goodno, rdate, diaryno, memberno
+FROM diarygood
+WHERE goodno = 6 AND memberno = 1
+
+-- 특정 회원의 추천 여부
+SELECT COUNT(*) as cnt
+FROM diarygood
+WHERE diaryno = 22 AND memberno = 1;
+
+
+
+

@@ -9,13 +9,29 @@
       let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
       let tag='';
       if (heartCnt == 1) {
-        tag='<a href="/diary/good?diaryno=[[${diaryVO.diaryno}]]"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
+        tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
         document.querySelector('#heart_panel').innerHTML = tag; 
       } else {
-        tag='<a href="/diary/good?diaryno=[[${diaryVO.diaryno}]]"><img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제"></a>'
+        tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제"></a>'
         document.querySelector('#heart_panel').innerHTML = tag; 
       }
-      document.querySelector('#recom_panel').innerHTML = '([[${diaryVO.recom}]])'
+      document.querySelector('#cnt_panel').innerHTML = '([[${diaryVO.cnt}]])'
+    }
+    
+    function good(diaryno) {
+      console.log('-> diaryno : ' + diaryno);
+      fetch("http://localhost:9093/diary/good", {
+          "method": "post",
+          "headers": {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({diaryno}) // {"sentence":sentence, "language":language}, JSON 형식으로 전송
+        })
+        .then((response) => response.text()) // 응답 문자열 추출
+        .then((data) => {
+          console.log('-> data : ' + data);
+        });
+
     }
   </script>
   <div class='title_line'>
@@ -63,7 +79,7 @@
       <li class="li_none">
         <div>
           <span id="heart_panel"></span>
-          <span id="recom_panel"></span>
+          <span id="cnt_panel"></span>
         </div>
       </li>
     </ul>
