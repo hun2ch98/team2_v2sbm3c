@@ -1,6 +1,7 @@
 package dev.mvc.diarygood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface DiaryGoodProcInter {
 
@@ -12,4 +13,7 @@ public interface DiaryGoodProcInter {
   
   
   public int delete(int goodno);
+
+  
+  public int heartCnt(HashMap<String, Object> map);
 }

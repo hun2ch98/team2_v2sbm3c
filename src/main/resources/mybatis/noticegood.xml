@@ -18,7 +18,13 @@
   <!-- 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM noticegood
-    WHERE noticegoodno = #{noticegoodno};
+    WHERE noticegoodno = #{noticegoodno}
   </delete>
+  
+  <select id="heart_Cnt" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM noticegood
+    WHERE noticeno=#{noticeno} AND memberno=#{memberno}
+  </select>
   
 </mapper>

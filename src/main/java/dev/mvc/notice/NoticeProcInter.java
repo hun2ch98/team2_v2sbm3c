@@ -18,7 +18,10 @@ public interface NoticeProcInter {
   public NoticeVO read(int noticeno);
   
   /** 추천수 증가 */
-  public int goodCnt(int noticeno);
+  public int increaseGoodcnt(int noticeno);
+  
+  /** 추천수 감소 */
+  public int decreaseGoodcnt(int noticeno);
   
   /** 조회수 증가 */
   public int increaseCnt(int noticeno);

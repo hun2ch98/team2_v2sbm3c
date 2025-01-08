@@ -22,12 +22,19 @@
     WHERE noticeno = #{noticeno}
   </select>
   
-  <!-- 추천수 증가 
-  <update id="goodCnt" parameterType="int">
+  <!-- 추천수 증가 -->
+  <update id="increaseGoodcnt" parameterType="int">
     UPDATE notice
     SET goodcnt = goodcnt + 1
     WHERE noticeno = #{noticeno}
-  </update> -->
+  </update> 
+  
+  <!-- 추천수 감소 -->
+  <update id="decreaseGoodcnt" parameterType="int">
+    UPDATE notice
+    SET goodcnt = goodcnt - 1
+    WHERE noticeno = #{noticeno}
+  </update> 
   
   <!-- 조회수 증가 -->
   <update id="increaseCnt" parameterType="int">
@@ -36,10 +43,10 @@
     WHERE noticeno = #{noticeno}
   </update> 
   
-  <!-- 글 수정 
+  <!-- 글 수정 -->
   <update id="update" parameterType="dev.mvc.notice.NoticeVO">
     UPDATE notice
     SET title = #{title}, content = #{content}
     WHERE noticeno = #{noticeno}
-  </update>-->
+  </update>
 </mapper>

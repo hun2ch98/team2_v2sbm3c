@@ -1,6 +1,7 @@
 package dev.mvc.diarygood;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,12 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
   @Override
   public int delete(int goodno) {
     int cnt = this.diaryGoodDAO.delete(goodno);
+    return cnt;
+  }
+
+  @Override
+  public int heartCnt(HashMap<String, Object> map) {
+    int cnt = this.diaryGoodDAO.heartCnt(map);
     return cnt;
   }
   

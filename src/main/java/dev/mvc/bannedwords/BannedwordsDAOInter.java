@@ -3,8 +3,6 @@ package dev.mvc.bannedwords;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
 public interface BannedwordsDAOInter {
 	
 /**
@@ -12,7 +10,7 @@ public interface BannedwordsDAOInter {
    * @param BannedwordsVO
    * @return
    */
-  public int create(BannedwordsVO BannedwordsVO);
+  public int create(BannedwordsVO bannedwordsVO);
   
   /**
    * 금지 단어 조회
