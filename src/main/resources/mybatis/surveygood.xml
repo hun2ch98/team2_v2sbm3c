@@ -29,4 +29,19 @@
     FROM surveygood
     WHERE surveyno = #{surveyno} AND memberno = #{memberno}
   </select>
+  
+  <!-- PK 조회 -->
+  <select id="read" resultType="dev.mvc.surveygood.SurveygoodVO" parameterType="int">
+    SELECT goodno, surveyno, memberno, rdate
+    FROM surveygood
+    ORDER BY goodno = #{goodno}
+  </select>
+  
+  <!-- surveyno, memberno로 조회 -->
+  <select id="readBysurveymember" resultType="dev.mvc.surveygood.SurveygoodVO" parameterType="HashMap">
+    SELECT goodno, surveyno, memberno, rdate
+    FROM surveygood
+    WHERE surveyno = #{surveyno} AND memberno = #{memberno}
+  </select>
+  
 </mapper>

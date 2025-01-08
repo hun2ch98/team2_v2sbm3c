@@ -40,13 +40,15 @@ SELECT goodno, surveyno, memberno, rdate
 FROM surveygood
 ORDER BY goodno DESC;
 
--- 조회
+-- PK 조회
 SELECT goodno, surveyno, memberno, rdate
 FROM surveygood
-WHERE goodno = 1;
-   GOODNO   SURVEYNO   MEMBERNO RDATE            
----------- ---------- ---------- -----------------
-         1          1          1 25/01/07 10:58:38
+WHERE goodno = 5;
+
+-- surveyno, memberno로 조회
+SELECT goodno, surveyno, memberno, rdate
+FROM surveygood
+WHERE surveyno=12 AND memberno =2;
 
 -- 삭제
 DELETE FROM surveygood

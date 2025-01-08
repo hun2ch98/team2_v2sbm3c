@@ -119,6 +119,13 @@ public interface SurveyProcInter {
    * @return
    */
   public int decreasegoodcnt(int surveyno);
+  
+  /**
+   * 추천
+   * @param surveyno
+   * @return
+   */
+  public int good(int surveyno);
 
 
 }
