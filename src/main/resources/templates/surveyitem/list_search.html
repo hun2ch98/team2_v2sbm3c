@@ -11,16 +11,56 @@
     // let memberno =  '[[${session.memberno}]]'; //  javascript -> Thymeleaf -> session
     
       let heartCnt = '[[${heartCnt}]]';
+      let tag='';
       if(heartCnt == 1){
-        document.querySelector('#heart_panel').innerHTML = '<img src="/survey/images/good.png" style="width: 24px;" title="추천">'; 
+        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 24px;" title="추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag; 
       }else{
-        document.querySelector('#heart_panel').innerHTML = '<img src="/survey/images/bad.png" style="width: 24px;" title="비추천">'; 
+        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 24px;" title="비추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag; 
       }
+      
+      document.querySelector('#goodcnt_panel').innerHTML = '([[${surveyVO.goodcnt}]])';
+    }
+
+    function good(surveyno){
+      console.log('-> surveyno: ' + surveyno);
+
+      fetch("http://localhost:9093/surveyitem/good", {
+          "method": "post",
+          "headers": {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({surveyno}) // {"surveyno":surveyno}, JSON 형식으로 전송
+        })
+        .then((response) => response.json()) // 응답 문자열 추출
+        .then((data) => {
+          console.log('-> data.isMember: ' + data.isMember);
+
+          if(data.isMember == 1){ // 회원
+            let heartCnt = data.heartCnt;
+            let tag='';
+
+            if(heartCnt == 1){
+              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 24px;" title="추천"></a>';
+              document.querySelector('#heart_panel').innerHTML = tag; 
+            }else{
+              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 24px;" title="비추천"></a>';
+              document.querySelector('#heart_panel').innerHTML = tag; 
+            }
+            
+            document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
+          }else{  // 비회원
+            alert("로그인해야 추천할 수 있습니다.");
+            location.href='/member/login'
+          }
+        }
+      );
     }
     
   </script>
   <div class="title_line">
-    <span id="heart_panel" style="text-align: right;"></span>
+    <span id="heart_panel"></span><span id="goodcnt_panel"></span>
     설문조사 항목 > 
     <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
   </div>

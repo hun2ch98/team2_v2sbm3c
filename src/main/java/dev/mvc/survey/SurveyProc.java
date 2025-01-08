@@ -162,5 +162,11 @@ public class SurveyProc implements SurveyProcInter {
     int cnt = this.surveyDAO.decreasegoodcnt(surveyno);
     return cnt;
   }
+  
+  @Override
+  public int good(int surveyno) {
+    
+    return 0;
+  }
 
 }
