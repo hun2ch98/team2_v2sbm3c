@@ -12,14 +12,14 @@
 		   
 		   if (heartCnt == 1) {
 			   tag = '<a href="javascript:good([[${bannedwordsVO.wordno}]])"><img src="/bannedwords/images/heart_on.png" style="width: 22px" title="추천"></a>';
-			   document.querySelector('#heart_panel').innerHTML = tag; 
-      	  } else {
-			   tag = '<a href="javascript:good([[${bannedwordsVO.wordno}]])"><img src="/bannedwords/images/heart_off.png" style="width: 22px" title="비추천"></a>';
-			   document.querySelector('#heart_panel').innerHTML = tag; 		  
-		  }
-		  
-		  document.querySelector('#goodcnt_panel').innerHTML = '[[${bannedwordsVO.goodcnt}]]';
-	  }
+			   document.querySelector('#heart_panel').innerHTML = tag;
+			   } else {
+				   tag = '<a href="javascript:good([[${bannedwordsVO.wordno}]])"><img src="/bannedwords/images/heart_off.png" style="width: 22px" title="비추천"></a>';
+				   document.querySelector('#heart_panel').innerHTML = tag;
+			   }
+			   document.querySelector('#goodcnt_panel').innerHTML = '([[${bannedwordsVO.goodcnt}]])';
+		    }
+
 	  
 	  function good(wordno) {
 		  console.log('-> wordno: ' +wordno);
@@ -29,8 +29,26 @@
                 "headers": {"Content-Type": "application/json"},
                 body: JSON.stringify({wordno})
                 })
-                .then((response) => response.text())
+                .then((response) => response.json())
                 .then((data) => {
+					console.log('-> data.isMember: '+ data.isMember);
+					if (data.isMember == 1){
+					   let heartCnt =  '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+					   let tag = '';
+					   
+					   if (heartCnt == 1) {
+						   tag = '<a href="javascript:good([[${bannedwordsVO.wordno}]])"><img src="/bannedwords/images/heart_on.png" style="width: 22px" title="추천"></a>';
+						   document.querySelector('#heart_panel').innerHTML = tag;
+						   } else {
+							   tag = '<a href="javascript:good([[${bannedwordsVO.wordno}]])"><img src="/bannedwords/images/heart_off.png" style="width: 22px" title="비추천"></a>';
+							   document.querySelector('#heart_panel').innerHTML = tag;
+						   }
+						   document.querySelector('#goodcnt_panel').innerHTML = '([[${bannedwordsVO.goodcnt}]])';
+					    }else {
+						alert("로그인을 해야 추천할 수 있습니다.")
+						
+						location.href='/member/login_cookie_need';
+					}
                   console.log('-> data: ' +data);
                 });
         
