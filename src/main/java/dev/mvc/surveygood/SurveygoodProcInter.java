@@ -45,5 +45,11 @@ public interface SurveygoodProcInter {
    * @return
    */
   public SurveygoodVO readBysurveymember(HashMap<String, Object> map);
+  
+  /**
+   * 목록
+   * @return
+   */
+  public ArrayList<SurveySurveygoodMemberVO> list_all_join();
 
 }
