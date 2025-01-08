@@ -6,6 +6,8 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.mvc.notice.NoticeVO;
+
 @Component("dev.mvc.noticegood.NoticegoodProc")
 public class NoticegoodProc implements NoticegoodProcInter {
   @Autowired
@@ -24,6 +26,13 @@ public class NoticegoodProc implements NoticegoodProcInter {
     ArrayList<NoticegoodVO> list = this.noticegoodDAO.list_all();
     
     return list;
+  }
+  
+  /** 조회 */
+  @Override
+  public NoticegoodVO read(int noticegoodno) {
+    NoticegoodVO noticegoodVO = this.noticegoodDAO.read(noticegoodno);
+    return noticegoodVO;
   }
   
   @Override
