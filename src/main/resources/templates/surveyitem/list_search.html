@@ -52,12 +52,10 @@
             document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
           }else{  // 비회원
             alert("로그인해야 추천할 수 있습니다.");
-            location.href='/member/login'
+            location.href='/member/login_cookie_need'
           }
-        }
-      );
-    }
-    
+        });
+      }
   </script>
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
