@@ -4,26 +4,26 @@
 <div layout:fragment="content">
 
   <script>
-    window.onload = function(){
-    //  <img src="/contents/images/good.png" style="width: 22px;" title="추천">
-    //  <img src="/contents/images/bad.png" style="width: 22px;" title="비추천">
-    // 현재 로그인한 사용자의 추천 여부 반영
-    // let memberno =  '[[${session.memberno}]]'; //  javascript -> Thymeleaf -> session
-    
-      let heartCnt = '[[${heartCnt}]]';
+    window.onload = function() {
+      // <img src="/survey/images/good.png" style="width: 22px" title="추천">         
+      // <img src="/survey/images/bad.png" style="width: 22px" title="비추천">   
+      // 현재 로그인한 사용자의 추천 여부 반영
+
+      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
       let tag='';
-      if(heartCnt == 1){
-        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 24px;" title="추천"></a>';
+      
+      if (heartCnt == 1) {
+        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
         document.querySelector('#heart_panel').innerHTML = tag; 
-      }else{
-        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 24px;" title="비추천"></a>';
+      } else {
+        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="비추천"></a>';
         document.querySelector('#heart_panel').innerHTML = tag; 
-      }
+      }    
       
       document.querySelector('#goodcnt_panel').innerHTML = '([[${surveyVO.goodcnt}]])';
     }
 
-    function good(surveyno){
+    function good(surveyno) {
       console.log('-> surveyno: ' + surveyno);
 
       fetch("/surveyitem/good", {
@@ -37,25 +37,28 @@
         .then((data) => {
           console.log('-> data.isMember: ' + data.isMember);
 
-          if(data.isMember == 1){ // 회원
-            let heartCnt = data.heartCnt;
+          if (data.isMember == 1) { // 회원
+            let heartCnt =data.heartCnt; //  javascript -> Thymeleaf -> session
             let tag='';
-
-            if(heartCnt == 1){
-              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 24px;" title="추천"></a>';
+            
+            if (heartCnt == 1) {
+              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
               document.querySelector('#heart_panel').innerHTML = tag; 
-            }else{
-              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 24px;" title="비추천"></a>';
+            } else {
+              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="추천"></a>';
               document.querySelector('#heart_panel').innerHTML = tag; 
-            }
+            }    
             
             document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
-          }else{  // 비회원
-            alert("로그인해야 추천할 수 있습니다.");
-            location.href='/member/login_cookie_need'
+          
+          } else { // 비회원
+            alert("로그인해야 추천 할 수 있습니다.");
+            location.href='/member/login_cookie_need';  
+
           }
-        });
-      }
+        }
+      );
+    }
   </script>
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
