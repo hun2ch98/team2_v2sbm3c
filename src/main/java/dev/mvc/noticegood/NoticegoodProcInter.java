@@ -17,11 +17,6 @@ public interface NoticegoodProcInter {
    */
   public ArrayList<NoticegoodVO> list_all();
   
-  /**
-   * 조회
-   */
-  public NoticegoodVO read(int noticegoodno);
-  
   /** 삭제 */
   public int delete(int noticegoodno);
   
@@ -31,4 +26,9 @@ public interface NoticegoodProcInter {
    * @return
    */
   public int heart_Cnt(HashMap<String, Object> map);
+  
+  /**
+   * 조회
+   */
+  public NoticegoodVO read(int noticegoodno);
 }

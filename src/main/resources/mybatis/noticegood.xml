@@ -15,13 +15,6 @@
     ORDER BY noticegoodno DESC
   </select>
   
-  <!-- 조회 -->
-  <select id="read" resultType="dev.mvc.noticegood/NoticegoodVO">
-    SELECT noticegoodno, rdate, memberno, noticeno
-    FROM noticegood
-    WHERE noticegoodno = #{noticegoodno};
-  </select>
-  
   <!-- 삭제 -->
   <delete id="delete" parameterType="int">
     DELETE FROM noticegood
@@ -32,6 +25,13 @@
     SELECT COUNT(*) as cnt
     FROM noticegood
     WHERE noticeno=#{noticeno} AND memberno=#{memberno}
+  </select>
+  
+    <!-- 조회 -->
+  <select id="read" resultType="dev.mvc.noticegood.NoticegoodVO" parameterType="int">
+    SELECT noticegoodno, rdate, memberno, noticeno
+    FROM noticegood
+    WHERE noticegoodno = #{noticegoodno};
   </select>
   
 </mapper>
