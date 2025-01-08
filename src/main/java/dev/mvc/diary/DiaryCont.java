@@ -363,7 +363,7 @@ public class DiaryCont {
         diaryGoodVO_new.setDiaryno(diaryno);
         diaryGoodVO_new.setMemberno(memberno);
         this.diaryGoodProc.create(diaryGoodVO_new); // 새로운 튜플 생성
-        
+        this.diaryProc.increaseGoodCnt(diaryno);
       }
       
       int heartCnt = this.diaryGoodProc.heartCnt(map);
