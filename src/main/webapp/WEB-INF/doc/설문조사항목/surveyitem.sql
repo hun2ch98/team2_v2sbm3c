@@ -64,7 +64,7 @@ VALUES (surveyitem_seq.nextval, 14, 2, '테스트항목');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 14, 3, '테스트항목');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 14, 4, '테스트항목');
+VALUES (surveyitem_seq.nextval, 14, 5, '테스트항목');
 
 -- 조회
 SELECT * FROM surveyitem;
