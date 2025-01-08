@@ -42,8 +42,8 @@ public class BannedwordsProc implements BannedwordsgoodProcInter {
 		return bannedwordsgoodVO;
     }
 	
-	public BannedwordsgoodVO read(HashMap<String, Object> map) {
-		BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodDAO.read(map);
+	public BannedwordsgoodVO readByWordnoMemeberno(HashMap<String, Object> map) {
+		BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodDAO.readByWordnoMemeberno(map);
 		return bannedwordsgoodVO;
 	}
 	

@@ -46,5 +46,5 @@ public interface BannedwordsgoodProcInter {
    * @param wordno
    * @return
    */
-  public BannedwordsgoodVO read(HashMap<String, Object> map);
+  public BannedwordsgoodVO readByWordnoMemeberno(HashMap<String, Object> map);
 }

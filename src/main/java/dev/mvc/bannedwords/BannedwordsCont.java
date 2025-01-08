@@ -405,12 +405,12 @@ public class BannedwordsCont {
   }
 
   /**
-   * 금지 단어 수정 처리
+   * 금지 단어 추천 처리
    * @return
    */
   @PostMapping(value = "/good")
   @ResponseBody
-  public String update_text(
+  public String good(
       HttpSession session,
       Model model,
       RedirectAttributes ra,
@@ -429,13 +429,13 @@ public class BannedwordsCont {
     	  map.put("wordno", wordno);
     	  map.put("memberno", memberno);
     	  
-    	  int goodcnt = this.bannedwordsgoodProc.heartCnt(map);
-    	  System.out.println("-> goodcnt: " + goodcnt);
+    	  int good_cnt = this.bannedwordsgoodProc.heartCnt(map);
+    	  System.out.println("-> good_cnt: " + good_cnt);
     	  
-    	  if (goodcnt == 1) {
+    	  if (good_cnt == 1) {
     		  System.out.println("-> 추천 해제: " + wordno + ' ' + memberno);
     		  
-    		  BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodProc.read(map);
+    		  BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodProc.readByWordnoMemeberno(map);
     		  //추천 해제
     		  this.bannedwordsgoodProc.delete(bannedwordsgoodVO.getGoodno());
     		  this.bannedwordsProc.decreaseGoodcnt(wordno);
@@ -445,18 +445,20 @@ public class BannedwordsCont {
     		  BannedwordsgoodVO bannedwordsgoodVO_new = new BannedwordsgoodVO();
     		  bannedwordsgoodVO_new.setMemberno(memberno);
     		  bannedwordsgoodVO_new.setWordno(wordno);
-    		  
     		  this.bannedwordsgoodProc.create(bannedwordsgoodVO_new);
+    		  this.bannedwordsProc.increaseGoodcnt(wordno);
+
     	  }
     	  //추천 여부가 변경되어 다시 새로운 값을 읽어옴.
     	  int heartCnt = this.bannedwordsgoodProc.heartCnt(map);
-    	  int recom = this.bannedwordsProc.read(wordno).getGoodcnt();
+    	  int goodcnt = this.bannedwordsProc.read(wordno).getGoodcnt();
     	  
-    	 JSONObject result = new JSONObject();
-    	 result.put("isMember", 1); // 로그인:1, 비회원:0
-    	 result.put("heartCnt", heartCnt); //추천 여부, 추천:1, 비추천:0
-    	 result.put("recom", recom); // 추천인수
+    	  JSONObject result = new JSONObject();
+    	  result.put("isMember", 1); // 로그인:1, 비회원:0
+    	  result.put("heartCnt", heartCnt); //추천 여부, 추천:1, 비추천:0
+    	  result.put("goodcnt", goodcnt); // 추천인수
     	  
+    	  System.out.println("-> result.toString(): " +result.toString());
     	  return result.toString();
       }else {
      	 JSONObject result = new JSONObject();
