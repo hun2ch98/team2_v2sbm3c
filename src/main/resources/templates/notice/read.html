@@ -30,9 +30,28 @@
         },
         body: JSON.stringify({noticeno}) // {"noticeno":noticeno, JSON 형식으로 전송
       })
-      .then((response) => response.text()) // 응답 문자열 추출
+      .then((response) => response.json()) // 응답 문자열 추출
       .then((data) => {
-        console.log('-> data: ' + data);
+        console.log('-> data.isMember: ' + data.isMember);
+
+        if (data.isMember == 1) { // 회원
+          let heart_Cnt = data.heart_Cnt; //  javascript -> Thymeleaf -> session
+          let tag = '';
+          
+          if (heart_Cnt == 1) {
+            tag = '<a href="javascript:good([[${noticeVO.noticeno}]])"><img src="/notice/images/like.png" style="width: 22px" title="추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          } else {
+            tag = '<a href="javascript:good([[${noticeVO.noticeno}]])"><img src="/notice/images/nope.png" style="width: 22px" title="비추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          }
+    
+          document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
+
+        } else { // 비회원
+          alert("로그인해야 추천 할 수 있습니다.");
+          location.href='/member/login_cookie_need';
+        }
       });
     }
   </script>

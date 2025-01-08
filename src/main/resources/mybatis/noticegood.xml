@@ -21,17 +21,25 @@
     WHERE noticegoodno = #{noticegoodno}
   </delete>
   
+  <!-- 특정 공지사항의 특정 회원 추천 갯수 산출 -->
   <select id="heart_Cnt" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as cnt
     FROM noticegood
     WHERE noticeno=#{noticeno} AND memberno=#{memberno}
   </select>
   
-    <!-- 조회 -->
+  <!-- 일반적인 조회 -->
   <select id="read" resultType="dev.mvc.noticegood.NoticegoodVO" parameterType="int">
     SELECT noticegoodno, rdate, memberno, noticeno
     FROM noticegood
-    WHERE noticegoodno = #{noticegoodno};
+    WHERE noticegoodno = #{noticegoodno}
+  </select>
+  
+  <!-- noticeno, memberno로 조회 -->
+  <select id="readByNoticeMember" resultType="dev.mvc.noticegood.NoticegoodVO" parameterType="HashMap">
+    SELECT noticegoodno, rdate, memberno, noticeno
+    FROM noticegood
+    WHERE noticeno=#{noticeno} AND memberno=#{memberno}
   </select>
   
 </mapper>

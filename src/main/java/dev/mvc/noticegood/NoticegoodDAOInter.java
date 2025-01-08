@@ -34,4 +34,10 @@ public interface NoticegoodDAOInter {
    */
   public NoticegoodVO read(int noticegoodno);
   
+  
+  /**
+   * noticeno, memberno로 조회
+   */
+  public NoticegoodVO readByNoticeMember(HashMap<String, Object> map);
+  
 }
