@@ -3,6 +3,8 @@ package dev.mvc.noticegood;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dev.mvc.notice.NoticeVO;
+
 public interface NoticegoodDAOInter {
   /**
    * 등록, 추상 메서드
@@ -27,6 +29,9 @@ public interface NoticegoodDAOInter {
    */
   public int heart_Cnt(HashMap<String, Object> map);
   
-  
+  /**
+   * 조회
+   */
+  public NoticegoodVO read(int noticegoodno);
   
 }

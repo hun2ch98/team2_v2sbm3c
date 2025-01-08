@@ -13,7 +13,10 @@ public interface DiaryGoodProcInter {
   
   
   public int delete(int goodno);
+  
 
+  public DiaryGoodVO read(int goodno);
+  
   
   public int heartCnt(HashMap<String, Object> map);
 }

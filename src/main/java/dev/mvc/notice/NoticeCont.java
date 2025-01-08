@@ -3,6 +3,7 @@ package dev.mvc.notice;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.noticegood.NoticegoodProcInter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -138,5 +140,22 @@ public class NoticeCont {
     }
   }
   
-  /** 수정 처리 http://localhost:9093/notice/update?noticeno0=1 */
+  /** 추천 처리 http://localhost:9093/notice/good */
+  @PostMapping(value = "/good")
+  @ResponseBody
+  public String good(HttpSession session, Model model, RedirectAttributes ra, @RequestBody String json_src) {
+    System.out.println("-> json_src: " + json_src); // json_src: {"noticeno":"4"}
+    
+    JSONObject src = new JSONObject(json_src); // String -> JSON
+    int noticeno = (int)src.get("noticeno"); // 값 가져오기
+    System.out.println("-> noticeno: " + noticeno);
+    
+    if (this.memberProc.isMember(session)) { // 회원 로그인 확인
+      return "수신 성공";
+      
+    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
+      return "redirect:/notice/post2get"; // @GetMapping(value = "/msg")
+    }
+  }
 }

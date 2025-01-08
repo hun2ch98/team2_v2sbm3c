@@ -65,6 +65,14 @@ public class DiaryGoodCont {
     return json.toString();
   }
   
+  
+  @GetMapping(value="/read")
+  public String read(Model model, @RequestParam(name="goodno", defaultValue="0") int goodno) {
+    DiaryGoodVO diaryGoodVO = this.diaryGoodProc.read(goodno);
+    model.addAttribute(diaryGoodVO);
+    return "/diarygood/read";
+  }
+  
   @GetMapping(value="/list_all")
   public String list_all(Model model) {
     ArrayList<DiaryGoodVO> list = this.diaryGoodProc.list_all();

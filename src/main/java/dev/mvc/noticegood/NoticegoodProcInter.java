@@ -26,4 +26,9 @@ public interface NoticegoodProcInter {
    * @return
    */
   public int heart_Cnt(HashMap<String, Object> map);
+  
+  /**
+   * 조회
+   */
+  public NoticegoodVO read(int noticegoodno);
 }

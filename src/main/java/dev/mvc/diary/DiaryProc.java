@@ -41,7 +41,17 @@ public class DiaryProc implements DiaryProcInter {
     DiaryVO diaryVO = this.diaryDAO.read(diaryno);
     return diaryVO;
   }
+  
+  public int increaseGoodCnt(int goodno) {
+    int cnt = this.increaseGoodCnt(goodno);
+    return cnt;
+  }
 
+  public int decreaseGoodCnt(int goodno) {
+    int cnt = this.decreaseGoodCnt(goodno);
+    return cnt;
+  }
+  
   @Override
   public int update(DiaryVO diaryVO) {
     int cnt = this.diaryDAO.update(diaryVO);

@@ -7,11 +7,33 @@
       // 현재 로그인한 사용자의 추천 여부 반영
       
       let heart_Cnt = '[[${heart_Cnt}]]'; //  javascript -> Thymeleaf -> session
+      let tag = '';
+      
       if (heart_Cnt == 1) {
-        document.querySelector('#heart_panel').innerHTML = '<img src="/notice/images/like.png" style="width: 22px" title="추천">';
+        tag = '<a href="javascript:good([[${noticeVO.noticeno}]])"><img src="/notice/images/like.png" style="width: 22px" title="추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag;
       } else {
-        document.querySelector('#heart_panel').innerHTML = '<img src="/notice/images/nope.png" style="width: 22px" title="비추천">';
+        tag = '<a href="javascript:good([[${noticeVO.noticeno}]])"><img src="/notice/images/nope.png" style="width: 22px" title="비추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag;
       }
+
+      document.querySelector('#goodcnt_panel').innerHTML = '([[${noticeVO.goodcnt}]])';
+    }
+    
+    function good(noticeno) {
+      console.log('-> noticeno: ' + noticeno);
+      
+      fetch("http://localhost:9093/notice/good", {
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({noticeno}) // {"noticeno":noticeno, JSON 형식으로 전송
+      })
+      .then((response) => response.text()) // 응답 문자열 추출
+      .then((data) => {
+        console.log('-> data: ' + data);
+      });
     }
   </script>
   
@@ -50,7 +72,7 @@
       </li>
       <li class="li_none">
         <div>
-          <span id="heart_panel"></span>
+          <span id="heart_panel"></span><span id="goodcnt_panel"></span>
         </div>
       </li>
       <li class="li_none" th:text="|조회수: ${noticeVO.cnt }|"></li>

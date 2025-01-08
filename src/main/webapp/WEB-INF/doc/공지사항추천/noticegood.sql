@@ -39,9 +39,9 @@ ORDER BY noticegoodno DESC;
 
 NOTICEGOODNO RDATE                 MEMBERNO   NOTICENO
 ------------ ------------------- ---------- ----------
-           3 2025-01-07 10:57:56          4          4
-           2 2025-01-07 10:57:56          3          3
-           1 2025-01-07 10:55:47          1          1
+          10 2025-01-07 06:46:13          3          8
+           9 2025-01-07 06:43:58          4          9
+           7 2025-01-07 06:43:58          1          4
 
 -- 조회
 SELECT noticegoodno, rdate, memberno, noticeno
