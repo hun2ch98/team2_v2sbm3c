@@ -36,4 +36,10 @@ public interface NoticegoodProcInter {
    * noticeno, memberno로 조회
    */
   public NoticegoodVO readByNoticeMember(HashMap<String, Object> map);
+  
+  /**
+   * 테이블 3개 join
+   * @return
+   */
+  public ArrayList<NoticeNoticegoodMemberVO> list_all_join();
 }

@@ -32,7 +32,9 @@
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                       <li class="nav-item"><a class="nav-link"th:href="@{|/notice/list_all|}">공지사항 목록</a></li>
-                      <li class="nav-item"><a class="nav-link"th:href="@{|/noticegood/list_all|}">공지사항 추천</a></li>
+                      <span th:if="${session.grade == 'admin'}"> 
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/noticegood/list_all|}">추천 회원</a></li>
+                      </span>
                   </ul>
                 </li>
                 
