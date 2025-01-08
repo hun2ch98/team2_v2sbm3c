@@ -21,6 +21,21 @@
   <select id="dev.mvc.diary.DiaryDAOInter.cntcount" parameterType="int" resultType="int">
     SELECT COUNT(*) FROM diary WHERE diaryno = #{diaryno}
   </select>
+  
+  <!-- 추천수 증가 -->
+  <update id="increaseGoodcnt" parameterType="int">
+    UPDATE diary
+    SET cnt = cnt + 1
+    WHERE diaryno = #{diaryno}
+  </update> 
+  
+  <!-- 추천수 감소 -->
+  <update id="decreaseGoodcnt" parameterType="int">
+    UPDATE diary
+    SET cnt = cnt - 1
+    WHERE diaryno = #{diaryno}
+  </update> 
+  
 
   <select id="listSearch" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
     SELECT *

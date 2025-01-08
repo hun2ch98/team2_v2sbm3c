@@ -17,13 +17,21 @@
     ORDER BY goodno DESC
   </select>
   
-
+  <!-- 삭제 -->
   <delete id="dev.mvc.diarygood.DiaryGoodDAOInter.delete" parameterType="int">
     DELETE FROM diarygood
     WHERE goodno=#{goodno}
   </delete>
   
+  <!-- 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.diarygood.DiaryGoodVO">
+    SELECT goodno, rdate, diaryno, memberno
+    FROM diarygood
+    WHERE goodno = #{goodno}
+  </select>
   
+  
+  <!-- 좋아요 수 count -->
   <select id = "heartCnt" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as cnt
     FROM diarygood
