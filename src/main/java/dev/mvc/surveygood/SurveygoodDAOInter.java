@@ -44,6 +44,6 @@ public interface SurveygoodDAOInter {
    * @param map
    * @return
    */
-  public SurveygoodVO read(HashMap<String, Object> map);
+  public SurveygoodVO readBysurveymember(HashMap<String, Object> map);
 
 }

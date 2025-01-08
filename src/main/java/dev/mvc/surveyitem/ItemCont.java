@@ -352,7 +352,7 @@ public class ItemCont {
       
       if(good_cnt == 1) {
         System.out.println("-> 추천 해제: " + surveyno + ' ' + memberno);
-        SurveygoodVO surveygoodVO = this.surveygoodProc.read(map);
+        SurveygoodVO surveygoodVO = this.surveygoodProc.readBysurveymember(map);
         
         this.surveygoodProc.delete(surveygoodVO.getGoodno());  // 추천 삭제
         this.surveyProc.decreasegoodcnt(surveyno);    // 카운트 감소
@@ -377,6 +377,7 @@ public class ItemCont {
       result.put("heartCnt", heartCnt);  // 추천 여부, 추천:1, 비추천:0
       result.put("goodcnt", goodcnt);   // 추천인수
       
+      System.out.println("-> result.toString(): " + result.toString());
       return result.toString();
 
     } else { // 정상적인 로그인이 아닌 경우 로그인 유도

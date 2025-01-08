@@ -42,8 +42,8 @@ public class SurveygoodProc implements SurveygoodProcInter {
   }
   
   @Override
-  public SurveygoodVO read(HashMap<String, Object> map) {
-    SurveygoodVO surveygoodVO = this.surveygoodDAO.read(map);
+  public SurveygoodVO readBysurveymember(HashMap<String, Object> map) {
+    SurveygoodVO surveygoodVO = this.surveygoodDAO.readBysurveymember(map);
     return surveygoodVO;
   }
   
