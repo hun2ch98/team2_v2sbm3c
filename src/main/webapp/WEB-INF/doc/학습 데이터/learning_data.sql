@@ -27,4 +27,7 @@ CREATE SEQUENCE learningdata_seq
   
 SELECT * FROM learningdata;
 
+INSERT INTO learningdata(datano, ethical, create_at, ques, ans)
+VALUES(learningdata_seq.nextval,'Y' ,sysdate, '오늘 뭐했어?', '맛있는 밥 먹었어.');
+
 COMMIT;
