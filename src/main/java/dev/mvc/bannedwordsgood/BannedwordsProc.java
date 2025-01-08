@@ -35,4 +35,16 @@ public class BannedwordsProc implements BannedwordsgoodProcInter {
 		 int cnt = this.bannedwordsgoodDAO.heartCnt(map);
 	     return cnt;
 	}
+	
+	@Override
+    public BannedwordsgoodVO read(int goodno) {
+		BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodDAO.read(goodno);
+		return bannedwordsgoodVO;
+    }
+	
+	public BannedwordsgoodVO read(HashMap<String, Object> map) {
+		BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodDAO.read(map);
+		return bannedwordsgoodVO;
+	}
+	
 }
