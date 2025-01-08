@@ -45,5 +45,5 @@ public class DiaryVO {
   /** 회원번호 */
   private int memberno;
 
-  
+  private int cnt;
 }

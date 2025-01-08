@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.diarygood.DiaryGoodProcInter;
+import dev.mvc.diarygood.DiaryGoodVO;
 import dev.mvc.emotion.EmotionVO;
 import dev.mvc.illustration.IllustrationProcInter;
 import dev.mvc.illustration.IllustrationVO;
@@ -323,6 +326,60 @@ public class DiaryCont {
       } else {
           return "redirect:/member/login_cookie_need"; // 권한이 없으면 로그인 페이지로 리다이렉트
       }
+  }
+  
+  
+  @PostMapping(value="/good")
+  @ResponseBody
+  public String good(HttpSession session, Model model, RedirectAttributes ra,
+                                  @ RequestBody String json_src ) {
+    System.out.println("-> json_src : "  + json_src);
+    JSONObject src = new JSONObject(json_src); 
+    
+    int diaryno = (int) src.getInt("diaryno");
+    System.out.println("->diaryno : " + diaryno);
+    
+    if (this.memberProc.isMember(session)) {
+      
+      // 기존 추천 여부를 확인
+      int memberno = (int) session.getAttribute("memberno");
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("diaryno", diaryno);
+      map.put("memberno", memberno);
+      
+      int cnt = this.diaryGoodProc.heartCnt(map); 
+      System.out.println("->cnt : " + cnt);
+      
+      if (cnt == 1) {
+        // 추천 해제 작업
+        System.out.println("-> 추천 해제 : " + diaryno + " " + memberno);
+        DiaryGoodVO diaryGoodVO = this.diaryGoodProc.read(map);
+        this.diaryGoodProc.delete(diaryGoodVO.getGoodno()); // 추천 삭제
+        this.diaryProc.decreaseGoodCnt(diaryno); // 카운트 감소
+        
+      } else {
+        // 추천 작업
+        DiaryGoodVO diaryGoodVO_new = new DiaryGoodVO(); // 새로운 객체 생성
+        diaryGoodVO_new.setDiaryno(diaryno);
+        diaryGoodVO_new.setMemberno(memberno);
+        this.diaryGoodProc.create(diaryGoodVO_new); // 새로운 튜플 생성
+        this.diaryProc.increaseGoodCnt(diaryno);
+      }
+      
+      int heartCnt = this.diaryGoodProc.heartCnt(map);
+      int goodCnt = this.diaryProc.read(diaryno).getCnt();
+      JSONObject result = new JSONObject();
+      result.put("isMember", 1); // 로그인 : 1 , 비회원 : 0
+      result.put("heartCnt", heartCnt);
+      result.put("goodCnt", goodCnt);
+      
+      return result.toString();
+      
+    } else {
+      JSONObject result = new JSONObject();
+      result.put("isMember", 0); // 로그인 : 1 , 비회원 : 0
+      return result.toString();
+    }
   }
 
 

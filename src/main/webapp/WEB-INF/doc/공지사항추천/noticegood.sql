@@ -43,10 +43,15 @@ NOTICEGOODNO RDATE                 MEMBERNO   NOTICENO
            9 2025-01-07 06:43:58          4          9
            7 2025-01-07 06:43:58          1          4
 
--- 조회
+-- PK 조회
 SELECT noticegoodno, rdate, memberno, noticeno
 FROM noticegood
 WHERE noticegoodno = 1;
+
+-- noticeno, memberno로 조회
+SELECT noticegoodno, rdate, memberno, noticeno
+FROM noticegood
+WHERE noticeno=4 AND memberno=1;
 
 -- 삭제
 DELETE FROM noticegood
@@ -61,4 +66,31 @@ commit;
 SELECT COUNT(*) as cnt
 FROM noticegood
 WHERE noticeno=3 AND memberno=3;
+
+-- JOIN, 어느 공지사항을 누가 추천 했는가?
+SELECT noticegoodno, rdate, memberno, noticeno
+FROM noticegood
+ORDER BY noticegoodno DESC;
+
+-- 테이블 2개 join
+SELECT r.noticegoodno, r.rdate, r.noticeno, c.title, r.memberno
+FROM notice c, noticegood r
+WHERE c.noticeno = r.noticeno
+ORDER BY noticegoodno DESC;
+
+-- 테이블 3개 join, as 사용시 컬럼명 변경 가능: c.title as n_title
+SELECT r.noticegoodno, r.rdate, r.noticeno, c.title as n_title, r.memberno, m.id, m.name
+FROM notice c, noticegood r, member m
+WHERE c.noticeno = r.noticeno AND r.memberno = m.memberno
+ORDER BY noticegoodno DESC;
+
+-- 
+
+
+
+
+
+
+
+
 

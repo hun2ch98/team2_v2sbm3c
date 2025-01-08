@@ -31,5 +31,25 @@ public interface SurveygoodProcInter {
    * @return
    */
   public int heartCnt(HashMap<String, Object> map);
+  
+  /**
+   * 조회
+   * @param goodno
+   * @return
+   */
+  public SurveygoodVO read(int goodno);
+  
+  /**
+   * surveyno, memberno로 조회
+   * @param map
+   * @return
+   */
+  public SurveygoodVO readBysurveymember(HashMap<String, Object> map);
+  
+  /**
+   * 목록
+   * @return
+   */
+  public ArrayList<SurveySurveygoodMemberVO> list_all_join();
 
 }

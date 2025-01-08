@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.noticegood.NoticegoodProcInter;
+import dev.mvc.noticegood.NoticegoodVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -124,9 +125,8 @@ public class NoticeCont {
   }
   
   /** 수정 폼 http://localhost:9093/notice/update?noticeno0=1 */
-  @GetMapping(value = "/update")
-  public String update_text(HttpSession session,
-      Model model,
+  @GetMapping(value = "/update{noticeno}")
+  public String update_text(HttpSession session, Model model,
       @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
       RedirectAttributes ra) {
     
@@ -136,26 +136,116 @@ public class NoticeCont {
       
       return "/notice/update";
     } else {
+      return "redirect:/member/login_cookie_need";
+    }
+  }
+  
+  /** 수정 처리 */
+  @PostMapping(value = "/update")
+  public String update(HttpSession session,
+      Model model,
+      @ModelAttribute("noticeVO") NoticeVO noticeVO,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) {
+      this.noticeProc.update(noticeVO); // 글수정
+      
+      return "redirect:/notice/read/" + noticeVO.getNoticeno();
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/notice/post2get";
+    }
+  }
+  
+  /** 삭제 폼 */
+  @GetMapping(path = "/delete/{noticeno}")
+  public String delete(HttpSession session,
+      Model model,
+      @PathVariable("noticeno") int noticeno,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한 경우
+      NoticeVO noticeVO = this.noticeProc.read(noticeno);
+      model.addAttribute("noticeVO", noticeVO);
+      
+      return "/notice/delete";
+    } else {
+      
       return "/member/login_cookie_need";
+    }
+  }
+  
+  /** 삭제 처리 */
+  @PostMapping(value = "/delete")
+  public String delete_proc(HttpSession session,
+      Model model,
+      @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
+      RedirectAttributes ra) {
+    
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
+      this.noticegoodProc.n_delete(noticeno); // 자식
+      this.noticeProc.delete(noticeno); // 부모
+      
+      return "redirect:/notice/list_all";
+    } else {
+      ra.addAttribute("url", "/member/login_cookie_need");
+      return "redirect:/notice/post2get";
     }
   }
   
   /** 추천 처리 http://localhost:9093/notice/good */
   @PostMapping(value = "/good")
   @ResponseBody
-  public String good(HttpSession session, Model model, RedirectAttributes ra, @RequestBody String json_src) {
-    System.out.println("-> json_src: " + json_src); // json_src: {"noticeno":"4"}
+  public String good(HttpSession session, Model model, @RequestBody String json_src) {
+    System.out.println("-> json_src: " + json_src); // json_src: {"noticeno":"4"} 검증
     
     JSONObject src = new JSONObject(json_src); // String -> JSON
     int noticeno = (int)src.get("noticeno"); // 값 가져오기
-    System.out.println("-> noticeno: " + noticeno);
+    System.out.println("-> noticeno: " + noticeno); // 검증
     
     if (this.memberProc.isMember(session)) { // 회원 로그인 확인
-      return "수신 성공";
+      // 추천을 한 상태인지 확인
+      int memberno = (int)session.getAttribute("memberno");
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("noticeno", noticeno);
+      map.put("memberno", memberno);
+      
+      int good_cnt = this.noticegoodProc.heart_Cnt(map);
+      System.out.println("-> good_cnt: " + good_cnt); // 검증
+      
+      if (good_cnt == 1) {
+        System.out.println("-> 추천 해제: " + noticeno + ' ' + memberno);
+        NoticegoodVO noticegoodVO = this.noticegoodProc.readByNoticeMember(map);
+        this.noticegoodProc.delete(noticegoodVO.getNoticegoodno()); // 추천 삭제
+        this.noticeProc.decreaseGoodcnt(noticeno); // 카운트 감소
+      } else {
+        System.out.println("-> 추천: " + noticeno + ' ' + memberno);
+        NoticegoodVO noticegoodVO_new = new NoticegoodVO();
+        noticegoodVO_new.setNoticeno(noticeno);
+        noticegoodVO_new.setMemberno(memberno);
+        this.noticegoodProc.create(noticegoodVO_new);
+        this.noticeProc.increaseGoodcnt(noticeno); // 카운트 증가
+      }
+      
+      // 추천 여부가 변경되어 다시 새로운 값을 읽어옴.
+      int heart_Cnt = this.noticegoodProc.heart_Cnt(map);
+      int goodcnt = this.noticeProc.read(noticeno).getGoodcnt();
+          
+      JSONObject result = new JSONObject();
+      result.put("isMember", 1); // 로그인: 1, 비회원: 0
+      result.put("heart_Cnt", heart_Cnt); // 추천 여부, 추천: 1, 비추천: 0
+      result.put("goodcnt", goodcnt); //추천인수
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      
+      return result.toString();
       
     } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-      return "redirect:/notice/post2get"; // @GetMapping(value = "/msg")
+      JSONObject result = new JSONObject();
+      result.put("isMember", 0); // 로그인: 1, 비회원: 0
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      return result.toString();
     }
   }
 }

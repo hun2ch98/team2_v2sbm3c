@@ -19,8 +19,11 @@ public interface NoticegoodDAOInter {
    */
   public ArrayList<NoticegoodVO> list_all();
   
-  /** 삭제 */
+  /** 부모 레코드 noticegoodno 삭제 */
   public int delete(int noticegoodno);
+  
+  /** 자식 레코드 noticeno 삭제 */
+  public int n_delete(int noticeno);
   
   /**
    * 특정 공지사항의 특정 회원 추천 갯수 산출
@@ -33,5 +36,17 @@ public interface NoticegoodDAOInter {
    * 조회
    */
   public NoticegoodVO read(int noticegoodno);
+  
+  
+  /**
+   * noticeno, memberno로 조회
+   */
+  public NoticegoodVO readByNoticeMember(HashMap<String, Object> map);
+  
+  /**
+   * 테이블 3개 join
+   * @return
+   */
+  public ArrayList<NoticeNoticegoodMemberVO> list_all_join();
   
 }

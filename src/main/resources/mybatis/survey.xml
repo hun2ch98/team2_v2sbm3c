@@ -93,18 +93,18 @@
   </select>
   
   <!-- 추천 증가 -->
-  <select id="increasegoodcnt" parameterType="int">
+  <update id="increasegoodcnt" parameterType="int">
     UPDATE survey
     SET goodcnt = goodcnt + 1
     WHERE surveyno = #{surveyno}
-  </select>
+  </update>
   
     <!-- 추천 감소 -->
-  <select id="decreasegoodcnt" parameterType="int">
+  <update id="decreasegoodcnt" parameterType="int">
     UPDATE survey
     SET goodcnt = goodcnt - 1
     WHERE surveyno = #{surveyno}
-  </select>
+  </update>
   
   
 </mapper>
