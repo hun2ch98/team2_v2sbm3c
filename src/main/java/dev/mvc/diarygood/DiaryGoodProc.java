@@ -28,6 +28,13 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
     int cnt = this.diaryGoodDAO.delete(goodno);
     return cnt;
   }
+  
+  
+  @Override
+  public DiaryGoodVO read(int goodno) {
+    DiaryGoodVO diaryGoodVO = this.diaryGoodDAO.read(goodno);
+    return diaryGoodVO;
+  }
 
   @Override
   public int heartCnt(HashMap<String, Object> map) {

@@ -36,6 +36,12 @@ public interface DiaryDAOInter {
    */
   public DiaryVO read(Integer diaryno);
   
+  
+  public int increaseGoodCnt(int goodno);
+  
+  
+  public int decreaseGoodCnt(int goodno);
+  
   /**
    * 수정
    * @param diaryVO 수정할 내용
