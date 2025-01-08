@@ -93,6 +93,13 @@ public interface SurveyProcInter {
   public int delete(int surveyno);
   
   /**
+   * 자식 무시하고 삭제
+   * @param surveyno
+   * @return
+   */
+  public int delete_survey(int surveyno);
+  
+  /**
    * 자료수 산출
    * @param surveyno
    * @return

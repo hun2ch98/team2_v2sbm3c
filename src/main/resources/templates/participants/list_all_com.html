@@ -14,35 +14,35 @@
     <thead>
       <tr>
         <th class="th_bs">순서</th>
-        <th class="th_bs">등록일</th>
-        <th class="th_bs">설문조사 번호</th>
+        <th class="th_bs">참여일</th>
+        <th class="th_bs">공지사항 번호</th>
         <th class="th_bs">회원 번호</th>
         <th class="th_bs">기타</th>
       </tr>
     </thead>
     <tbody>
-      <tr th:each="surveygoodVO, status:${list}">
+      <tr th:each="partVO, status:${list}">
         <td class="td_bs" th:text="|${status.index+1}|"></td>
-        <td class="td_bs" th:text="${surveygoodVO.rdate.substring(0, 10)}"></td>
-        <td class="td_bs" th:text="${surveygoodVO.surveyno}"></td>
-        <td class="td_bs" th:text="${surveygoodVO.memberno}"></td>
+        <td class="td_bs" th:text="${partVO.pdate.substring(0, 10)}"></td>
+        <td class="td_bs" th:text="${partVO.itemno}"></td>
+        <td class="td_bs" th:text="${partVO.memberno}"></td>
         <td class="td_bs">
-          <a href="#" th:onclick="'delete_good(event, ' + ${surveygoodVO.goodno} + ');'"><img src="/surveygood/images/delete.png" class="icon" title="삭제"></a>
+          <a href="#" th:onclick="'delete_p(event, ' + ${partVO.pno} + ');'"><img src="/participants/images/delete.png" class="icon" title="삭제"></a>
         </td>
       </tr>
     </tbody>
   </table>
   <script>
-    function delete_good(e, goodno) {
-      let sw = confirm(goodno + '번 글 삭제를 하시겠습니까?\n삭제하면 복구 할 수 없습니다.');
+    function delete_p(e, pno) {
+      let sw = confirm(pno + '번 글 삭제를 하시겠습니까?\n삭제하면 복구 할 수 없습니다.');
       if (sw == true) {
-        document.querySelector('#goodno').value = goodno;
+        document.querySelector('#pno').value = pno;
         document.querySelector('#frm').submit();
       }
     }
   </script>
-  <form name="frm" id="frm" method="post" action="/surveygood/delete">
-    <input type="hidden" name="goodno" id="goodno">
+  <form name="frm" id="frm" method="post" action="/participants/delete">
+    <input type="hidden" name="pno" id="pno">
   </form>
   
 </div>
