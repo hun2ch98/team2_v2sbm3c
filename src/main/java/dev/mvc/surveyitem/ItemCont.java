@@ -230,32 +230,32 @@ public class ItemCont {
    * 설문조사
    * @return
    */
-  @GetMapping("/finish")
-  public String finish(Model model) {
-      model.addAttribute("message", "설문조사가 완료되었습니다.");
-      return "/surveyitem/finish"; // finish.html 템플릿
-  }
-
-  
-  /**
-   * 설문조사 참여 처리
-   * @return
-   */
-  @PostMapping("/finish")
-  public String finish(
-      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-      @RequestParam("itemno") int itemno,
-      HttpSession session,
-      RedirectAttributes ra) {
-      if (session.getAttribute("memberno") == null) {
-          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
-          return "redirect:/member/login";
-      }
-
-      this.itemProc.update_cnt(itemno); // item_cnt 증가
-      ra.addFlashAttribute("msg", "설문조사 완료!");
-      return "redirect:/surveyitem/finish";
-  }
+//  @GetMapping("/finish")
+//  public String finish(Model model) {
+//      model.addAttribute("message", "설문조사가 완료되었습니다.");
+//      return "/surveyitem/finish"; // finish.html 템플릿
+//  }
+//
+//  
+//  /**
+//   * 설문조사 참여 처리
+//   * @return
+//   */
+//  @PostMapping("/finish")
+//  public String finish(
+//      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+//      @RequestParam("itemno") int itemno,
+//      HttpSession session,
+//      RedirectAttributes ra) {
+//      if (session.getAttribute("memberno") == null) {
+//          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
+//          return "redirect:/member/login";
+//      }
+//
+//      this.itemProc.update_cnt(itemno); // item_cnt 증가
+//      ra.addFlashAttribute("msg", "설문조사 완료!");
+//      return "redirect:/surveyitem/finish";
+//  }
 
 
 

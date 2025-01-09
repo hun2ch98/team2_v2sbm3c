@@ -12,6 +12,12 @@ public interface PartProcInter {
   public int create(PartVO partVO);
   
   /**
+   * 추천수 증가
+   * @return
+   */
+  public int update_cnt(int itemno);
+  
+  /**
    * 목록
    * @return
    */
