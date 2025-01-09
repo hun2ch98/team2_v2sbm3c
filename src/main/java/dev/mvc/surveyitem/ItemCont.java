@@ -266,32 +266,40 @@ public class ItemCont {
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
                                   @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                  @RequestParam(name = "itemno", defaultValue = "0") int itemno,
                                   @RequestParam(name = "word", defaultValue = "") String word,
                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
       model.addAttribute("surveyno", surveyno);
-      
+      model.addAttribute("itemno", itemno);
       // 관리자 또는 일반 회원인지 확인  
       if (this.memberProc.isMember(session)) {
+        
+        int record_per_page = 10;
+        int startRow = (now_page - 1) * record_per_page + 1;
+        int endRow = now_page * record_per_page;
+        
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
 
-        word = Tool.checkNull(word);
+        word = Tool.checkNull(word).trim();
+        
         
 //        ArrayList<TopicItemVO> list_t = this.itemProc.list_all_join();
 //        model.addAttribute("list_t", list_t);
 
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
-//        System.out.println("-> listsize: " + list.size());
+        System.out.println("-> listsize: " + list.size());
         model.addAttribute("list", list);
         
         // --------------------------------------------------------------------------------------
         // 페이지 번호 목록 생성
         // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(word);
-//        System.out.println("->search_count : " + search_count);
+        System.out.println("->search_count : " + search_count);
         String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_count, this.record_per_page,
             this.page_per_block);
+
         model.addAttribute("paging", paging);
         model.addAttribute("now_page", now_page);
         model.addAttribute("search_count", search_count);
