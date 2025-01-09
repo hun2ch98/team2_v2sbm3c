@@ -8,6 +8,7 @@ import dev.mvc.emotion.Emotion;
 import dev.mvc.grade.Grade;
 import dev.mvc.illustration.Illustration;
 import dev.mvc.member.Member;
+import dev.mvc.notice.Notice;
 import dev.mvc.survey.Survey;
 import dev.mvc.weather.Weather;
 
@@ -34,11 +35,14 @@ public class WebMvcConfiguration implements WebMvcConfigurer{
       // C:/kd/deploy/team2/grade/storage ->  /board/storage -> http://localhost:9093/grade/storage;
       registry.addResourceHandler("/grade/storage/**").addResourceLocations("file:///" +  Grade.getUploadDir());
 
-      // C:/kd/deploy/team2/grade/storage ->  /grade/storage -> http://localhost:9093/grade/storage;
+      // C:/kd/deploy/team2/emotion/storage ->  /emotion/storage -> http://localhost:9093/emotion/storage;
       registry.addResourceHandler("/emotion/storage/**").addResourceLocations("file:///" +  Emotion.getUploadDir());
 
-      // C:/kd/deploy/team2/grade/storage ->  /grade/storage -> http://localhost:9093/grade/storage;
+      // C:/kd/deploy/team2/weather/storage ->  /weather/storage -> http://localhost:9093/weather/storage;
       registry.addResourceHandler("/weather/storage/**").addResourceLocations("file:///" +  Weather.getUploadDir());
+      
+      // C:/kd/deploy/team2/notice/storage ->  /notice/storage -> http://localhost:9093/notice/storage;
+      registry.addResourceHandler("/notice/storage/**").addResourceLocations("file:///" +  Notice.getUploadDir());
   }
 
 }
