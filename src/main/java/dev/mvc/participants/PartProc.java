@@ -29,4 +29,10 @@ public class PartProc implements PartProcInter {
     return cnt;
   }
 
+  @Override
+  public ArrayList<ItemMemberPartVO> list_all_join() {
+    ArrayList<ItemMemberPartVO> list = this.partDAO.list_all_join();
+    return list;
+  }
+
 }

@@ -542,7 +542,7 @@ public class SurveyCont {
       // --------------------------------------------------------------------------------------
       if (cnt == 0) {
         // 콘텐츠가 없을 경우 cate/delete.html로 이동
-        return "/survey/delete";
+        return "/survey/list_all_delete";
       } else {
         // 콘텐츠가 있을 경우 cate/list_all_delete.html로 이동
         ArrayList<ItemVO> list_item = itemProc.list_all_com(surveyno); // 해당 카테고리의 콘텐츠 리스트 불러오기
@@ -562,6 +562,7 @@ public class SurveyCont {
    */
   @PostMapping(value = "/list_all_delete")
   public String deleteAllCategory(@RequestParam (name="surveyno", defaultValue="0") int surveyno,
+                                  @RequestParam(name = "memberno", defaultValue = "0") int memberno,
                                                        RedirectAttributes redirectAttributes) {
     // 콘텐츠 삭제
     itemProc.delete_survey(surveyno);
@@ -579,7 +580,7 @@ public class SurveyCont {
   @GetMapping(value = "/delete")
   public String delete(Model model) {
     // 기본 삭제 폼
-    return "/survey/delete";  // survey/delete.html로 이동
+    return "/survey/list_all_delete";  // survey/delete.html로 이동
   }
 
   /**

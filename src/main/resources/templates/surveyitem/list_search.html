@@ -103,16 +103,16 @@
         <tr th:if="${list == null or #lists.isEmpty(list)}">
           <td colspan="4">등록된 항목이 없습니다.</td>
         </tr>
-        <tr th:each="itemVO : ${list}">
-          <td th:text="${itemVO.itemno}"></td>
-          <td th:text="${itemVO.item}"></td>
-          <td th:text="${itemVO.item_seq}"></td>
-          <td th:text="${itemVO.item_cnt}"></td>
+        <tr th:each="ItemVO : ${list}">
+          <td class="td_bs" th:text="${ItemVO.itemno}"></td>
+          <td class="td_bs" th:text="${ItemVO.item}"></td>
+          <td class="td_bs" th:text="${ItemVO.item_seq}"></td>
+          <td class="td_bs" th:text="${ItemVO.item_cnt}"></td>
           <td>
-            <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
+            <a th:href="@{|/surveyitem/update/${ItemVO.itemno}|}">
               <img src="/item/images/update.png" class="icon" title="수정">
             </a> 
-            <a th:href="@{|/surveyitem/delete/${itemVO.itemno}|}">
+            <a th:href="@{|/surveyitem/delete/${ItemVO.itemno}|}">
               <img src="/item/images/delete.png" class="icon" title="삭제">
             </a> 
           </td>
@@ -145,13 +145,13 @@
           <tr th:if="${list == null or #lists.isEmpty(list)}">
             <td colspan="3">등록된 항목이 없습니다.</td>
           </tr>
-          <tr th:each="itemVO : ${list}" >
+          <tr th:each="ItemVO : ${list}" >
             <td align="center" valign="middle">
-              <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" th:value="${itemVO.itemno}" required />
+              <input type="radio" id="itemno_${ItemVO.itemno}" name="itemno" th:value="${ItemVO.itemno}" required />
             </td>
-            <td th:text="${itemVO.itemno}"></td>
-            <td th:text="${itemVO.item}"></td>
-            <td th:text="${itemVO.item_cnt}"></td>
+            <td class="td_bs" th:text="${ItemVO.itemno}"></td>
+            <td class="td_bs" th:text="${ItemVO.item}"></td>
+            <td class="td_bs" th:text="${ItemVO.item_cnt}"></td>
           </tr>
         </tbody>
       </table>

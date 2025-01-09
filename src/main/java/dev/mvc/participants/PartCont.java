@@ -79,7 +79,7 @@ public class PartCont {
    */
   @GetMapping(value = "/list_all")
   public String list_all(Model model) {
-    ArrayList<PartVO> list = this.partProc.list_all();
+    ArrayList<ItemMemberPartVO> list = this.partProc.list_all_join();
     model.addAttribute("list", list);
 
     return "/participants/list_all"; 

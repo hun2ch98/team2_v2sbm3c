@@ -272,11 +272,14 @@ public class ItemCont {
       model.addAttribute("surveyno", surveyno);
       
       // 관리자 또는 일반 회원인지 확인  
-      if (this.memberProc.isMember(session) || this.memberProc.isMemberAdmin(session)) {
+      if (this.memberProc.isMember(session)) {
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
 
         word = Tool.checkNull(word);
+        
+//        ArrayList<TopicItemVO> list_t = this.itemProc.list_all_join();
+//        model.addAttribute("list_t", list_t);
 
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
 //        System.out.println("-> listsize: " + list.size());

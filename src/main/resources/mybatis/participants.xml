@@ -22,5 +22,13 @@
     DELETE FROM participants
     WHERE pno = #{pno}
   </delete>
+  
+  <!-- 조인 목록 -->
+  <select id="list_all_join" parameterType="dev.mvc.participants.ItemMemberPartVO">
+    SELECT p.pno, p.itemno, p.memberno, p.pdate, i.item as i_item, m.memberno, m.email, m.name
+    FROM surveyitem i, participants p, member m
+    WHERE i.itemno = p.itemno AND p.memberno = m.memberno
+    ORDER BY pno DESC
+  </select>
 
 </mapper>
