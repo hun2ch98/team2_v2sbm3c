@@ -47,4 +47,11 @@ public interface BannedwordsgoodProcInter {
    * @return
    */
   public BannedwordsgoodVO readByWordnoMemeberno(HashMap<String, Object> map);
+  
+  /**
+   * 테이블 3개 join
+   * @return
+   */
+  public ArrayList<BannedwordsBannedwordsgoodMemberVO> list_all_join();
+  
 }
