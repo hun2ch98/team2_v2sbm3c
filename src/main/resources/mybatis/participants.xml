@@ -10,6 +10,13 @@
     VALUES (participants_seq.nextval, #{itemno}, #{memberno}, sysdate)
   </insert>
   
+  <!-- 참여수 증가 -->
+  <update id="update_cnt" parameterType="int">
+    UPDATE surveyitem
+    SET item_cnt = item_cnt + 1
+    WHERE itemno = #{itemno}
+  </update>
+  
   <!-- 목록 -->
   <select id="list_all" parameterType="dev.mvc.participants.PartVO">
     SELECT pno, itemno, memberno, pdate

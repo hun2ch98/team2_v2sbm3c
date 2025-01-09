@@ -123,7 +123,7 @@
   </div>
   
   <!-- 회원 모드 -->
-  <div th:if="${session.grade != 'admin'}">
+  <div th:fragment="list_all_fragment" th:if="${session.grade != 'admin'}">
     <form method="post" th:action="@{/surveyitem/finish}">
       <input type="hidden" name="itemno" th:value="${itemno}" />
       <table class="table table-hover" style="width: 100%;">
@@ -156,7 +156,7 @@
         </tbody>
       </table>
       <div style="text-align: center; margin-top: 20px;">
-        <button type="submit" class="btn btn-primary">참여</button>
+        <button type="submit" th:href="@{|/surveyitem/finish|}" class="btn btn-primary">참여</button>
       </div>
     </form>
   </div>
