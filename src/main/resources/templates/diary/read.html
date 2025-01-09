@@ -7,7 +7,6 @@
       let heartCnt =`[[${heartCnt}]]`; //  javascript -> Thymeleaf -> session
       let tag='';
 
-      alert('heartCnt: ' + heartCnt);      
       if (heartCnt == 1) {
         tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
         document.querySelector('#heart_panel').innerHTML = tag; 
@@ -35,12 +34,10 @@
           let heartCnt = data.heartCnt; //  javascript -> Thymeleaf -> session
           let tag='';
             
-          if (heartCnt == 1) {
-            alert('-> heartCnt: ' + heartCnt + ' isMember; ' + data.isMember);      
+          if (heartCnt == 1) {     
             tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
             document.querySelector('#heart_panel').innerHTML = tag; 
           } else {
-            alert('-> heartCnt: ' + heartCnt + ' isMember; ' + data.isMember);
             tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제"></a>'
             document.querySelector('#heart_panel').innerHTML = tag; 
           }
@@ -85,17 +82,18 @@
       <li  >
         <strong>일기 제목:</strong> <span th:text="${diaryVO.title}"></span><br>
         <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span>
-        <strong>일기:</strong> <span th:text="${diaryVO.summary}"></span><br>      
-      </li>
-      
-       <!-- 썸네일 출력 반복문 추가 -->
-      <li>
-        <strong>썸네일:</strong>
+        
+         <!-- 그림 출력 반복문 추가 -->
         <div th:each="illustration : ${illustrationList}">
           <img th:src="@{'/upload/' + ${illustration.illust}}" 
-               alt="썸네일" style="width: 200px; height: auto;">
+               alt="썸네일" style="width: 300px; height: auto;">
         </div>
+        <strong>일기 내용:</strong><br>
+        <span th:text="${diaryVO.summary}"></span><br>      
       </li>
+      
+      
+      
       <li class="li_none">
         <div>
           <span id="heart_panel"></span>

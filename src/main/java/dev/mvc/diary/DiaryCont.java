@@ -163,7 +163,7 @@ public class DiaryCont {
     
     // 일기 번호에 해당하는 일러스트 데이터 조회
     List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
-
+    System.out.println(illustrationList);
     // List<DiaryVO> diaryList = diaryProc.read(diaryno);
     
     // 모델에 일기 데이터와 일러스트 목록 추가
@@ -184,11 +184,9 @@ public class DiaryCont {
       int memberno = (int) session.getAttribute("memberno");
       map.put("memberno", memberno);
       heartCnt = this.diaryGoodProc.heartCnt(map);
-      System.out.println("->memberno : " +memberno);
     }
     
-    System.out.println("-> public String read() heartCnt:" + heartCnt);
-    model.addAttribute(heartCnt);
+    model.addAttribute("heartCnt", heartCnt);
     //-----------------------------------------------------------------------------------
     
     
