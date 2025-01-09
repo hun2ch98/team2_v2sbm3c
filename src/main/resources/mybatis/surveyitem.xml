@@ -94,14 +94,14 @@
   </select>
   
   <!-- 특정 카테고리에 속한 레코드 갯수를 리턴 -->
-  <select id="count_by_surveyno" resultType="int" parameterType="int">
+  <select id="count_survey" resultType="int" parameterType="int">
     SELECT COUNT(*) as cnt 
     FROM surveyitem 
     WHERE surveyno=#{surveyno}
   </select>
   
   <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->
-  <delete id="delete_by_surveyno" parameterType="int">
+  <delete id="delete_survey" parameterType="int">
     DELETE FROM surveyitem
     WHERE surveyno=#{surveyno}
   </delete>

@@ -63,6 +63,7 @@
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
     설문조사 항목 > 
+    <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
     <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
   </div>
 

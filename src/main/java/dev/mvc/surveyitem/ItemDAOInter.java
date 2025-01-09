@@ -73,14 +73,14 @@ public interface ItemDAOInter {
    * @param surveyno
    * @return
    */
-  public int count_by_surveyno(int surveyno);
+  public int count_survey(int surveyno);
   
   /**
    * 특정 레코드 삭제
    * @param surveyno
    * @return
    */
-  public int delete_by_surveyno(int surveyno);
+  public int delete_survey(int surveyno);
 
 
 }

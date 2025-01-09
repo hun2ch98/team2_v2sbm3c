@@ -85,7 +85,9 @@ DELETE FROM surveyitem;
 UPDATE surveyitem
 SET item_cnt = 0
 WHERE itemno = 17;
-
+SELECT itemno, surveyno, item_seq, item, item_cnt
+    FROM surveyitem
+    WHERE itemno = 1;
 
 COMMIT;
 SELECT * FROM surveyitem;
@@ -154,4 +156,6 @@ WHERE
 ORDER BY 
     i.itemno ASC;
 
+DELETE FROM surveyitem
+WHERE surveyno=14;
         
