@@ -125,8 +125,8 @@ public class NoticeCont {
   }
   
   /** 수정 폼 http://localhost:9093/notice/update?noticeno0=1 */
-  @GetMapping(value = "/update{noticeno}")
-  public String update_text(HttpSession session, Model model,
+  @GetMapping(value = "/update")
+  public String update(HttpSession session, Model model,
       @RequestParam(name = "noticeno", defaultValue = "0") int noticeno,
       RedirectAttributes ra) {
     
@@ -147,7 +147,7 @@ public class NoticeCont {
       @ModelAttribute("noticeVO") NoticeVO noticeVO,
       RedirectAttributes ra) {
     
-    if (this.memberProc.isMemberAdmin(session)) {
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
       this.noticeProc.update(noticeVO); // 글수정
       
       return "redirect:/notice/read/" + noticeVO.getNoticeno();
@@ -167,6 +167,8 @@ public class NoticeCont {
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한 경우
       NoticeVO noticeVO = this.noticeProc.read(noticeno);
       model.addAttribute("noticeVO", noticeVO);
+      
+//      NoticegoodVO noticegoodVO = this.noticegoodProc.read(noticeno)
       
       return "/notice/delete";
     } else {

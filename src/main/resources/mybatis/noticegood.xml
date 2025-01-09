@@ -17,7 +17,7 @@
   
   <!-- 공지사항 추천(noticegoodno) 자식 삭제 --> 
   <delete id="n_delete" parameterType="int">
-    DELETE FROM noticegood WHERE noticeno = #{noticeno};
+    DELETE FROM noticegood WHERE noticeno = #{noticeno}
   </delete>
   
   <!-- 삭제 -->
