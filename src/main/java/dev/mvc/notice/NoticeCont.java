@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import dev.mvc.dto.PageDTO;
+import dev.mvc.dto.SearchDTO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.noticegood.NoticegoodProcInter;
 import dev.mvc.noticegood.NoticegoodVO;
@@ -86,11 +89,42 @@ public class NoticeCont {
   
   /** 목록 */
   @GetMapping(value = "/list_all")
-  public String list_all(Model model) {
-    ArrayList<NoticeVO> list = this.noticeProc.list_all();
-    model.addAttribute("list", list);
-    
-    return "/notice/list_all"; // /templates/notice/list_all.html
+  public String list_all(Model model, HttpSession session,
+      @RequestParam(name = "page", defaultValue = "1") int page,
+      @RequestParam(name = "searchType", required = false) String searchType,
+      @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+    if (this.memberProc.isMember(session)) {
+      
+      // 검색 조건
+      SearchDTO searchDTO = new SearchDTO();
+      searchDTO.setSearchType(searchType);
+      searchDTO.setKeyword(keyword);
+      searchDTO.setPage(page);
+      searchDTO.setSize(page * 10);
+      searchDTO.setOffset((page - 1) * 10);
+      
+      // 전체 공지사항 수 조회
+      int total = this.noticeProc.list_search_count(searchDTO);
+      
+      // 검색 페이지 결과가 없고 페이지가 1보다 큰 경우 첫 페이지로 리다이렉트
+      if(total == 0 && page > 1) {
+        return "redirectL/notice/list_all?searchType=" + searchType + "&keyword=" + keyword;
+      }
+      
+      // 페이징 정보 계싼
+      PageDTO pageDTO = new PageDTO(total, page);
+      
+      // 공지사항 목록 조회
+      ArrayList<NoticeVO> list = this.noticeProc.list_search_paging(searchDTO);
+      model.addAttribute("list", list);
+      model.addAttribute("searchDTO", searchDTO);
+      model.addAttribute("pageDTO", pageDTO);
+      model.addAttribute("total", total);
+      
+      return "/notice/list_search"; // /templates/notice/list_all.html
+    } else {
+      return "redirect:/member/login_cookie_need";
+    }
   }
   
   /** 조회 http://localhost:9093/notice/read/1 */

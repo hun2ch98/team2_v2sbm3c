@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 목록</title>
+    <!-- CSS 파일 링크 추가 -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
+    <link rel="stylesheet" href="/css/member.css"> <!-- CSS 파일 경로 -->
+</head>
+<body>
+<div layout:fragment="content">
+
+  <div class='title_line'>공지사항 목록</div>
+  
+  <!-- 검색 -->
+  <div class='search-container'>
+      <select id="searchType" th:value="${searchDTO.searchType}" class="search-select">
+          <option value="title">제목</option>
+          <option value="content">내용</option>
+      </select>
+      <input type="text" id="keyword" th:value="${searchDTO.keyword}" placeholder="검색어를 입력하세요" class="search-input">
+      <button onclick="search()" class="search-button">검색</button>
+      <button th:onclick="|location.href='/notice/list_all'|" class="cancel-button">취소</button>
+  </div>
+  <aside class="aside_right">
+    <a href="javascript:location.reload();" >새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a href='/notice/list_all'>목록</a>
+  </aside>
+
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 5%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>  
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+    </colgroup>
+    <tr>
+      <th class="th_bs">순서</th>
+      <th class="th_bs">제목</th>
+      <th class="th_bs">내용</th>
+      <th class="th_bs">등록일</th>
+      <th class="th_bs">추천</th>
+      <th class="th_bs">조회</th>
+      <th class="th_bs">기타</th>
+      </tr>
+
+    <tbody>
+      <tr th:each="noticeVO, status:${list}">
+        <td class="td_bs" th:text="|${status.index+1}|"></td>
+        <td class='td_left'>
+          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block; font-weight: bold;" th:text="${noticeVO.title}"></a>
+        </td>
+        <td class="td_left">
+          <span th:if="${noticeVO.content.length() > 30 }" 
+                  th:text="|${noticeVO.content.substring(0, 30) }...|"></span>
+          <span th:if="${noticeVO.content.length() <= 30 }" 
+                  th:text="|${noticeVO.content}|"></span>
+        </td>
+        <td class="td_bs" th:text="${noticeVO.rdate.substring(0, 10)}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.goodcnt}"></a>
+        </td> 
+        <td class="td_bs">
+          <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.cnt}"></a>
+        </td>
+        <td class="td_bs">
+          <!--  <a th:href="@{|/notice/update/${noticeVO.noticeno}|}"><img src="/notice/images/update.png" class="icon" title="수정"></a> /static 기준 -->
+          <a th:href="@{|/notice/delete/${noticeVO.noticeno}|}"><img src="/notice/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <!-- 페이징 -->
+  <div class="pagination">
+      <th:block th:if="${total > 0}">
+          <a th:if="${pageDTO.prev}" th:href="@{|/notice/list_all?page=${pageDTO.startPage - 1}&searchType=${searchDTO.searchType}&keyword=${searchDTO.keyword}|}" class="pagination-link">이전</a>
+          
+          <th:block th:each="num : ${#numbers.sequence(pageDTO.startPage, pageDTO.endPage)}">
+              <a th:href="@{|/notice/list_all?page=${num}&searchType=${searchDTO.searchType}&keyword=${searchDTO.keyword}|}"
+                 th:class="${pageDTO.currentPage == num} ? 'active' : ''"
+                 class="pagination-link"
+                 th:text="${num}"></a>
+          </th:block>
+    
+          <a th:if="${pageDTO.next}" th:href="@{|/notice/list_all?page=${pageDTO.endPage + 1}&searchType=${searchDTO.searchType}&keyword=${searchDTO.keyword}|}" class="pagination-link">다음</a>
+      </th:block>
+      
+      <div th:if="${total == 0}" class="no-results">검색 결과가 존재하지 않습니다.</div>
+  </div>
+  
+  <script>
+      function search() {
+          const searchType = document.getElementById('searchType').value;
+          const keyword = document.getElementById('keyword').value;
+          
+          if (keyword.trim() === '') {
+              alert('검색어를 입력해주세요');
+              return;
+          }
+          
+          location.href = `/notice/list_all?page=1&searchType=${searchType}&keyword=${keyword}`;
+      }
+  
+      // 엔터키 검색 기능
+      document.getElementById('keyword').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+              search();
+          }
+      });
+  </script>
+
+</div> <!-- layout:fragment="content" 닫는 태그 -->
+
+</body>
+</html>
