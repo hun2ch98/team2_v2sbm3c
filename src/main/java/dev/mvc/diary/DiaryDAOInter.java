@@ -37,10 +37,10 @@ public interface DiaryDAOInter {
   public DiaryVO read(Integer diaryno);
   
   
-  public int increaseGoodCnt(int goodno);
+  public int increaseGoodCnt(int diaryno);
   
   
-  public int decreaseGoodCnt(int goodno);
+  public int decreaseGoodCnt(int diaryno);
   
   /**
    * 수정
@@ -101,5 +101,7 @@ public interface DiaryDAOInter {
   DiaryVO getDiaryByDiaryNo(int diaryno);
   
   public List<DiaryVO> readList(int diaryno);
+
+  public int increaseCnt(int diaryno);
   
 }

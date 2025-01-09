@@ -46,4 +46,6 @@ public class DiaryVO {
   private int memberno;
 
   private int cnt;
+  
+  private int goodcnt;
 }

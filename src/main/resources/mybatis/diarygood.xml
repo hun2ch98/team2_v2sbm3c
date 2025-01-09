@@ -18,20 +18,20 @@
   </select>
   
   <!-- 삭제 -->
-  <delete id="dev.mvc.diarygood.DiaryGoodDAOInter.delete" parameterType="int">
+  <delete id="delete" parameterType="int">
     DELETE FROM diarygood
     WHERE goodno=#{goodno}
   </delete>
   
   <!-- 조회1 -->
-  <select id="read" parameterType="int" resultType="dev.mvc.diarygood.DiaryGoodVO">
+  <select id="read" resultType="dev.mvc.diarygood.DiaryGoodVO" parameterType="int">
     SELECT goodno, rdate, diaryno, memberno
     FROM diarygood
     WHERE goodno = #{goodno}
   </select>
   
   <!-- 조회2 -->
-  <select id="readByDiaryMember" parameterType="HashMap" resultType="dev.mvc.diarygood.DiaryGoodVO">
+  <select id="readByDiaryMember" resultType="dev.mvc.diarygood.DiaryGoodVO" parameterType="HashMap">
     SELECT goodno, rdate, diaryno, memberno
     FROM diarygood
     WHERE diaryno = #{diaryno} AND memberno = #{memberno}
