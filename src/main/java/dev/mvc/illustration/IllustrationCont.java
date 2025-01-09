@@ -12,6 +12,8 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -345,6 +348,73 @@ public class IllustrationCont {
 
       return "diary/read";  // "diary/read" 템플릿으로 이동
   }
+  
+  /**
+   * 특정 날짜의 목록
+   * @param session
+   * @param model
+   * @param date
+   * @return
+   */
+  @GetMapping(value="/list_calendar")
+  public String list_calendar(HttpSession session, Model model, 
+      @RequestParam(name="year", defaultValue="0") int year, 
+    @RequestParam(name="month", defaultValue="0") int month) {
+
+      if (year == 0) {
+        // 현재 날짜를 가져옴
+        LocalDate today  = LocalDate.now();
+        
+        //연도와 월을 추출
+        year = today.getYear();
+        month = today.getMonthValue();
+      }
+      
+      String month_str = String.format("%02d", month); // 두 자리 형식으로
+    System.out.println("-> month: " + month_str);
+  
+    String date = year + "-" + month;
+    System.out.println("-> date: " + date);
+    
+    model.addAttribute("year", year);
+    model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
+      
+    return "/illustration/list_calendar"; // /templates/calendar/list_calendar.html
+  }
+  
+  
+  @GetMapping(value="/list_calendar_day")
+  @ResponseBody
+  public String list_calendar_day(Model model, 
+      @RequestParam(name="ddate", defaultValue = "") Date ddate) {
+    
+    System.out.println("-> ddate : " + ddate);
+    
+    ArrayList<DiaryIllustrationVO> list = this.illustrationProc.list_calendar_day(ddate);
+    model.addAttribute(list);
+    
+    JSONArray calendar_list = new JSONArray();
+    
+    for (DiaryIllustrationVO diaryillustrationVO : list) {
+      JSONObject calendar = new JSONObject();
+      //diaryVO
+      calendar.put("diaryno", diaryillustrationVO.getDiaryno());
+      calendar.put("ddate", diaryillustrationVO);
+      //emotionVO
+      calendar.put("emono", diaryillustrationVO.getEmono());
+      calendar.put("em_file1", diaryillustrationVO);
+      //weatherVO
+      calendar.put("weatherno", diaryillustrationVO.getWeatherno());
+      calendar.put("we_file1", diaryillustrationVO.getWe_file1());
+      //illustrationVO
+      calendar.put("illustno", diaryillustrationVO.getIllustno());
+      calendar.put("illust_thumb", diaryillustrationVO.getIllust_thumb());
+      
+      calendar_list.put(calendar);
+    }
+    return calendar_list.toString();
+  }
+  
   
   
   

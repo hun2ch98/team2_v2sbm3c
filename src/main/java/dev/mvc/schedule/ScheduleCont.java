@@ -244,7 +244,7 @@ public class ScheduleCont {
   @GetMapping(value = "/list_calendar_day")
   @ResponseBody
   public String list_calendar_day(Model model, @RequestParam(name="sdate", defaultValue = "") String sdate) {
-	System.out.println("-> sdate: " + sdate);
+    System.out.println("-> sdate: " + sdate);
 	
     ArrayList<ScheduleVO> list = this.scheduleProc.list_calendar_day(sdate);
     model.addAttribute("list", list);

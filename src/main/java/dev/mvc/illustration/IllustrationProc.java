@@ -234,6 +234,22 @@ public class IllustrationProc implements IllustrationProcInter {
     public int cntcount(int illustno) {
       return illustrationDAO.cntcount(illustno);
     }
+
+
+
+    @Override
+    public ArrayList<DiaryIllustrationVO> list_calendar(Date date) {
+      ArrayList<DiaryIllustrationVO> list_calendar = this.illustrationDAO.list_calendar(date);
+      return list_calendar;
+    }
+
+
+
+    @Override
+    public ArrayList<DiaryIllustrationVO> list_calendar_day(Date date) {
+      ArrayList<DiaryIllustrationVO> list_calendar_day = this.illustrationDAO.list_calendar_day(date);
+      return list_calendar_day;
+    }
     
     
 }
