@@ -38,8 +38,8 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
   
   
   @Override
-  public DiaryGoodVO read(HashMap<String, Object> map) {
-    DiaryGoodVO diaryGoodVO = this.diaryGoodDAO.read(map);
+  public DiaryGoodVO readByDiaryMember(HashMap<String, Object> map) {
+    DiaryGoodVO diaryGoodVO = this.diaryGoodDAO.readByDiaryMember(map);
     return diaryGoodVO;
   }
 

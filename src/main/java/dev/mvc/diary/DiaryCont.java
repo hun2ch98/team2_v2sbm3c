@@ -153,13 +153,14 @@ public class DiaryCont {
   
   
   @GetMapping(path="/read/{diaryno}")
-  public String readDiary(@PathVariable("diaryno") int diaryno, HttpSession session,
+  public String read(@PathVariable("diaryno") int diaryno, HttpSession session,
     @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
     
     
     // 일기 번호에 해당하는 일기 데이터 조회
-    DiaryVO diaryVO = diaryProc.getDiaryByDiaryNo(diaryno);  // DiaryProc에서 일기 데이터 조회
-
+    DiaryVO diaryVO = diaryProc.read(diaryno);  // DiaryProc에서 일기 데이터 조회
+    this.diaryProc.increaseCnt(diaryno);
+    
     // 일기 번호에 해당하는 일러스트 데이터 조회
     List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
 
@@ -183,8 +184,10 @@ public class DiaryCont {
       int memberno = (int) session.getAttribute("memberno");
       map.put("memberno", memberno);
       heartCnt = this.diaryGoodProc.heartCnt(map);
+      System.out.println("->memberno : " +memberno);
     }
     
+    System.out.println("-> public String read() heartCnt:" + heartCnt);
     model.addAttribute(heartCnt);
     //-----------------------------------------------------------------------------------
     
@@ -336,29 +339,30 @@ public class DiaryCont {
     System.out.println("-> json_src : "  + json_src);
     JSONObject src = new JSONObject(json_src); 
     
-    int diaryno = (int) src.getInt("diaryno");
+    int diaryno = (int)src.get("diaryno");
     System.out.println("->diaryno : " + diaryno);
     
     if (this.memberProc.isMember(session)) {
       
       // 기존 추천 여부를 확인
-      int memberno = (int) session.getAttribute("memberno");
+      int memberno = (int)session.getAttribute("memberno");
       HashMap<String, Object> map = new HashMap<String, Object>();
       map.put("diaryno", diaryno);
       map.put("memberno", memberno);
       
-      int cnt = this.diaryGoodProc.heartCnt(map); 
-      System.out.println("->cnt : " + cnt);
+      int goodcnt = this.diaryGoodProc.heartCnt(map); 
+      System.out.println("->goodcnt : " + goodcnt);
       
-      if (cnt == 1) {
+      if (goodcnt == 1) {
         // 추천 해제 작업
         System.out.println("-> 추천 해제 : " + diaryno + " " + memberno);
-        DiaryGoodVO diaryGoodVO = this.diaryGoodProc.read(map);
+        DiaryGoodVO diaryGoodVO = this.diaryGoodProc.readByDiaryMember(map);
         this.diaryGoodProc.delete(diaryGoodVO.getGoodno()); // 추천 삭제
         this.diaryProc.decreaseGoodCnt(diaryno); // 카운트 감소
         
       } else {
         // 추천 작업
+        System.out.println("-> 추천: " + diaryno + ' ' + memberno);
         DiaryGoodVO diaryGoodVO_new = new DiaryGoodVO(); // 새로운 객체 생성
         diaryGoodVO_new.setDiaryno(diaryno);
         diaryGoodVO_new.setMemberno(memberno);
@@ -367,17 +371,21 @@ public class DiaryCont {
       }
       
       int heartCnt = this.diaryGoodProc.heartCnt(map);
-      int goodCnt = this.diaryProc.read(diaryno).getCnt();
+      int goodCnt = this.diaryProc.read(diaryno).getGoodcnt();
+      
       JSONObject result = new JSONObject();
       result.put("isMember", 1); // 로그인 : 1 , 비회원 : 0
       result.put("heartCnt", heartCnt);
       result.put("goodCnt", goodCnt);
+      
+      System.out.println("-> result.toString(): " + result.toString());
       
       return result.toString();
       
     } else {
       JSONObject result = new JSONObject();
       result.put("isMember", 0); // 로그인 : 1 , 비회원 : 0
+      System.out.println("-> result.toString(): " + result.toString());
       return result.toString();
     }
   }
