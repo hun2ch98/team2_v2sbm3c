@@ -152,8 +152,8 @@ public class DiaryCont {
   }
   
   
-  @GetMapping(path="/read/{diaryno}")
-  public String read(@PathVariable("diaryno") int diaryno, HttpSession session,
+  @GetMapping(value="/read")
+  public String read(@RequestParam(name="diaryno", defaultValue="1") int diaryno, HttpSession session,
     @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
     
     
@@ -164,11 +164,11 @@ public class DiaryCont {
     // 일기 번호에 해당하는 일러스트 데이터 조회
     List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
 
-    List<DiaryVO> diaryList = diaryProc.readList(diaryno);
+    // List<DiaryVO> diaryList = diaryProc.read(diaryno);
     
     // 모델에 일기 데이터와 일러스트 목록 추가
     model.addAttribute("diaryVO", diaryVO);  // 일기 데이터
-    model.addAttribute("diaryList", diaryList);  
+    // model.addAttribute("diaryList", diaryList);  
     model.addAttribute("illustrationList", illustrationList);  // 일러스트 목록
     model.addAttribute("now_page", now_page);  // 현재 페이지
     

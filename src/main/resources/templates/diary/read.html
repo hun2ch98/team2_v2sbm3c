@@ -81,7 +81,8 @@
 
   <fieldset class="fieldset_basic">
     <ul>
-      <li th:if="${diaryVO != null}">
+      <!--<li th:if="${diaryVO != null}"> -->
+      <li  >
         <strong>일기 제목:</strong> <span th:text="${diaryVO.title}"></span><br>
         <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span>
         <strong>일기:</strong> <span th:text="${diaryVO.summary}"></span><br>      
