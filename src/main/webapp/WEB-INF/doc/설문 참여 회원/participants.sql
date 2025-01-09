@@ -87,7 +87,22 @@ WHERE surveyno=1 AND memberno =1;
 DELETE FROM surveyitem
 WHERE memberno=1;         
          
-         
+-- JOIN, 어느 공지사항을 누가 추천 했는가?
+SELECT pno, itemno, memberno, pdate
+FROM participants
+ORDER BY pno DESC;
+
+-- 테이블 2개 join
+SELECT i.itemno, i.surveyno, i.item_seq, i.item, i.item_cnt, s.topic
+FROM survey s, surveyitem i
+WHERE s.surveyno = i.surveyno
+ORDER BY itemno DESC;
+
+-- 테이블 3개 join, as 사용시 컬럼명 변경 가능: c.title as n_title
+SELECT p.pno, p.itemno, p.memberno, p.pdate, i.item as i_item, m.memberno, m.email, m.name
+FROM surveyitem i, participants p, member m
+WHERE i.itemno = p.itemno AND p.memberno = m.memberno
+ORDER BY pno DESC;         
          
          
          

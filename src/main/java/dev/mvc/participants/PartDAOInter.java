@@ -23,5 +23,11 @@ public interface PartDAOInter {
    * @return
    */
   public int delete(int pno);
+  
+  /**
+   * 3개 조인
+   * @return
+   */
+  public ArrayList<ItemMemberPartVO> list_all_join();
 
 }
