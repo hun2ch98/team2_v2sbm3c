@@ -4,10 +4,10 @@
   <script>
     window.onload = function() {
      
-      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+      let heartCnt =`[[${heartCnt}]]`; //  javascript -> Thymeleaf -> session
       let tag='';
 
-      // alert('heartCnt: ' + heartCnt);      
+      alert('heartCnt: ' + heartCnt);      
       if (heartCnt == 1) {
         tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
         document.querySelector('#heart_panel').innerHTML = tag; 
@@ -36,9 +36,11 @@
           let tag='';
             
           if (heartCnt == 1) {
+            alert('-> heartCnt: ' + heartCnt + ' isMember; ' + data.isMember);      
             tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
             document.querySelector('#heart_panel').innerHTML = tag; 
           } else {
+            alert('-> heartCnt: ' + heartCnt + ' isMember; ' + data.isMember);
             tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제"></a>'
             document.querySelector('#heart_panel').innerHTML = tag; 
           }
@@ -106,4 +108,3 @@
 </div>
 
 </html>
-

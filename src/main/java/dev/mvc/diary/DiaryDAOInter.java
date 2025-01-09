@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import dev.mvc.schedule.ScheduleVO;
+
 public interface DiaryDAOInter {
   /**
    * <pre>
@@ -103,5 +105,9 @@ public interface DiaryDAOInter {
   public List<DiaryVO> readList(int diaryno);
 
   public int increaseCnt(int diaryno);
+  
+  public ArrayList<ScheduleVO> list_calendar(String date);
+  
+  public List<ScheduleVO> list_calendar_day(String date);
   
 }

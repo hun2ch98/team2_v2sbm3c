@@ -192,7 +192,7 @@ public class DiaryCont {
     //-----------------------------------------------------------------------------------
     
     
-    return "/diary/read";
+    return "/diary/read"; // /templates/diary/read.html
   }
   
   
@@ -391,40 +391,5 @@ public class DiaryCont {
   }
 
 
-  @GetMapping(value="/list_calendar")
-  public String list_calendar(HttpSession session, Model model, 
-      @RequestParam(name="year", defaultValue="0") int year, 
-    @RequestParam(name="month", defaultValue="0") int month) {
-
-      if (year == 0) {
-        // 현재 날짜를 가져옴
-        LocalDate today  = LocalDate.now();
-        
-        //연도와 월을 추출
-        year = today.getYear();
-        month = today.getMonthValue();
-      }
-      
-      String month_str = String.format("%02d", month); // 두 자리 형식으로
-    System.out.println("-> month: " + month_str);
-  
-    String date = year + "-" + month;
-    System.out.println("-> date: " + date);
-    
-    model.addAttribute("year", year);
-    model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
-      
-    return "/diary/list_calendar"; // /templates/calendar/list_calendar.html
-  }
-
-//  @GetMapping(value = "/list_calendar_day")
-//  @ResponseBody
-//  public String list_calendar_day(Model model, @RequestParam(name="sdate", defaultValue = "") String sdate) {
-//    System.out.println("-> sdate: " + sdate);
-//    List<Map<String, Object>> list = this.diaryProc.list_calendar_day(sdate);
-//    
-//  
-//  return "";
-//  }
   
 }
