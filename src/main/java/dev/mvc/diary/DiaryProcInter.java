@@ -106,7 +106,7 @@ public interface DiaryProcInter {
   
   DiaryVO getDiaryByDiaryNo(int diaryno);
 
-  public List<DiaryVO> readList(int diaryno);
+  //public List<DiaryVO> readList(int diaryno);
 
   int increaseCnt(int diaryno);
 }

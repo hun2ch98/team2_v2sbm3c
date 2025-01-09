@@ -102,7 +102,7 @@ public interface DiaryDAOInter {
   
   DiaryVO getDiaryByDiaryNo(int diaryno);
   
-  public List<DiaryVO> readList(int diaryno);
+  // public List<DiaryVO> readList(int diaryno);
 
   public int increaseCnt(int diaryno);
   
