@@ -1,5 +1,10 @@
 DROP TABLE notice;
 
+--file1                                   VARCHAR(100)          NULL,
+--file1saved                            VARCHAR(100)          NULL,
+--thumb1                              VARCHAR(100)          NULL,
+--size1                                 NUMBER(10)      DEFAULT 0 NULL,  
+
 CREATE TABLE notice(
     noticeno    NUMBER(10)                  NOT NULL PRIMARY KEY,
     memberno    NUMBER(10)                  NOT NULL,

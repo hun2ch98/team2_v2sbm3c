@@ -28,12 +28,14 @@ public class NoticegoodProc implements NoticegoodProcInter {
     return list;
   }
   
+  /** 부모 레코드 noticegoodno 삭제 */
   @Override
   public int delete(int noticegoodVO) {
     int cnt = this.noticegoodDAO.delete(noticegoodVO);
     return cnt;
   }
   
+  /** 자식 레코드 noticeno 삭제 */
   @Override
   public int n_delete(int noticeno) {
     int cnt = this.noticegoodDAO.n_delete(noticeno);

@@ -35,12 +35,12 @@
         <td class="td_bs" th:text="${noticeVO.rdate.substring(0, 10)}"></td>
         <td class="td_bs">
           <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.goodcnt}"></a>
-        </td>
+        </td> 
         <td class="td_bs">
           <a th:href="@{|/notice/read/${noticeVO.noticeno}|}" style="display:block;" th:text="${noticeVO.cnt}"></a>
         </td>
         <td class="td_bs">
-          <a th:href="@{|/notice/update/${noticeVO.noticeno}|}"><img src="/notice/images/update.png" class="icon" title="수정"></a> <!-- /static 기준 -->
+          <!--  <a th:href="@{|/notice/update/${noticeVO.noticeno}|}"><img src="/notice/images/update.png" class="icon" title="수정"></a> /static 기준 -->
           <a th:href="@{|/notice/delete/${noticeVO.noticeno}|}"><img src="/notice/images/delete.png" class="icon" title="삭제"></a> <!--/* /static 기준 */-->
         </td>
       </tr>

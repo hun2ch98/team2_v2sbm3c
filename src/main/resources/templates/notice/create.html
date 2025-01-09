@@ -11,7 +11,7 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|./create|}">등록</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_all|}">기본 목록형</a>
+    <a th:href="@{|./list_all|}">목록</a>
   </aside>
   
   <div class="menu_line"></div>
@@ -28,7 +28,7 @@
     </div>
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">등록</button>
-      <button type="button" th:attr="onclick=|location.href='./list_all'|" class="btn btn-secondary btn-sm">목록</button>
+      <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
     </div>
     
   </form>
