@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class='title_line'>
+    > 학습데이터 내용 수정
+  </div>
+  
+  <aside class="aside_right">
+    <a th:href="@{/learningdata/create}">등록</a>
+    <span class='menu_divide' >│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{/learningdata/list_by_datano_search_paging}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <form name='frm' method='post' th:object="${learningdataVO}" action='./update_text'>
+    <input type="hidden" name="datano" th:value="${learningdataVO.datano}">
+    <input type="hidden" name="now_page" th:value="${now_page}">
+    <input type="hidden" name="search_word" th:value="${ques}">
+    
+    <div>
+       <label>학습 데이터 질문</label>
+       <textarea name='ques' required="required" class="form-control" rows="8" style='width: 100%;' 
+                      th:text='${learningdataVO.ques}'></textarea>
+    </div>
+    <div>
+       <label>학습 데이터 답변</label>
+       <textarea name='ans' required="required" class="form-control" rows="8" style='width: 100%;' 
+                      th:text='${learningdataVO.ans}'></textarea>
+    </div>
+    <div>
+        <label>도덕성 검증 여부(Y/N)</label>
+        <select id="ethical" name="ethical" class="form-control">
+          <option value="Y" th:selected="${learningdataVO.ethical == 'Y'}">Y</option>
+          <option value="N" th:selected="${learningdataVO.ethical == 'N'}">N</option>
+        </select>
+        <div th:if="${#fields.hasErrors('ethical')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err: ${#lists.sort(#fields.errors('ethical'))}" th:text="${err}"></div>
+        </div>  
+    </div>
+    
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+      <button type="button" th:attr="onclick=|location.href='./list_by_datano_search_paging'|" class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  
+  </form>
+
+</div>

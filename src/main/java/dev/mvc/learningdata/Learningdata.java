@@ -16,7 +16,7 @@ public class Learningdata {
 	      path = "C:\\kd\\deploy\\team2\\learningdata\\storage\\";
 	      // System.out.println("Windows: " + path);
 	    } else if (osName.contains("mac")) { // MacOS
-	      path = "/Users/hy/bannedwords/storage/";
+	      path = "/Users/hy/learningdata/storage/";
 	     // System.out.println("MacOS: " + path);
 	    } else { // Linux
 	      path = "/home/ubuntu/deploy/team2/learningdata/storage/";
