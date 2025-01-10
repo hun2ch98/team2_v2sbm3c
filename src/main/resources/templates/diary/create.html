@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
   <div class="title_line">
-    <span th:text="${diaryVO.title}"></span> 글 등록
+   일기 쓰기
   </div>
 
   <aside class="aside_right">
@@ -15,29 +15,31 @@
 
   <form name="frm" method="post" th:object="${diaryVO}" action="./create" enctype="multipart/form-data">
     <!-- 제목 -->
-    <div>
+    <div style="margin-bottom:10px;">
       <label>제목</label>
       <input type="text" name="title" th:value="*{title}" required="required" class="form-control" style="width: 100%;" placeholder="오늘의 제목">
     </div>
 
     <!-- 날짜 -->
-    <div>
+    <div style="margin-bottom:10px;">
       <label>날짜</label>
       <input type="date" name="ddate" th:value="*{ddate}" required="required" class="form-control" style="width: 100%;">
     </div>
 
-    <!-- 날씨 코드 -->
-    <div>
-      <label>날씨 코드</label>
-      <input type="number" name="weatherno" th:value="*{weatherno}" required="required" class="form-control" style="width: 100%;">
+    <div style="margin-bottom:10px; display: flex; justify-content: space-between; align-items: center;">
+      <!-- 날씨 코드 -->
+      <div style="flex: 1; margin-right: 10px;">
+        <label>날씨 코드</label>
+        <input type="number" name="weatherno" th:value="*{weatherno}" required="required" class="form-control">
+      </div>
+    
+      <!-- 감정 코드 -->
+      <div style="flex: 1; margin-left: 10px;">
+        <label>감정 코드</label>
+        <input type="number" name="emono" th:value="*{emono}" required="required" class="form-control">
+      </div>
     </div>
 
-    <!-- 감정 번호 -->
-    <div>
-      <label>감정 코드</label>
-      <input type="number" name="emono" th:value="*{emono}" required="required" class="form-control" style="width: 100%;">
-    </div>
-    
    
     <!-- 요약 -->
     <div>
