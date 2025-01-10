@@ -153,8 +153,9 @@ public class DiaryCont {
   
   
   @GetMapping(value="/read")
-  public String read(@RequestParam(name="diaryno", defaultValue="1") int diaryno, HttpSession session,
-    @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
+  public String read(HttpSession session, Model model, 
+      @RequestParam(name="diaryno", defaultValue="1") int diaryno,
+      @RequestParam(name="now_page", defaultValue="1") int now_page) {
     
     
     // 일기 번호에 해당하는 일기 데이터 조회
@@ -232,13 +233,19 @@ public class DiaryCont {
    * 
    */
   @PostMapping(value = "/delete")
-  public String deleteProcess(HttpSession session,
+  public String deleteProcess(HttpSession session, Model model, 
                               @RequestParam(name = "diaryno") int diaryno,
                               @RequestParam(name = "title", defaultValue = "") String title,
-                              @RequestParam(name = "date", defaultValue = "") String date,
+                              @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+                              @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
                               @RequestParam(name = "now_page", defaultValue = "1") int nowPage,
                               RedirectAttributes ra) {
       if (this.memberProc.isMemberAdmin(session)) {
+        
+        int startNum = (nowPage - 1) * record_per_page + 1;
+        int endNum = nowPage * record_per_page;
+        ArrayList<DiaryVO> diaryList = diaryProc.list_search_paging(title, startDate, endDate, startNum, endNum);
+        model.addAttribute("diaryList", diaryList);
           // 삭제할 Diary 조회
           DiaryVO diaryVO = this.diaryProc.read(diaryno);
 
@@ -249,10 +256,12 @@ public class DiaryCont {
               if (cnt == 1) {
                   // 삭제 성공 시 검색 조건 유지
                   ra.addAttribute("title", title);
-                  ra.addAttribute("date", date);
+                  ra.addAttribute("start_date", startDate);
+                  ra.addAttribute("end_date", endDate);
+                  ra.addAttribute("diaryList", diaryList);
 
                   // 마지막 페이지 처리 (빈 페이지 방지)
-                  int searchCount = this.diaryProc.list_search_count(title, date);
+                  int searchCount = diaryProc.countSearchResults(title, startDate, endDate);
                   if (searchCount % this.record_per_page == 0) {
                       nowPage = Math.max(nowPage - 1, 1); // 최소 페이지는 1
                   }
@@ -279,19 +288,29 @@ public class DiaryCont {
   @GetMapping(value = "/update/{diaryno}")
   public String update(HttpSession session, Model model, 
                        @PathVariable("diaryno") Integer diaryno, 
+                       @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+                       @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
                        @RequestParam(name = "title", defaultValue = "") String title,  
-                       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+                       @RequestParam(name = "now_page", defaultValue = "1") int nowPage) {
       if (this.memberProc.isMemberAdmin(session)) {
-          DiaryVO diaryVO = this.diaryProc.read(diaryno); // 수정할 데이터를 조회
-          model.addAttribute("diaryVO", diaryVO);
+        
+        int startNum = (nowPage - 1) * record_per_page + 1;
+        int endNum = nowPage * record_per_page;
+        
+        DiaryVO diaryVO = this.diaryProc.read(diaryno); // 수정할 데이터를 조회
+        ArrayList<DiaryVO> diaryList = diaryProc.list_search_paging(title, startDate, endDate, startNum, endNum);
+        
+        model.addAttribute("diaryVO", diaryVO);
+        model.addAttribute("title", title); // 검색어 유지
+        model.addAttribute("start_date", startDate); 
+        model.addAttribute("end_date", endDate); 
+        model.addAttribute("diaryList", diaryList); 
+        model.addAttribute("now_page", nowPage); // 현재 페이지 유지
 
-          model.addAttribute("title", title); // 검색어 유지
-          model.addAttribute("now_page", now_page); // 현재 페이지 유지
-
-          return "/diary/update"; // 수정 폼으로 이동
-      } else {
-          return "redirect:/member/login_cookie_need"; // 권한이 없으면 로그인 페이지로 리다이렉트
-      }
+        return "/diary/update"; // 수정 폼으로 이동
+    } else {
+        return "redirect:/member/login_cookie_need"; // 권한이 없으면 로그인 페이지로 리다이렉트
+    }
   }
   
 
