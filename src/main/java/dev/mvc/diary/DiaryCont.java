@@ -26,10 +26,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.diarygood.DiaryGoodProcInter;
 import dev.mvc.diarygood.DiaryGoodVO;
+import dev.mvc.emotion.EmotionProcInter;
 import dev.mvc.emotion.EmotionVO;
 import dev.mvc.illustration.IllustrationProcInter;
 import dev.mvc.illustration.IllustrationVO;
 import dev.mvc.tool.Tool;
+import dev.mvc.weather.WeatherProcInter;
 import dev.mvc.weather.WeatherVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -53,6 +55,14 @@ public class DiaryCont {
   @Autowired
   @Qualifier("dev.mvc.diarygood.DiaryGoodProc")
   private DiaryGoodProcInter diaryGoodProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.emotion.EmotionProc")
+  private EmotionProcInter emotionProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.weather.WeatherProc")
+  private WeatherProcInter weatherProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 10;
@@ -83,8 +93,15 @@ public class DiaryCont {
     // create method에 사용될 테이블
     // summary를 가져올 테이블
     DiaryVO diaryVO = new DiaryVO();
-    EmotionVO emotionVO = new EmotionVO();
-    WeatherVO weatherVO = new WeatherVO();
+//    EmotionVO emotionVO = new EmotionVO();
+//    WeatherVO weatherVO = new WeatherVO();
+
+    ArrayList<EmotionVO> emotions = this.emotionProc.image_list();
+    ArrayList<WeatherVO> weathers = this.weatherProc.image_list();
+    
+    System.out.println("Emotions: " + emotions.size());
+    System.out.println("Weathers: " + weathers.size());
+
     
     diaryVO.setTitle(title);
     diaryVO.setEmono(emono);
@@ -92,8 +109,8 @@ public class DiaryCont {
     diaryVO.setSummary(summary);
     
     model.addAttribute("diaryVO", diaryVO);
-    model.addAttribute("emotionVO", emotionVO);
-    model.addAttribute("weatherVO", weatherVO);
+    model.addAttribute("emotions", emotions);
+    model.addAttribute("weatherVO", weathers);
 
     
     return "/diary/create"; // /templates/diary/create.html
@@ -150,6 +167,7 @@ public class DiaryCont {
           return "/diary/msg";
       }
   }
+
   
   
   @GetMapping(value="/read")

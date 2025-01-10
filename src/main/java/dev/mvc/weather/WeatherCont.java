@@ -162,26 +162,7 @@ public class WeatherCont {
    */
   @GetMapping(value = "/list_all")
   public String list_all(HttpSession session, Model model) {
-    // System.out.println("-> list_all");
-//    ArrayList<DiaryVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
-
       ArrayList<WeatherVO> list = this.weatherProc.list_all(); // 모든 목록
-
-      // Thymeleaf는 CSRF(크로스사이트) 스크립팅 해킹 방지 자동 지원
-      // for문을 사용하여 객체를 추출, Call By Reference 기반의 원본 객체 값 변경
-//      for (ContentsVO contentsVO : list) {
-//        String title = contentsVO.getTitle();
-//        String content = contentsVO.getContent();
-//        
-//        title = Tool.convertChar(title);  // 특수 문자 처리
-//        content = Tool.convertChar(content); 
-//        
-//        contentsVO.setTitle(title);
-//        contentsVO.setContent(content);  
-//
-//      }
-
       model.addAttribute("list", list);
       return "/weather/list_all";
 

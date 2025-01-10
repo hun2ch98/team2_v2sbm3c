@@ -32,6 +32,11 @@ public class WeatherProc implements WeatherProcInter{
         ArrayList<WeatherVO> list = this.weatherDAO.list_all();
         return list;
     }
+    @Override
+    public ArrayList<WeatherVO> image_list() {
+      ArrayList<WeatherVO> image_list = this.weatherDAO.image_list();
+      return image_list;
+    }
 
     @Override
     public int update_text(WeatherVO weatherVO) {
