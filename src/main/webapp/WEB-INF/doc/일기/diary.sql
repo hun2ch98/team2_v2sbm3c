@@ -8,7 +8,8 @@ CREATE TABLE diary (
     emno         NUMBER(10)       NULL,
     memberno     NUMBER(10)      NULL,
     illustno     NUMBER(10) NULL,
-    cnt          NUMBER(7)  NULL,                 
+    cnt          NUMBER(7)  NULL, 
+    goodcnt          NUMBER(7)  NULL,
     FOREIGN KEY (emno) REFERENCES EMOTION(emno),
     FOREIGN KEY (memberno) REFERENCES MEMBER(membernno),
     FOREIGN KEY (weatherno) REFERENCES WEATHER(weatherno),
@@ -36,5 +37,6 @@ WHERE 1=1
   AND (TRUNC(ddate) >= TO_DATE(:start_date, 'YYYY-MM-DD') OR :start_date IS NULL OR :start_date = '')
   AND (TRUNC(ddate) <= TO_DATE(:end_date, 'YYYY-MM-DD') OR :end_date IS NULL OR :end_date = '');
 
+SELECT COUNT(*) as cnt
 
 

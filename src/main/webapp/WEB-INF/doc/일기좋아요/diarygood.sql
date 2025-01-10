@@ -56,6 +56,8 @@ SELECT COUNT(*) as cnt
 FROM diarygood
 WHERE diaryno = 22 AND memberno = 1;
 
-
-
+SELECT g.goodno, g.rdate, g.diaryno, d.title, g.memberno, m.id, m.name
+FROM diary d, diarygood g, member m
+WHERE d.diaryno = g.diaryno AND g.memberno = m.memberno
+ORDER BY goodno DESC;
 

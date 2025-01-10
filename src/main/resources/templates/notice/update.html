@@ -17,7 +17,7 @@
   
   <div class='menu_line'></div>
   
-  <form name='frm' method='post' action='./update'>
+  <form name='frm' method='post' th:object="${noticeVO}" action='./update'>
     <input type="hidden" name="noticeno" th:value="${noticeVO.noticeno }">
     <div>
        <label>제목</label>
@@ -25,12 +25,12 @@
                  autofocus="autofocus" class="form-control" style='width: 100%;'>
     </div>
     <div>
-       <label>글 내용</label>
-       <textarea name='content' required="required" class="form-control" rows="12" style='width: 100%;' th:text='${calendarVO.content}'></textarea>
+       <label>내용</label>
+       <textarea name='content' required="required" class="form-control" rows="12" style='width: 100%;' th:text='${noticeVO.content}'></textarea>
     </div>
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">저장</button>
-      <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">돌아가기</button>
+      <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
     </div>
   
   </form>

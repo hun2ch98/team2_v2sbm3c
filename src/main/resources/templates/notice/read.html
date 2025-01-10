@@ -71,7 +71,7 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/notice/update?noticeno=${noticeVO.noticeno}|}">수정</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/notice/delete?noticeno=${noticeVO.noticeno}|}">삭제</a>
+    <a th:href="@{|/notice/delete|}">삭제</a>
   </aside>
   
   <aside class="aside_right" th:if="${session.grade != 'admin'}">
@@ -82,18 +82,20 @@
   
   <div class="menu_line"></div>
   
-  <fieldset class="fieldset_basic">
+  <fieldset class="fieldset_basic" style="margin-left: 30%;">
     <ul>
+      <li class="li_none">
+        <div>
+          <span id="heart_panel" style="margin-left: 7px;"></span>
+          <span id="goodcnt_panel"></span></br>
+          <span>좋아요</span>
+        </div>
+      </li>
       <li class="li_none">
         <div style="width: 100%; word-break: break-all;">
           <span style="font-size: 1.5em; font-weight: bold;" th:text="${noticeVO.title}"></span>
           <span style="font-size: 1em;" th:text="${noticeVO.rdate }"></span><br><br>
           <div style="white-space: pre-wrap;"><span th:text="${noticeVO.content}"></span></div>
-        </div>
-      </li>
-      <li class="li_none">
-        <div>
-          <span id="heart_panel"></span><span id="goodcnt_panel"></span>
         </div>
       </li>
       <li class="li_none" th:text="|조회수: ${noticeVO.cnt }|"></li>

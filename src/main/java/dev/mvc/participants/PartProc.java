@@ -16,6 +16,12 @@ public class PartProc implements PartProcInter {
     int cnt = this.partDAO.create(partVO);
     return cnt;
   }
+  
+  @Override
+  public int update_cnt(int itemno) {
+    int cnt = this.partDAO.update_cnt(itemno);
+    return cnt;
+  }
 
   @Override
   public ArrayList<PartVO> list_all() {
@@ -28,5 +34,13 @@ public class PartProc implements PartProcInter {
     int cnt = this.partDAO.delete(pno);
     return cnt;
   }
+
+  @Override
+  public ArrayList<ItemMemberPartVO> list_all_join() {
+    ArrayList<ItemMemberPartVO> list = this.partDAO.list_all_join();
+    return list;
+  }
+
+
 
 }

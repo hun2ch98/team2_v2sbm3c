@@ -42,13 +42,21 @@ public class DiaryProc implements DiaryProcInter {
     return diaryVO;
   }
   
-  public int increaseGoodCnt(int goodno) {
-    int cnt = this.increaseGoodCnt(goodno);
+  @Override
+  public int increaseGoodCnt(int diaryno) {
+    int cnt = this.diaryDAO.increaseGoodCnt(diaryno);
+    return cnt;
+  }
+  
+  @Override
+  public int decreaseGoodCnt(int diaryno) {
+    int cnt = this.diaryDAO.decreaseGoodCnt(diaryno);
     return cnt;
   }
 
-  public int decreaseGoodCnt(int goodno) {
-    int cnt = this.decreaseGoodCnt(goodno);
+  @Override
+  public int increaseCnt(int diaryno) {
+    int cnt = this.diaryDAO.increaseCnt(diaryno);
     return cnt;
   }
   
@@ -100,10 +108,10 @@ public class DiaryProc implements DiaryProcInter {
   }
 
 
-  @Override
-  public List<DiaryVO> readList(int diaryno) {
-    return sqlSession.selectList("dev.mvc.diary.DiaryDAOInter.getReadList", diaryno);
-  }
+//  @Override
+//  public List<DiaryVO> readList(int diaryno) {
+//    return sqlSession.selectList("dev.mvc.diary.DiaryDAOInter.getReadList", diaryno);
+//  }
 
   /** 
    * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 

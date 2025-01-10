@@ -230,32 +230,32 @@ public class ItemCont {
    * 설문조사
    * @return
    */
-  @GetMapping("/finish")
-  public String finish(Model model) {
-      model.addAttribute("message", "설문조사가 완료되었습니다.");
-      return "/surveyitem/finish"; // finish.html 템플릿
-  }
-
-  
-  /**
-   * 설문조사 참여 처리
-   * @return
-   */
-  @PostMapping("/finish")
-  public String finish(
-      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-      @RequestParam("itemno") int itemno,
-      HttpSession session,
-      RedirectAttributes ra) {
-      if (session.getAttribute("memberno") == null) {
-          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
-          return "redirect:/member/login";
-      }
-
-      this.itemProc.update_cnt(itemno); // item_cnt 증가
-      ra.addFlashAttribute("msg", "설문조사 완료!");
-      return "redirect:/surveyitem/finish";
-  }
+//  @GetMapping("/finish")
+//  public String finish(Model model) {
+//      model.addAttribute("message", "설문조사가 완료되었습니다.");
+//      return "/surveyitem/finish"; // finish.html 템플릿
+//  }
+//
+//  
+//  /**
+//   * 설문조사 참여 처리
+//   * @return
+//   */
+//  @PostMapping("/finish")
+//  public String finish(
+//      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+//      @RequestParam("itemno") int itemno,
+//      HttpSession session,
+//      RedirectAttributes ra) {
+//      if (session.getAttribute("memberno") == null) {
+//          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
+//          return "redirect:/member/login";
+//      }
+//
+//      this.itemProc.update_cnt(itemno); // item_cnt 증가
+//      ra.addFlashAttribute("msg", "설문조사 완료!");
+//      return "redirect:/surveyitem/finish";
+//  }
 
 
 
@@ -266,29 +266,40 @@ public class ItemCont {
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
                                   @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                  @RequestParam(name = "itemno", defaultValue = "0") int itemno,
                                   @RequestParam(name = "word", defaultValue = "") String word,
                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
       model.addAttribute("surveyno", surveyno);
-      
+      model.addAttribute("itemno", itemno);
       // 관리자 또는 일반 회원인지 확인  
-      if (this.memberProc.isMember(session) || this.memberProc.isMemberAdmin(session)) {
+      if (this.memberProc.isMember(session)) {
+        
+        int record_per_page = 10;
+        int startRow = (now_page - 1) * record_per_page + 1;
+        int endRow = now_page * record_per_page;
+        
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
 
-        word = Tool.checkNull(word);
+        word = Tool.checkNull(word).trim();
+        
+        
+//        ArrayList<TopicItemVO> list_t = this.itemProc.list_all_join();
+//        model.addAttribute("list_t", list_t);
 
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
-//        System.out.println("-> listsize: " + list.size());
+        System.out.println("-> listsize: " + list.size());
         model.addAttribute("list", list);
         
         // --------------------------------------------------------------------------------------
         // 페이지 번호 목록 생성
         // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(word);
-//        System.out.println("->search_count : " + search_count);
+        System.out.println("->search_count : " + search_count);
         String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_count, this.record_per_page,
             this.page_per_block);
+
         model.addAttribute("paging", paging);
         model.addAttribute("now_page", now_page);
         model.addAttribute("search_count", search_count);
