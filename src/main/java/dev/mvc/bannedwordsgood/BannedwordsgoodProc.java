@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component("dev.mvc.bannedwordsgood.BannedwordsgoodProc")
-public class BannedwordsProc implements BannedwordsgoodProcInter {
+public class BannedwordsgoodProc implements BannedwordsgoodProcInter {
 	@Autowired
 	BannedwordsgoodDAOInter bannedwordsgoodDAO;
 	

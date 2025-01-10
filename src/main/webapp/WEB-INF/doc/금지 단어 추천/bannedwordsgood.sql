@@ -70,6 +70,10 @@ SELECT goodno, rdate, wordno, memberno
 FROM bannedwordsgood
 WHERE wordno = 1 AND memberno=1;
 
+SELECT g.goodno, g.rdate, g.wordno, b.word as b_title, g.memberno, m.id, m.name
+FROM bannedwords b, bannedwordsgood g, member m
+WHERE b.wordno = g.wordno AND g.memberno = m.memberno
+ORDER BY goodno DESC;
 
 
 
