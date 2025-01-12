@@ -124,7 +124,7 @@
   
   <!-- 회원 모드 -->
   <div th:if="${session.grade != 'admin'}">
-    <form method="post" th:action="@{/surveyitem/finish}">
+    <form method="post" th:action="@{/participants/finish}">
       <input type="hidden" name="itemno" th:value="${itemno}" />
       <table class="table table-hover" style="width: 100%;">
         <colgroup>
