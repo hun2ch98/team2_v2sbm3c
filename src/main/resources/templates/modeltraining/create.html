@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+  <div class='title_line'>
+    
+  </div>
+  
+  <aside class="aside_right">
+    <a th:href="@{.|/create?trainingno=${modeltrainingVO.trainingno}|}">등록</a>
+    <span class='menu_divide'>│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/modeltraining/list_by_trainingno_search_paging}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <form name="frm" method="post" th:object="${modeltrainingVO}" th:action="@{/modeltraining/create}" enctype="multipart/form-data">
+    <input type="hidden" name="memberno" th:value="${modeltrainingVO?.memberno ?: 1}">
+
+    <div>
+        <label>모델 이름</label>
+        <input type="text" name="name" th:value="${modeltrainingVO?.name ?: ''}" required="required"
+               autofocus="autofocus" class="form-control" style="width: 100%;">
+    </div>
+    
+    <div>
+        <label>학습 관련 메모</label>
+        <textarea name="notes" th:text="${modeltrainingVO?.notes ?: ''}" required="required"
+                  class="form-control" rows="5" style="width: 100%;"></textarea>
+    </div>
+    
+	 <div>
+	    <label>학습 상태</label>
+	    <select id="status" name="status" class="form-control" style="width: 100px;">
+	      <option value="학습 상태" selected="selected">학습 상태</option>
+	      <option value="완료">완료</option>
+	      <option value="미완료">미완료</option>
+	    </select>
+	    <div th:if="${#fields.hasErrors('status')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+	      <div th:each="err: ${#lists.sort(#fields.errors('status'))}" th:text="${err}"></div>
+	    </div>  
+	</div>
+
+    <div>
+    	<label>학습 정확도</label>
+    	<div style="display: flex; align-items: center;">
+        	<input type="number" name="accuracy" th:value="${modeltrainingVO?.accuracy ?: ''}" required="required"
+               min="0" max="100" step="1" class="form-control" style="width: 80px;"> %
+    	</div>
+	</div>
+
+    <div>
+      <label>학습 시작 날짜</label>
+      <input type="date" name="st_time" th:value="*{st_time}" required="required" class="form-control" style="width: 20%;">
+    </div>
+    
+    <div>
+      <label>학습 종료 날짜(종료되지 않았다면 입력x)</label>
+      <input type="date" name="end_time" th:value="*{end_time}" class="form-control" style="width: 20%;">
+    </div>
+
+    <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        <button type="button" th:attr="onclick=|location.href='/modeltraining/list_by_trainingno_search_paging'|"
+                class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  </form>
+
+</div>
+</html>
