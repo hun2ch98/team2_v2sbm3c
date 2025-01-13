@@ -26,6 +26,9 @@ public interface EmotionProcInter {
    * @return
    */
   public ArrayList<EmotionVO> list_all();
+
+  
+  public ArrayList<EmotionVO> image_list();
   
   /**
    * 게시글 등록된 목록

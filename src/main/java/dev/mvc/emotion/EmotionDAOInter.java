@@ -28,6 +28,12 @@ public interface EmotionDAOInter {
   public ArrayList<EmotionVO> list_all();
   
   /**
+   * 이미지 list
+   * @return
+   */
+  public ArrayList<EmotionVO> image_list();
+  
+  /**
    * 감정 등록된 목록
    * @param emono
    * @return

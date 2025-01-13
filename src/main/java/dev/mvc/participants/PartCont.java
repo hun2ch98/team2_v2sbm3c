@@ -132,11 +132,11 @@ public class PartCont {
       int cnt = this.partProc.create(partVO);
       if (cnt > 0) {
           ra.addFlashAttribute("msg", "설문조사 참여 완료!");
-          return "/surveyitem/finish"; // 뷰 파일 경로 반환
+          return "/participants/finish"; // 뷰 파일 경로 반환
       }
 
       ra.addFlashAttribute("msg", "설문조사 참여에 실패했습니다.");
-      return "/surveyitem/finish";
+      return "/participants/finish";
   }
 
 }

@@ -26,10 +26,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.diarygood.DiaryGoodProcInter;
 import dev.mvc.diarygood.DiaryGoodVO;
+import dev.mvc.emotion.EmotionProcInter;
 import dev.mvc.emotion.EmotionVO;
 import dev.mvc.illustration.IllustrationProcInter;
 import dev.mvc.illustration.IllustrationVO;
 import dev.mvc.tool.Tool;
+import dev.mvc.weather.WeatherProcInter;
 import dev.mvc.weather.WeatherVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -53,6 +55,14 @@ public class DiaryCont {
   @Autowired
   @Qualifier("dev.mvc.diarygood.DiaryGoodProc")
   private DiaryGoodProcInter diaryGoodProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.emotion.EmotionProc")
+  private EmotionProcInter emotionProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.weather.WeatherProc")
+  private WeatherProcInter weatherProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 10;
@@ -83,8 +93,15 @@ public class DiaryCont {
     // create method에 사용될 테이블
     // summary를 가져올 테이블
     DiaryVO diaryVO = new DiaryVO();
-    EmotionVO emotionVO = new EmotionVO();
-    WeatherVO weatherVO = new WeatherVO();
+//    EmotionVO emotionVO = new EmotionVO();
+//    WeatherVO weatherVO = new WeatherVO();
+
+    ArrayList<EmotionVO> emotions = this.emotionProc.image_list();
+    ArrayList<WeatherVO> weathers = this.weatherProc.image_list();
+    
+    System.out.println("Emotions: " + emotions.size());
+    System.out.println("Weathers: " + weathers.size());
+
     
     diaryVO.setTitle(title);
     diaryVO.setEmono(emono);
@@ -92,8 +109,8 @@ public class DiaryCont {
     diaryVO.setSummary(summary);
     
     model.addAttribute("diaryVO", diaryVO);
-    model.addAttribute("emotionVO", emotionVO);
-    model.addAttribute("weatherVO", weatherVO);
+    model.addAttribute("emotions", emotions);
+    model.addAttribute("weatherVO", weathers);
 
     
     return "/diary/create"; // /templates/diary/create.html
@@ -150,11 +167,13 @@ public class DiaryCont {
           return "/diary/msg";
       }
   }
+
   
   
   @GetMapping(value="/read")
-  public String read(@RequestParam(name="diaryno", defaultValue="1") int diaryno, HttpSession session,
-    @RequestParam(name="now_page", defaultValue="1") int now_page, Model model) {
+  public String read(HttpSession session, Model model, 
+      @RequestParam(name="diaryno", defaultValue="1") int diaryno,
+      @RequestParam(name="now_page", defaultValue="1") int now_page) {
     
     
     // 일기 번호에 해당하는 일기 데이터 조회
@@ -163,7 +182,7 @@ public class DiaryCont {
     
     // 일기 번호에 해당하는 일러스트 데이터 조회
     List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
-
+    System.out.println(illustrationList);
     // List<DiaryVO> diaryList = diaryProc.read(diaryno);
     
     // 모델에 일기 데이터와 일러스트 목록 추가
@@ -184,11 +203,9 @@ public class DiaryCont {
       int memberno = (int) session.getAttribute("memberno");
       map.put("memberno", memberno);
       heartCnt = this.diaryGoodProc.heartCnt(map);
-      System.out.println("->memberno : " +memberno);
     }
     
-    System.out.println("-> public String read() heartCnt:" + heartCnt);
-    model.addAttribute(heartCnt);
+    model.addAttribute("heartCnt", heartCnt);
     //-----------------------------------------------------------------------------------
     
     
@@ -234,13 +251,19 @@ public class DiaryCont {
    * 
    */
   @PostMapping(value = "/delete")
-  public String deleteProcess(HttpSession session,
+  public String deleteProcess(HttpSession session, Model model, 
                               @RequestParam(name = "diaryno") int diaryno,
                               @RequestParam(name = "title", defaultValue = "") String title,
-                              @RequestParam(name = "date", defaultValue = "") String date,
+                              @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+                              @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
                               @RequestParam(name = "now_page", defaultValue = "1") int nowPage,
                               RedirectAttributes ra) {
       if (this.memberProc.isMemberAdmin(session)) {
+        
+        int startNum = (nowPage - 1) * record_per_page + 1;
+        int endNum = nowPage * record_per_page;
+        ArrayList<DiaryVO> diaryList = diaryProc.list_search_paging(title, startDate, endDate, startNum, endNum);
+        model.addAttribute("diaryList", diaryList);
           // 삭제할 Diary 조회
           DiaryVO diaryVO = this.diaryProc.read(diaryno);
 
@@ -251,10 +274,12 @@ public class DiaryCont {
               if (cnt == 1) {
                   // 삭제 성공 시 검색 조건 유지
                   ra.addAttribute("title", title);
-                  ra.addAttribute("date", date);
+                  ra.addAttribute("start_date", startDate);
+                  ra.addAttribute("end_date", endDate);
+                  ra.addAttribute("diaryList", diaryList);
 
                   // 마지막 페이지 처리 (빈 페이지 방지)
-                  int searchCount = this.diaryProc.list_search_count(title, date);
+                  int searchCount = diaryProc.countSearchResults(title, startDate, endDate);
                   if (searchCount % this.record_per_page == 0) {
                       nowPage = Math.max(nowPage - 1, 1); // 최소 페이지는 1
                   }
@@ -281,19 +306,29 @@ public class DiaryCont {
   @GetMapping(value = "/update/{diaryno}")
   public String update(HttpSession session, Model model, 
                        @PathVariable("diaryno") Integer diaryno, 
+                       @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+                       @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
                        @RequestParam(name = "title", defaultValue = "") String title,  
-                       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+                       @RequestParam(name = "now_page", defaultValue = "1") int nowPage) {
       if (this.memberProc.isMemberAdmin(session)) {
-          DiaryVO diaryVO = this.diaryProc.read(diaryno); // 수정할 데이터를 조회
-          model.addAttribute("diaryVO", diaryVO);
+        
+        int startNum = (nowPage - 1) * record_per_page + 1;
+        int endNum = nowPage * record_per_page;
+        
+        DiaryVO diaryVO = this.diaryProc.read(diaryno); // 수정할 데이터를 조회
+        ArrayList<DiaryVO> diaryList = diaryProc.list_search_paging(title, startDate, endDate, startNum, endNum);
+        
+        model.addAttribute("diaryVO", diaryVO);
+        model.addAttribute("title", title); // 검색어 유지
+        model.addAttribute("start_date", startDate); 
+        model.addAttribute("end_date", endDate); 
+        model.addAttribute("diaryList", diaryList); 
+        model.addAttribute("now_page", nowPage); // 현재 페이지 유지
 
-          model.addAttribute("title", title); // 검색어 유지
-          model.addAttribute("now_page", now_page); // 현재 페이지 유지
-
-          return "/diary/update"; // 수정 폼으로 이동
-      } else {
-          return "redirect:/member/login_cookie_need"; // 권한이 없으면 로그인 페이지로 리다이렉트
-      }
+        return "/diary/update"; // 수정 폼으로 이동
+    } else {
+        return "redirect:/member/login_cookie_need"; // 권한이 없으면 로그인 페이지로 리다이렉트
+    }
   }
   
 
