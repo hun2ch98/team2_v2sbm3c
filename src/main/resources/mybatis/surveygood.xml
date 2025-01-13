@@ -30,7 +30,7 @@
     WHERE surveyno = #{surveyno} AND memberno = #{memberno}
   </select>
   
-    <!-- PK 조회 -->
+  <!-- PK 조회 -->
   <select id="read" resultType="dev.mvc.surveygood.SurveygoodVO" parameterType="int">
     SELECT goodno, surveyno, memberno, rdate
     FROM surveygood

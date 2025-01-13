@@ -1,6 +1,7 @@
 package dev.mvc.participants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface PartProcInter {
   
@@ -29,6 +30,20 @@ public interface PartProcInter {
    * @return
    */
   public int delete(int pno);
+  
+  /**
+   * 조회
+   * @param goodno
+   * @return
+   */
+  public PartVO read(int pno);
+  
+  /**
+   * surveyno, memberno로 조회
+   * @param map
+   * @return
+   */
+  public PartVO readByitemmember(HashMap<String, Object> map);
   
   /**
    * 3개 조인
