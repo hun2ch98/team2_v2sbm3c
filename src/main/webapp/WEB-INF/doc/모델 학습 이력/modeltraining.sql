@@ -5,7 +5,7 @@ CREATE TABLE modeltraining (
 	trainingno	    NUMBER(10)	    NOT NULL,
 	name	        VARCHAR(100)	NOT NULL,
 	status	        VARCHAR(100)	NOT NULL,
-	accuracy	    VARCHAR(100)	NOT NULL,
+	accuracy	    NUMBER(5, 2)	NOT NULL,
 	rdate	        DATE	        NOT NULL,
 	notes	        VARCHAR(100)	NOT NULL,
 	st_time	        DATE	            NOT NULL,
@@ -37,6 +37,6 @@ CREATE SEQUENCE modeltraining_seq
 SELECT * FROM modeltraining;
 
 INSERT INTO modeltraining(trainingno, name, status, accuracy, rdate, notes, st_time, memberno)
-VALUES(modeltraining_seq.nextval,'child_edu_v1', '학습 중', '90%',sysdate, '놀이공원 간 아이 학습 내용', sysdate, 1);
+VALUES(modeltraining_seq.nextval,'child_edu_v1', '학습 중', '90',sysdate, '놀이공원 간 아이 학습 내용', sysdate, 1);
 
 COMMIT;
