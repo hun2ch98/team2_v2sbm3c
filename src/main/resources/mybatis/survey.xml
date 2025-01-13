@@ -31,7 +31,7 @@
       SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
       FROM survey
       WHERE is_continue = #{is_continue, jdbcType=VARCHAR}
-      ORDER BY surveyno DESC
+      ORDER BY surveyno ASC
       OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
   </select>
   
@@ -47,7 +47,7 @@
     SELECT *
     FROM (
         SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt, 
-               ROW_NUMBER() OVER (ORDER BY surveyno DESC) AS rnum
+               ROW_NUMBER() OVER (ORDER BY surveyno ASC) AS rnum
         FROM survey
         WHERE (#{is_continue} = '' OR is_continue LIKE '%' || #{is_continue} || '%')
     )

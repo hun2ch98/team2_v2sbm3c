@@ -88,6 +88,13 @@ public interface ItemDAOInter {
    * @return
    */
   public int delete_survey(int surveyno);
+  
+  /**
+   * 설문 참여 결과 조회
+   * @param itemno
+   * @return
+   */
+  public int count_result(int itemno);
 
 
 }

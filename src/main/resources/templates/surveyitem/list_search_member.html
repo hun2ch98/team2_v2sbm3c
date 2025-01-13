@@ -61,75 +61,9 @@
     }
   </script>
   
-  <!--
-  <script>
-    window.onload = function () {
-      const form = document.querySelector("form"); // 폼 요소 선택
-  
-      form.addEventListener("submit", function (event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-  
-        // 사용자가 선택한 설문 항목 확인
-        const selectedItem = document.querySelector("input[name='itemno']:checked");
-        if (!selectedItem) {
-          alert("항목을 선택해주세요!");
-          return;
-        }
-  
-        const surveyno = document.querySelector("input[name='surveyno']").value;
-        const itemno = document.querySelector("input[name='itemno']:checked").value;
-        const memberno = document.querySelector("input[name='memberno']")?.value;
-          
-        if (!memberno) {
-          alert("로그인이 필요합니다.");
-          window.location.href = "/member/login_cookie_need"; // 로그인 페이지로 이동
-          return;
-        }
-  
-        // 서버로 보낼 요청 데이터 생성
-        const requestData = { surveyno, itemno, memberno };
-        console.log(JSON.stringify({ surveyno, itemno, memberno }));
-  
-        // Fetch API를 이용한 POST 요청
-        fetch("/surveyitem/submit", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ surveyno, itemno, memberno }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("네트워크 응답에 문제가 있습니다.");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("surveyno:", surveyno, "itemno:", itemno, "memberno:", memberno);
-
-            if (data.status === "success") {
-              alert(data.message || "설문조사에 참여해 주셔서 감사합니다!");
-              window.location.href = "/survey/list_by_surveyno_search_paging"; // 목록 페이지로 이동
-            } else if (data.status === "error") {
-              alert(data.message || "설문조사 참여 중 문제가 발생했습니다.");
-              if (data.redirect) {
-                window.location.href = data.redirect; // 로그인 페이지로 이동
-              }
-            }
-          })
-          .catch((error) => {
-            console.error("에러 발생:", error);
-            alert("설문조사 참여 중 문제가 발생했습니다. 다시 시도해주세요.");
-          });
-      });
-    };
-  </script>
--->
-
-
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
-    설문조사 항목 > 
+    설문조사 > 
     <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
   </div>
 
@@ -142,22 +76,18 @@
   <div class="menu_line"></div>
   
   <!-- 회원 모드 -->
-  <div th:if="${session.grade != 'admin'}">
-    <form method="post">
+  <div>
+    <form method="post" action="/surveyitem/finish">
       <input type="hidden" name="itemno" th:value="${itemno}" />
       <table class="table table-hover" style="width: 100%;">
         <colgroup>
           <col style='width: 10%;'/>
-          <col style='width: 10%;'/>
-          <col style='width: 65%;'/>
-          <col style='width: 15%;'/>
+          <col style='width: 90%;'/>
         </colgroup>
         <thead>
           <tr>
             <th class="th_bs">선택</th>
-            <th class="th_bs">항목 번호</th>
             <th class="th_bs">설문 조사 항목</th>
-            <th class="th_bs">선택 인원</th>
           </tr>
         </thead>
         <tbody>
@@ -168,15 +98,23 @@
             <td align="center" valign="middle">
               <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" th:value="${itemVO.itemno}" required />
             </td>
-            <td th:text="${itemVO.itemno}"></td>
-            <td th:text="${itemVO.item}"></td>
-            <td th:text="${itemVO.item_cnt}"></td>
+            <td class="td_bs" th:text="${itemVO.item}"></td>
           </tr>
         </tbody>
       </table>
-      <div style="text-align: center; margin-top: 20px;">
-        <button type="submit" class="btn btn-primary">참여</button>
+      <div style="text-align: center; margin-top: 15px;">
+        <!-- 참여 버튼 -->
+        <button type="submit" class="btn btn-primary" style="margin-right: 10px;">참여</button>
+
+        <!-- 결과 버튼 -->
+        <a th:href="@{/surveyitem/result(surveyno=${surveyno})}" class="btn btn-secondary">결과</a>
       </div>
+
+      <!--
+      <div style="text-align: center; margin-top: 15px;">
+        <button type="submit" class="btn btn-primary">결과 차트</button>
+      </div>
+      -->
     </form>
   </div>
   

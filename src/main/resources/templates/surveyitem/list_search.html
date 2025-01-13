@@ -60,77 +60,13 @@
       );
     }
   </script>
-  
-  <script>
-    window.onload = function () {
-      const form = document.querySelector("form"); // 폼 요소 선택
-  
-      form.addEventListener("submit", function (event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-  
-        // 사용자가 선택한 설문 항목 확인
-        const selectedItem = document.querySelector("input[name='itemno']:checked");
-        if (!selectedItem) {
-          alert("항목을 선택해주세요!");
-          return;
-        }
-  
-        const surveyno = document.querySelector("input[name='surveyno']").value;
-        const itemno = document.querySelector("input[name='itemno']:checked").value;
-        const memberno = document.querySelector("input[name='memberno']")?.value;
-          
-        if (!memberno) {
-          alert("로그인이 필요합니다.");
-          window.location.href = "/member/login_cookie_need"; // 로그인 페이지로 이동
-          return;
-        }
-  
-        // 서버로 보낼 요청 데이터 생성
-        const requestData = { surveyno, itemno, memberno };
-        console.log(JSON.stringify({ surveyno, itemno, memberno }));
-  
-        // Fetch API를 이용한 POST 요청
-        fetch("/surveyitem/submit", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ surveyno, itemno, memberno }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("네트워크 응답에 문제가 있습니다.");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("surveyno:", surveyno, "itemno:", itemno, "memberno:", memberno);
-
-            if (data.status === "success") {
-              alert(data.message || "설문조사에 참여해 주셔서 감사합니다!");
-              window.location.href = "/survey/list_by_surveyno_search_paging"; // 목록 페이지로 이동
-            } else if (data.status === "error") {
-              alert(data.message || "설문조사 참여 중 문제가 발생했습니다.");
-              if (data.redirect) {
-                window.location.href = data.redirect; // 로그인 페이지로 이동
-              }
-            }
-          })
-          .catch((error) => {
-            console.error("에러 발생:", error);
-            alert("설문조사 참여 중 문제가 발생했습니다. 다시 시도해주세요.");
-          });
-      });
-    };
-  </script>
-
-
 
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
-    설문조사 항목 > 
+    설문조사 > 
     <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
-    <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
+    <span th:if="${word != null and word != ''}" th:text="|${word} ${search_count} 건|"></span>
+    
   </div>
 
   <aside class="aside_right">
@@ -170,10 +106,10 @@
           <td colspan="4">등록된 항목이 없습니다.</td>
         </tr>
         <tr th:each="itemVO : ${list}">
-          <td th:text="${itemVO.itemno}"></td>
-          <td th:text="${itemVO.item}"></td>
-          <td th:text="${itemVO.item_seq}"></td>
-          <td th:text="${itemVO.item_cnt}"></td>
+          <td class="td_bs" th:text="${itemVO.itemno}"></td>
+          <td class="td_bs" th:text="${itemVO.item}"></td>
+          <td class="td_bs" th:text="${itemVO.item_seq}"></td>
+          <td class="td_bs" th:text="${itemVO.item_cnt}"></td>
           <td>
             <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
               <img src="/item/images/update.png" class="icon" title="수정">
