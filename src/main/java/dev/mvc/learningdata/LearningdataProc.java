@@ -110,7 +110,7 @@ public class LearningdataProc implements LearningdataProcInter{
       int _now_page = (now_grp - 1) * page_per_block;
       if (now_grp >= 2) { // 현재 그룹번호가 2이상이면 페이지수가 11페이지 이상임으로 이전 그룹으로 갈수 있는 링크 생성
 
-        str.append("<span class='span_box_1'><A href='" + ques + "?ethical=" + ethical + "&now_page=" + _now_page
+        str.append("<span class='span_box_1'><A href='" + ethical + "?ques=" + ques + "&now_page=" + _now_page
             + "'>이전</A></span>");
       }
       
@@ -124,7 +124,7 @@ public class LearningdataProc implements LearningdataProcInter{
           str.append("<span class='span_box_2'>" + i + "</span>"); // 현재 페이지, 강조
         } else {
           // 현재 페이지가 아닌 페이지는 이동이 가능하도록 링크를 설정
-          str.append("<span class='span_box_1'><A href='" + ques + "?ethical=" + ethical + "&now_page=" + i + "'>" + i
+          str.append("<span class='span_box_1'><A href='" + ethical + "?ques=" + ques + "&now_page=" + i + "'>" + i
               + "</A></span>");
         }
       }
@@ -136,7 +136,7 @@ public class LearningdataProc implements LearningdataProcInter{
       // 현재 페이지 25일경우 -> 현재 3그룹: (3 * 10) + 1 = 4그룹의 시작페이지 31
       _now_page = (now_grp * page_per_block) + 1; // 최대 페이지수 + 1
       if (now_grp < total_grp) {
-        str.append("<span class='span_box_1'><A href='" + ques + "?ethical=" + ethical + "&now_page=" + _now_page
+        str.append("<span class='span_box_1'><A href='"  + ethical + "?ques=" + ques + "&now_page=" + _now_page
             + "'>다음</A></span>");
       }
       str.append("</div>");
