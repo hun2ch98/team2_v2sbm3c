@@ -87,7 +87,7 @@ public interface ItemProcInter {
    * @param surveyno
    * @return
    */
-  public int count_survey(int surveyno);
+  public int count_survey(HashMap<String, Object> map);
   
   /**
    * 특정 레코드 삭제
