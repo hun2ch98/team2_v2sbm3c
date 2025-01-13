@@ -71,9 +71,23 @@ public class SurveygoodCont {
    * @return
    */
   // http://localhost:9091/cate/list_all
+//  @GetMapping(value = "/list_all")
+//  public String list_all(Model model) {
+//    ArrayList<SurveygoodVO> list = this.surveygoodProc.list_all();
+//    model.addAttribute("list", list);
+//
+//    return "/surveygood/list_all"; // /templates/calendar/list_all.html
+//  }
+  
+  /**
+   * 목록
+   * @param model
+   * @return
+   */
+  // http://localhost:9091/cate/list_all
   @GetMapping(value = "/list_all")
   public String list_all(Model model) {
-    ArrayList<SurveygoodVO> list = this.surveygoodProc.list_all();
+    ArrayList<SurveySurveygoodMemberVO> list = this.surveygoodProc.list_all_join();
     model.addAttribute("list", list);
 
     return "/surveygood/list_all"; // /templates/calendar/list_all.html

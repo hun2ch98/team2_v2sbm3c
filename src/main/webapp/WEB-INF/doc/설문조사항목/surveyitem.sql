@@ -85,7 +85,9 @@ DELETE FROM surveyitem;
 UPDATE surveyitem
 SET item_cnt = 0
 WHERE itemno = 17;
-
+SELECT itemno, surveyno, item_seq, item, item_cnt
+    FROM surveyitem
+    WHERE itemno = 1;
 
 COMMIT;
 SELECT * FROM surveyitem;
@@ -154,4 +156,23 @@ WHERE
 ORDER BY 
     i.itemno ASC;
 
+DELETE FROM surveyitem
+WHERE surveyno=14;
+
+-- JOIN, 어느 공지사항을 누가 추천 했는가?
+SELECT itemno, surveyno, item_seq, item, item_cnt
+FROM noticegood
+ORDER BY noticegoodno DESC;
+
+-- 테이블 2개 join
+SELECT i.itemno, i.surveyno, i.item_seq, i.item, i.item_cnt, s.topic
+FROM survey s, surveyitem i
+WHERE s.surveyno = i.surveyno
+ORDER BY itemno DESC;
+
+-- 테이블 3개 join, as 사용시 컬럼명 변경 가능: c.title as n_title
+SELECT i.itemno, i.surveyno, i.item_seq, i.item, i.item_cnt, s.topic as s_topic, m.memberno, m.id, m.name
+FROM notice c, noticegood r, member m
+WHERE c.noticeno = r.noticeno AND r.memberno = m.memberno
+ORDER BY noticegoodno DESC;
         

@@ -99,6 +99,8 @@ DELETE FROM survey;
 
 DELETE FROM survey WHERE topic='교육적 가치';
 
+DELETE FROM survey WHERE surveyno=14;
+
 COMMIT;
 
 -- ----------------------------------------------------------------------------------------------------
@@ -164,6 +166,7 @@ WHERE surveyno = 14;
 
 -- 추천
 UPDATE survey SET goodcnt=goodcnt+1 WHERE surveyno=12;
+
 
 
 

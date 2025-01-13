@@ -14,27 +14,27 @@
           다시 시도해주세요.
         </div>
         <div th:case="'update_success'">
-          <span class="span_success">카테고리 수정에 성공했습니다.</span><br>
-          수정된 카테고리: <span th:text="${name}"></span> <span th:text="${namesub}"></span>
+          <span class="span_success">설문조사 주제 수정에 성공했습니다.</span><br>
+          수정된 설문조사 주제: <span th:text="${topic}"></span> <span th:text="${topicsub}"></span>
         </div>
         <div th:case="'update_fail'">
-          <span class="span_fail">카테고리 수정에 실패했습니다.</span><br>
-          수정 실패된 카테고리: <span th:text="${name}"></span> <span th:text="${namesub}"></span>
+          <span class="span_fail">설문조사 주제 수정에 실패했습니다.</span><br>
+          수정 실패된 설문조사 주제: <span th:text="${topic}"></span> <span th:text="${topicsub}"></span>
         </div>
         <div th:case="'delete_success'">
-          <span class="span_success">카테고리 삭제에 성공했습니다.</span><br>
-          삭제된 카테고리: <span th:text="${name}"></span>
-          <span th:if="${namesub != '-'}" th:text="' - ' + ${namesub}"></span>
+          <span class="span_success">설문조사 주제 삭제에 성공했습니다.</span><br>
+          삭제된 설문조사 주제: <span th:text="${topic}"></span>
+          <span th:if="${topicsub != '-'}" th:text="' - ' + ${topicsub}"></span>
         </div>
         <div th:case="'delete_fail'">
-          <span class="span_fail">카테고리 삭제에 실패했습니다.</span><br>
-          삭제 실패된 카테고리: <span th:text="${name}"></span>
-          <span th:if="${namesub != '-'}" th:text="' - ' + ${namesub}"></span>
+          <span class="span_fail">설문조사 주제 삭제에 실패했습니다.</span><br>
+          삭제 실패된 설문조사 주제: <span th:text="${topic}"></span>
+          <span th:if="${topicsub != '-'}" th:text="' - ' + ${topicsub}"></span>
         </div>
       </div>
       <div>
         <button type="button" th:if="${cnt == 0}" onclick="history.back()" class="btn btn-secondary btn-sm">다시 시도</button>
-        <button type="button" th:if="${cnt != 0}" onclick="location.href='./list_search'" class="btn btn-secondary btn-sm">전체 목록</button>
+        <button type="button" th:if="${cnt != 0}" onclick="location.href='./list_by_surveyno_search_paging'" class="btn btn-secondary btn-sm">전체 목록</button>
       </div>
     </fieldset>
   </div>

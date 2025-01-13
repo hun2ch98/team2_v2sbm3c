@@ -49,4 +49,55 @@
     SET title = #{title}, content = #{content}
     WHERE noticeno = #{noticeno}
   </update>
+
+  <!-- 공지사항(notice) 부모 삭제 --> 
+  <delete id="delete" parameterType="int">
+    DELETE FROM notice WHERE noticeno = #{noticeno}
+  </delete>
+  
+  <!-- 공지사항 검색 목록 + 페이징 -->
+  <select id="list_search_paging" parameterType="dev.mvc.dto.SearchDTO" resultType="dev.mvc.notice.NoticeVO" >
+    SELECT *
+      FROM(
+        SELECT a.*, ROWNUM rnum
+        FROM(
+          SELECT *
+          FROM notice
+          <where>
+            <if test="searchType != null and keyword != null">
+              <choose>
+                <when test="searchType == 'title'">
+                  AND title LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="searchType == 'content'">
+                  AND content LIKE '%' || #{keyword} || '%'
+                </when>
+              </choose>
+            </if>
+          </where>
+          ORDER BY noticeno DESC
+         ) a
+         WHERE ROWNUM &lt;= #{size}
+        )
+        WHERE rnum &gt; #{offset}
+  </select>
+  
+  <!-- 공지사항 검색 레코드 갯수 -->
+  <select id="list_search_count" parameterType="dev.mvc.dto.SearchDTO" resultType="int">
+    SELECT COUNT(*)
+    FROM notice
+    <where>
+      <if test="searchType != null and keyword != null">
+        <choose>
+          <when test = "searchType == 'title'">
+            AND title LIKE '%' || #{keyword} || '%'
+          </when>
+          <when test = "searchType == 'content'">
+            AND content LIKE '%' || #{keyword} || '%'
+          </when>
+        </choose>
+      </if>
+    </where>
+  </select>
+  
 </mapper>

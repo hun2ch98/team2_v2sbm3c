@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component("dev.mvc.bannedwordsgood.BannedwordsgoodProc")
-public class BannedwordsProc implements BannedwordsgoodProcInter {
+public class BannedwordsgoodProc implements BannedwordsgoodProcInter {
 	@Autowired
 	BannedwordsgoodDAOInter bannedwordsgoodDAO;
 	
@@ -42,9 +42,17 @@ public class BannedwordsProc implements BannedwordsgoodProcInter {
 		return bannedwordsgoodVO;
     }
 	
-	public BannedwordsgoodVO read(HashMap<String, Object> map) {
-		BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodDAO.read(map);
+	@Override
+	public BannedwordsgoodVO readByWordnoMemeberno(HashMap<String, Object> map) {
+		BannedwordsgoodVO bannedwordsgoodVO = this.bannedwordsgoodDAO.readByWordnoMemeberno(map);
 		return bannedwordsgoodVO;
 	}
+	
+	@Override
+	public ArrayList<BannedwordsBannedwordsgoodMemberVO> list_all_join() {
+		ArrayList<BannedwordsBannedwordsgoodMemberVO> list = this.bannedwordsgoodDAO.list_all_join();
+		return list;
+	}
+	
 	
 }

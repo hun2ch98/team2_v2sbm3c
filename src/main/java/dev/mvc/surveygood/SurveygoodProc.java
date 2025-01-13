@@ -34,4 +34,22 @@ public class SurveygoodProc implements SurveygoodProcInter {
     int cnt = this.surveygoodDAO.heartCnt(map);
     return cnt;
   }
+  
+  @Override
+  public SurveygoodVO read(int goodno) {
+    SurveygoodVO surveygoodVO = this.surveygoodDAO.read(goodno);
+    return surveygoodVO;
+  }
+  
+  @Override
+  public SurveygoodVO readBysurveymember(HashMap<String, Object> map) {
+    SurveygoodVO surveygoodVO = this.surveygoodDAO.readBysurveymember(map);
+    return surveygoodVO;
+  }
+  
+  @Override
+  public ArrayList<SurveySurveygoodMemberVO> list_all_join() {
+    ArrayList<SurveySurveygoodMemberVO> list = this.surveygoodDAO.list_all_join();
+    return list;
+  }
 }
