@@ -1,4 +1,4 @@
-package dev.mvc.modeltraining;
+package dev.mvc.score;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,11 +21,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping(value = "/modeltraining")
-public class ModeltrainingCont {
+@RequestMapping(value = "/score")
+public class ScoreCont {
   @Autowired
-  @Qualifier("dev.mvc.modeltraining.ModeltrainingProc")
-  private ModeltrainingProcInter modeltrainingProc;
+  @Qualifier("dev.mvc.score.ScoreProc")
+  private ScoreProcInter scoreProc;
   
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") 
@@ -38,10 +38,10 @@ public class ModeltrainingCont {
   public int page_per_block = 10;
 
   /** 페이징 목록 주소 */
-  private String list_file_name = "/modeltraining/list_by_trainingno_search_paging";
+  private String list_file_name = "/score/list_by_scoreno_search_paging";
   
-  public ModeltrainingCont() {
-    System.out.println("-> ModeltrainingCont created.");
+  public ScoreCont() {
+    System.out.println("-> ScoreCont created.");
   }
   
   /**
@@ -57,29 +57,29 @@ public class ModeltrainingCont {
   }
   
   /**
-   * 금지 단어 등록 폼
+   * 평점 등록 폼
    * @param model
-   * @param ModeltrainingVO
+   * @param scoreVO
    * @return
    */
   @GetMapping(value = "/create")
   public String create(Model model,
 		  HttpSession session,
-      @ModelAttribute("modeltrainingVO") ModeltrainingVO modeltrainingVO) { 
+      @ModelAttribute("scoreVO") ScoreVO scoreVO) { 
 	
 	  int memberno =(int) session.getAttribute("memberno");
-	  modeltrainingVO.setMemberno(memberno); 
-	  model.addAttribute("modeltrainingVO", modeltrainingVO); // 수정된 ModeltrainingVO 전달
+	  scoreVO.setMemberno(memberno); 
+	  model.addAttribute("scoreVO", scoreVO); // 수정된 scoreVO 전달
 
-	  return "/modeltraining/create";
+	  return "/score/create";
   }
   
   /**
-   * 금지 단어 등록 처리
+   * 평점 등록 처리
    * @param request
    * @param session
    * @param model
-   * @param ModeltrainingVO
+   * @param scoreVO
    * @param ra
    * @return
    */
@@ -87,24 +87,24 @@ public class ModeltrainingCont {
   public String create(HttpServletRequest request,
                        HttpSession session,
                        Model model,
-                       @ModelAttribute("ModeltrainingVO") ModeltrainingVO modeltrainingVO,
+                       @ModelAttribute("scoreVO") ScoreVO scoreVO,
                        RedirectAttributes ra) {
 	  int memberno = 1; 
-	  modeltrainingVO.setMemberno(memberno); 
+	  scoreVO.setMemberno(memberno); 
   
-	  int cnt = this.modeltrainingProc.create(modeltrainingVO);
+	  int cnt = this.scoreProc.create(scoreVO);
 	  if (cnt == 1) {
-		  ra.addAttribute("modeltrainingVO", modeltrainingVO.getTrainingno()); 
+		  ra.addAttribute("scoreVO", scoreVO.getScoreno()); 
 		  ra.addAttribute("now_page", 1); 
-		  return "redirect:/modeltraining/list_by_trainingno_search_paging"; 
+		  return "redirect:/score/list_by_scoreno_search_paging"; 
 	  } else {
 		  ra.addFlashAttribute("code", "create_fail");
-		  return "redirect:/modeltraining/msg"; 
+		  return "redirect:/score/msg"; 
 	  }
   }
     
 //  /**
-//   * 금지 단어 전체 목록(관리자)
+//   * 평점 전체 목록(관리자)
 //   * @param session
 //   * @param model
 //   * @return
@@ -112,26 +112,25 @@ public class ModeltrainingCont {
 //  @GetMapping(value = "/list_all")
 //  public String list_all(HttpSession session, Model model) {
 //    
-//	    ArrayList<ModeltrainingVO> list = this.ModeltrainingProc.list_all(); // 금지 단어 모든 목록
+//	    ArrayList<scoreVO> list = this.scoreProc.list_all(); // 평점 모든 목록
 //    
 //	    model.addAttribute("list", list);
-//	    return "/Modeltraining/list_all";
+//	    return "/score/list_all";
 //  }
 
   /**
    * 유형 3
-   * 금지 단어별 목록 + 검색 + 페이징
+   * 평점별 목록 + 검색 + 페이징
    * 
    * @return
    */
-  @GetMapping(value = "/list_by_trainingno_search_paging")
-  public String list_by_trainingno_search_paging(
+  @GetMapping(value = "/list_by_scoreno_search_paging")
+  public String list_by_scoreno_search_paging(
       HttpSession session,
       Model model,
-      @ModelAttribute("modeltrainingVO") ModeltrainingVO modeltrainingVO,
-      @RequestParam(name = "trainingno", defaultValue = "0") int trainingno,
-      @RequestParam(name = "name", defaultValue = "") String name,
-      @RequestParam(name = "notes", defaultValue = "") String notes,
+      @ModelAttribute("scoreVO") ScoreVO scoreVO,
+      @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
+      @RequestParam(name = "jumsu", defaultValue = "") String jumsuStr,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
       int record_per_page = 10;
@@ -145,32 +144,44 @@ public class ModeltrainingCont {
           memberVO.setMemberno(0);
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
-      name = Tool.checkNull(name).trim();
-      notes = Tool.checkNull(notes).trim();
-      
+
+      // jumsu 값 처리: 빈 문자열이면 0.0f로 처리하고, 그 외에는 0.5 단위로 확인
+      float jumsu = 0.0f; // 기본값 0.0f
+      if (!jumsuStr.isEmpty()) {
+          try {
+              jumsu = Float.parseFloat(jumsuStr.trim());
+              // 0.5 단위 체크
+              if (jumsu % 0.5 != 0 || jumsu > 5) {
+                  model.addAttribute("message", "평점은 0.5단위로 입력해야 하며 최대 5점까지 가능합니다.");
+                  return "/score/list_by_scoreno_search_paging"; // 입력 오류 메시지 출력 후 종료
+              }
+          } catch (NumberFormatException e) {
+              model.addAttribute("message", "유효하지 않은 평점 값입니다.");
+              return "/score/list_by_scoreno_search_paging"; // 예외 발생 시 오류 메시지 출력 후 종료
+          }
+      }
+
       model.addAttribute("memberVO", memberVO);
-      model.addAttribute("trainingno", trainingno);
-      model.addAttribute("name", name);
-      model.addAttribute("notes", notes);
+      model.addAttribute("scoreno", scoreno);
+      model.addAttribute("jumsu", jumsu);
       model.addAttribute("now_page", now_page);
 
       HashMap<String, Object> map = new HashMap<>();
       map.put("memberno", memberno);
-      map.put("name", name);
-      map.put("notes", notes);
+      map.put("jumsu", jumsu);
       map.put("now_page", now_page);
       map.put("startRow", startRow);
       map.put("endRow", endRow);
 
-      ArrayList<ModeltrainingVO> list = this.modeltrainingProc.list_by_trainingno_search_paging(map);
+      ArrayList<ScoreVO> list = this.scoreProc.list_by_scoreno_search_paging(map);
       if (list == null || list.isEmpty()) {
           model.addAttribute("message", "게시물이 없습니다.");
       } else {
-          model.addAttribute("list", list);          
+          model.addAttribute("list", list);
       }
 
-      int search_count = this.modeltrainingProc.count_by_trainingno_search(map);
-      String paging = this.modeltrainingProc.pagingBox(now_page, name, notes, "/modeltraining/list_by_trainingno_search_paging", search_count,
+      int search_count = this.scoreProc.count_by_scoreno_search(map);
+      String paging = this.scoreProc.pagingBox(now_page, jumsu, memberno, search_count,
           record_per_page, page_per_block);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
@@ -179,41 +190,40 @@ public class ModeltrainingCont {
       int no = search_count - ((now_page - 1) * record_per_page);
       model.addAttribute("no", no);
 
-      return "/modeltraining/list_by_trainingno_search_paging"; // /templates/modeltraining/list_by_trainingno_search_paging.html
+      return "/score/list_by_scoreno_search_paging"; // /templates/score/list_by_scoreno_search_paging.html
   }
 
-  
   /**
-   * 금지 단어 조회
+   * 평점 조회
    * @return
    */
   @GetMapping(value = "/read")
   public String read(HttpSession session, Model model,
-      @RequestParam(name = "trainingno", defaultValue = "0") int trainingno,
+      @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
-    ModeltrainingVO modeltrainingVO = this.modeltrainingProc.read(trainingno);
+	ScoreVO scoreVO = this.scoreProc.read(scoreno);
    
-    model.addAttribute("modeltrainingVO", modeltrainingVO);
+    model.addAttribute("scoreVO", scoreVO);
     
-    MemberVO memberVO = this.memberProc.read(modeltrainingVO.getMemberno());
+    MemberVO memberVO = this.memberProc.read(scoreVO.getMemberno());
     model.addAttribute("memberVO", memberVO);
     
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
     
-    return "/modeltraining/read";
+    return "/score/read";
   }
   
   /**
-   * 금지 단어 수정 폼
+   * 평점 수정 폼
    * @return
    */
   @GetMapping(value = "/update_text")
   public String update_text(HttpSession session,
       Model model, 
-      @RequestParam(name = "trainingno", defaultValue = "0") int trainingno,
+      @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
       RedirectAttributes ra,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
@@ -223,16 +233,14 @@ public class ModeltrainingCont {
     
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
 
-    	ModeltrainingVO modeltrainingVO = this.modeltrainingProc.read(trainingno);
-//	    	System.out.println("-> ModeltrainingVO.gettrainingno() : " + ModeltrainingVO.gettrainingno());
-        model.addAttribute("modeltrainingVO", modeltrainingVO);
-        model.addAttribute("st_time", modeltrainingVO.getSt_time()); 
-        model.addAttribute("end_time", modeltrainingVO.getEnd_time()); 
+    	ScoreVO scoreVO = this.scoreProc.read(scoreno);
+//	    	System.out.println("-> scoreVO.getscoreno() : " + scoreVO.getscoreno());
+        model.addAttribute("scoreVO", scoreVO);
         
-        MemberVO memberVO = this.memberProc.read(modeltrainingVO.getMemberno());
+        MemberVO memberVO = this.memberProc.read(scoreVO.getMemberno());
         model.addAttribute("memberVO", memberVO);
         
-        return "/modeltraining/update_text";
+        return "/score/update_text";
     } else {
         ra.addAttribute("url", "/member/login_cookie_need"); // /templates/diary/login_cookie_need.html
 //	        return "redirect:/contents/msg"; // @GetMapping(value = "/read")
@@ -241,55 +249,74 @@ public class ModeltrainingCont {
   }
   
   /**
-   * 금지 단어 수정 처리
+   * 평점 수정 처리
    * @return
    */
   @PostMapping(value = "/update_text")
   public String update_text(
       HttpSession session,
       Model model,
-      @ModelAttribute("modeltrainingVO") ModeltrainingVO modeltrainingVO,
+      @ModelAttribute("scoreVO") ScoreVO scoreVO,
       RedirectAttributes ra,
-      @RequestParam(name = "trainingno", defaultValue = "") int trainingno,
+      @RequestParam(name = "scoreno", defaultValue = "") int scoreno,
       @RequestParam(name = "search_word", defaultValue = "") String search_word,
       @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
-	  
+
       // Redirect 시 검색어 및 현재 페이지를 유지하기 위한 파라미터 추가
       ra.addAttribute("word", search_word);
       ra.addAttribute("now_page", now_page);
       
-      // reason 값 검증
-      if (modeltrainingVO.getName() == null || modeltrainingVO.getName().trim().isEmpty()) {
-        ra.addFlashAttribute("message", "이유는 필수 입력 사항입니다.");
-        ra.addFlashAttribute("code", "update_fail");
-        return "redirect:/modeltraining/msg"; // 실패 시 msg 페이지로 이동
+      // 평점 값 검증 (jumsu가 0.5 단위로 입력되었는지 확인)
+      if (scoreVO.getJumsu() == null || scoreVO.getJumsu().trim().isEmpty()) {
+          ra.addFlashAttribute("message", "평점은 필수 입력 사항입니다.");
+          ra.addFlashAttribute("code", "update_fail");
+          return "redirect:/score/msg"; // 실패 시 msg 페이지로 이동
       }
       
-      // 금지 단어 글 수정 처리
+      Float jumsu = null;
       try {
-        int cnt = this.modeltrainingProc.update_text(modeltrainingVO); // 금지 단어 글 수정
-        if (cnt > 0) { // 수정 성공
-          ra.addAttribute("trainingno", modeltrainingVO.getTrainingno());
-          return "redirect:/modeltraining/read"; // 성공 시 게시글 조회 페이지로 이동
-        } else { // 수정 실패
-          ra.addFlashAttribute("message", "금지 단어 글 수정에 실패했습니다.");
+          // 문자열로 된 평점 값을 Float로 변환
+          jumsu = Float.parseFloat(scoreVO.getJumsu().trim());
+          // 0.5단위 체크
+          if (jumsu % 0.5 != 0 || jumsu > 5) {
+              ra.addFlashAttribute("message", "평점은 0.5단위로 입력해야 하며 최대 5점까지 가능합니다.");
+              ra.addFlashAttribute("code", "update_fail");
+              return "redirect:/score/msg"; // 유효하지 않은 평점 입력 시
+          }
+      } catch (NumberFormatException e) {
+          ra.addFlashAttribute("message", "유효하지 않은 평점 값입니다.");
           ra.addFlashAttribute("code", "update_fail");
-          return "redirect:/modeltraining/msg"; // 실패 시 msg 페이지로 이동
-        }
+          return "redirect:/score/msg"; // 예외 발생 시 오류 처리
+      }
+
+      // scoreVO에 검증된 jumsu 값 설정
+      scoreVO.setJumsu(String.valueOf(jumsu));
+
+      // 평점 글 수정 처리
+      try {
+          int cnt = this.scoreProc.update_text(scoreVO); // 평점 글 수정
+          if (cnt > 0) { // 수정 성공
+              ra.addAttribute("scoreno", scoreVO.getScoreno());
+              return "redirect:/score/read"; // 성공 시 게시글 조회 페이지로 이동
+          } else { // 수정 실패
+              ra.addFlashAttribute("message", "평점 글 수정에 실패했습니다.");
+              ra.addFlashAttribute("code", "update_fail");
+              return "redirect:/score/msg"; // 실패 시 msg 페이지로 이동
+          }
       } catch (Exception e) {
-        e.printStackTrace();
-        ra.addFlashAttribute("message", "금지 단어 글 수정 중 오류가 발생했습니다.");
-        ra.addFlashAttribute("code", "update_fail");
-        return "redirect:/modeltraining/msg"; // 오류 발생 시 msg 페이지로 이동
-    }
+          e.printStackTrace();
+          ra.addFlashAttribute("message", "평점 글 수정 중 오류가 발생했습니다.");
+          ra.addFlashAttribute("code", "update_fail");
+          return "redirect:/score/msg"; // 오류 발생 시 msg 페이지로 이동
+      }
   }
-  
+
   /**
-   * 금지 단어 삭제 폼
+   * 평점 삭제 폼
    * @param session
    * @param model
    * @param ra
-   * @param trainingno
+   * @param scoreno
    * @param word
    * @param now_page
    * @return
@@ -297,28 +324,28 @@ public class ModeltrainingCont {
   @GetMapping(value = "/delete")
   public String delete(HttpSession session, Model model,
          RedirectAttributes ra,
-         @RequestParam(name = "trainingno", defaultValue = "0") int trainingno,
+         @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
          @RequestParam(name = "memberno", defaultValue = "0") int memberno,
          @RequestParam(name = "word", defaultValue = "") String word,
          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-		  model.addAttribute("trainingno", trainingno);
+		  model.addAttribute("scoreno", scoreno);
 		  model.addAttribute("word", word);
 		  model.addAttribute("now_page", now_page);
 		    
-		  ModeltrainingVO modeltrainingVO = this.modeltrainingProc.read(trainingno);
-		  model.addAttribute("modeltrainingVO", modeltrainingVO);
+		  ScoreVO scoreVO = this.scoreProc.read(scoreno);
+		  model.addAttribute("scoreVO", scoreVO);
 		  
-		  MemberVO  memberVO = this.memberProc.read(modeltrainingVO.getMemberno());
+		  MemberVO  memberVO = this.memberProc.read(scoreVO.getMemberno());
 		  model.addAttribute("memberVO", memberVO);
 		    
-		  return "/modeltraining/delete"; // forward
+		  return "/score/delete"; // forward
 	
   }
   
   /**
-   * 금지 단어 삭제 처리
+   * 평점 삭제 처리
    * @param ra
-   * @param trainingno
+   * @param scoreno
    * @param word
    * @param now_page
    * @return
@@ -326,11 +353,11 @@ public class ModeltrainingCont {
   @PostMapping(value = "/delete")
   public String delete(RedirectAttributes ra,
 	  @RequestParam(name="memberno", defaultValue="0") int memberno, 
-      @RequestParam(name = "trainingno", defaultValue = "0") int trainingno,
+      @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
-    this.modeltrainingProc.delete(trainingno); // DBMS 삭제
+    this.scoreProc.delete(scoreno); // DBMS 삭제
     
     // -------------------------------------------------------------------------------------
     // 마지막 페이지의 마지막 레코드 삭제시의 페이지 번호 -1 처리
@@ -347,8 +374,7 @@ public class ModeltrainingCont {
     ra.addAttribute("word", word);
     ra.addAttribute("now_page", now_page);
     
-    return "redirect:/modeltraining/list_by_trainingno_search_paging";
+    return "redirect:/score/list_by_scoreno_search_paging";
   }
   
 }
-
