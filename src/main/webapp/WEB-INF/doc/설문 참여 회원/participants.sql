@@ -69,6 +69,10 @@ WHERE pno = 5;
 
 COMMIT;
 
+UPDATE surveyitem
+SET item_cnt = item_cnt + 1
+WHERE itemno = 3
+
 SELECT COUNT (*) as cnt
 FROM participants
 WHERE itemno=1 AND memberno =2;
