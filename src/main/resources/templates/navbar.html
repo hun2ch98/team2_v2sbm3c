@@ -112,11 +112,11 @@
                 
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="모델 학습 이력">                                                            
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="모델학습이력">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/modeltrainging/create|}">모델 학습 이력 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/modeltrainging/list_by_trainingno_search_paging?is_continue=${is_continue ?: ''}|}">모델 학습 이력 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/modeltraining/create|}">모델 학습 이력 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/modeltraining/list_by_trainingno_search_paging?is_continue=${is_continue ?: ''}|}">모델 학습 이력 목록</a></li>
                     </ul>
                 </li>
                 
