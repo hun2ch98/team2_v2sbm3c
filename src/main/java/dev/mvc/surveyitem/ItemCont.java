@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
+import dev.mvc.participants.PartProcInter;
+import dev.mvc.participants.PartVO;
 import dev.mvc.survey.Survey;
 import dev.mvc.survey.SurveyProcInter;
 import dev.mvc.survey.SurveyVO;
@@ -49,6 +51,10 @@ public class ItemCont {
   @Autowired
   @Qualifier("dev.mvc.surveygood.SurveygoodProc")
   SurveygoodProcInter surveygoodProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.participants.PartProc")
+  private PartProcInter partProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 5;
@@ -289,14 +295,14 @@ public class ItemCont {
 //        model.addAttribute("list_t", list_t);
 
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
-        System.out.println("-> listsize: " + list.size());
+//        System.out.println("-> listsize: " + list.size());
         model.addAttribute("list", list);
         
         // --------------------------------------------------------------------------------------
         // 페이지 번호 목록 생성
         // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(word);
-        System.out.println("->search_count : " + search_count);
+//        System.out.println("->search_count : " + search_count);
         String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_count, this.record_per_page,
             this.page_per_block);
 
@@ -399,4 +405,73 @@ public class ItemCont {
     }
 
   }  
+  
+  /**
+   * 설문조사 참여 처리
+   * @param session
+   * @param json_src
+   * @return
+   */
+  @PostMapping(value = "/submit")
+  @ResponseBody
+  public String participate(HttpSession session, @RequestBody String json_src, @RequestBody PartVO partVO) {
+      System.out.println("-> 설문조사 참여 요청: " + json_src); // 입력 JSON 확인
+
+      JSONObject src = new JSONObject(json_src); // JSON 파싱
+      int surveyno = src.getInt("surveyno");
+      int itemno = src.getInt("itemno");
+
+      JSONObject result = new JSONObject();
+
+      // 회원 여부 확인
+      if (this.memberProc.isMember(session)) {
+          int memberno = (int) session.getAttribute("memberno");
+
+          // 중복 참여 여부 확인
+          HashMap<String, Object> map = new HashMap<>();
+          map.put("surveyno", surveyno);
+          map.put("itemno", itemno);
+          map.put("memberno", memberno);
+
+          int count_survey = this.itemProc.count_survey(map);
+          System.out.println("->count_survey: " + count_survey);
+          if (count_survey > 0) {
+            System.out.println("->설문조사 참여 실패: " + itemno + ' ' + memberno);
+              result.put("status", "error");
+              result.put("message", "이미 참여한 설문조사입니다.");
+          } else {
+            System.out.println("->설문조사 참여 완료: " + itemno + ' ' + memberno);
+            
+            PartVO partVO_new = new PartVO();
+            partVO_new.setItemno(itemno);
+            partVO_new.setMemberno(memberno);
+            
+            // 설문조사 참여 처리
+            this.partProc.create(partVO_new);
+            // 선택 인원 증가
+            this.itemProc.update_cnt(itemno);
+
+            result.put("status", "success");
+            result.put("message", "설문조사에 참여해 주셔서 감사합니다.");
+          }
+       // 추천 여부가 변경되어 다시 새로운 값을 읽어옴
+          int update_mem = this.partProc.update_cnt(itemno);
+          int update_cnt = this.itemProc.read(itemno).getItem_cnt();
+          
+//          JSONObject result = new JSONObject();
+          result.put("isMember", 1);  // 로그인:1, 비회원:0
+          result.put("update_cnt", update_cnt);  // 추천 여부, 추천:1, 비추천:0
+          result.put("update_mem", update_mem);   // 추천인수
+          
+          System.out.println("-> result.toString(): " + result.toString());
+          return result.toString();
+
+        } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+//          JSONObject result = new JSONObject();
+          result.put("isMember", 1);  // 로그인:1, 비회원:0
+          
+          return result.toString();
+        }
+  }
+
 }

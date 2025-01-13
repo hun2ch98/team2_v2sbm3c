@@ -60,6 +60,68 @@
       );
     }
   </script>
+  
+  <script>
+    window.onload = function () {
+      const form = document.querySelector("form"); // 폼 요소 선택
+  
+      form.addEventListener("submit", function (event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+  
+        // 사용자가 선택한 설문 항목 확인
+        const selectedItem = document.querySelector("input[name='itemno']:checked");
+        if (!selectedItem) {
+          alert("항목을 선택해주세요!");
+          return;
+        }
+  
+        const itemno = selectedItem.value; // 선택한 설문 항목 번호
+        const memberno = document.querySelector("input[name='memberno']")?.value; // 로그인된 회원 번호 (세션에서 전달)
+  
+        if (!memberno) {
+          alert("로그인이 필요합니다.");
+          window.location.href = "/member/login_cookie_need"; // 로그인 페이지로 이동
+          return;
+        }
+  
+        // 서버로 보낼 요청 데이터 생성
+        const requestData = { surveyno, itemno, memberno };
+  
+        // Fetch API를 이용한 POST 요청
+        fetch("/participants/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ surveyno, itemno, memberno }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("네트워크 응답에 문제가 있습니다.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.status === "success") {
+              alert(data.message || "설문조사에 참여해 주셔서 감사합니다!");
+              window.location.href = "/survey/list_by_surveyno_search_paging"; // 목록 페이지로 이동
+            } else if (data.status === "error") {
+              alert(data.message || "설문조사 참여 중 문제가 발생했습니다.");
+              if (data.redirect) {
+                window.location.href = data.redirect; // 로그인 페이지로 이동
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("에러 발생:", error);
+            alert("설문조사 참여 중 문제가 발생했습니다. 다시 시도해주세요.");
+          });
+      });
+    };
+  </script>
+
+
+
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
     설문조사 항목 > 
@@ -124,7 +186,7 @@
   
   <!-- 회원 모드 -->
   <div th:if="${session.grade != 'admin'}">
-    <form method="post" th:action="@{/participants/finish}">
+    <form method="post" >
       <input type="hidden" name="itemno" th:value="${itemno}" />
       <table class="table table-hover" style="width: 100%;">
         <colgroup>

@@ -93,11 +93,11 @@
     WHERE r BETWEEN #{start_num} AND #{end_num}
   </select>
   
-  <!-- 특정 카테고리에 속한 레코드 갯수를 리턴 -->
-  <select id="count_survey" resultType="int" parameterType="int">
+  <!-- 설문조사한 회원 조회 -->
+  <select id="count_survey" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as cnt 
-    FROM surveyitem 
-    WHERE surveyno=#{surveyno}
+    FROM participarts 
+    WHERE itmeno=#{itmeno} AND memberno=#{memberno}
   </select>
   
   <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->

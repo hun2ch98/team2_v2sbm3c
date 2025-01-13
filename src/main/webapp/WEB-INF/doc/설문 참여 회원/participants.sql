@@ -71,7 +71,7 @@ COMMIT;
 
 UPDATE surveyitem
 SET item_cnt = item_cnt + 1
-WHERE itemno = 3
+WHERE itemno = 24;
 
 SELECT COUNT (*) as cnt
 FROM participants
