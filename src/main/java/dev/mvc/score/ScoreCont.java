@@ -130,7 +130,7 @@ public class ScoreCont {
       Model model,
       @ModelAttribute("scoreVO") ScoreVO scoreVO,
       @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
-      @RequestParam(name = "jumsu", defaultValue = "") String jumsuStr,
+      @RequestParam(name = "jumsu", defaultValue = "") String jumsu,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
       int record_per_page = 10;
@@ -144,22 +144,7 @@ public class ScoreCont {
           memberVO.setMemberno(0);
           model.addAttribute("message", "회원 정보가 없습니다.");
       }
-
-      // jumsu 값 처리: 빈 문자열이면 0.0f로 처리하고, 그 외에는 0.5 단위로 확인
-      float jumsu = 0.0f; // 기본값 0.0f
-      if (!jumsuStr.isEmpty()) {
-          try {
-              jumsu = Float.parseFloat(jumsuStr.trim());
-              // 0.5 단위 체크
-              if (jumsu % 0.5 != 0 || jumsu > 5) {
-                  model.addAttribute("message", "평점은 0.5단위로 입력해야 하며 최대 5점까지 가능합니다.");
-                  return "/score/list_by_scoreno_search_paging"; // 입력 오류 메시지 출력 후 종료
-              }
-          } catch (NumberFormatException e) {
-              model.addAttribute("message", "유효하지 않은 평점 값입니다.");
-              return "/score/list_by_scoreno_search_paging"; // 예외 발생 시 오류 메시지 출력 후 종료
-          }
-      }
+      jumsu = Tool.checkNull(jumsu).trim();
 
       model.addAttribute("memberVO", memberVO);
       model.addAttribute("scoreno", scoreno);
@@ -220,7 +205,7 @@ public class ScoreCont {
    * 평점 수정 폼
    * @return
    */
-  @GetMapping(value = "/update_text")
+  @GetMapping(value = "/update_score")
   public String update_text(HttpSession session,
       Model model, 
       @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
@@ -240,7 +225,7 @@ public class ScoreCont {
         MemberVO memberVO = this.memberProc.read(scoreVO.getMemberno());
         model.addAttribute("memberVO", memberVO);
         
-        return "/score/update_text";
+        return "/score/update_score";
     } else {
         ra.addAttribute("url", "/member/login_cookie_need"); // /templates/diary/login_cookie_need.html
 //	        return "redirect:/contents/msg"; // @GetMapping(value = "/read")
@@ -252,7 +237,7 @@ public class ScoreCont {
    * 평점 수정 처리
    * @return
    */
-  @PostMapping(value = "/update_text")
+  @PostMapping(value = "/update_score")
   public String update_text(
       HttpSession session,
       Model model,
@@ -294,7 +279,7 @@ public class ScoreCont {
 
       // 평점 글 수정 처리
       try {
-          int cnt = this.scoreProc.update_text(scoreVO); // 평점 글 수정
+          int cnt = this.scoreProc.update_score(scoreVO); // 평점 글 수정
           if (cnt > 0) { // 수정 성공
               ra.addAttribute("scoreno", scoreVO.getScoreno());
               return "redirect:/score/read"; // 성공 시 게시글 조회 페이지로 이동
