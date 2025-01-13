@@ -61,6 +61,7 @@
     }
   </script>
   
+  <!--
   <script>
     window.onload = function () {
       const form = document.querySelector("form"); // 폼 요소 선택
@@ -123,73 +124,61 @@
       });
     };
   </script>
-
+-->
 
 
   <div class="title_line">
     <span id="heart_panel"></span><span id="goodcnt_panel"></span>
     설문조사 항목 > 
     <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
-    <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
   </div>
 
   <aside class="aside_right">
-    <span th:if="${session.grade == 'admin'}">
-      <a th:href="@{|/surveyitem/create/${surveyno}|}">항목 추가</a>
-      <span class='menu_divide'>│</span> 
-    </span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span> 
-    <a th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
+    <a th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
   </aside>
-  
-  <!--/* '/cate/list_search_com.html' 파일의 list_search_fragment를 가져다 사용 */--> 
-  <div th:replace="~{surveyitem/list_search_com::list_search_fragment}"></div> 
 
   <div class="menu_line"></div>
   
-  <!-- 관리자 모드 -->
-  <div th:fragment="list_all_fragment" th:if="${session.grade == 'admin'}"> 
-    <table class="table table-hover" style="width: 100%;">
-      <colgroup>
-        <col style='width: 10%;'/>
-        <col style='width: 60%;'/>
-        <col style='width: 13%;'/>    
-        <col style='width: 13%;'/>
-      </colgroup>
-      <thead>
-        <tr>
-          <th class="th_bs">항목 번호</th>
-          <th class="th_bs">설문 조사 항목</th>
-          <th class="th_bs">출력 순서</th>
-          <th class="th_bs">선택 인원</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:if="${list == null or #lists.isEmpty(list)}">
-          <td colspan="4">등록된 항목이 없습니다.</td>
-        </tr>
-        <tr th:each="itemVO : ${list}">
-          <td th:text="${itemVO.itemno}"></td>
-          <td th:text="${itemVO.item}"></td>
-          <td th:text="${itemVO.item_seq}"></td>
-          <td th:text="${itemVO.item_cnt}"></td>
-          <td>
-            <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
-              <img src="/item/images/update.png" class="icon" title="수정">
-            </a> 
-            <a th:href="@{|/surveyitem/delete/${itemVO.itemno}|}">
-              <img src="/item/images/delete.png" class="icon" title="삭제">
-            </a> 
-          </td>
-
-        </tr>
-      </tbody>
-    </table>
+  <!-- 회원 모드 -->
+  <div th:if="${session.grade != 'admin'}">
+    <form method="post">
+      <input type="hidden" name="itemno" th:value="${itemno}" />
+      <table class="table table-hover" style="width: 100%;">
+        <colgroup>
+          <col style='width: 10%;'/>
+          <col style='width: 10%;'/>
+          <col style='width: 65%;'/>
+          <col style='width: 15%;'/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="th_bs">선택</th>
+            <th class="th_bs">항목 번호</th>
+            <th class="th_bs">설문 조사 항목</th>
+            <th class="th_bs">선택 인원</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${list_m == null or #lists.isEmpty(list_m)}">
+            <td colspan="3">등록된 항목이 없습니다.</td>
+          </tr>
+          <tr th:each="itemVO : ${list_m}" >
+            <td align="center" valign="middle">
+              <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" th:value="${itemVO.itemno}" required />
+            </td>
+            <td th:text="${itemVO.itemno}"></td>
+            <td th:text="${itemVO.item}"></td>
+            <td th:text="${itemVO.item_cnt}"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align: center; margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">참여</button>
+      </div>
+    </form>
   </div>
-  
-  <!-- 페이지 버튼 목록 출력 -->
-  <div class="Bottom_menu" th:utext="${paging}"></div>
   
 </div>
 </html>
