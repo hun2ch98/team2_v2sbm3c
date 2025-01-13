@@ -47,7 +47,7 @@ public interface ScoreProcInter {
    * @param page_per_block 블럭당 페이지 수
    * @return 페이징 생성 문자열
    */
-  public String pagingBox(int now_page, float jumsu, int memberno, int search_count, int record_per_page, int page_per_block);
+  public String pagingBox(int now_page, String jumsu, int memberno, int search_count, int record_per_page, int page_per_block);
   
   
   /**
@@ -76,7 +76,7 @@ public interface ScoreProcInter {
    * @param ScoreVO
    * @return
    */
-  public int update_text(ScoreVO scoreVO);
+  public int update_score(ScoreVO scoreVO);
   
   /**
    * 평점 삭제

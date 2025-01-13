@@ -32,7 +32,7 @@
   </select>
   
   <!-- 내용 수정 -->
-  <update id="update_text" parameterType="dev.mvc.score.ScoreVO">
+  <update id="update_score" parameterType="dev.mvc.score.ScoreVO">
     UPDATE score
     SET jumsu=#{jumsu},memberno=#{memberno}, rdate=sysdate
     WHERE scoreno = #{scoreno}
