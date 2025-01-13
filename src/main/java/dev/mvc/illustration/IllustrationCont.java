@@ -349,13 +349,6 @@ public class IllustrationCont {
       return "diary/read";  // "diary/read" 템플릿으로 이동
   }
   
-  /**
-   * 특정 날짜의 목록
-   * @param session
-   * @param model
-   * @param date
-   * @return
-   */
   @GetMapping(value="/list_calendar")
   public String list_calendar(HttpSession session, Model model, 
       @RequestParam(name="year", defaultValue="0") int year, 
@@ -396,6 +389,9 @@ public class IllustrationCont {
     JSONArray calendar_list = new JSONArray();
     
     for (DiaryIllustrationVO diaryillustrationVO : list) {
+      System.out.println("Illustno: " + diaryillustrationVO.getIllustno());
+      System.out.println("Illust Thumb: " + diaryillustrationVO.getIllust_thumb());
+      
       JSONObject calendar = new JSONObject();
       //diaryVO
       calendar.put("diaryno", diaryillustrationVO.getDiaryno());

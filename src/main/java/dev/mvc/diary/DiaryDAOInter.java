@@ -106,8 +106,5 @@ public interface DiaryDAOInter {
 
   public int increaseCnt(int diaryno);
   
-  public ArrayList<ScheduleVO> list_calendar(String date);
-  
-  public List<ScheduleVO> list_calendar_day(String date);
   
 }

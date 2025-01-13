@@ -23,6 +23,12 @@
     WHERE goodno=#{goodno}
   </delete>
   
+  <!-- 일기 삭제로 인한 자식 레코드 삭제 -->
+  <delete id="f_delete" parameterType="int">
+    DELETE FROM diarygood
+    WHERE diaryno=#{diaryno}
+  </delete>
+  
   <!-- 조회1 -->
   <select id="read" resultType="dev.mvc.diarygood.DiaryGoodVO" parameterType="int">
     SELECT goodno, rdate, diaryno, memberno

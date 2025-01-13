@@ -69,11 +69,13 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/create|}">등록</a>
     <span class='menu_divide' >│</span>
+    <a th:href="@{|/illustration/create|}">그림 등록</a>
+    <span class='menu_divide' >│</span>
     <a th:href="@{/diary/update/{diaryno}(diaryno=${diaryVO.diaryno})}">글 수정</a>
     <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록</a>    
     <span class='menu_divide' >│</span>
-    <a th:href="@{/diary/delete?diaryno=${diaryVO.diaryno}}">삭제</a>  
+    <a th:href="@{/diary/delete/{diaryno}(diaryno=${diaryVO.diaryno})}">삭제</a>  
  </aside> 
 
   <aside class="aside_right" th:if="${session.grade != 'admin'}">
@@ -91,7 +93,17 @@
       <!--<li th:if="${diaryVO != null}"> -->
       <li  >
         <strong>일기 제목:</strong> <span th:text="${diaryVO.title}"></span><br>
-        <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span>
+        <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span><br>
+        <!-- 감정 이미지 추가 -->
+        <strong style="float:right;">오늘의 감정</strong>
+        <img th:src="@{'/emotion/images/image' + ${diaryVO.emono} + '.png'}" 
+             alt="감정 이미지" 
+             style="width: 30px; height: auto; margin-top: 10px; float:right;">
+             
+        <strong style="float:right;">오늘의 날씨</strong>
+        <img th:src="@{'/weather/images/weather' + '-' + ${diaryVO.weatherno} + '.png'}" 
+             alt="날씨 이미지" 
+             style="width: 30px; height: auto; margin-top: 10px; float:right;">
         
          <!-- 그림 출력 반복문 추가 -->
         <div id="carouselExample" class="carousel slide" style="width: 40%; margin: 10px auto;">

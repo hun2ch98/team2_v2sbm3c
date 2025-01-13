@@ -61,7 +61,7 @@ public class DiaryCont {
   private EmotionProcInter emotionProc;
   
   @Autowired
-  @Qualifier("dev.mvc.weather.WeatherProc")
+@Qualifier("dev.mvc.weather.WeatherProc")
   private WeatherProcInter weatherProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
@@ -245,6 +245,29 @@ public class DiaryCont {
 
       return "/diary/list_by_diaryno_search_paging";
   }
+  
+  @GetMapping(path="/delete/{diaryno}")
+  public String delete (HttpSession session, Model model, 
+                                    @PathVariable("diaryno") int diaryno, 
+                                    @RequestParam(value = "title", required = false, defaultValue = "") String title,
+                                    @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
+                                    @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
+                                    @RequestParam(name="now_page", defaultValue = "1") int now_page) {
+    if (this.memberProc.isMemberAdmin(session)) {
+      model.addAttribute("diaryno", diaryno);
+      model.addAttribute("now_page", now_page);
+      model.addAttribute("title", title);
+      model.addAttribute("start_date", start_date);
+      model.addAttribute("end_date", end_date);
+      
+      DiaryVO diaryVO = this.diaryProc.read(diaryno);
+      model.addAttribute("diaryVO", diaryVO);
+      
+      return "diary/delete";
+    } else {
+      return "/member/login_cookie_need";
+    }
+  }
 
   /**
    * 삭제 처리
@@ -269,24 +292,25 @@ public class DiaryCont {
 
           if (diaryVO != null) {
               // 삭제 수행
-              int cnt = this.diaryProc.delete(diaryno);
+            this.diaryGoodProc.f_delete(diaryno);
+             int cnt = this.diaryProc.delete(diaryno);
+             
+             if (cnt == 1) {
+                // 삭제 성공 시 검색 조건 유지
+                ra.addAttribute("title", title);
+                ra.addAttribute("start_date", startDate);
+                ra.addAttribute("end_date", endDate);
+                ra.addAttribute("diaryList", String.join(",", diaryList.stream().map(Object::toString).toList()));
 
-              if (cnt == 1) {
-                  // 삭제 성공 시 검색 조건 유지
-                  ra.addAttribute("title", title);
-                  ra.addAttribute("start_date", startDate);
-                  ra.addAttribute("end_date", endDate);
-                  ra.addAttribute("diaryList", diaryList);
-
-                  // 마지막 페이지 처리 (빈 페이지 방지)
-                  int searchCount = diaryProc.countSearchResults(title, startDate, endDate);
-                  if (searchCount % this.record_per_page == 0) {
-                      nowPage = Math.max(nowPage - 1, 1); // 최소 페이지는 1
-                  }
-                  ra.addAttribute("now_page", nowPage);
-
-                  return "redirect:/diary/list_by_diaryno_search_paging";
-              }
+                // 마지막 페이지 처리 (빈 페이지 방지)
+                int searchCount = diaryProc.countSearchResults(title, startDate, endDate);
+                if (searchCount % this.record_per_page == 0) {
+                    nowPage = Math.max(nowPage - 1, 1); // 최소 페이지는 1
+                }
+                ra.addAttribute("now_page", nowPage);
+                
+                return "redirect:/diary/list_by_diaryno_search_paging";
+             }
           }
           // 삭제 실패 시 처리
           ra.addFlashAttribute("msg", "삭제 실패");
