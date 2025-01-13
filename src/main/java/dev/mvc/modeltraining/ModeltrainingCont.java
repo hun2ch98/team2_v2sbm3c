@@ -226,6 +226,8 @@ public class ModeltrainingCont {
     	ModeltrainingVO modeltrainingVO = this.modeltrainingProc.read(trainingno);
 //	    	System.out.println("-> ModeltrainingVO.gettrainingno() : " + ModeltrainingVO.gettrainingno());
         model.addAttribute("modeltrainingVO", modeltrainingVO);
+        model.addAttribute("st_time", modeltrainingVO.getSt_time()); 
+        model.addAttribute("end_time", modeltrainingVO.getEnd_time()); 
         
         MemberVO memberVO = this.memberProc.read(modeltrainingVO.getMemberno());
         model.addAttribute("memberVO", memberVO);
