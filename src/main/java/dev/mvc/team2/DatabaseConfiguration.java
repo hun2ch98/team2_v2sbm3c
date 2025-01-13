@@ -38,6 +38,9 @@ import com.zaxxer.hikari.HikariDataSource;
                                                     "dev.mvc.surveygood",
                                                     "dev.mvc.participants",
                                                     "dev.mvc.learningdata",
+
+                                                    "dev.mvc.loginlog"
+
                                                     "dev.mvc.modeltraining",
                                                     "dev.mvc.score"
 
