@@ -16,12 +16,12 @@
           </div>
           
           <div th:case="delete_success">
-            <span class="span_success">모델 학습 이력 삭제에 성공했습니다.</span><br>
-            삭제된 모델 학습 이력: <span th:text="${name}"></span> 
+            <span class="span_success">평점 삭제에 성공했습니다.</span><br>
+            삭제된 평점: <span th:text="${scoreno}"></span> 
           </div>
           <div th:case="delete_fail">
-            <span class="span_fail">모델 학습 이력 삭제에 실패했습니다.</span><br>
-            삭제 실패된 모델 학습 이력: <span th:text="${name}"></span>
+            <span class="span_fail">평점 삭제에 실패했습니다.</span><br>
+            삭제 실패된 평점: <span th:text="${scoreno}"></span>
           </div>
 
         </li>
@@ -31,7 +31,7 @@
             <button type="button" onclick="history.back()" class="btn btn-secondary btn-sm">다시 시도</button>
           </div>
           <div th:if="${cnt != 0}">
-            <button type="button" onclick="location.href='./list_by_trainingno'" class="btn btn-secondary btn-sm">목록</button>
+            <button type="button" onclick="location.href='./list_by_scoreno'" class="btn btn-secondary btn-sm">목록</button>
           </div>
         </li>
       </ul>

@@ -62,7 +62,7 @@ public class ScoreProc implements ScoreProcInter {
     }
    
     @Override
-    public String pagingBox(int now_page, float jumsu, int memberno, int search_count,
+    public String pagingBox(int now_page, String jumsu, int memberno, int search_count,
             int record_per_page, int page_per_block) {
         int total_page = (int) (Math.ceil((double) search_count / record_per_page));
         int total_grp = (int) (Math.ceil((double) total_page / page_per_block));
@@ -152,8 +152,8 @@ public class ScoreProc implements ScoreProcInter {
     }
 
     @Override
-    public int update_text(ScoreVO scoreVO) {
-        int cnt = this.scoreDAO.update_text(scoreVO);
+    public int update_score(ScoreVO scoreVO) {
+        int cnt = this.scoreDAO.update_score(scoreVO);
         return cnt;
     }
     
