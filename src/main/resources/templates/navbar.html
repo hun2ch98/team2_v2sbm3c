@@ -20,6 +20,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/loginlog/list|}">로그 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
@@ -159,7 +160,7 @@
 
                 <li class="nav-item">
                   <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
-                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.name} 로그아웃|}"></a>
+                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.name}님 로그아웃|}"></a>
                 </li>
                 
                 <li class="nav-item dropdown" th:if="${session.memberno == null}">
