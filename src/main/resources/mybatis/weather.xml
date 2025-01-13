@@ -23,6 +23,12 @@
     ORDER BY weatherno
   </select>
   
+  <select id="image_list" resultType="dev.mvc.weather.WeatherVO">
+    SELECT weatherno, type, file1
+    FROM weather
+    ORDER BY weatherno
+  </select>
+  
   <select id="list_search_count" resultType="int">
     SELECT COUNT(*) FROM weather
   </select>

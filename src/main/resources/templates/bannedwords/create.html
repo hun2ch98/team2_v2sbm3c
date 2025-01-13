@@ -16,7 +16,7 @@
   <div class='menu_line'></div>
   
   <form name="frm" method="post" th:object="${bannedwordsVO}" th:action="@{/bannedwords/create}" enctype="multipart/form-data">
-    <input type="hidden" name="memberno" th:value="${weatherVO?.memberno ?: 1}">
+    <input type="hidden" name="memberno" th:value="${bannedwordsVO?.memberno ?: 1}">
 
     <div>
         <label>금지 단어</label>

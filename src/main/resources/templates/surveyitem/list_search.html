@@ -103,16 +103,16 @@
         <tr th:if="${list == null or #lists.isEmpty(list)}">
           <td colspan="4">등록된 항목이 없습니다.</td>
         </tr>
-        <tr th:each="ItemVO : ${list}">
-          <td class="td_bs" th:text="${ItemVO.itemno}"></td>
-          <td class="td_bs" th:text="${ItemVO.item}"></td>
-          <td class="td_bs" th:text="${ItemVO.item_seq}"></td>
-          <td class="td_bs" th:text="${ItemVO.item_cnt}"></td>
+        <tr th:each="itemVO : ${list}">
+          <td th:text="${itemVO.itemno}"></td>
+          <td th:text="${itemVO.item}"></td>
+          <td th:text="${itemVO.item_seq}"></td>
+          <td th:text="${itemVO.item_cnt}"></td>
           <td>
-            <a th:href="@{|/surveyitem/update/${ItemVO.itemno}|}">
+            <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
               <img src="/item/images/update.png" class="icon" title="수정">
             </a> 
-            <a th:href="@{|/surveyitem/delete/${ItemVO.itemno}|}">
+            <a th:href="@{|/surveyitem/delete/${itemVO.itemno}|}">
               <img src="/item/images/delete.png" class="icon" title="삭제">
             </a> 
           </td>
@@ -123,8 +123,8 @@
   </div>
   
   <!-- 회원 모드 -->
-  <div th:fragment="list_all_fragment" th:if="${session.grade != 'admin'}">
-    <form method="post" th:action="@{/surveyitem/finish}">
+  <div th:if="${session.grade != 'admin'}">
+    <form method="post" th:action="@{/participants/finish}">
       <input type="hidden" name="itemno" th:value="${itemno}" />
       <table class="table table-hover" style="width: 100%;">
         <colgroup>
@@ -145,18 +145,18 @@
           <tr th:if="${list == null or #lists.isEmpty(list)}">
             <td colspan="3">등록된 항목이 없습니다.</td>
           </tr>
-          <tr th:each="ItemVO : ${list}" >
+          <tr th:each="itemVO : ${list}" >
             <td align="center" valign="middle">
-              <input type="radio" id="itemno_${ItemVO.itemno}" name="itemno" th:value="${ItemVO.itemno}" required />
+              <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" th:value="${itemVO.itemno}" required />
             </td>
-            <td class="td_bs" th:text="${ItemVO.itemno}"></td>
-            <td class="td_bs" th:text="${ItemVO.item}"></td>
-            <td class="td_bs" th:text="${ItemVO.item_cnt}"></td>
+            <td th:text="${itemVO.itemno}"></td>
+            <td th:text="${itemVO.item}"></td>
+            <td th:text="${itemVO.item_cnt}"></td>
           </tr>
         </tbody>
       </table>
       <div style="text-align: center; margin-top: 20px;">
-        <button type="submit" th:href="@{|/surveyitem/finish|}" class="btn btn-primary">참여</button>
+        <button type="submit" class="btn btn-primary">참여</button>
       </div>
     </form>
   </div>
