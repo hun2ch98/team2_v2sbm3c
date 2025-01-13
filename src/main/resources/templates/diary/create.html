@@ -125,6 +125,62 @@
   </form>
 </div>
 
+<script>
+  document.querySelector('form[name="frm"]').addEventListener('submit', async (event) => {
+    event.preventDefault(); // 기본 폼 제출 방지
+
+    // 폼 데이터 가져오기
+    const formData = new FormData(event.target);
+    const title = formData.get('title');
+    const date = formData.get('ddate');
+    const weatherCode = formData.get('weatherno');
+    const emotionCode = formData.get('emono');
+    const content = formData.get('summary');
+
+    if (!title || !date || !weatherCode || !emotionCode || !content) {
+      alert("모든 필드를 채워주세요!");
+      return;
+    }
+
+    // API 요청 데이터 구성
+    const payload = {
+      title: title,
+      weatherCode: weatherCode,
+      emotionCode: emotionCode,
+      content: content
+    };
+
+    try {
+      // Flask API 호출
+      const response = await fetch('http://127.0.0.1:5000/generate_image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // 이미지 URL 반환 성공
+        alert(`이미지 생성 성공! URL: ${result.image_url}`);
+
+        // 이미지 미리보기 추가
+        const imagePreview = document.createElement('img');
+        imagePreview.src = result.image_url;
+        imagePreview.alt = '생성된 이미지';
+        imagePreview.style = 'margin-top: 20px; width: 300px; height: auto; border: 1px solid #ccc; display: block;';
+        document.querySelector('form[name="frm"]').appendChild(imagePreview);
+      } else {
+        alert(`이미지 생성 실패: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('API 호출 중 오류 발생:', error);
+      alert('이미지 생성 중 문제가 발생했습니다.');
+    }
+  });
+</script>
 
 
  
