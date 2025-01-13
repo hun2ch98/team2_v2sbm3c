@@ -118,7 +118,7 @@ WHERE r >= 1 AND r <= 2;
 
 SELECT COUNT(*) 
     FROM participants 
-    WHERE itemno = 3 AND memberno = 2;
+    WHERE itemno = 24 AND memberno = 2;
   COUNT(*)
 ----------
          2

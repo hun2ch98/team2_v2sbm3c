@@ -31,6 +31,12 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
+  public ArrayList<ItemVO> list_member(int surveyno) {
+    ArrayList<ItemVO> list = this.itemDAO.list_member(surveyno);
+    return list;
+  }
+  
+  @Override
   public ArrayList<ItemVO> list_all_com(int surveyno){
     ArrayList<ItemVO> list = this.itemDAO.list_all_com(surveyno);
     return list;

@@ -21,6 +21,14 @@ public interface ItemProcInter {
   public ItemVO read(int itemno);
   
   /**
+   * 회원
+   * 목록
+   * @return
+   */
+  public ArrayList<ItemVO> list_member(int surveyno);
+  
+  /**
+   * 관리자
    * 목록
    * @return
    */
