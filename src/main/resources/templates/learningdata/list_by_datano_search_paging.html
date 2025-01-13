@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    목록 조회 검색
+    <span th:if="${ques != ''}" th:text="|> ${ques} (${search_count} 건)|" class="title_line_text"></span>
+  </div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{|/learningdata/create|}">등록</a>
+      <span class="menu_devide">│</span>    
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>│</span>    
+      <a th:href="@{/learningdata/list_by_datano_search_paging}">목록</a>
+    </span>
+  </aside> 
+
+  <div th:replace="~{/learningdata/list_search_com :: list_search_fragment}"></div>
+  
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 45%;'/>
+      <col style='width: 45%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>학습 데이터 번호</th>
+      <th class='th_bs'>학습 데이터 질문</th>
+      <th class='th_bs'>학습 데이터 답변</th>
+    </tr>
+   
+    <tr th:if="${list != null and list.size() > 0}" th:each="learningdataVO, status:${list}" 
+         th:attr="onclick=|location.href='/learningdata/read?datano=${learningdataVO.datano}&now_page=${now_page}'|"
+         style="cursor: pointer; height: 90px;"> 
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <span th:text="${learningdataVO.datano}" style="font-weight: bold;"></span><br>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <span th:if="${learningdataVO.ques.length() > 160 }" 
+                  th:text="|${learningdataVO.ques.substring(0, 160) }...|"></span>
+        <span th:if="${learningdataVO.ques.length() <= 160 }" 
+                  th:text="|${learningdataVO.ques}|"></span>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <span th:if="${learningdataVO.ans.length() > 160 }" 
+                  th:text="|${learningdataVO.ans.substring(0, 160) }...|"></span>
+        <span th:if="${learningdataVO.ans.length() <= 160 }" 
+                  th:text="|${learningdataVO.ans}|"></span>        
+      </td>
+    </tr>
+
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="3" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    </tr> 
+
+  </table>
+   
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+  
+</div>
+</html>

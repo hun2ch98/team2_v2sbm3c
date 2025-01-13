@@ -1,9 +1,12 @@
 package dev.mvc.participants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import dev.mvc.surveygood.SurveygoodVO;
 
 @Component("dev.mvc.participants.PartProc")
 public class PartProc implements PartProcInter {
@@ -33,6 +36,18 @@ public class PartProc implements PartProcInter {
   public int delete(int pno) {
     int cnt = this.partDAO.delete(pno);
     return cnt;
+  }
+  
+  @Override
+  public PartVO read(int pno) {
+    PartVO partVO = this.partDAO.read(pno);
+    return partVO;
+  }
+  
+  @Override
+  public PartVO readByitemmember(HashMap<String, Object> map) {
+    PartVO partVO = this.partDAO.readByitemmember(map);
+    return partVO;
   }
 
   @Override

@@ -61,3 +61,4 @@ FROM diary d, diarygood g, member m
 WHERE d.diaryno = g.diaryno AND g.memberno = m.memberno
 ORDER BY goodno DESC;
 
+

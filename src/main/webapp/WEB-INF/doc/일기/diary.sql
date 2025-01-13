@@ -5,15 +5,13 @@ CREATE TABLE diary (
     ddate        DATE               NULL,
     summary      CLOB,
     weatherno    NUMBER(10) NULL,
-    emno         NUMBER(10)       NULL,
+    emono         NUMBER(10)       NULL,
     memberno     NUMBER(10)      NULL,
-    illustno     NUMBER(10) NULL,
     cnt          NUMBER(7)  NULL, 
     goodcnt          NUMBER(7)  NULL,
-    FOREIGN KEY (emno) REFERENCES EMOTION(emno),
+    FOREIGN KEY (emono) REFERENCES EMOTION(emono),
     FOREIGN KEY (memberno) REFERENCES MEMBER(membernno),
-    FOREIGN KEY (weatherno) REFERENCES WEATHER(weatherno),
-    FOREIGN KEY (illustno) REFERENCES ILLUSTLATION(illustno)
+    FOREIGN KEY (weatherno) REFERENCES WEATHER(weatherno)
 );
 
 commit;
@@ -37,6 +35,19 @@ WHERE 1=1
   AND (TRUNC(ddate) >= TO_DATE(:start_date, 'YYYY-MM-DD') OR :start_date IS NULL OR :start_date = '')
   AND (TRUNC(ddate) <= TO_DATE(:end_date, 'YYYY-MM-DD') OR :end_date IS NULL OR :end_date = '');
 
-SELECT COUNT(*) as cnt
+SELECT COUNT(*) as cnt;
 
+ALTER TABLE diary
+ADD CONSTRAINT fk_diary_emotion
+FOREIGN KEY (emono) REFERENCES EMOTION(emono);
+
+-- MEMBER 테이블과의 외래 키 추가
+ALTER TABLE diary
+ADD CONSTRAINT fk_diary_member
+FOREIGN KEY (memberno) REFERENCES MEMBER(memberno);
+
+-- WEATHER 테이블과의 외래 키 추가
+ALTER TABLE diary
+ADD CONSTRAINT fk_diary_weather
+FOREIGN KEY (weatherno) REFERENCES WEATHER(weatherno);
 

@@ -23,6 +23,12 @@
     ORDER BY emono
   </select>
   
+  <select id="image_list" resultType="dev.mvc.emotion.EmotionVO">
+    SELECT emono, type, file1
+    FROM emotion
+    ORDER BY emono
+  </select>
+  
   <select id="list_search_count" resultType="int">
     SELECT COUNT(*) FROM emotion
   </select>

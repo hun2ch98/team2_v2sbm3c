@@ -114,29 +114,29 @@ public class PartCont {
    * @param ra
    * @return
    */
-  @PostMapping("/finish")
-  public String finish(
-      @RequestParam("itemno") int itemno, 
-      HttpSession session, 
-      RedirectAttributes ra) {
-      Integer memberno = (Integer) session.getAttribute("memberno");
-      if (memberno == null) {
-          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
-          return "redirect:/member/login";
-      }
-
-      PartVO partVO = new PartVO();
-      partVO.setItemno(itemno);
-      partVO.setMemberno(memberno);
-
-      int cnt = this.partProc.create(partVO);
-      if (cnt > 0) {
-          ra.addFlashAttribute("msg", "설문조사 참여 완료!");
-          return "/surveyitem/finish"; // 뷰 파일 경로 반환
-      }
-
-      ra.addFlashAttribute("msg", "설문조사 참여에 실패했습니다.");
-      return "/surveyitem/finish";
-  }
+//  @PostMapping("/finish")
+//  public String finish(
+//      @RequestParam("itemno") int itemno, 
+//      HttpSession session, 
+//      RedirectAttributes ra) {
+//      Integer memberno = (Integer) session.getAttribute("memberno");
+//      if (memberno == null) {
+//          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
+//          return "redirect:/member/login";
+//      }
+//
+//      PartVO partVO = new PartVO();
+//      partVO.setItemno(itemno);
+//      partVO.setMemberno(memberno);
+//
+//      int cnt = this.partProc.create(partVO);
+//      if (cnt > 0) {
+//          ra.addFlashAttribute("msg", "설문조사 참여 완료!");
+//          return "/participants/finish"; // 뷰 파일 경로 반환
+//      }
+//
+//      ra.addFlashAttribute("msg", "설문조사 참여에 실패했습니다.");
+//      return "/participants/finish";
+//  }
 
 }
