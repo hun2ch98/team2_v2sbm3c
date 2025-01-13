@@ -224,5 +224,11 @@ public class ItemProc implements ItemProcInter{
     return cnt;
   }
 
+  @Override
+  public int count_result(int itemno) {
+    int cnt = this.itemDAO.count_result(itemno);
+    return cnt;
+  }
+
 
 }

@@ -32,10 +32,16 @@ COMMIT;
 
 -- 데이터 삽입
 INSERT INTO participants(pno, itemno, memberno, pdate)
-VALUES (participants_seq.nextval, 24, 2, sysdate);
+VALUES (participants_seq.nextval, 1, 6, sysdate);
 
 INSERT INTO participants(pno, itemno, memberno, pdate)
 VALUES (participants_seq.nextval, 2, 2, sysdate);
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 3, sysdate);
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 4, sysdate);
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 5, sysdate);
 
 INSERT INTO participants(pno, itemno, memberno, pdate)
 VALUES (participants_seq.nextval, 3, 2, sysdate);

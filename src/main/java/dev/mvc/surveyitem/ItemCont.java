@@ -235,14 +235,14 @@ public class ItemCont {
       // 관리자인지 확인  
       if (this.memberProc.isMemberAdmin(session)) {
         
-        int record_per_page = 10;
-        int startRow = (now_page - 1) * record_per_page + 1;
-        int endRow = now_page * record_per_page;
+//        int record_per_page = 10;
+//        int startRow = (now_page - 1) * record_per_page + 1;
+//        int endRow = now_page * record_per_page;
         
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
 
-        word = Tool.checkNull(word).trim();
+        word = Tool.checkNull(word);
         
         
 //        ArrayList<TopicItemVO> list_t = this.itemProc.list_all_join();
@@ -257,11 +257,13 @@ public class ItemCont {
         // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(word);
 //        System.out.println("->search_count : " + search_count);
-        String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_count, this.record_per_page,
-            this.page_per_block);
+//        String paging = this.itemProc.pagingBox(surveyno, now_page, word, this.list_file_name, search_count, this.record_per_page,
+//            this.page_per_block);
+//
+//        model.addAttribute("paging", paging);
+//        model.addAttribute("now_page", now_page);
+//        System.out.println("search_count: " + search_count);
 
-        model.addAttribute("paging", paging);
-        model.addAttribute("now_page", now_page);
         model.addAttribute("search_count", search_count);
         model.addAttribute("word", word);
 
@@ -387,37 +389,48 @@ public class ItemCont {
   }
   
   /**
-   * 설문조사
+   * 설문조사 완료 페이지
    * @return
    */
-//  @GetMapping("/finish")
-//  public String finish(Model model) {
-//      model.addAttribute("message", "설문조사가 완료되었습니다.");
-//      return "/surveyitem/finish"; // finish.html 템플릿
-//  }
-//
-//  
-//  /**
-//   * 설문조사 참여 처리
-//   * @return
-//   */
-//  @PostMapping("/finish")
-//  public String finish(
-//      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-//      @RequestParam("itemno") int itemno,
-//      HttpSession session,
-//      RedirectAttributes ra) {
-//      if (session.getAttribute("memberno") == null) {
-//          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
-//          return "redirect:/member/login";
-//      }
-//
-//      this.itemProc.update_cnt(itemno); // item_cnt 증가
-//      ra.addFlashAttribute("msg", "설문조사 완료!");
-//      return "redirect:/surveyitem/finish";
-//  }
+  @GetMapping("/finish")
+  public String finish(Model model) {
+      model.addAttribute("message", "설문조사가 완료되었습니다.");
+      return "/surveyitem/finish"; // finish.html 템플릿
+  }
 
+  /**
+   * 설문조사 참여 처리
+   * @return
+   */
+  @PostMapping("/finish")
+  public String finish(
+      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+      @RequestParam("itemno") int itemno,
+      @ModelAttribute("partVO") PartVO partVO, 
+      HttpSession session,
+      RedirectAttributes ra) {
 
+      // 로그인 여부 확인
+      if (session.getAttribute("memberno") == null) {
+          ra.addFlashAttribute("msg", "로그인 후 참여 가능합니다.");
+          return "redirect:/member/login";
+      }
+
+      int memberno = (int) session.getAttribute("memberno");
+
+      try {
+          // 설문조사 참여 처리 (참여 테이블에 추가 및 카운트 증가)
+          partProc.create(partVO);
+          itemProc.update_cnt(itemno);
+
+          ra.addFlashAttribute("msg", "설문조사 완료!");
+      } catch (Exception e) {
+          ra.addFlashAttribute("msg", "설문조사 처리 중 오류가 발생했습니다.");
+          e.printStackTrace();
+      }
+
+      return "redirect:/surveyitem/finish";
+  }
 
   
   /**
@@ -491,67 +504,88 @@ public class ItemCont {
    * @param json_src
    * @return
    */
-  @PostMapping(value = "/submit")
-  @ResponseBody
-  public String participate(HttpSession session, @RequestBody String json_src) {
-      System.out.println("-> 설문조사 참여 요청: " + json_src); // 입력 JSON 확인
+//  @PostMapping(value = "/submit")
+//  @ResponseBody
+//  public String participate(HttpSession session, @RequestBody String json_src) {
+//      System.out.println("-> 설문조사 참여 요청: " + json_src); // 입력 JSON 확인
+//
+//      JSONObject src = new JSONObject(json_src); // JSON 파싱
+//      int surveyno = src.getInt("surveyno");
+//      int itemno = src.getInt("itemno");
+//      
+//      JSONObject result = new JSONObject();
+//      
+//      // 회원 여부 확인
+//      if (this.memberProc.isMember(session)) {
+//        int memberno = (int) session.getAttribute("memberno");
+//
+//        // 중복 참여 여부 확인
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("surveyno", surveyno);
+//        map.put("itemno", itemno);
+//        map.put("memberno", memberno);
+//
+//        int count_survey = this.itemProc.count_survey(map);
+//        System.out.println("->count_survey: " + count_survey);
+//        
+//        if (count_survey > 0) {
+//          
+//          System.out.println("->설문조사 참여 실패: " + itemno + ' ' + memberno);
+//          result.put("status", "error");
+//          result.put("message", "이미 참여한 설문조사입니다.");
+////          this.partProc.readByitemmember(map);
+////          this.itemProc.count_survey(map);
+//        } else {
+//          System.out.println("->설문조사 참여 완료: " + itemno + ' ' + memberno);
+//          
+//          PartVO partVO_new = new PartVO();
+//          partVO_new.setItemno(itemno);
+//          partVO_new.setMemberno(memberno);
+//          
+//          // 설문조사 참여 처리
+//          this.partProc.create(partVO_new);
+//          // 선택 인원 증가
+//          this.itemProc.update_cnt(itemno);
+//
+//          result.put("status", "success");
+//          result.put("message", "설문조사에 참여해 주셔서 감사합니다.");
+//        }
+//     // 추천 여부가 변경되어 다시 새로운 값을 읽어옴
+//        int update_cnt = this.itemProc.read(itemno).getItem_cnt();
+//        
+//        result.put("isMember", 1);  // 로그인:1, 비회원:0
+//        result.put("update_cnt", update_cnt);  // 추천 여부, 추천:1, 비추천:0
+//        
+//        System.out.println("-> result.toString(): " + result.toString());
+//        return result.toString();
+//
+//      } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+////        JSONObject result = new JSONObject();
+//        result.put("isMember", 1);  // 로그인:1, 비회원:0
+//        
+//        return result.toString();
+//      }
+//  }
+  
+  /**
+   * 설문조사 결과 보기
+   * @param surveyno
+   * @param model
+   * @return
+   */
+  @GetMapping("/result")
+  public String result(@RequestParam("surveyno") int surveyno, Model model) {
+      // 설문조사 정보 읽기
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
 
-      JSONObject src = new JSONObject(json_src); // JSON 파싱
-      int surveyno = src.getInt("surveyno");
-      int itemno = src.getInt("itemno");
-      
-      JSONObject result = new JSONObject();
-      
-      // 회원 여부 확인
-      if (this.memberProc.isMember(session)) {
-        int memberno = (int) session.getAttribute("memberno");
+      // 설문조사 항목 및 참여 인원 데이터 가져오기
+      ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
+      model.addAttribute("list", list);
 
-        // 중복 참여 여부 확인
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("surveyno", surveyno);
-        map.put("itemno", itemno);
-        map.put("memberno", memberno);
-
-        int count_survey = this.itemProc.count_survey(map);
-        System.out.println("->count_survey: " + count_survey);
-        
-        if (count_survey > 0) {
-          
-          System.out.println("->설문조사 참여 실패: " + itemno + ' ' + memberno);
-          result.put("status", "error");
-          result.put("message", "이미 참여한 설문조사입니다.");
-//          this.partProc.readByitemmember(map);
-//          this.itemProc.count_survey(map);
-        } else {
-          System.out.println("->설문조사 참여 완료: " + itemno + ' ' + memberno);
-          
-          PartVO partVO_new = new PartVO();
-          partVO_new.setItemno(itemno);
-          partVO_new.setMemberno(memberno);
-          
-          // 설문조사 참여 처리
-          this.partProc.create(partVO_new);
-          // 선택 인원 증가
-          this.itemProc.update_cnt(itemno);
-
-          result.put("status", "success");
-          result.put("message", "설문조사에 참여해 주셔서 감사합니다.");
-        }
-     // 추천 여부가 변경되어 다시 새로운 값을 읽어옴
-        int update_cnt = this.itemProc.read(itemno).getItem_cnt();
-        
-        result.put("isMember", 1);  // 로그인:1, 비회원:0
-        result.put("update_cnt", update_cnt);  // 추천 여부, 추천:1, 비추천:0
-        
-        System.out.println("-> result.toString(): " + result.toString());
-        return result.toString();
-
-      } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-//        JSONObject result = new JSONObject();
-        result.put("isMember", 1);  // 로그인:1, 비회원:0
-        
-        return result.toString();
-      }
+      return "/surveyitem/result";
   }
+
+
 
 }
