@@ -107,10 +107,10 @@ public class ScheduleCont {
     if (cnt == 1) {
       // model.addAttribute("code", "create_success");
       // model.addAttribute("name", cateVO.getName());
-      logAction("create", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "Y");
+      logAction("create", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
       return "redirect:/schedule/list_all"; // @GetMapping(value="/list_all")
     } else {
-      logAction("create", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "N");
+      logAction("create", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "N");
       model.addAttribute("code", "create_fail");
     }
 
@@ -147,7 +147,7 @@ public class ScheduleCont {
 
     int memberno = (int) session.getAttribute("memberno");
     model.addAttribute("scheduleVO", scheduleVO);
-    logAction("read", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "Y");
+    logAction("read", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
     return "/schedule/read";
   }
   
@@ -184,10 +184,10 @@ public class ScheduleCont {
       int cnt = this.scheduleProc.update(scheduleVO); // 글수정
       
       if (cnt == 1) {
-        logAction("update", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "Y");
+        logAction("update", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
         return "redirect:/schedule/list_all";
       } else {
-        logAction("update", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "N");
+        logAction("update", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "N");
         model.addAttribute("code", "update_fail");
       }
       model.addAttribute(cnt);
@@ -229,12 +229,12 @@ public class ScheduleCont {
     int memberno = (int) session.getAttribute("memberno");
     ScheduleVO scheduleVO = this.scheduleProc.read(scheduleno);
     if (this.memberProc.isMemberAdmin(session)) {
-      logAction("delete_process", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "Y");
+      logAction("delete_process", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
       this.scheduleProc.delete(scheduleno);
       return "redirect:/schedule/list_all";
      
     } else {
-      logAction("delete_process", "schedule", memberno, "title=" + scheduleVO.getTitle(), request, "N");
+      logAction("delete_process", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "N");
       return "redirect:/schedule/post2get";  // redirect
     }
   }

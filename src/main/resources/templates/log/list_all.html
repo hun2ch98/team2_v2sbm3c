@@ -58,20 +58,22 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th style="width: 25%;">대상 테이블</th>
+          <th style="width: 20%;">대상 테이블</th>
           <th style="width: 20%;">기능</th>
-          <th style="width: 30%;">ip 주소</th>
+          <th style="width: 25%;">ip 주소</th>
           <th style="width: 10%;">성공 여부</th>
+          <th style="width: 20%;">사용 시간</th>
           <th style="width: 15%;">로그 처리</th>
         </tr>
       </thead>
       <tbody>
         <!-- 데이터 반복 출력 -->
-        <tr th:each="item : ${logList}">
+        <tr th:each="item : ${logList}" th:if="${search_count > 0}">
           <td th:text="${item['table_name']}"></td>
           <td th:text="${item['action']}"></td>
           <td th:text="${item['ip']}"></td>
           <td th:text="${item['is_success']}"></td>
+          <td th:text="${item['ldate']}"></td>
           <td>
             <a th:href="@{/log/delete/{logno}(logno=${item['logno']})}" class="btn btn-danger">삭제</a>
           </td>

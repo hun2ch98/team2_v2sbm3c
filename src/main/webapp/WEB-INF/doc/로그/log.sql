@@ -3,8 +3,8 @@ DROP TABLE log;
 CREATE TABLE log(
    	logno         NUMBER(10)      NOT NULL    PRIMARY KEY,
     memberno      NUMBER(10)      NOT NULL,
-    table_name    VARCHAR(50)     NOT NULL,
-    action        VARCHAR(50)     NOT NULL,
+    table_name    VARCHAR(20)     NOT NULL,
+    action        VARCHAR(20)     NOT NULL,
     ldate         VARCHAR(10)     NOT NULL,
     details       VARCHAR2(50)    NULL,
     ip            VARCHAR(50)     NOT NULL,

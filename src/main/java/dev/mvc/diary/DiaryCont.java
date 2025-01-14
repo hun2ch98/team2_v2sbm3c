@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
@@ -187,7 +188,7 @@ public class DiaryCont {
       
       if (memberno == null) {
           ra.addFlashAttribute("message", "로그인이 필요합니다.");
-          return "redirect:/member/login";
+          return "/member/login_cookie_need";
       }
       diaryVO.setMemberno(memberno);
 
@@ -204,6 +205,74 @@ public class DiaryCont {
         return "/diary/msg";
       }
   }
+
+  
+//  @PostMapping("/create")
+//  public String createDiaryWithIllustration(Model model, HttpSession session, HttpServletRequest request,
+//                                            @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+//                                            BindingResult bindingResult, 
+//                                            @RequestParam(value = "illustMF", required = false) MultipartFile illustFile,
+//                                            @RequestParam(value = "selectedDate", required = false) String selectedDate,
+//                                            RedirectAttributes ra) {
+//      Integer memberno = (Integer) session.getAttribute("memberno");
+//
+//      // Validation 에러 처리
+//      if (bindingResult.hasErrors()) {
+//          bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+//          logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//          return "/diary/create";
+//      }
+//
+//      // 제목 및 내용 트림 처리
+//      diaryVO.setTitle(diaryVO.getTitle().trim());
+//      diaryVO.setSummary(diaryVO.getSummary().trim());
+//      
+//      // 날짜 설정
+//      if (diaryVO.getDdate() == null) {
+//          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 기본값: 오늘 날짜
+//      }
+//
+//      // 회원 번호 설정
+//      if (memberno == null) {
+//          ra.addFlashAttribute("message", "로그인이 필요합니다.");
+//          return "/member/login_cookie_need";
+//      }
+//      diaryVO.setMemberno(memberno);
+//
+//      // 1. Diary 저장
+//      int diaryCnt = diaryProc.create(diaryVO);
+//
+//      // 2. Illustration 저장
+//      if (diaryCnt == 1 && illustFile != null && !illustFile.isEmpty() && selectedDate != null) {
+//          try {
+//              // IllustrationVO 생성
+//              IllustrationVO illustrationVO = new IllustrationVO();
+//              illustrationVO.setDiaryno(diaryVO.getDiaryno()); // Diary 번호 설정
+//              illustrationVO.setIllustMF(illustFile);
+//
+//              // 날짜로 Diaryno 매핑
+//              java.sql.Date ddate = java.sql.Date.valueOf(selectedDate);
+//              illustrationVO.setDiaryno(diaryProc.getDiaryNoByDate(ddate));
+//
+//              // Illustration 저장
+//              illustrationProc.create(illustrationVO);
+//
+//              logAction("create", "diary_with_illustration", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+//              ra.addFlashAttribute("code", "diary_with_illustration_success");
+//          } catch (Exception e) {
+//              logAction("create", "illustration", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//              ra.addFlashAttribute("code", "illustration_create_fail");
+//              ra.addFlashAttribute("message", "Diary는 저장되었지만 Illustration 등록 중 오류가 발생했습니다.");
+//          }
+//      } else if (diaryCnt == 1) {
+//          logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+//      } else {
+//          ra.addFlashAttribute("code", "diary_create_fail");
+//      }
+//
+//      return "redirect:/diary/list_by_diaryno_search_paging";
+//  }
+
 
   
   

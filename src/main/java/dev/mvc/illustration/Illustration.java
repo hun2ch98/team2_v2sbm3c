@@ -25,6 +25,22 @@ public class Illustration {
 
     return path;
   }
+  
+  
+  public static String getUploadDirTemp() {
+    String osName = System.getProperty("os.name").toLowerCase();
+    String path = "";
+
+    if (osName.contains("win")) { // Windows
+      path = "C:\\kd\\deploy\\team2\\temp\\storage\\";
+    } else if (osName.contains("mac")) { // MacOS
+      path = "/Users/yourusername/deploy/team2/temp/storage/";
+    } else { // Linux
+      path = "/home/ubuntu/deploy/team2/temp/storage/";
+    }
+
+    return path;
+  }
 
 }
 
