@@ -58,6 +58,12 @@
           document.getElementById('btn_send').focus();
         }
       });
+      
+      // 복구키가 존재할 경우 경고창 표시
+      var recoveryKey = /*[[${recoveryKey}]]*/ '';
+      if (recoveryKey) {
+        alert("이 복구키는 본인만 가지고 있어야하며 누군가에게 알려줘서는 안됩니다.\n복구키: " + recoveryKey);
+      }
     }
 
     // 중복 아이디 검사

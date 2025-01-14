@@ -185,6 +185,7 @@ public class MemberCont {
               model.addAttribute("name", memberVO.getName());
               model.addAttribute("id", memberVO.getId());
               model.addAttribute("gradeno", memberVO.getGradeno());
+              model.addAttribute("recoveryKey", memberVO.getRecovery_key());
           } else {
               model.addAttribute("code", "create_fail");
           }
@@ -203,7 +204,7 @@ public class MemberCont {
 
       return "/member/msg"; // 결과 메시지 페이지로 이동
   }
-//----------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------
   // 회원가입 폼 및 처리 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
   
@@ -620,7 +621,7 @@ public class MemberCont {
     
     MemberVO memberVO_old = memberProc.read(memberVO.getMemberno());
     
- // -------------------------------------------------------------------
+    // -------------------------------------------------------------------
     // 파일 삭제 시작
     // -------------------------------------------------------------------
     String file1saved = memberVO_old.getFile1saved(); // 실제 저장된 파일명
