@@ -22,14 +22,15 @@
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
       <col style='width: 10%;'/>
-      <col style='width: 45%;'/>
-      <col style='width: 45%;'/>
+      <col style='width: 35%;'/>
+      <col style='width: 35%;'/>
+      <col style='width: 20%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>학습 데이터 번호</th>
       <th class='th_bs'>학습 데이터 질문</th>
       <th class='th_bs'>학습 데이터 답변</th>
-    </tr>
+      <th class='th_bs'>데이터 등록일</th>
    
     <tr th:each="learningdataVO, status:${list}" 
          th:attr="onclick=|location.href='/learningdata/read?datano=${learningdataVO.datano}&ques=${ques}'|"
@@ -50,6 +51,9 @@
                   th:text="|${learningdataVO.ans.substring(0, 160) }...|"></span>
         <span th:if="${learningdataVO.ans.length() <= 160 }" 
                   th:text="|${learningdataVO.ans}|"></span>        
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${learningdataVO.create_at}" style="font-weight: bold;"></span><br>
+      </td>
         
       </td>
     </tr>
