@@ -1,5 +1,7 @@
 package dev.mvc.learningdata;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -167,5 +169,12 @@ public class LearningdataProc implements LearningdataProcInter{
 	    int cnt = this.learningdataDAO.delete(datano);
 	    return cnt;
 	}
+	
+	@Override
+	public ArrayList<LearningdataVO> findAll() {
+	    ArrayList<LearningdataVO> list = this.learningdataDAO.findAll();
+	    return list;
+	}
+
 
 }

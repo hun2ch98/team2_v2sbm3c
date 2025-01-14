@@ -78,5 +78,8 @@
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
-
+  
+  <select id="findAll" resultType="dev.mvc.learningdata.LearningdataVO">
+      SELECT * FROM learningdata
+  </select>
 </mapper>
