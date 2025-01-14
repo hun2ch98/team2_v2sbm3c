@@ -175,12 +175,12 @@ public class EmotionCont {
 	  
 	        int cnt = this.emotionProc.create(emotionVO);
 	        if (cnt == 1) {
-	          logAction("create", "emotion", memberno, "title=" + emotionVO.getType(), request, "Y");
+	          logAction("create", "emotion", memberno, "type=" + emotionVO.getType(), request, "Y");
 	            ra.addAttribute("emono", emotionVO.getEmono()); 
 	            ra.addAttribute("now_page", 1); 
 	            return "redirect:/emotion/list_by_emono"; 
 	        } else {
-	          logAction("create", "emotion", memberno, "title=" + emotionVO.getType(), request, "N");
+	          logAction("create", "emotion", memberno, "type=" + emotionVO.getType(), request, "N");
 	            ra.addFlashAttribute("code", "create_fail");
 	            return "redirect:/emotion/msg"; 
 	        }
@@ -446,13 +446,13 @@ public class EmotionCont {
 
       MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
       model.addAttribute("memberVO", memberVO);
-      logAction("update_text", "emotion", memberno, "title=" + emotionVO.getType(), request, "Y");
+      logAction("update_text", "emotion", memberno, "type=" + emotionVO.getType(), request, "Y");
       return "/emotion/update_text"; // /templates/contents/update_text.html
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
     } else {
-      logAction("update_text", "emotion", memberno, "title=" + emotionVO.getType(), request, "N");
+      logAction("update_text", "emotion", memberno, "type=" + emotionVO.getType(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); // /templates/diary/login_cookie_need.html
 //      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
       return "member/login_cookie_need";
@@ -607,7 +607,7 @@ public class EmotionCont {
       ra.addAttribute("diaryno", emotionVO.getDiaryno());
       ra.addAttribute("word", word);
       ra.addAttribute("now_page", now_page);
-      logAction("update_file", "emotion", memberno, "title=" + emotionVO.getType(), request, "Y");
+      logAction("update_file", "emotion", memberno, "type=" + emotionVO.getType(), request, "Y");
       return "redirect:/emotion/read";
 //    } else {
 //      ra.addAttribute("url", "/diary/login_cookie_need"); 
@@ -669,7 +669,7 @@ public class EmotionCont {
     // -------------------------------------------------------------------
         
     this.emotionProc.delete(emono); // DBMS 삭제
-    logAction("delete", "emotion", memberno, "title=" + emotionVO_read.getType(), request, "Y");
+    logAction("delete", "emotion", memberno, "type=" + emotionVO_read.getType(), request, "Y");
     // -------------------------------------------------------------------------------------
     // 마지막 페이지의 마지막 레코드 삭제시의 페이지 번호 -1 처리
     // -------------------------------------------------------------------------------------    

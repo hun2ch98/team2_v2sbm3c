@@ -213,14 +213,14 @@ public class SurveyCont {
         // ra.addFlashAttribute("cateno", contentsVO.getCateno()); // controller ->
         // controller: X
 
-        logAction("create", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");  
+        logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");  
         ra.addAttribute("memberno", surveyVO.getMemberno()); // controller -> controller: O
         return "redirect:/survey/list_by_surveyno_search_paging";
 
         // return "redirect:/contents/list_by_cateno?cateno=" + contentsVO.getCateno();
         // // /templates/contents/list_by_cateno.html
       } else {
-        logAction("create", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");  
+        logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");  
         ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
         ra.addFlashAttribute("cnt", 0); // 업로드 실패
         ra.addFlashAttribute("url", "/survey/msg"); // msg.html, redirect parameter 적용
@@ -475,14 +475,14 @@ public class SurveyCont {
           map.put("surveyno", surveyVO.getSurveyno());
 
           this.surveyProc.update_text(surveyVO); // 글 수정 처리
-          logAction("update_text", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");
+          logAction("update_text", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
           return "redirect:/survey/list_by_surveyno_search_paging"; // @GetMapping(value = "/read")
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-        logAction("update_text", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");
+        logAction("update_text", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
           ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
           return "redirect:/survey/post2get"; // @GetMapping(value = "/msg")
       }
@@ -589,10 +589,10 @@ public class SurveyCont {
       ra.addAttribute("memberno", surveyVO.getMemberno());
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
-      logAction("update_file", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");
+      logAction("update_file", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
       return "redirect:/survey/list_by_surveyno_search_paging";
     } else {
-      logAction("update_file", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");
+      logAction("update_file", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); 
       return "redirect:/survey/post2get"; // GET
     }
@@ -731,10 +731,10 @@ public class SurveyCont {
                   }
 
                   ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-                  logAction("delete", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");
+                  logAction("delete", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
                   return "redirect:/survey/list_by_surveyno_search_paging"; // 설문조사 목록 페이지로 리다이렉트
               } else {
-                logAction("delete", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");
+                logAction("delete", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
                   model.addAttribute("code", "delete_fail");
                   return "/survey/msg"; // 실패 메시지 출력
               }

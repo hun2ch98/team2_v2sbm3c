@@ -152,11 +152,11 @@ public class IllustrationCont {
           int cnt = this.illustrationProc.create(illustrationVO);
 
           if (cnt == 1) {
-            logAction("create", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "Y");
+            logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "Y");
               ra.addAttribute("illustno", illustrationVO.getIllustno());
               return "redirect:/illustration/list_all";
           } else {
-            logAction("create", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "N");
+            logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "N");
               ra.addFlashAttribute("code", "check_upload_file_fail");
               ra.addFlashAttribute("url", "/illustration/msg");
               ra.addFlashAttribute("cnt", 0);
@@ -190,7 +190,7 @@ public class IllustrationCont {
       model.addAttribute("title", title);
       model.addAttribute("start_date", start_date);
       model.addAttribute("end_date", end_date);
-      logAction("read", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "Y");
+      logAction("read", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "Y");
       return "/illustration/read";
   }
   
@@ -290,7 +290,7 @@ public class IllustrationCont {
     model.addAttribute("title", title);
     model.addAttribute("start_date", start_date);
     model.addAttribute("end_date", end_date);
-    logAction("delete", "illustration", memberno, "title=" + illustrationVO_read.getIllust(), request, "Y");
+    logAction("delete", "illustration", memberno, "파일명=" + illustrationVO_read.getIllust(), request, "Y");
     return "redirect:/illustration/list_all";    
     
   }   
@@ -373,10 +373,10 @@ public class IllustrationCont {
       model.addAttribute("title", title);
       model.addAttribute("start_date", start_date);
       model.addAttribute("end_date", end_date);
-      logAction("update", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "Y");
+      logAction("update", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "Y");
       return "redirect:/illustration/list_all";
     } else {
-      logAction("update", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "N");
+      logAction("update", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "N");
         return "/member/login_cookie_need"; // GET
       }
   }

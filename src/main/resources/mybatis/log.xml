@@ -44,10 +44,10 @@
         AND is_success LIKE #{is_success}
     </if>
     <if test="start_date != null and start_date != ''">
-        AND ldate &gt;= #{start_date}
+        AND ldate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
     </if>
     <if test="end_date != null and end_date != ''">
-        AND ldate &lt;= #{end_date}
+        AND ldate &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
     </if>
   </select>
   
