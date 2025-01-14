@@ -30,9 +30,12 @@ import dev.mvc.emotion.EmotionProcInter;
 import dev.mvc.emotion.EmotionVO;
 import dev.mvc.illustration.IllustrationProcInter;
 import dev.mvc.illustration.IllustrationVO;
+import dev.mvc.log.LogProcInter;
+import dev.mvc.log.LogVO;
 import dev.mvc.tool.Tool;
 import dev.mvc.weather.WeatherProcInter;
 import dev.mvc.weather.WeatherVO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -72,6 +75,36 @@ public class DiaryCont {
 
   /** 페이징 목록 주소 */
   private String list_file_name = "/diary/list_by_diaryno_search_paging";
+  
+  @Autowired
+  @Qualifier("dev.mvc.log.LogProc")
+  private LogProcInter logProc;
+
+  private void logAction(String action, String table, int memberno, String details, HttpServletRequest request, String is_success) {
+      LogVO logVO = new LogVO();
+      logVO.setMemberno(memberno);
+      logVO.setTable_name(table);
+      logVO.setAction(action);
+      logVO.setDetails(details);
+      logVO.setIp(getClientIp(request)); // IP 주소 설정
+      logVO.setIs_success(is_success);
+      logProc.create(logVO); // Log 테이블에 삽입
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+      String ip = request.getHeader("X-Forwarded-For");
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("WL-Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getRemoteAddr();
+      }
+      return ip;
+  }
+
 
   public DiaryCont() {
     System.out.println("-> DiaryCont created.");
@@ -127,12 +160,14 @@ public class DiaryCont {
    */
   // contentCont의 create 처리 과정보고 추가해야함. 
   @PostMapping(value = "/create")
-  public String create(Model model, HttpSession session,
+  public String create(Model model, HttpSession session, HttpServletRequest request,
                        @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
                        BindingResult bindingResult, RedirectAttributes ra) {
+    Integer memberno = (Integer) session.getAttribute("memberno");
       if (bindingResult.hasErrors()) { 
           // 에러 발생 시 폼으로 돌아가기
         bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
         return "/diary/create";
       }
 
@@ -149,7 +184,7 @@ public class DiaryCont {
       }
 
       // 세션에서 memberno 가져오기
-      Integer memberno = (Integer) session.getAttribute("memberno");
+      
       if (memberno == null) {
           ra.addFlashAttribute("message", "로그인이 필요합니다.");
           return "redirect:/member/login";
@@ -161,17 +196,19 @@ public class DiaryCont {
       System.out.println("-> create_cnt: " + cnt);
 
       if (cnt == 1) {
-          return "redirect:/diary/list_by_diaryno_search_paging";
+        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+        return "redirect:/diary/list_by_diaryno_search_paging";
       } else {
-          model.addAttribute("code", "create_fail");
-          return "/diary/msg";
+        model.addAttribute("code", "create_fail");
+        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+        return "/diary/msg";
       }
   }
 
   
   
   @GetMapping(value="/read")
-  public String read(HttpSession session, Model model, 
+  public String read(HttpSession session, Model model, HttpServletRequest request,
       @RequestParam(name="diaryno", defaultValue="1") int diaryno,
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
     
@@ -203,6 +240,7 @@ public class DiaryCont {
       int memberno = (int) session.getAttribute("memberno");
       map.put("memberno", memberno);
       heartCnt = this.diaryGoodProc.heartCnt(map);
+      logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
     }
     
     model.addAttribute("heartCnt", heartCnt);
@@ -274,7 +312,7 @@ public class DiaryCont {
    * 
    */
   @PostMapping(value = "/delete")
-  public String deleteProcess(HttpSession session, Model model, 
+  public String deleteProcess(HttpSession session, Model model, HttpServletRequest request,
                               @RequestParam(name = "diaryno") int diaryno,
                               @RequestParam(name = "title", defaultValue = "") String title,
                               @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
@@ -282,7 +320,7 @@ public class DiaryCont {
                               @RequestParam(name = "now_page", defaultValue = "1") int nowPage,
                               RedirectAttributes ra) {
       if (this.memberProc.isMemberAdmin(session)) {
-        
+        int memberno = (int) session.getAttribute("memberno");
         int startNum = (nowPage - 1) * record_per_page + 1;
         int endNum = nowPage * record_per_page;
         ArrayList<DiaryVO> diaryList = diaryProc.list_search_paging(title, startDate, endDate, startNum, endNum);
@@ -301,7 +339,10 @@ public class DiaryCont {
                 ra.addAttribute("start_date", startDate);
                 ra.addAttribute("end_date", endDate);
                 ra.addAttribute("diaryList", String.join(",", diaryList.stream().map(Object::toString).toList()));
+              
+                logAction("delete", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
 
+                
                 // 마지막 페이지 처리 (빈 페이지 방지)
                 int searchCount = diaryProc.countSearchResults(title, startDate, endDate);
                 if (searchCount % this.record_per_page == 0) {
@@ -314,6 +355,7 @@ public class DiaryCont {
           }
           // 삭제 실패 시 처리
           ra.addFlashAttribute("msg", "삭제 실패");
+          logAction("delete", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
           return "redirect:/diary/list_by_diaryno_search_paging";
       } else {
           return "redirect:/member/login_cookie_need";
@@ -361,12 +403,13 @@ public class DiaryCont {
    * http://localhost:9093/diary/update
    */
   @PostMapping(value = "/update")
-  public String update(HttpSession session, Model model, 
+  public String update(HttpSession session, Model model, HttpServletRequest request,
                        @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
                        @RequestParam("diaryno") int diaryno,
                        BindingResult bindingResult, 
                        @RequestParam(name = "now_page", defaultValue = "1") int now_page, 
                        RedirectAttributes ra) {
+    int memberno = (int) session.getAttribute("memberno");
       if (this.memberProc.isMemberAdmin(session)) {
           if (bindingResult.hasErrors()) { // 폼 에러 처리
             DiaryVO diary1VO = diaryProc.read(diaryno);
@@ -379,6 +422,8 @@ public class DiaryCont {
           
           int cnt = this.diaryProc.update(diaryVO); // 데이터 업데이트
           if (cnt == 1) {
+            
+            logAction("update", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
               ra.addAttribute("now_page", now_page); // 페이지 번호 전달
               return "redirect:/diary/list_by_diaryno_search_paging"; // 목록 페이지로 리다이렉트
           } else {
@@ -386,6 +431,7 @@ public class DiaryCont {
               return "/diary/msg"; // 에러 메시지 출력 페이지
           }
       } else {
+        logAction("update", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
           return "redirect:/member/login_cookie_need"; // 권한이 없으면 로그인 페이지로 리다이렉트
       }
   }
@@ -393,13 +439,14 @@ public class DiaryCont {
   
   @PostMapping(value="/good")
   @ResponseBody
-  public String good(HttpSession session, Model model, RedirectAttributes ra,
-                                  @ RequestBody String json_src ) {
+  public String good(HttpSession session, Model model, RedirectAttributes ra, 
+      HttpServletRequest request,  @ RequestBody String json_src ) {
     System.out.println("-> json_src : "  + json_src);
     JSONObject src = new JSONObject(json_src); 
     
     int diaryno = (int)src.get("diaryno");
     System.out.println("->diaryno : " + diaryno);
+    DiaryVO diaryVO = this.diaryProc.read(diaryno);
     
     if (this.memberProc.isMember(session)) {
       
@@ -418,6 +465,7 @@ public class DiaryCont {
         DiaryGoodVO diaryGoodVO = this.diaryGoodProc.readByDiaryMember(map);
         this.diaryGoodProc.delete(diaryGoodVO.getGoodno()); // 추천 삭제
         this.diaryProc.decreaseGoodCnt(diaryno); // 카운트 감소
+        logAction("decreaseGoodCnt", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
         
       } else {
         // 추천 작업
@@ -427,6 +475,7 @@ public class DiaryCont {
         diaryGoodVO_new.setMemberno(memberno);
         this.diaryGoodProc.create(diaryGoodVO_new); // 새로운 튜플 생성
         this.diaryProc.increaseGoodCnt(diaryno);
+        logAction("increaseGoodCnt", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
       }
       
       int heartCnt = this.diaryGoodProc.heartCnt(map);

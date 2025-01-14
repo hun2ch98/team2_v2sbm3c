@@ -166,6 +166,16 @@
                     </ul>
                 </li>
                 
+                <!--
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="로그 기록">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/log/list_all|}">그림 등록</a></li>
+                    </ul>
+                </li> -->
+                
                 <li class="nav-item dropdown" th:if="${session.memberno != null}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="MyPage">                                                            
