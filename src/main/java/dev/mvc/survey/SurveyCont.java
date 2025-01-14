@@ -219,7 +219,8 @@ public class SurveyCont {
   
   /**
    * 유형 3
-   * 카테고리별 목록 + 검색 + 페이징  
+   * 카테고리별 목록 + 검색 + 페이징 
+   * 회원
    * @return
    */
   @GetMapping(value = "/list_by_surveyno_search_paging")
@@ -230,7 +231,7 @@ public class SurveyCont {
       @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    if (this.memberProc.isMember(session) || this.memberProc.isMemberAdmin(session)) { // 회원 또는 관리자 로그인한 경우
+    if (this.memberProc.isMember(session)) { // 회원 로그인한 경우
 
       int record_per_page = 10;
       int startRow = (now_page - 1) * record_per_page + 1;
@@ -273,6 +274,69 @@ public class SurveyCont {
       model.addAttribute("no", no);
 
       return "/survey/list_by_surveyno_search_paging"; // /templates/board/list_by_boardno_search_paging.html
+      } else {
+      return "member/login_cookie_need";
+      }
+
+  }
+  
+  /**
+   * 유형 3
+   * 카테고리별 목록 + 검색 + 페이징 
+   * 관리자 
+   * @return
+   */
+  @GetMapping(value = "/list_by_surveyno_admin")
+  public String list_by_surveyno_admin(
+      HttpSession session, 
+      Model model, 
+      @ModelAttribute("surveyVO") SurveyVO surveyVO,
+      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+      @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
+      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인한 경우
+
+      int record_per_page = 10;
+      int startRow = (now_page - 1) * record_per_page + 1;
+      int endRow = now_page * record_per_page;
+
+//      int memberno = 1;
+      int memberno = (int)session.getAttribute("memberno");
+      MemberVO memberVO = this.memberProc.read(memberno);
+      if (memberVO == null) {
+          memberVO = new MemberVO();
+          memberVO.setMemberno(1);
+          model.addAttribute("message", "회원 정보가 없습니다.");
+      }
+      is_continue = Tool.checkNull(is_continue).trim();
+      model.addAttribute("memberVO", memberVO);
+      model.addAttribute("surveyno", surveyno);
+      model.addAttribute("is_continue", is_continue);
+      model.addAttribute("now_page", now_page);
+
+      HashMap<String, Object> map = new HashMap<>();
+      map.put("memberno", memberno);
+      map.put("is_continue", is_continue);
+      map.put("now_page", now_page);
+      map.put("startRow", startRow);
+      map.put("endRow", endRow);
+
+      ArrayList<SurveyVO> list = this.surveyProc.list_by_surveyno_search_paging(map);
+      model.addAttribute("list", list);
+
+      int search_count = this.surveyProc.count_by_surveyno_search(map);
+      String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, "/survey/list_by_surveyno_search_paging", search_count,
+          Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
+      model.addAttribute("paging", paging);
+      model.addAttribute("is_continue", is_continue);
+      model.addAttribute("now_page", now_page);
+      model.addAttribute("search_count", search_count);
+
+
+      int no = search_count - ((now_page - 1) * Survey.RECORD_PER_PAGE);
+      model.addAttribute("no", no);
+
+      return "/survey/list_by_surveyno_admin"; // /templates/board/list_by_boardno_search_paging.html
       } else {
       return "member/login_cookie_need";
       }

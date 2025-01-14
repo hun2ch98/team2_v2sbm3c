@@ -20,6 +20,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/loginlog/list|}">로그 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
@@ -54,7 +55,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/surveygood/list_all|}">설문조사 추천</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/participants/list_all|}">설문조사 참여회원</a></li>
                     </ul>
@@ -113,11 +114,21 @@
                 <!--
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="모델 학습 이력">                                                            
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="모델학습이력">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/modeltrainging/create|}">모델 학습 이력 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/modeltrainging/list_by_trainingno_search_paging?is_continue=${is_continue ?: ''}|}">모델 학습 이력 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/modeltraining/create|}">모델 학습 이력 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/modeltraining/list_by_trainingno_search_paging?is_continue=${is_continue ?: ''}|}">모델 학습 이력 목록</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="평점">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/score/create|}">평점 등록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/score/list_by_scoreno_search_paging?is_continue=${is_continue ?: ''}|}">평점 목록</a></li>
                     </ul>
                 </li>-->
                 
@@ -180,7 +191,7 @@
 
                 <li class="nav-item">
                   <a th:if="${session.memberno == null}" class="nav-link" href="/member/login" th:text="@{|로그인|}"></a>
-                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.name} 로그아웃|}"></a>
+                  <a th:if="${session.memberno != null}" class="nav-link" href="/member/logout" th:text="@{|${session.name}님 로그아웃|}"></a>
                 </li>
                 
                 <li class="nav-item dropdown" th:if="${session.memberno == null}">

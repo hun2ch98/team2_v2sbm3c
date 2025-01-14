@@ -32,10 +32,16 @@ COMMIT;
 
 -- 데이터 삽입
 INSERT INTO participants(pno, itemno, memberno, pdate)
-VALUES (participants_seq.nextval, 1, 2, sysdate);
+VALUES (participants_seq.nextval, 1, 6, sysdate);
 
 INSERT INTO participants(pno, itemno, memberno, pdate)
 VALUES (participants_seq.nextval, 2, 2, sysdate);
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 3, sysdate);
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 4, sysdate);
+INSERT INTO participants(pno, itemno, memberno, pdate)
+VALUES (participants_seq.nextval, 2, 5, sysdate);
 
 INSERT INTO participants(pno, itemno, memberno, pdate)
 VALUES (participants_seq.nextval, 3, 2, sysdate);
@@ -71,11 +77,11 @@ COMMIT;
 
 UPDATE surveyitem
 SET item_cnt = item_cnt + 1
-WHERE itemno = 3
+WHERE itemno = 24;
 
 SELECT COUNT (*) as cnt
 FROM participants
-WHERE itemno=1 AND memberno =2;
+WHERE itemno=24 AND memberno =2;
        CNT
 ----------
          0

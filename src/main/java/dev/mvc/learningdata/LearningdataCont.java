@@ -114,7 +114,7 @@ public class LearningdataCont {
 	  public String list_by_datano_search_paging(
 	      HttpSession session,
 	      Model model,
-	      @ModelAttribute("LearningdataVO") LearningdataVO learningdataVO,
+	      @ModelAttribute("learningdataVO") LearningdataVO learningdataVO,
 	      @RequestParam(name = "datano", defaultValue = "0") int datano,
 	      @RequestParam(name = "ques", defaultValue = "") String ques,
 	      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {

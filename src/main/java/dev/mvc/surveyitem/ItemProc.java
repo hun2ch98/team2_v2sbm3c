@@ -31,6 +31,12 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
+  public ArrayList<ItemVO> list_member(int surveyno) {
+    ArrayList<ItemVO> list = this.itemDAO.list_member(surveyno);
+    return list;
+  }
+  
+  @Override
   public ArrayList<ItemVO> list_all_com(int surveyno){
     ArrayList<ItemVO> list = this.itemDAO.list_all_com(surveyno);
     return list;
@@ -206,14 +212,21 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public int count_survey(int surveyno) {
-    int cnt = this.itemDAO.count_survey(surveyno);
+  public int count_survey(HashMap<String, Object> map) {
+    int cnt = this.itemDAO.count_survey(map);
     return cnt;
   }
+
   
   @Override
   public int delete_survey(int surveyno) {
     int cnt = this.itemDAO.delete_survey(surveyno);
+    return cnt;
+  }
+
+  @Override
+  public int count_result(int itemno) {
+    int cnt = this.itemDAO.count_result(itemno);
     return cnt;
   }
 

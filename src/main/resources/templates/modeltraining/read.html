@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<body>
+<div layout:fragment="content">
+  <div class='title_line'>
+    > 모델 학습 이력 조회
+  </div>
+
+  <aside class="aside_right" th:if="${session?.gradle != 1}">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/modeltraining/list_by_trainingno_search_paging}">목록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/modeltraining/create}">등록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/modeltraining/update_text?trainingno=${modeltrainingVO.trainingno}&now_page=${now_page}|}">글 수정</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/modeltraining/delete?trainingno=${modeltrainingVO.trainingno}&now_page=${now_page}|}">삭제</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/modeltraining/list_by_trainingno_search_paging}">모델 학습 이력 보기</a>
+  </aside>
+
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div style="width: 100%; word-break: break-all;">
+          <span style="font-size: 1.5em; font-weight: bold;">모델 이름: </span><span th:text="${modeltrainingVO.name}" style="font-size: inherit; font-weight: normal;"></span>
+          <br><br><br>
+          <span style="font-size: 1.5em; font-weight: bold;">< 학습 관련 메모 ></span>
+          <br><br>
+          <span th:text="${modeltrainingVO.notes}" style="font-size: inherit; font-weight: normal;"></span>
+          <br><br><br>
+          <div style="white-space: pre-wrap;">학습 정확도: <span th:text="${modeltrainingVO.accuracy}"></span>%</div>
+          <br><br>
+          <div style="white-space: pre-wrap;">학습 시작 날짜: <span th:text="${modeltrainingVO.st_time}"></span></div>
+          <br><br>
+          <div style="white-space: pre-wrap;">학습 종료 날짜: <span th:text="${modeltrainingVO.end_time == null ? modeltrainingVO.end_time : '아직 학습 중...'}"></span>
+          </div>
+          <br><br>
+          <div style="white-space: pre-wrap;">등록일: <span th:text="${modeltrainingVO.rdate}"></span></div>
+        </div>
+      </li>
+    </ul>
+  </fieldset>
+</div>
+</body>
+</html>

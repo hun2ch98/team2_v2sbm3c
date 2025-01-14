@@ -25,6 +25,13 @@ public interface ItemDAOInter {
    * 목록
    * @return
    */
+  public ArrayList<ItemVO> list_member(int surveyno);
+  
+  /**
+   * 관리자
+   * 목록
+   * @return
+   */
   public ArrayList<ItemVO> list_all_com(int surveyno);
   
   /**
@@ -72,8 +79,8 @@ public interface ItemDAOInter {
    * 특정 카테고리에 속한 레코드 갯수 산출
    * @param surveyno
    * @return
-   */
-  public int count_survey(int surveyno);
+   */  
+  public int count_survey(HashMap<String, Object> map);
   
   /**
    * 특정 레코드 삭제
@@ -81,6 +88,13 @@ public interface ItemDAOInter {
    * @return
    */
   public int delete_survey(int surveyno);
+  
+  /**
+   * 설문 참여 결과 조회
+   * @param itemno
+   * @return
+   */
+  public int count_result(int itemno);
 
 
 }
