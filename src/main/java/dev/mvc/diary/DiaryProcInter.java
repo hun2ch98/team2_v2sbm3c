@@ -109,6 +109,7 @@ public interface DiaryProcInter {
   //public List<DiaryVO> readList(int diaryno);
 
   int increaseCnt(int diaryno);
+  
 }
 
 

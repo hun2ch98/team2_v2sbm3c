@@ -55,13 +55,14 @@ CREATE SEQUENCE member_seq
 
 commit;
 
-SELECT * FROM member;
-
 -- 모두 삭제
 DELETE FROM member;
 2) 특정 회원 삭제
 DELETE FROM member
-WHERE memberno=2;
+WHERE memberno=6;
+
+SELECT * FROM member;
+
 
 -- cateno FK 특정 그룹에 속한 레코드 모두 삭제
 DELETE FROM grade
@@ -83,12 +84,12 @@ VALUES (member_seq.nextval, 'admin', '1234', 'admin@mail.com', '통합 관리자
 
 -- 개인 회원 테스트 계정
 INSERT INTO member (memberno, id, passwd, email, name, nickname, birth, zipcode,
-                    address1, address2, pf_img, mdate, grade)
+                    address1, address2, pf_img, mdate, grade, phone)
 VALUES (member_seq.nextval, 'member', '1234', 'member@mail.com', '일반 회원',
-        '일반인', TO_DATE('2024-12-18', 'YYYY-MM-DD'), '서울시 종로2가', '1.png', SYSDATE, 10);
+        '일반인', TO_DATE('2024-12-18', 'YYYY-MM-DD'), '서울시 종로2가', '1.png', SYSDATE, 10, 010-1234-5678);
 
 --2. 목록
-SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, gradeno
+SELECT memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, gradeno, phone
 FROM member
 ORDER BY grade ASC, id ASC;
 
@@ -96,8 +97,8 @@ ORDER BY grade ASC, id ASC;
 DELETE FROM member
 WHERE memberno=1;
 
--- grade 등급 수정
-UPDATE member SET GRADE = 1 WHERE ID = 'admin';
+-- 수정
+UPDATE member SET MEMBERNO = 1 WHERE PHONE = '010-1234-5678';
 
 commit;
 

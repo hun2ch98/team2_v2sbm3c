@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+  
+  <div class="title_line">설문조사 완료</div>
+  <div style="text-align: center; margin-top: 50px;">
+    <p>설문조사에 참여해 주셔서 감사합니다!</p>
+    <a th:href="@{/survey/list_by_surveyno_search_paging(is_continue=${is_continue ?: ''})}" class="btn btn-primary">목록가기</a>
+  </div>
+</div>
+</html>

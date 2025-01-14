@@ -30,7 +30,6 @@ public class IllustrationProc implements IllustrationProcInter {
     public int create(IllustrationVO illustrationVO) {
         return illustrationDAO.create(illustrationVO);
     }
-
     
 
     @Override
@@ -236,13 +235,11 @@ public class IllustrationProc implements IllustrationProcInter {
     }
 
 
-
     @Override
     public ArrayList<DiaryIllustrationVO> list_calendar(Date date) {
       ArrayList<DiaryIllustrationVO> list_calendar = this.illustrationDAO.list_calendar(date);
       return list_calendar;
     }
-
 
 
     @Override

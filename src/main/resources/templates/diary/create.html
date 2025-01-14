@@ -109,13 +109,29 @@
       });
     </script>
 
-    <!-- 내용 -->
-    <div>
-      <label>내용</label>
-      <textarea name="summary" th:value="*{summary}" required="required" class="form-control" rows="12" style="width: 100%; position: relative; z-index: 1;">
-        오늘의 날씨는 그리 맑지 않지만 오랜만에 외출을 준비합니다.
-      </textarea>
+    <!-- 내용 및 이미지 미리보기 나란히 배치 -->
+    <div style="display: flex; justify-content: space-between;">
+      <!-- 내용 영역 -->
+      <div style="width: 45%;">
+        <label>내용</label>
+        <textarea name="summary" th:value="*{summary}" required="required" class="form-control" rows="12" style="width: 100%;">일기를 작성해주세요!</textarea>
+      </div>
+
+      <!-- 생성된 이미지 칸 -->
+      <div style="width: 45%; border: 1px solid #ccc; padding: 10px;">
+        <label>생성된 이미지</label>
+        <div>
+          <img id="preview-image" th:src="${imageUrl}" alt="생성된 이미지" style="width: 100%; display: none;">
+        </div>
+      </div>
     </div>
+    
+    <!-- 이미지 생성 버튼 -->
+    <div style="margin-top: 20px;">
+      <button type="button" id="generate-button" class="btn btn-primary btn-sm">만들기</button>
+      <button type="button" id="regenerate-button" class="btn btn-secondary btn-sm">다시 만들기</button>
+    </div>
+
 
     <!-- 등록 버튼 -->
     <div class="content_body_bottom" style="margin-top: 20px;">
@@ -123,9 +139,62 @@
       <button type="button" onclick="location.href='./list_by_diaryno_search_paging'" class="btn btn-secondary btn-sm">목록</button>
     </div>
   </form>
+  
+  <script>
+    async function generateImage(regenerate = false) {
+      // 폼 데이터 가져오기
+      const formData = new FormData(document.querySelector('form[name="frm"]'));
+      const title = formData.get('title');
+      const weatherCode = formData.get('weatherno');
+      const emotionCode = formData.get('emono');
+      const content = formData.get('summary');
+
+      if (!title || !weatherCode || !emotionCode || !content) {
+        alert("모든 필드를 입력해주세요!");
+        return;
+      }
+
+      // API 요청 데이터 구성
+      const payload = {
+        title: title,
+        weatherCode: weatherCode,
+        emotionCode: emotionCode,
+        content: content
+      };
+
+      try {
+        // Flask API 호출
+        const response = await fetch('http://127.0.0.1:5000/generate_image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // 생성된 이미지 URL 표시
+          const previewImage = document.getElementById('preview-image');
+          previewImage.src = result.image_url;
+          previewImage.style.display = 'block';
+          if (regenerate) {
+            alert("새로운 이미지가 생성되었습니다!");
+          } else {
+            alert("이미지가 성공적으로 생성되었습니다!");
+          }
+        } else {
+          alert(`이미지 생성 실패: ${result.error}`);
+        }
+      } catch (error) {
+        console.error('API 호출 중 오류 발생:', error);
+        alert('이미지 생성 중 문제가 발생했습니다.');
+      }
+    }
+
+    // 버튼 이벤트 핸들러 추가
+    document.getElementById('generate-button').addEventListener('click', () => generateImage(false));
+    document.getElementById('regenerate-button').addEventListener('click', () => generateImage(true));
+  </script>
 </div>
-
-
-
- 
 </html>
+

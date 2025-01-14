@@ -82,5 +82,10 @@ public interface LearningdataProcInter {
    */
   public int delete(int datano);
   
+  /**
+   * 모든 학습 데이터 목록을 반환
+   * @return
+   */
+  ArrayList<LearningdataVO> findAll();
 }
 

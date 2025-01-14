@@ -51,5 +51,45 @@
     WHERE i.itemno = p.itemno AND p.memberno = m.memberno
     ORDER BY pno DESC
   </select>
+  
+  <!-- 검색 개수 -->
+  <select id="count_search" resultType="int" parameterType="Map">
+    SELECT COUNT(*) AS cnt
+    FROM participants p
+    JOIN surveyitem i ON p.itemno = i.itemno
+    JOIN member m ON p.memberno = m.memberno
+    <where>
+      <if test="word != null and word != ''">
+        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' AND UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+      </if>
+    </where>
+  </select>
+  
+  <!-- 검색 + 페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.participants.ItemMemberPartVO" parameterType="Map">
+    SELECT *
+    FROM (
+        SELECT 
+            p.pno, 
+            p.itemno, 
+            p.memberno, 
+            p.pdate, 
+            i.item AS i_item, 
+            m.name AS name, 
+            m.email AS email, 
+            ROW_NUMBER() OVER (ORDER BY p.pno ASC) AS r
+        FROM participants p
+        JOIN surveyitem i ON p.itemno = i.itemno
+        JOIN member m ON p.memberno = m.memberno
+        <where>
+          <if test="word != null and word != ''">
+            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' AND UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+        </where>
+    )
+    WHERE r BETWEEN #{start_row} AND #{end_row}
+  </select>
+
+
 
 </mapper>

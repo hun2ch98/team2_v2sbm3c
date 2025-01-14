@@ -277,8 +277,7 @@ public class DiaryProc implements DiaryProcInter {
   public DiaryVO getDiaryByDiaryNo(int diaryno) {
       return diaryDAO.getDiaryByDiaryNo(diaryno);
   }
-  
-  
+
 }
 
 

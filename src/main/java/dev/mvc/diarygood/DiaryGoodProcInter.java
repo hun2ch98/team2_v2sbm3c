@@ -14,6 +14,7 @@ public interface DiaryGoodProcInter {
   
   public int delete(int goodno);
   
+  public int f_delete(int diaryno);
 
   public DiaryGoodVO read(int goodno);
   

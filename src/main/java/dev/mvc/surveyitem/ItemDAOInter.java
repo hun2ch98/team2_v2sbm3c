@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import dev.mvc.participants.PartVO;
+
 public interface ItemDAOInter {
   
   /**
@@ -22,6 +24,13 @@ public interface ItemDAOInter {
   
   /**
    * 회원
+   * 목록
+   * @return
+   */
+  public ArrayList<ItemVO> list_member(int surveyno);
+  
+  /**
+   * 관리자
    * 목록
    * @return
    */
@@ -47,6 +56,13 @@ public interface ItemDAOInter {
    * @return
    */
   public int update_cnt(int itemno);
+  
+  /**
+   * 등록
+   * @param partVO
+   * @return
+   */
+  public int create(PartVO partVO);
   
   /**
    * 검색 목록
@@ -81,6 +97,13 @@ public interface ItemDAOInter {
    * @return
    */
   public int delete_survey(int surveyno);
+  
+  /**
+   * 설문 참여 결과 조회
+   * @param itemno
+   * @return
+   */
+  public int count_result(int itemno);
 
 
 }
