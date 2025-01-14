@@ -9,15 +9,16 @@
 
   <aside class="aside_right">
     <span th:if="${session.grade == 'admin'}">
-      <a th:href="@{|/learningdata/create_file|}">csv파일로 전송</a>
-      <span class='menu_divide'>│</span>  
       <a th:href="@{|/learningdata/create|}">등록</a>
       <span class="menu_devide">│</span>    
       <a href="javascript:location.reload();">새로고침</a>
       <span class='menu_divide'>│</span>    
       <a th:href="@{/learningdata/list_by_datano_search_paging}">목록</a>
+      <span class='menu_divide'>│</span>    
+      <a th:href="@{/learningdata/download}">CSV 다운로드</a>
     </span>
   </aside> 
+  
 
   <div th:replace="~{/learningdata/list_search_com :: list_search_fragment}"></div>
   

@@ -1,10 +1,16 @@
 package dev.mvc.learningdata;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +24,7 @@ import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.tool.Tool;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -337,5 +344,33 @@ public class LearningdataCont {
 	    
 	    return "redirect:/learningdata/list_by_datano_search_paging";
 	  }
+	  
+	  @GetMapping(value = "/download")
+	  public ResponseEntity<String> exportCsv(HttpServletResponse response) throws IOException {
+	      SimpleDateFormat date = new SimpleDateFormat("yyMMddHHmmSS");
+	      String fileName = "learningdata_" + date.format(new Date()) + ".csv";
+
+	      ArrayList<LearningdataVO> list = learningdataProc.findAll();
+	      String[] dataColumn = {"질문", "답변"};
+
+	      StringBuilder csvFile = new StringBuilder();
+
+	      // Adding the header: Each column is now a row (질문, 답변)
+	      csvFile.append(dataColumn[0]).append(',');
+	      csvFile.append(dataColumn[1]).append('\n');
+
+	      // Adding the data rows: Each row will represent a question and answer
+	      for (LearningdataVO data : list) {
+	          csvFile.append(data.getQues().replace(",", "/")).append(',');
+	          csvFile.append(data.getAns().replace(",", "/")).append('\n');
+	      }
+
+	      HttpHeaders headers = new HttpHeaders();
+	      headers.add("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+	      headers.add("Content-Type", "text/csv; charset=MS949");
+
+	      return new ResponseEntity<>(csvFile.toString(), headers, HttpStatus.CREATED);
+	  }
+
 	  
 }
