@@ -102,7 +102,7 @@ public class SurveyCont {
       BindingResult bindingResult, 
       RedirectAttributes ra) {
     
-//    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+    if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
@@ -153,7 +153,8 @@ public class SurveyCont {
       // ------------------------------------------------------------------------------
 
       // Call By Reference: 메모리 공유, Hashcode 전달
-      int memberno = 1; // memberno FK
+//      int memberno = 1; // memberno FK
+      int memberno = (int)session.getAttribute("memberno");
       surveyVO.setMemberno(memberno);
       int cnt = this.surveyProc.create(surveyVO);
 
@@ -192,9 +193,9 @@ public class SurveyCont {
         ra.addFlashAttribute("url", "/survey/msg"); // msg.html, redirect parameter 적용
         return "redirect:/survey/msg"; // Post -> Get - param...
       }
-//    } else { // 로그인 실패 한 경우
-//      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
-//    }
+    } else { // 로그인 실패 한 경우
+      return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
+    }
   }
   
   /**

@@ -51,4 +51,5 @@ public interface PartProcInter {
    */
   public ArrayList<ItemMemberPartVO> list_all_join();
 
+
 }

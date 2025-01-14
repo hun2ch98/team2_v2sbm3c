@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import dev.mvc.participants.PartVO;
+
 public interface ItemDAOInter {
   
   /**
@@ -54,6 +56,13 @@ public interface ItemDAOInter {
    * @return
    */
   public int update_cnt(int itemno);
+  
+  /**
+   * 등록
+   * @param partVO
+   * @return
+   */
+  public int create(PartVO partVO);
   
   /**
    * 검색 목록
