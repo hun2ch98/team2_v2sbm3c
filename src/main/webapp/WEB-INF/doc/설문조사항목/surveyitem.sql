@@ -95,6 +95,8 @@ UPDATE surveyitem SET item_seq='5' WHERE itemno=9;
 -- 삭제
 DELETE FROM surveyitem;
 
+DELETE FROM surveyitem WHERE itemno =13;
+
 UPDATE surveyitem
 SET item_cnt = item_cnt + 1
 WHERE itemno = 5;

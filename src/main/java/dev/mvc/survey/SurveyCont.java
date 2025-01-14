@@ -604,6 +604,7 @@ public class SurveyCont {
   @GetMapping(value = "/delete/{surveyno}")
   public String delete(HttpSession session, Model model, 
                                    @PathVariable("surveyno") int surveyno,
+                                   @RequestParam(name = "itemno", defaultValue = "1") int itemno,
                                    @RequestParam(name = "memberno", defaultValue = "1") int memberno,
                                    @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
                                    @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
@@ -611,9 +612,11 @@ public class SurveyCont {
       SurveyVO surveyVO = this.surveyProc.read(surveyno);
       model.addAttribute("surveyVO", surveyVO);
       
+      ItemVO itemVO = this.itemProc.read(itemno);
+      model.addAttribute("itemVO", itemVO);     
+      
       int cnt = this.surveyProc.cntcount(surveyno);
       
-//      
       HashMap<String, Object> map = new HashMap<String, Object>();
 //      ArrayList<SurveyVO> list = this.surveyProc.list_by_surveyno_search_paging(map);
       map.put("is_continue", is_continue);

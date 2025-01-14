@@ -1,17 +1,17 @@
 <div th:fragment="list_search_fragment"> <!-- <div th:replace=... -->
   <div style="text-align: right; clear: both;">
-  <form name="frm_search" method="get" action="/survey/list_by_surveyno_search_paging">
+  <form name="frm_search" method="get" action="/surveyitem/list_search">
     <!-- <input type="hidden" name="memberno" id="memberno" th:value="${memberVO.memberno}" > -->
     
-    <input type="text" name="is_continue" id="is_continue" th:value="${is_continue}" >
+    <input type="text" name="item" id="item" th:value="${item}" >
     <button type='submit' class='btn btn-secondary btn-sm' 
                  style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
-    <span th:if="${is_continue != null and is_continue != ''}">
+    <span th:if="${item != null and item != ''}">
       <button type='button' class='btn btn-secondary btn-sm' 
                    style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
-                   th:onclick="|location.href='/survey/list_by_surveyno_search_paging?surveyno=${surveyVO.surveyno}'|">검색 취소</button>
+                   th:onclick="|location.href='/surveyitem/list_search?surveyno=${surveyVO.surveyno}'|">검색 취소</button>
     </span>
                   
   </form>
-</div>
+  </div>
 </div>

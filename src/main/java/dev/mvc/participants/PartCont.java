@@ -94,7 +94,7 @@ public class PartCont {
       int record_per_page = 10;
       int start_row = (now_page - 1) * record_per_page + 1;
       int end_row = now_page * record_per_page;
-      System.out.println("Search word: " + word);
+//      System.out.println("Search word: " + word);
       
       int memberno = (int)session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
@@ -122,7 +122,7 @@ public class PartCont {
       model.addAttribute("list", list);
       
       int search_count = this.partProc.count_search(map);
-      System.out.println("search_count: " + search_count);
+//      System.out.println("search_count: " + search_count);
       String paging = this.partProc.pagingBox(memberno, now_page, word, "/participants/list_all", search_count,
           Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
