@@ -29,11 +29,13 @@ import dev.mvc.diarygood.DiaryGoodProcInter;
 import dev.mvc.diarygood.DiaryGoodVO;
 import dev.mvc.emotion.EmotionProcInter;
 import dev.mvc.emotion.EmotionVO;
+import dev.mvc.illustration.Illustration;
 import dev.mvc.illustration.IllustrationProcInter;
 import dev.mvc.illustration.IllustrationVO;
 import dev.mvc.log.LogProcInter;
 import dev.mvc.log.LogVO;
 import dev.mvc.tool.Tool;
+import dev.mvc.tool.Upload;
 import dev.mvc.weather.WeatherProcInter;
 import dev.mvc.weather.WeatherVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -160,118 +162,109 @@ public class DiaryCont {
    * @return
    */
   // contentCont의 create 처리 과정보고 추가해야함. 
-  @PostMapping(value = "/create")
-  public String create(Model model, HttpSession session, HttpServletRequest request,
-                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
-                       BindingResult bindingResult, RedirectAttributes ra) {
-    Integer memberno = (Integer) session.getAttribute("memberno");
-      if (bindingResult.hasErrors()) { 
-          // 에러 발생 시 폼으로 돌아가기
-        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-        return "/diary/create";
-      }
-
-      // 제목 및 내용 트림 처리
-      diaryVO.setTitle(diaryVO.getTitle().trim());
-      diaryVO.setSummary(diaryVO.getSummary().trim());
-      diaryVO.setEmono(diaryVO.getEmono());
-      diaryVO.setWeatherno(diaryVO.getWeatherno());
-      
-
-      // ddate 설정
-      if (diaryVO.getDdate() == null) {
-          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
-      }
-
-      // 세션에서 memberno 가져오기
-      
-      if (memberno == null) {
-          ra.addFlashAttribute("message", "로그인이 필요합니다.");
-          return "/member/login_cookie_need";
-      }
-      diaryVO.setMemberno(memberno);
-
-      // DB 저장 로직 호출
-      int cnt = diaryProc.create(diaryVO);
-      System.out.println("-> create_cnt: " + cnt);
-
-      if (cnt == 1) {
-        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
-        return "redirect:/diary/list_by_diaryno_search_paging";
-      } else {
-        model.addAttribute("code", "create_fail");
-        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-        return "/diary/msg";
-      }
-  }
-
-  
-//  @PostMapping("/create")
-//  public String createDiaryWithIllustration(Model model, HttpSession session, HttpServletRequest request,
-//                                            @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
-//                                            BindingResult bindingResult, 
-//                                            @RequestParam(value = "illustMF", required = false) MultipartFile illustFile,
-//                                            @RequestParam(value = "selectedDate", required = false) String selectedDate,
-//                                            RedirectAttributes ra) {
-//      Integer memberno = (Integer) session.getAttribute("memberno");
-//
-//      // Validation 에러 처리
-//      if (bindingResult.hasErrors()) {
-//          bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-//          logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-//          return "/diary/create";
+//  @PostMapping(value = "/create")
+//  public String create(Model model, HttpSession session, HttpServletRequest request,
+//                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+//                       BindingResult bindingResult, RedirectAttributes ra) {
+//    Integer memberno = (Integer) session.getAttribute("memberno");
+//      if (bindingResult.hasErrors()) { 
+//          // 에러 발생 시 폼으로 돌아가기
+//        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+//        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//        return "/diary/create";
 //      }
 //
 //      // 제목 및 내용 트림 처리
 //      diaryVO.setTitle(diaryVO.getTitle().trim());
 //      diaryVO.setSummary(diaryVO.getSummary().trim());
+//      diaryVO.setEmono(diaryVO.getEmono());
+//      diaryVO.setWeatherno(diaryVO.getWeatherno());
 //      
-//      // 날짜 설정
+//
+//      // ddate 설정
 //      if (diaryVO.getDdate() == null) {
-//          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 기본값: 오늘 날짜
+//          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
 //      }
 //
-//      // 회원 번호 설정
+//      // 세션에서 memberno 가져오기
+//      
 //      if (memberno == null) {
 //          ra.addFlashAttribute("message", "로그인이 필요합니다.");
 //          return "/member/login_cookie_need";
 //      }
 //      diaryVO.setMemberno(memberno);
 //
-//      // 1. Diary 저장
-//      int diaryCnt = diaryProc.create(diaryVO);
+//      // DB 저장 로직 호출
+//      int cnt = diaryProc.create(diaryVO);
+//      System.out.println("-> create_cnt: " + cnt);
 //
-//      // 2. Illustration 저장
-//      if (diaryCnt == 1 && illustFile != null && !illustFile.isEmpty() && selectedDate != null) {
-//          try {
-//              // IllustrationVO 생성
-//              IllustrationVO illustrationVO = new IllustrationVO();
-//              illustrationVO.setDiaryno(diaryVO.getDiaryno()); // Diary 번호 설정
-//              illustrationVO.setIllustMF(illustFile);
-//
-//              // 날짜로 Diaryno 매핑
-//              java.sql.Date ddate = java.sql.Date.valueOf(selectedDate);
-//              illustrationVO.setDiaryno(diaryProc.getDiaryNoByDate(ddate));
-//
-//              // Illustration 저장
-//              illustrationProc.create(illustrationVO);
-//
-//              logAction("create", "diary_with_illustration", memberno, "title=" + diaryVO.getTitle(), request, "Y");
-//              ra.addFlashAttribute("code", "diary_with_illustration_success");
-//          } catch (Exception e) {
-//              logAction("create", "illustration", memberno, "title=" + diaryVO.getTitle(), request, "N");
-//              ra.addFlashAttribute("code", "illustration_create_fail");
-//              ra.addFlashAttribute("message", "Diary는 저장되었지만 Illustration 등록 중 오류가 발생했습니다.");
-//          }
-//      } else if (diaryCnt == 1) {
-//          logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+//      if (cnt == 1) {
+//        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+//        return "redirect:/diary/list_by_diaryno_search_paging";
 //      } else {
-//          ra.addFlashAttribute("code", "diary_create_fail");
+//        model.addAttribute("code", "create_fail");
+//        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//        return "/diary/msg";
 //      }
-//
-//      return "redirect:/diary/list_by_diaryno_search_paging";
 //  }
+
+  
+  @PostMapping("/create")
+  public String createDiaryAndIllustration(@ModelAttribute DiaryVO diaryVO,
+                                           @RequestParam(value = "illustMF", required = false) MultipartFile illustMF,
+                                           RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
+      Integer memberno = (Integer) session.getAttribute("memberno");
+
+      if (memberno == null) {
+          ra.addFlashAttribute("message", "로그인이 필요합니다.");
+          return "/member/login_cookie_need";
+      }
+
+      diaryVO.setMemberno(memberno);
+
+      // Diary 저장
+      int diaryCnt = diaryProc.create(diaryVO);
+
+      if (diaryCnt == 1) {
+          try {
+            if (illustMF != null && !illustMF.isEmpty()) {
+              String illust = illustMF.getOriginalFilename();
+              long illustSize = illustMF.getSize();
+
+              if (illustSize > 0 && Tool.checkUploadFile(illust)) {
+                  // 파일 저장 및 썸네일 생성
+                  String upDir = Illustration.getUploadDir();
+                  String illustSaved = Upload.saveFileSpring(illustMF, upDir);
+                  String illustThumb = Tool.isImage(illustSaved) ? Tool.preview(upDir, illustSaved, 200, 150) : "";
+
+                  // Illustration 저장
+                  IllustrationVO illustrationVO = new IllustrationVO();
+                  illustrationVO.setDiaryno(diaryVO.getDiaryno());
+                  illustrationVO.setIllust(illust);
+                  illustrationVO.setIllust_saved(illustSaved);
+                  illustrationVO.setIllust_thumb(illustThumb);
+                  illustrationVO.setIllust_size(illustSize);
+
+                  illustrationProc.create(illustrationVO);
+              } else {
+                  ra.addFlashAttribute("message", "유효하지 않은 파일 형식입니다.");
+                  return "redirect:/diary/create";
+              }
+          }
+
+
+              ra.addFlashAttribute("code", "diary_with_illustration_success");
+          } catch (Exception e) {
+              e.printStackTrace();
+              ra.addFlashAttribute("code", "illustration_create_fail");
+          }
+      } else {
+          ra.addFlashAttribute("code", "diary_create_fail");
+      }
+
+      return "redirect:/diary/list_by_diaryno_search_paging";
+  }
+
 
 
   
