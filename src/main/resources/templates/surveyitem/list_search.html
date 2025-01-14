@@ -2,62 +2,59 @@
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
-
   <script>
     window.onload = function() {
-      // <img src="/survey/images/good.png" style="width: 22px" title="추천">         
-      // <img src="/survey/images/bad.png" style="width: 22px" title="비추천">   
+      // <img src="/notice/images/like.png" style="width: 22px;" title="추천">
+      // <img src="/notice/images/nope.png" style="width: 22px;" title="비추천">
       // 현재 로그인한 사용자의 추천 여부 반영
-
+      
       let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
-      let tag='';
+      let tag = '';
       
       if (heartCnt == 1) {
         tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
-        document.querySelector('#heart_panel').innerHTML = tag; 
+        document.querySelector('#heart_panel').innerHTML = tag;
       } else {
         tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="비추천"></a>';
-        document.querySelector('#heart_panel').innerHTML = tag; 
-      }    
-      
+        document.querySelector('#heart_panel').innerHTML = tag;
+      }
+
       document.querySelector('#goodcnt_panel').innerHTML = '([[${surveyVO.goodcnt}]])';
     }
-
+    
     function good(surveyno) {
       console.log('-> surveyno: ' + surveyno);
 
       fetch("/surveyitem/good", {
-          "method": "post",
-          "headers": {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({surveyno}) // {"surveyno":surveyno}, JSON 형식으로 전송
-        })
-        .then((response) => response.json()) // 응답 문자열 추출
-        .then((data) => {
-          console.log('-> data.isMember: ' + data.isMember);
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({surveyno}) // {"noticeno":noticeno, JSON 형식으로 전송
+      })
+      .then((response) => response.json()) // 응답 문자열 추출
+      .then((data) => {
+        console.log('-> data.isMember: ' + data.isMember);
 
-          if (data.isMember == 1) { // 회원
-            let heartCnt =data.heartCnt; //  javascript -> Thymeleaf -> session
-            let tag='';
-            
-            if (heartCnt == 1) {
-              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
-              document.querySelector('#heart_panel').innerHTML = tag; 
-            } else {
-              tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="추천"></a>';
-              document.querySelector('#heart_panel').innerHTML = tag; 
-            }    
-            
-            document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
+        if (data.isMember == 1) { // 회원
+          let heartCnt = data.heartCnt; //  javascript -> Thymeleaf -> session
+          let tag = '';
           
-          } else { // 비회원
-            alert("로그인해야 추천 할 수 있습니다.");
-            location.href='/member/login_cookie_need';  
-
+          if (heartCnt == 1) {
+            tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          } else {
+            tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="비추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
           }
+    
+          document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
+
+        } else { // 비회원
+          alert("로그인해야 추천 할 수 있습니다.");
+          location.href='/member/login_cookie_need';
         }
-      );
+      });
     }
   </script>
 
@@ -89,16 +86,18 @@
     <table class="table table-hover" style="width: 100%;">
       <colgroup>
         <col style='width: 10%;'/>
+        <col style='width: 10%;'/>
         <col style='width: 60%;'/>
-        <col style='width: 13%;'/>    
-        <col style='width: 13%;'/>
+        <col style='width: 10%;'/>    
+        <col style='width: 10%;'/>
       </colgroup>
       <thead>
         <tr>
           <th class="th_bs">항목 번호</th>
-          <th class="th_bs">설문 조사 항목</th>
           <th class="th_bs">출력 순서</th>
+          <th class="th_bs">설문 조사 항목</th>
           <th class="th_bs">선택 인원</th>
+          <th class="th_bs">기타</th>
         </tr>
       </thead>
       <tbody>
@@ -107,10 +106,10 @@
         </tr>
         <tr th:each="itemVO : ${list}">
           <td class="td_bs" th:text="${itemVO.itemno}"></td>
-          <td class="td_bs" th:text="${itemVO.item}"></td>
           <td class="td_bs" th:text="${itemVO.item_seq}"></td>
+          <td class="td_bs" th:text="${itemVO.item}"></td>
           <td class="td_bs" th:text="${itemVO.item_cnt}"></td>
-          <td>
+          <td class="td_bs">
             <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
               <img src="/item/images/update.png" class="icon" title="수정">
             </a> 

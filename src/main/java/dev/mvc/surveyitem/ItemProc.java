@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.mvc.participants.PartVO;
+
 
 @Service("dev.mvc.surveyitem.ItemProc")
 public class ItemProc implements ItemProcInter{
@@ -54,9 +56,24 @@ public class ItemProc implements ItemProcInter{
     return cnt;
   }
   
+//  @Override
+//  public int update_cnt(int itemno) {
+//    int cnt = this.itemDAO.update_cnt(itemno);
+//    return cnt;
+//  }
+  
   @Override
   public int update_cnt(int itemno) {
-    int cnt = this.itemDAO.update_cnt(itemno);
+      System.out.println("update_cnt called with itemno: " + itemno); // 로그 추가
+      int cnt = this.itemDAO.update_cnt(itemno);
+      System.out.println("update_cnt result: " + cnt);
+      return cnt;
+  }
+
+  
+  @Override
+  public int create(PartVO partVO) {
+    int cnt = this.itemDAO.create(partVO);
     return cnt;
   }
   

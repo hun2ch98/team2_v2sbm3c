@@ -16,8 +16,6 @@ CREATE TABLE surveyitem (
     FOREIGN KEY (surveyno)  REFERENCES survey (surveyno),
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
-ALTER TABLE surveyitem
-MODIFY item_cnt NUMBER DEFAULT 0;
 
 
 COMMENT ON TABLE SURVEYITEM is '설문 조사 항목';
@@ -97,8 +95,8 @@ UPDATE surveyitem SET item_seq='5' WHERE itemno=9;
 -- 삭제
 DELETE FROM surveyitem;
 
-UPDATE participants
-SET item_cnt = item_cnt + 1
+UPDATE surveyitem
+SET item_cnt = item_cnt - 1
 WHERE itemno = 1;
     
 UPDATE surveyitem
