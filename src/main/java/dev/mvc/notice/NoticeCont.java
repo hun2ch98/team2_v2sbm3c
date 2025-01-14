@@ -100,7 +100,6 @@ public class NoticeCont {
   public String create(HttpSession session, Model model, HttpServletRequest request,
       @ModelAttribute("noticeVO") NoticeVO noticeVO) {
     
-
     int memberno = (int) session.getAttribute("memberno");
     noticeVO.setMemberno(memberno);
     
