@@ -176,23 +176,39 @@ public class ItemCont {
    */
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
-                                  @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                  @RequestParam(name = "surveyno", defaultValue = "") int surveyno,
                                   @RequestParam(name = "itemno", defaultValue = "0") int itemno,
                                   @RequestParam(name = "word", defaultValue = "") String word,
                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
       model.addAttribute("surveyno", surveyno);
+
       model.addAttribute("itemno", itemno);
       // 관리자인지 확인  
       if (this.memberProc.isMemberAdmin(session)) {
         
+        int record_per_page = 10;
+        int startRow = (now_page - 1) * record_per_page + 1;
+        int endRow = now_page * record_per_page;
+        
+        ArrayList<ItemVO> list_s = this.itemProc.list_member(surveyno);
+        model.addAttribute("list_s", list_s);
+        
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
-        
-        ItemVO itemVO = this.itemProc.read(itemno);
-        model.addAttribute("itemVO", itemVO);
+     
+        model.addAttribute("itemno", itemno);
+        model.addAttribute("surveyno", surveyno);
+        model.addAttribute("word", word);
+        model.addAttribute("now_page", now_page);
 
         word = Tool.checkNull(word);
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("surveyno", surveyno);
+//        map.put("word", word);
+//        map.put("now_page", now_page);
+//        map.put("startRow", startRow);
+//        map.put("endRow", endRow);
         
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
 //        System.out.println("-> listsize: " + list.size());
@@ -202,13 +218,17 @@ public class ItemCont {
         // 페이지 번호 목록 생성
         // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(word);
+        String paging = this.itemProc.pagingBox(surveyno, now_page, word, "/surveyitem/list_search", 
+            search_count, record_per_page, now_page);
 
+        model.addAttribute("paging", paging);
+        model.addAttribute("now_page", now_page);
         model.addAttribute("search_count", search_count);
         model.addAttribute("word", word);
 
         // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-        int no = search_count - ((now_page - 1) * this.record_per_page);
-        model.addAttribute("no", no);
+//        int no = search_count - ((now_page - 1) * this.record_per_page);
+//        model.addAttribute("no", no);
         // --------------------------------------------------------------------------------------
         
         
@@ -436,6 +456,9 @@ public class ItemCont {
 
       ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
       model.addAttribute("list", list);
+      
+      int totalParticipants = this.itemProc.count_sum(surveyno);
+      model.addAttribute("totalParticipants", totalParticipants);
 
       return "/surveyitem/result";
   }
@@ -453,17 +476,39 @@ public class ItemCont {
       
       ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
       model.addAttribute("list", list);
+      
+      int totalParticipants = this.itemProc.count_sum(surveyno);
+      model.addAttribute("totalParticipants", totalParticipants);
 
       return "/surveyitem/result_admin";
   }
   
   /**
-   * 컬럼 차트, http://localhost:9091/surveyitem/survey_chart
+   * 컬럼 차트, http://localhost:9093/surveyitem/survey_chart
    * @param model
    * @return
    */
   @GetMapping("/survey_chart")
-  public String survey_chart(Model model) {
+  public String survey_chart(Model model,
+      @RequestParam("surveyno") int surveyno) {
+    SurveyVO surveyVO = this.surveyProc.read(surveyno);
+//    ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
+//    model.addAttribute("list", list);
+    model.addAttribute("surveyVO", surveyVO);
+    
+//    model.addAttribute("title", "설문조사 차트 결과");
+//    model.addAttribute("item", "항목");
+//    model.addAttribute("item_cnt", "설문 참여 인원");
+//    
+//    String chart_data = "[\r\n"
+//        + "          ['항목', '참여 인원 수'],\r\n"
+//        + "          ['2014',  1000],\r\n"
+//        + "          ['2015',  1170],\r\n"
+//        + "          ['2016',  660],\r\n"
+//        + "          ['2017',  1030]\r\n"
+//        + "        ]";
+//    model.addAttribute("chart_data", chart_data);
+    
     return "/surveyitem/survey_chart.html";
   }
 

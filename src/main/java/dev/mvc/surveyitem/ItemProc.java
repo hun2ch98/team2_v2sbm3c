@@ -247,5 +247,11 @@ public class ItemProc implements ItemProcInter{
     return cnt;
   }
 
+  @Override
+  public int count_sum(int surveyno) {
+    int cnt = this.itemDAO.count_sum(surveyno);
+    return cnt;
+  }
+
 
 }
