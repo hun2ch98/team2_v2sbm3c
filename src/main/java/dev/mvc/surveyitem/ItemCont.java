@@ -131,6 +131,8 @@ public class ItemCont {
       // 회원인지 확인  
       if (this.memberProc.isMember(session)) {
         
+        model.addAttribute("defaultItemno", 1);  // 설문조사 항목 선택 기본값 지정
+        
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);     
         System.out.println("-> surveyno: " + surveyno);
@@ -493,14 +495,20 @@ public class ItemCont {
   @PostMapping(value = "/finish")
   @ResponseBody
   public String updateCnt(HttpSession session,
-      Model model, @RequestBody String json_src) {
+      Model model, @RequestBody String json_src,
+      @ModelAttribute("itemno") int itemno) {
+    System.out.println("-> updatecnt called:" );
     System.out.println("-> json_src: " + json_src); // json_src: {"surveyno":"12"}
+    
+    PartVO partVO = this.partProc.updateCnt(map);
+    model.addAttribute("partVO", partVO);
     
     JSONObject src = new JSONObject(json_src); // String -> JSON
     int itemno = (int)src.get("itemno"); // 값 가져오기
     System.out.println("-> itemno: " + itemno);
     
     if (this.memberProc.isMember(session)) { // 회원 로그인 확인
+      System.out.println("->회원 처리: ");
       // 추천을 한 상태인지 확인
       int memberno = (int)session.getAttribute("memberno");
       HashMap<String, Object> map = new HashMap<String, Object>();
@@ -541,8 +549,9 @@ public class ItemCont {
       return result.toString();
 
     } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+      System.out.println("->비회원 처리: ");
       JSONObject result = new JSONObject();
-      result.put("isMember", 1);  // 로그인:1, 비회원:0
+      result.put("isMember", 0);  // 로그인:1, 비회원:0
       
       System.out.println("-> result.toString(): " + result.toString());
       return result.toString();
