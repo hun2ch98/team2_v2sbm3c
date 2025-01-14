@@ -41,6 +41,12 @@
         }
       });
       
+      document.querySelector('#phone').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          document.getElementById('email').focus();
+        }
+      });
+      
       document.querySelector('#email').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           document.getElementById('btn_DaumPostcode').focus();
@@ -311,6 +317,14 @@
         <input type='date' name='birth' id='birth' value="${memberVO.birth}" required="required" 
                placeholder="생년월일" class="form-control form-control-sm" style="width: 30%;">
         <span id='birth_msg'></span>
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">전화 번호*(-없이 입력해 주세요.)</label>
+        <input type='text' name='phone' id='phone' value='' required="required" placeholder="전화번호"
+          class="form-control form-control-sm" style="width: 30%;">
+        <span id='phone_msg'></span>
+        예) 01012345678
       </div>
   
       <div class="form-group"> 

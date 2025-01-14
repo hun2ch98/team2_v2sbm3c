@@ -54,9 +54,6 @@ public class MemberVO {
   /** 주소 2 */
   private String address2 = "";
   
-  /** 작성 댓글수 */
-  private int replycnt = 0;
-  
   /** 가입일 */
   private String mdate = "";
   
