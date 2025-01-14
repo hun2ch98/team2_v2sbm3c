@@ -96,8 +96,8 @@ UPDATE surveyitem SET item_seq='5' WHERE itemno=9;
 DELETE FROM surveyitem;
 
 UPDATE surveyitem
-SET item_cnt = item_cnt - 1
-WHERE itemno = 1;
+SET item_cnt = item_cnt + 1
+WHERE itemno = 5;
     
 UPDATE surveyitem
 SET item_cnt = 0
