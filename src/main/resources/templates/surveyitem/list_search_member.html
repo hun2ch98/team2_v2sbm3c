@@ -43,7 +43,7 @@
   
         // 서버로 보낼 요청 데이터 생성
         const requestData = { surveyno, itemno, memberno };
-        console.log(JSON.stringify({ surveyno, itemno, memberno }));
+        console.log(JSON.stringify(requestData));
   
         // Fetch API를 이용한 POST 요청
         fetch("/surveyitem/submit", {
@@ -51,7 +51,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ surveyno, itemno, memberno }),
+          body: JSON.stringify(requestData),
         })
           .then((response) => {
             if (!response.ok) {
@@ -134,30 +134,27 @@
   <div>
     <form method="post" action="/surveyitem/finish">
       <input type="hidden" name="surveyno" th:value="${surveyno}" />
+      <input type="hidden" name="memberno" th:value="${memberno}" />
       <table class="table table-hover" style="width: 100%;">
           <colgroup>
               <col style="width: 10%;" />
               <col style="width: 90%;" />
           </colgroup>
-          <thead>
-              <tr>
-                  <th>선택</th>
-                  <th>설문 조사 항목</th>
-              </tr>
-          </thead>
+
           <tbody>
-              <tr th:if="${list_m == null or #lists.isEmpty(list_m)}">
-                  <td colspan="2">등록된 항목이 없습니다.</td>
-              </tr>
-              <tr th:each="itemVO : ${list_m}">
-                  <td align="center">
-                      <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" 
-                             th:value="${itemVO.itemno}" required />
-                  </td>
-                  <td>
-                      <label th:for="'itemno_' + ${itemVO.itemno}" th:text="${itemVO.item}"></label>
-                  </td>
-              </tr>
+            <tr th:if="${list_m == null or #lists.isEmpty(list_m)}">
+              <td colspan="2">등록된 항목이 없습니다.</td>
+            </tr>
+            <tr th:each="itemVO : ${list_m}">
+              <td colspan="2">
+                <label style="cursor: pointer;">
+                  <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" 
+                         th:value="${itemVO.itemno}" 
+                         th:checked="${itemVO.itemno == defaultItemno}" required />
+                  <span th:text="${itemVO.item}" style="margin-left: 8px;"></span>
+                </label>
+              </td>
+            </tr>
           </tbody>
       </table>
       <div style="text-align: center; margin-top: 15px;">
