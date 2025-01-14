@@ -3,9 +3,12 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <script>
-    window.onload = function () {
-      // 추천 여부 반영
-      let heartCnt = '[[${heartCnt}]]'; // JavaScript -> Thymeleaf -> session
+    window.onload = function() {
+      // <img src="/notice/images/like.png" style="width: 22px;" title="추천">
+      // <img src="/notice/images/nope.png" style="width: 22px;" title="비추천">
+      // 현재 로그인한 사용자의 추천 여부 반영
+      
+      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
       let tag = '';
       
       if (heartCnt == 1) {
@@ -15,86 +18,26 @@
         tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="비추천"></a>';
         document.querySelector('#heart_panel').innerHTML = tag;
       }
-  
+
       document.querySelector('#goodcnt_panel').innerHTML = '([[${surveyVO.goodcnt}]])';
-  
-      // 폼 제출 이벤트 처리
-      const form = document.querySelector("form"); // 폼 요소 선택
-  
-      form.addEventListener("submit", function (event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-  
-        // 사용자가 선택한 설문 항목 확인
-        const selectedItem = document.querySelector("input[name='itemno']:checked");
-        if (!selectedItem) {
-          alert("항목을 선택해주세요!");
-          return;
-        }
-  
-        const surveyno = document.querySelector("input[name='surveyno']").value;
-        const itemno = document.querySelector("input[name='itemno']:checked").value;
-        const memberno = document.querySelector("input[name='memberno']")?.value;
-          
-        if (!memberno) {
-          alert("로그인이 필요합니다.");
-          window.location.href = "/member/login_cookie_need"; // 로그인 페이지로 이동
-          return;
-        }
-  
-        // 서버로 보낼 요청 데이터 생성
-        const requestData = { surveyno, itemno, memberno };
-        console.log(JSON.stringify(requestData));
-  
-        // Fetch API를 이용한 POST 요청
-        fetch("/surveyitem/submit", {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("네트워크 응답에 문제가 있습니다.");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("surveyno:", surveyno, "itemno:", itemno, "memberno:", memberno);
-  
-            if (data.status === "success") {
-              alert(data.message || "설문조사에 참여해 주셔서 감사합니다!");
-              window.location.href = "/survey/list_by_surveyno_search_paging"; // 목록 페이지로 이동
-            } else if (data.status === "error") {
-              alert(data.message || "설문조사 참여 중 문제가 발생했습니다.");
-              if (data.redirect) {
-                window.location.href = data.redirect; // 로그인 페이지로 이동
-              }
-            }
-          })
-          .catch((error) => {
-            console.error("에러 발생:", error);
-            alert("설문조사 참여 중 문제가 발생했습니다. 다시 시도해주세요.");
-          });
-      });
-    };
-  
+    }
+    
     function good(surveyno) {
       console.log('-> surveyno: ' + surveyno);
-  
+
       fetch("/surveyitem/good", {
         "method": "post",
         "headers": {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ surveyno }) // {"noticeno":noticeno, JSON 형식으로 전송
+        body: JSON.stringify({surveyno}) // {"noticeno":noticeno, JSON 형식으로 전송
       })
       .then((response) => response.json()) // 응답 문자열 추출
       .then((data) => {
         console.log('-> data.isMember: ' + data.isMember);
-  
+
         if (data.isMember == 1) { // 회원
-          let heartCnt = data.heartCnt; // JavaScript -> Thymeleaf -> session
+          let heartCnt = data.heartCnt; //  javascript -> Thymeleaf -> session
           let tag = '';
           
           if (heartCnt == 1) {
@@ -106,7 +49,7 @@
           }
     
           document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
-  
+
         } else { // 비회원
           alert("로그인해야 추천 할 수 있습니다.");
           location.href='/member/login_cookie_need';
@@ -134,13 +77,12 @@
   <div>
     <form method="post" action="/surveyitem/finish">
       <input type="hidden" name="surveyno" th:value="${surveyno}" />
-      <input type="hidden" name="memberno" th:value="${memberno}" />
+
       <table class="table table-hover" style="width: 100%;">
           <colgroup>
               <col style="width: 10%;" />
               <col style="width: 90%;" />
           </colgroup>
-
           <tbody>
             <tr th:if="${list_m == null or #lists.isEmpty(list_m)}">
               <td colspan="2">등록된 항목이 없습니다.</td>
