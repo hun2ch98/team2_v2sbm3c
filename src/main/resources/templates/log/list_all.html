@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+  <!-- 제목 영역 -->
+  <div class="title_line">
+    로그 기록
+  </div>
+
+  <!-- 메뉴 -->
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로 고침</a>
+  </aside>
+
+  <div class="menu_line"></div>
+
+  <!-- 검색 및 날짜 범위 설정 -->
+  <form name="searchForm" method="get" action="/log/list_all" style="margin: 20px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+    
+      <!-- 검색어 -->
+      <input type="text" name="table_name" th:value="${table_name}" class="form-control" placeholder="테이블">
+
+      <!-- 검색어 -->
+      <input type="text" name="action" th:value="${action}" class="form-control" placeholder="기능">
+
+      <!-- 검색어 -->
+      <input type="text" name="ip" th:value="${ip}" class="form-control" placeholder="ip 주소">
+
+      <!-- 검색어 -->
+      <input type="text" name="is_success" th:value="${is_success}" class="form-control" placeholder="성공 여부">
+
+      <!-- 시작 날짜 -->
+      <input type="date" name="start_date" th:value="${start_date}" class="form-control">
+
+      <!-- 종료 날짜 -->
+      <input type="date" name="end_date" th:value="${end_date}" class="form-control">
+
+      <!-- 검색 버튼 -->
+      <button type="submit" class="btn btn-secondary btn-sm">검색</button>
+      <!-- 검색 취소 버튼 -->
+      <button type="button" class="btn btn-danger btn-sm" id="resetButton">검색 취소</button>
+      <script>
+        document.getElementById('resetButton').addEventListener('click', function () {
+          // 모든 입력 필드를 초기화
+          document.querySelectorAll('input').forEach(function (input) {
+            input.value = '';
+          });
+      
+          // 기본 URL로 리다이렉트
+          window.location.href = '/log/list_all';
+        });
+      </script>
+    </div>
+  </form>
+
+  <!-- 목록 출력 -->
+  <div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th style="width: 25%;">대상 테이블</th>
+          <th style="width: 20%;">기능</th>
+          <th style="width: 30%;">ip 주소</th>
+          <th style="width: 10%;">성공 여부</th>
+          <th style="width: 15%;">로그 처리</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 데이터 반복 출력 -->
+        <tr th:each="item : ${logList}">
+          <td th:text="${item['table_name']}"></td>
+          <td th:text="${item['action']}"></td>
+          <td th:text="${item['ip']}"></td>
+          <td th:text="${item['is_success']}"></td>
+          <td>
+            <a th:href="@{/log/delete/{logno}(logno=${item['logno']})}" class="btn btn-danger">삭제</a>
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 페이징 처리 (필요 시 추가 가능) -->
+  <div class="bottom_menu">
+    <span>총 <span th:text="${search_count}"></span>개의 기록이 있습니다.</span>
+  </div>
+  <div th:utext="${paging}"></div>
+</div>
+</html>
