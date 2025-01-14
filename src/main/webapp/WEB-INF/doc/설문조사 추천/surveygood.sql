@@ -49,6 +49,8 @@ WHERE goodno = 1;
          1          1          1 25/01/07 10:58:38
 
 -- 삭제
+DELETE FROM surveygood;
+
 DELETE FROM surveygood
 WHERE goodno = 4;
   GOODNO   SURVEYNO   MEMBERNO RDATE            

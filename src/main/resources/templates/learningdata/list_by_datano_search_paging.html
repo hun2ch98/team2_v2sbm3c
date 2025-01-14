@@ -14,8 +14,11 @@
       <a href="javascript:location.reload();">새로고침</a>
       <span class='menu_divide'>│</span>    
       <a th:href="@{/learningdata/list_by_datano_search_paging}">목록</a>
+      <span class='menu_divide'>│</span>    
+      <a th:href="@{/learningdata/download}">CSV 다운로드</a>
     </span>
   </aside> 
+  
 
   <div th:replace="~{/learningdata/list_search_com :: list_search_fragment}"></div>
   
@@ -24,13 +27,15 @@
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
       <col style='width: 10%;'/>
-      <col style='width: 45%;'/>
-      <col style='width: 45%;'/>
+      <col style='width: 35%;'/>
+      <col style='width: 35%;'/>
+      <col style='width: 20%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>학습 데이터 번호</th>
       <th class='th_bs'>학습 데이터 질문</th>
       <th class='th_bs'>학습 데이터 답변</th>
+      <th class='th_bs'>데이터 등록일</th>
     </tr>
    
     <tr th:if="${list != null and list.size() > 0}" th:each="learningdataVO, status:${list}" 
@@ -50,6 +55,9 @@
                   th:text="|${learningdataVO.ans.substring(0, 160) }...|"></span>
         <span th:if="${learningdataVO.ans.length() <= 160 }" 
                   th:text="|${learningdataVO.ans}|"></span>        
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${learningdataVO.create_at}" style="font-weight: bold;"></span><br>
       </td>
     </tr>
 

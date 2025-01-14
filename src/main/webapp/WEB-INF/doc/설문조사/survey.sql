@@ -17,7 +17,7 @@ CREATE TABLE survey (
     file1saved      VARCHAR2(100)		 NULL,
 	thumb1          VARCHAR2(100)		 NULL,
 	size1           NUMBER(10)		     NULL,
-    goodcnt         NUMBER(7)       NOT  NULL,
+    goodcnt         NUMBER(7)       DEFAULT 0   NOT  NULL,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 ALTER TABLE survey ADD GOODCNT NUMBER(7) DEFAULT 0;
@@ -55,29 +55,29 @@ COMMIT;
 
 -- create
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '교육적 가치', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '이 서비스를 일주일에 얼마나 사용하나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '언어와 표현', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '이 서비스를 자주 이용하는데 어려움이 있나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '다양한 콘텐츠', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '이 서비스를 아이가 자주 찾나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '에러 및 장애', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '자주 사용하는 기능은 무엇인가요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, 'AI 정확성', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '사용되는 언어와 표현이 적절하다고 느끼셨나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '저장 및 관리', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '아이에게 불쾌감을 줄 수 있는 표현이 있었나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '데이터 신뢰도', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '사용된 문구가 아이들에게 친근하고 이해하기 쉬웠나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, 'UI/UX 편리성', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '아이의 반응', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '아이의 반응', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '추가 기능 요청', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '추가 기능 요청', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '기능 만족도', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '기능 만족도', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
-VALUES (survey_seq.nextval, 1, '사용 빈도', '2024/12/23', '2025/01/01', 5, 'Y');
+VALUES (survey_seq.nextval, 1, '사용 빈도', '2024/12/23', '2025/01/01', 0, 'Y');
 
 -- read
 SELECT * FROM survey;
@@ -99,7 +99,7 @@ DELETE FROM survey;
 
 DELETE FROM survey WHERE topic='교육적 가치';
 
-DELETE FROM survey WHERE surveyno=14;
+DELETE FROM survey WHERE surveyno=13;
 
 COMMIT;
 

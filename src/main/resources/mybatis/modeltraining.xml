@@ -79,4 +79,6 @@
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
 
+
 </mapper>
+

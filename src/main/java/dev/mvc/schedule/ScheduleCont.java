@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.schedule.ScheduleVO;
+import dev.mvc.log.LogProcInter;
+import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -38,7 +41,34 @@ public class ScheduleCont {
   public ScheduleCont() {
     System.out.println("-> ScheduleCont created.");
   }
-  
+  @Autowired
+  @Qualifier("dev.mvc.log.LogProc")
+  private LogProcInter logProc;
+
+  private void logAction(String action, String table, int memberno, String details, HttpServletRequest request, String is_success) {
+      LogVO logVO = new LogVO();
+      logVO.setMemberno(memberno);
+      logVO.setTable_name(table);
+      logVO.setAction(action);
+      logVO.setDetails(details);
+      logVO.setIp(getClientIp(request)); // IP 주소 설정
+      logVO.setIs_success(is_success);
+      logProc.create(logVO); // Log 테이블에 삽입
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+      String ip = request.getHeader("X-Forwarded-For");
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("WL-Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getRemoteAddr();
+      }
+      return ip;
+  }
   /**
    * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
    * 전송
@@ -67,7 +97,7 @@ public class ScheduleCont {
    * @return
    */
   @PostMapping(value = "/create")
-  public String create(HttpSession session, Model model, 
+  public String create(HttpSession session, Model model, HttpServletRequest request,
            @ModelAttribute("scheduleVO") ScheduleVO scheduleVO) {
     
     int memberno = (int) session.getAttribute("memberno");
@@ -77,9 +107,10 @@ public class ScheduleCont {
     if (cnt == 1) {
       // model.addAttribute("code", "create_success");
       // model.addAttribute("name", cateVO.getName());
-
+      logAction("create", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
       return "redirect:/schedule/list_all"; // @GetMapping(value="/list_all")
     } else {
+      logAction("create", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "N");
       model.addAttribute("code", "create_fail");
     }
 
@@ -109,12 +140,14 @@ public class ScheduleCont {
    * @return
    */
   @GetMapping(path = "/read/{scheduleno}")
-  public String read(Model model, @PathVariable("scheduleno") int scheduleno) {
+  public String read(Model model, @PathVariable("scheduleno") int scheduleno, 
+      HttpServletRequest request, HttpSession session) {
    
     ScheduleVO scheduleVO = this.scheduleProc.read(scheduleno);
 
+    int memberno = (int) session.getAttribute("memberno");
     model.addAttribute("scheduleVO", scheduleVO);
-
+    logAction("read", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
     return "/schedule/read";
   }
   
@@ -144,15 +177,17 @@ public class ScheduleCont {
    * @return
    */
   @PostMapping(value = "/update")
-  public String update(HttpSession session, Model model, RedirectAttributes ra,
+  public String update(HttpSession session, Model model, RedirectAttributes ra, HttpServletRequest request,
       @Valid @ModelAttribute("scheduleVO") ScheduleVO scheduleVO) {
-    
+    int memberno = (int) session.getAttribute("memberno");
     if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
       int cnt = this.scheduleProc.update(scheduleVO); // 글수정
       
       if (cnt == 1) {
+        logAction("update", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
         return "redirect:/schedule/list_all";
       } else {
+        logAction("update", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "N");
         model.addAttribute("code", "update_fail");
       }
       model.addAttribute(cnt);
@@ -189,13 +224,17 @@ public class ScheduleCont {
    * @return
    */
   @PostMapping(value = "/delete")
-  public String delete_process(HttpSession session, Model model,  RedirectAttributes ra, 
+  public String delete_process(HttpSession session, Model model,  RedirectAttributes ra, HttpServletRequest request,
       @RequestParam(name = "scheduleno", defaultValue = "0") Integer scheduleno ) {
+    int memberno = (int) session.getAttribute("memberno");
+    ScheduleVO scheduleVO = this.scheduleProc.read(scheduleno);
     if (this.memberProc.isMemberAdmin(session)) {
+      logAction("delete_process", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "Y");
       this.scheduleProc.delete(scheduleno);
       return "redirect:/schedule/list_all";
      
     } else {
+      logAction("delete_process", "schedule", memberno, "일정=" + scheduleVO.getTitle(), request, "N");
       return "redirect:/schedule/post2get";  // redirect
     }
   }

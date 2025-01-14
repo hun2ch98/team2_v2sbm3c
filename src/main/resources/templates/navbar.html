@@ -1,15 +1,16 @@
 <div th:fragment="navbarFragment">
-  <div class="top_menu_img">
-    <div class="top_menu_label">추억의 저장소 그림 일기</div>
-  </div>
-  
-  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+
+  <nav class="navbar navbar-expand-lg navbar-light border-bottom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">메인화면</a>
+        <a class="top_menu_img" href="/"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
+        <button class="btn btn-primary" onclick="window.location.href='http://192.168.12.147:5000/chatbot';">채팅하기</button>
+
+
           
         <!-- 메뉴 시작 -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -23,7 +24,6 @@
                         <li class="nav-item"><a class="nav-link" th:href="@{|/loginlog/list|}">로그 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/board/list_all|}">요청사항 글 목록</a></li>
                     </ul>
                 </li>
                 
@@ -33,7 +33,8 @@
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                       <li class="nav-item"><a class="nav-link"th:href="@{|/notice/list_all|}">공지사항 목록</a></li>
-                      <span th:if="${session.grade == 'admin'}"> 
+                      <span th:if="${session.grade == 'admin'}">
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/notice/create|}">공지사항 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/noticegood/list_all|}">추천 회원</a></li>
                       </span>
                   </ul>
@@ -55,7 +56,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/surveygood/list_all|}">설문조사 추천</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/participants/list_all|}">설문조사 참여회원</a></li>
                     </ul>
@@ -111,6 +112,7 @@
                     </ul>
                 </li>
                 
+
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="모델학습이력">                                                            
@@ -162,6 +164,16 @@
                         <li class="nav-item"><a class="nav-link" th:href="@{|/schedule/create|}">일정 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/schedule/list_all|}">일정 목록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/schedule/list_calendar|}">일정 달력</a></li>
+                    </ul>
+                </li>
+                
+                
+                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="로그">                                                            
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/log/list_all|}">로그 목록</a></li>
                     </ul>
                 </li>
                 

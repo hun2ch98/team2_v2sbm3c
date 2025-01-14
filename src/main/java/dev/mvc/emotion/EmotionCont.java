@@ -17,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.diary.DiaryProcInter;
 import dev.mvc.diary.DiaryVO;
+import dev.mvc.log.LogProcInter;
+import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.tool.Tool;
@@ -48,6 +50,35 @@ public class EmotionCont {
 
   /** 페이징 목록 주소 */
   private String list_file_name = "/emotion/list_by_emono";
+  
+  @Autowired
+  @Qualifier("dev.mvc.log.LogProc")
+  private LogProcInter logProc;
+
+  private void logAction(String action, String table, int memberno, String details, HttpServletRequest request, String is_success) {
+      LogVO logVO = new LogVO();
+      logVO.setMemberno(memberno);
+      logVO.setTable_name(table);
+      logVO.setAction(action);
+      logVO.setDetails(details);
+      logVO.setIp(getClientIp(request)); // IP 주소 설정
+      logVO.setIs_success(is_success);
+      logProc.create(logVO); // Log 테이블에 삽입
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+      String ip = request.getHeader("X-Forwarded-For");
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("WL-Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getRemoteAddr();
+      }
+      return ip;
+  }
   
   public EmotionCont() {
     System.out.println("-> EmotionCont created.");
@@ -95,6 +126,7 @@ public class EmotionCont {
                        @ModelAttribute("emotionVO") EmotionVO emotionVO,
                        RedirectAttributes ra) {
 	  
+    int memberno = (int) session.getAttribute("memberno");
 	  if (memberProc.isMember(session)) { // 회원 로그인한경우
 		  // ------------------------------------------------------------------------------
 	      // 파일 전송 코드 시작
@@ -139,15 +171,16 @@ public class EmotionCont {
 	        // ------------------------------------------------------------------------------
 	        // 파일 전송 코드 종료
 	        // ------------------------------------------------------------------------------
-	        int memberno = 1; 
 	        emotionVO.setMemberno(memberno); 
 	  
 	        int cnt = this.emotionProc.create(emotionVO);
 	        if (cnt == 1) {
+	          logAction("create", "emotion", memberno, "type=" + emotionVO.getType(), request, "Y");
 	            ra.addAttribute("emono", emotionVO.getEmono()); 
 	            ra.addAttribute("now_page", 1); 
 	            return "redirect:/emotion/list_by_emono"; 
 	        } else {
+	          logAction("create", "emotion", memberno, "type=" + emotionVO.getType(), request, "N");
 	            ra.addFlashAttribute("code", "create_fail");
 	            return "redirect:/emotion/msg"; 
 	        }
@@ -395,7 +428,7 @@ public class EmotionCont {
    */
   @GetMapping(value = "/update_text")
   public String update_text(HttpSession session, 
-      Model model, 
+      Model model, HttpServletRequest request,
       @RequestParam(name="emono", defaultValue="") int emono, 
       RedirectAttributes ra, 
       @RequestParam(name="word", defaultValue="") String word,
@@ -405,20 +438,21 @@ public class EmotionCont {
 
     model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
-
-    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
+    int memberno = (int) session.getAttribute("memberno");
+    EmotionVO emotionVO = this.emotionProc.read(emono);
+    model.addAttribute("emotionVO", emotionVO);
     
-      EmotionVO emotionVO = this.emotionProc.read(emono);
-      model.addAttribute("emotionVO", emotionVO);
+    if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
 
       MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
       model.addAttribute("memberVO", memberVO);
-
+      logAction("update_text", "emotion", memberno, "type=" + emotionVO.getType(), request, "Y");
       return "/emotion/update_text"; // /templates/contents/update_text.html
       // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
       // model.addAttribute("content", content);
 
     } else {
+      logAction("update_text", "emotion", memberno, "type=" + emotionVO.getType(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); // /templates/diary/login_cookie_need.html
 //      return "redirect:/contents/msg"; // @GetMapping(value = "/read")
       return "member/login_cookie_need";
@@ -506,11 +540,12 @@ public class EmotionCont {
    * @return
    */
   @PostMapping(value = "/update_file")
-  public String update_file(HttpSession session, Model model, RedirectAttributes ra,
+  public String update_file(HttpSession session, Model model, RedirectAttributes ra, HttpServletRequest request,
                             @ModelAttribute("emotionVO") EmotionVO emotionVO,
                             @RequestParam(name="word", defaultValue="") String word, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
+    int memberno = (int) session.getAttribute("memberno");
 //    if (this.diaryProc.isdiary(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
 	  EmotionVO emotionVO_old = emotionProc.read(emotionVO.getEmono());
@@ -572,7 +607,7 @@ public class EmotionCont {
       ra.addAttribute("diaryno", emotionVO.getDiaryno());
       ra.addAttribute("word", word);
       ra.addAttribute("now_page", now_page);
-      
+      logAction("update_file", "emotion", memberno, "type=" + emotionVO.getType(), request, "Y");
       return "redirect:/emotion/read";
 //    } else {
 //      ra.addAttribute("url", "/diary/login_cookie_need"); 
@@ -612,8 +647,7 @@ public class EmotionCont {
    * @return
    */
   @PostMapping(value = "/delete")
-  public String delete(RedirectAttributes ra,
-      @RequestParam(name="memberno", defaultValue="0") int memberno, 
+  public String delete(RedirectAttributes ra, HttpSession session, HttpServletRequest request,
       @RequestParam(name="emono", defaultValue="0") int emono, 
       @RequestParam(name="word", defaultValue="") String word, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
@@ -621,6 +655,7 @@ public class EmotionCont {
     // 파일 삭제 시작
     // -------------------------------------------------------------------
     // 삭제할 파일 정보를 읽어옴.
+    int memberno = (int) session.getAttribute("memberno");
     EmotionVO emotionVO_read = emotionProc.read(emono);
         
     String file1saved = emotionVO_read.getFile1saved();
@@ -634,7 +669,7 @@ public class EmotionCont {
     // -------------------------------------------------------------------
         
     this.emotionProc.delete(emono); // DBMS 삭제
-        
+    logAction("delete", "emotion", memberno, "type=" + emotionVO_read.getType(), request, "Y");
     // -------------------------------------------------------------------------------------
     // 마지막 페이지의 마지막 레코드 삭제시의 페이지 번호 -1 처리
     // -------------------------------------------------------------------------------------    

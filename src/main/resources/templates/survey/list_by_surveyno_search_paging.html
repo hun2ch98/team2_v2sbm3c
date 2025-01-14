@@ -42,7 +42,7 @@
     </thead>
     
     <tr th:each="surveyVO : ${list}" 
-        th:attr="onclick=|location.href='@{/surveyitem/list_search(surveyno=${surveyVO.surveyno})}'|"
+        th:attr="onclick=|location.href='@{/surveyitem/list_search_member(surveyno=${surveyVO.surveyno})}'|"
         style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
         <div th:if="${surveyVO.file1.endsWith('jpg') or surveyVO.file1.endsWith('png')  or surveyVO.file1.endsWith('gif')}">
@@ -78,11 +78,9 @@
       </td>
 
       <td>
-        <span th:if="${session.grade == 'admin'}">
-          <a th:href="@{|/survey/list_all_delete/${surveyVO.surveyno}|}">
-            <img src="/survey/images/delete.png" class="icon" title="삭제">
-          </a> 
-        </span>
+        <a th:href="@{/surveyitem/result_admin(surveyno=${surveyVO.surveyno})}" >
+          <img src="/survey/images/result.png" class="icon" title="결과">
+        </a>
       </td>
     </tr>
 

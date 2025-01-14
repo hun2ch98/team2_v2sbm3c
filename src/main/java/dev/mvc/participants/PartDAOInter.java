@@ -21,6 +21,13 @@ public interface PartDAOInter {
   public int update_cnt(int itemno);
   
   /**
+   * 특정 개수 산출
+   * @param map
+   * @return
+   */
+  public int updateCnt(int itemno);
+  
+  /**
    * 목록
    * @return
    */
@@ -52,5 +59,19 @@ public interface PartDAOInter {
    * @return
    */
   public ArrayList<ItemMemberPartVO> list_all_join();
+  
+  /**
+   * 검색 개수
+   * @param Map
+   * @return
+   */
+  public int count_search(HashMap<String, Object> Map);
+  
+  /**
+   * 검색 + 페이징
+   * @param Map
+   * @return
+   */
+  public ArrayList<ItemMemberPartVO> list_search_paging(HashMap<String, Object> Map);
 
 }
