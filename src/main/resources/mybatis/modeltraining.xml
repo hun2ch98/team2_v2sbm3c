@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.modeltraining.ModeltrainingDAOInter">
+
+  <!-- 금지 단어 글 추가 -->
+  <insert id="create" parameterType="dev.mvc.modeltraining.ModeltrainingVO">
+    INSERT INTO modeltraining (trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno)
+    VALUES (modeltraining_seq.nextval, #{name}, #{status}, #{accuracy}, sysdate, #{notes}, #{st_time}, #{end_time}, #{memberno})
+  </insert>
+  
+  <!-- 금지 단어 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.modeltraining.ModeltrainingVO">
+    SELECT trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno
+    FROM modeltraining
+    WHERE trainingno = #{trainingno}
+  </select>
+  
+  <!-- 모든 목록 -->
+  <select id="list_all" parameterType="dev.mvc.modeltraining.ModeltrainingVO">
+    SELECT trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno
+    FROM modeltraining
+    ORDER BY trainingno DESC
+  </select>
+  
+  <!-- 등록된 목록 -->
+  <select id="list_by_trainingno" resultType="dev.mvc.modeltraining.ModeltrainingVO">
+    SELECT trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno
+    FROM modeltraining
+    ORDER BY trainingno DESC
+  </select>
+  
+  <!-- 내용 수정 -->
+  <update id="update_text" parameterType="dev.mvc.modeltraining.ModeltrainingVO">
+    UPDATE modeltraining
+    SET name=#{name}, status=#{status}, accuracy=#{accuracy}, notes=#{notes}, memberno=#{memberno}, rdate=sysdate , st_time=#{st_time}, end_time=#{end_time}
+    WHERE trainingno = #{trainingno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM modeltraining
+    WHERE trainingno = #{trainingno}
+  </delete>
+  
+  <!-- 검색 목록 -->
+  <select id="list_by_trainingno_search" resultType="dev.mvc.modeltraining.ModeltrainingVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+        SELECT trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno,
+               ROW_NUMBER() OVER (ORDER BY trainingno DESC) AS rnum
+        FROM modeltraining
+        WHERE (#{name} IS NULL OR #{name} = '' OR name = #{name})
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 검색 레코드 갯수 -->
+  <select id="count_by_trainingno_search" resultType="int" parameterType="HashMap">
+      SELECT COUNT(*)
+      FROM modeltraining
+      WHERE (#{name} IS NULL OR #{name} = '' OR name = #{name})
+  </select>
+   
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM modeltraining
+  </select>
+  
+  <!-- 금지 단어별 검색 + 페이징 목록 -->
+  <select id="list_by_trainingno_search_paging" resultType="dev.mvc.modeltraining.ModeltrainingVO" parameterType="HashMap">
+      SELECT *
+      FROM (
+          SELECT trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno,
+                 ROW_NUMBER() OVER (ORDER BY trainingno DESC) AS rnum
+          FROM modeltraining
+          WHERE (#{name} IS NULL OR #{name} = '' OR name = #{name})
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+
+</mapper>
