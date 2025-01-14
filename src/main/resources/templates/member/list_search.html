@@ -36,7 +36,8 @@
       <col style='width: 10%;'/>
       <col style='width: 15%;'/>
       <col style='width: 15%;'/>
-      <col style='width: 30%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
       <col style='width: 15%;'/>
     </colgroup>
     <tr>
@@ -44,6 +45,7 @@
       <th class='th_bs'>ID</th>
       <th class='th_bs'>성명</th>
       <th class='th_bs'>이메일</th>
+      <th class='th_bs'>전화번호</th>
       <th class='th_bs'>주소</th>
       <th class='th_bs'>등록일</th>
     </tr>
@@ -68,6 +70,7 @@
       <td class='td_basic'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
       <td class='td_basic'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.name}"></a></td>
       <td class='td_basic' th:text="${memberVO.email}"></td>
+      <td class='td_basic' th:text="${memberVO.phone}"></td>
       <td class='td_basic'>
         <span th:if="${memberVO.address1.length() > 15 }" th:text="|${memberVO.address1.substring(0, 15) }...|"></span>
         <span th:unless="${memberVO.address1.length() > 15 }" th:text="${memberVO.address1}"></span>
