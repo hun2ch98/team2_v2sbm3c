@@ -2,27 +2,68 @@
 
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
-
   <script>
-    window.onload = function(){
-    //  <img src="/contents/images/good.png" style="width: 22px;" title="추천">
-    //  <img src="/contents/images/bad.png" style="width: 22px;" title="비추천">
-    // 현재 로그인한 사용자의 추천 여부 반영
-    // let memberno =  '[[${session.memberno}]]'; //  javascript -> Thymeleaf -> session
-    
-      let heartCnt = '[[${heartCnt}]]';
-      if(heartCnt == 1){
-        document.querySelector('#heart_panel').innerHTML = '<img src="/survey/images/good.png" style="width: 24px;" title="추천">'; 
-      }else{
-        document.querySelector('#heart_panel').innerHTML = '<img src="/survey/images/bad.png" style="width: 24px;" title="비추천">'; 
+    window.onload = function() {
+      // <img src="/notice/images/like.png" style="width: 22px;" title="추천">
+      // <img src="/notice/images/nope.png" style="width: 22px;" title="비추천">
+      // 현재 로그인한 사용자의 추천 여부 반영
+      
+      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+      let tag = '';
+      
+      if (heartCnt == 1) {
+        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag;
+      } else {
+        tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="비추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag;
       }
+
+      document.querySelector('#goodcnt_panel').innerHTML = '([[${surveyVO.goodcnt}]])';
     }
     
+    function good(surveyno) {
+      console.log('-> surveyno: ' + surveyno);
+
+      fetch("/surveyitem/good", {
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({surveyno}) // {"noticeno":noticeno, JSON 형식으로 전송
+      })
+      .then((response) => response.json()) // 응답 문자열 추출
+      .then((data) => {
+        console.log('-> data.isMember: ' + data.isMember);
+
+        if (data.isMember == 1) { // 회원
+          let heartCnt = data.heartCnt; //  javascript -> Thymeleaf -> session
+          let tag = '';
+          
+          if (heartCnt == 1) {
+            tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          } else {
+            tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/bad.png" style="width: 22px" title="비추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          }
+    
+          document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
+
+        } else { // 비회원
+          alert("로그인해야 추천 할 수 있습니다.");
+          location.href='/member/login_cookie_need';
+        }
+      });
+    }
   </script>
+
   <div class="title_line">
-    <span id="heart_panel" style="text-align: right;"></span>
-    설문조사 항목 > 
-    <span th:if="${word != null and word != ''}" th:text="|${word} ${search_cnt} 건|"></span>
+    <span id="heart_panel"></span><span id="goodcnt_panel"></span>
+    설문조사 > 
+    <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
+    <span th:if="${word != null and word != ''}" th:text="|${word} ${search_count} 건|"></span>
+    
   </div>
 
   <aside class="aside_right">
@@ -32,7 +73,7 @@
     </span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span> 
-    <a th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
+    <a th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
   </aside>
   
   <!--/* '/cate/list_search_com.html' 파일의 list_search_fragment를 가져다 사용 */--> 
@@ -45,16 +86,18 @@
     <table class="table table-hover" style="width: 100%;">
       <colgroup>
         <col style='width: 10%;'/>
+        <col style='width: 10%;'/>
         <col style='width: 60%;'/>
-        <col style='width: 13%;'/>    
-        <col style='width: 13%;'/>
+        <col style='width: 10%;'/>    
+        <col style='width: 10%;'/>
       </colgroup>
       <thead>
         <tr>
           <th class="th_bs">항목 번호</th>
-          <th class="th_bs">설문 조사 항목</th>
           <th class="th_bs">출력 순서</th>
+          <th class="th_bs">설문 조사 항목</th>
           <th class="th_bs">선택 인원</th>
+          <th class="th_bs">기타</th>
         </tr>
       </thead>
       <tbody>
@@ -62,11 +105,11 @@
           <td colspan="4">등록된 항목이 없습니다.</td>
         </tr>
         <tr th:each="itemVO : ${list}">
-          <td th:text="${itemVO.itemno}"></td>
-          <td th:text="${itemVO.item}"></td>
-          <td th:text="${itemVO.item_seq}"></td>
-          <td th:text="${itemVO.item_cnt}"></td>
-          <td>
+          <td class="td_bs" th:text="${itemVO.itemno}"></td>
+          <td class="td_bs" th:text="${itemVO.item_seq}"></td>
+          <td class="td_bs" th:text="${itemVO.item}"></td>
+          <td class="td_bs" th:text="${itemVO.item_cnt}"></td>
+          <td class="td_bs">
             <a th:href="@{|/surveyitem/update/${itemVO.itemno}|}">
               <img src="/item/images/update.png" class="icon" title="수정">
             </a> 
@@ -79,52 +122,6 @@
       </tbody>
     </table>
   </div>
-  
-  <!-- 회원 모드 -->
-  <div th:if="${session.grade != 'admin'}">
-    <form method="post" th:action="@{/surveyitem/finish}">
-      <input type="hidden" name="itemno" th:value="${itemno}" />
-      <table class="table table-hover" style="width: 100%;">
-        <colgroup>
-          <col style='width: 10%;'/>
-          <col style='width: 10%;'/>
-          <col style='width: 65%;'/>
-          <col style='width: 15%;'/>
-        </colgroup>
-        <thead>
-          <tr>
-            <th class="th_bs">선택</th>
-            <th class="th_bs">항목 번호</th>
-            <th class="th_bs">설문 조사 항목</th>
-            <th class="th_bs">선택 인원</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:if="${list == null or #lists.isEmpty(list)}">
-            <td colspan="3">등록된 항목이 없습니다.</td>
-          </tr>
-          <tr th:each="itemVO : ${list}" >
-            <td align="center" valign="middle">
-              <input type="radio" id="itemno_${itemVO.itemno}" name="itemno" th:value="${itemVO.itemno}" required />
-            </td>
-            <td th:text="${itemVO.itemno}"></td>
-            <td th:text="${itemVO.item}"></td>
-            <td th:text="${itemVO.item_cnt}"></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="text-align: center; margin-top: 20px;">
-        <button type="submit" class="btn btn-primary">참여</button>
-      </div>
-    </form>
-  </div>
-  
-  <!--
-  <div class="flex_div_center" style="width: 90%; margin: 0px auto;">  
-    <form name="frm" method="post" action="/surveyitem/create" th:object="${itemVO}">
-    </form>
-  </div>  
-  -->
   
   <!-- 페이지 버튼 목록 출력 -->
   <div class="Bottom_menu" th:utext="${paging}"></div>

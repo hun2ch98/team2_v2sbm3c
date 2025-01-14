@@ -28,9 +28,17 @@ public class NoticegoodProc implements NoticegoodProcInter {
     return list;
   }
   
+  /** 부모 레코드 noticegoodno 삭제 */
   @Override
   public int delete(int noticegoodVO) {
     int cnt = this.noticegoodDAO.delete(noticegoodVO);
+    return cnt;
+  }
+  
+  /** 자식 레코드 noticeno 삭제 */
+  @Override
+  public int n_delete(int noticeno) {
+    int cnt = this.noticegoodDAO.n_delete(noticeno);
     return cnt;
   }
   
@@ -51,6 +59,12 @@ public class NoticegoodProc implements NoticegoodProcInter {
   public NoticegoodVO readByNoticeMember(HashMap<String, Object> map) {
     NoticegoodVO noticegoodVO = this.noticegoodDAO.readByNoticeMember(map);
     return noticegoodVO;
+  }
+  
+  @Override
+  public ArrayList<NoticeNoticegoodMemberVO> list_all_join() {
+    ArrayList<NoticeNoticegoodMemberVO> list = this.noticegoodDAO.list_all_join();
+    return list;
   }
 
 }

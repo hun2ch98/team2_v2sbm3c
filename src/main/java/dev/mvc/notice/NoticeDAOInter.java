@@ -2,6 +2,9 @@ package dev.mvc.notice;
 
 import java.util.ArrayList;
 
+import dev.mvc.dto.SearchDTO;
+import dev.mvc.member.MemberVO;
+
 public interface NoticeDAOInter {
   /** 공지사항 등록 */
   public int create(NoticeVO noticeVO); // 추상 메소드
@@ -29,6 +32,20 @@ public interface NoticeDAOInter {
   
   /** 삭제 */
   public int delete(int noticeno);
+  
+  /**
+   * 검색 공지사항 수
+   * @param noticeVO
+   * @return
+   */
+  public int list_search_count(SearchDTO searchDTO);
+  
+  /**
+   * 공지사항 검색 + 페이징 목록
+   * @param noticeVO
+   * @return
+   */
+  public ArrayList<NoticeVO> list_search_paging(SearchDTO searchDTO);
   
   
 

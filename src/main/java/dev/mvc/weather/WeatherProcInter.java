@@ -25,6 +25,9 @@ public interface WeatherProcInter {
    * @return
    */
   public ArrayList<WeatherVO> list_all();
+
+  
+  public ArrayList<WeatherVO> image_list();
   
   /**
    * 게시글 등록된 목록

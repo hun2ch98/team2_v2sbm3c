@@ -1,13 +1,21 @@
 <!DOCTYPE html> 
-
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
 <div layout:fragment="content">
   <script>
     window.onload = function() {
-      //<img src = "/diarygood/images/file_name" style="" title="">
-      //<img src = "/diarygood/images/file_name" style="" title="">
-      let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
+     
+      let heartCnt =`[[${heartCnt}]]`; //  javascript -> Thymeleaf -> session
       let tag='';
+
       if (heartCnt == 1) {
         tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
         document.querySelector('#heart_panel').innerHTML = tag; 
@@ -15,25 +23,43 @@
         tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제"></a>'
         document.querySelector('#heart_panel').innerHTML = tag; 
       }
-      document.querySelector('#cnt_panel').innerHTML = '([[${diaryVO.cnt}]])'
+      document.querySelector('#goodCnt_panel').innerHTML = '([[${diaryVO.goodcnt}]])'
+           
     }
     
     function good(diaryno) {
       console.log('-> diaryno : ' + diaryno);
-      fetch("http://localhost:9093/diary/good", {
-          "method": "post",
-          "headers": {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({diaryno}) // {"sentence":sentence, "language":language}, JSON 형식으로 전송
-        })
-        .then((response) => response.text()) // 응답 문자열 추출
-        .then((data) => {
-          console.log('-> data : ' + data);
-        });
-
+      fetch("/diary/good", {
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({diaryno}) // {"sentence":sentence, "language":language}, JSON 형식으로 전송
+      })
+      .then((response) => response.json()) // 응답 문자열 추출
+      .then((data) => {
+        console.log('-> data.isMember : ' + data.isMember);
+        if (data.isMember == 1) {
+          let heartCnt = data.heartCnt; //  javascript -> Thymeleaf -> session
+          let tag='';
+            
+          if (heartCnt == 1) {     
+            tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_on.png" style="width: 22px" title="좋아요"></a>'
+            document.querySelector('#heart_panel').innerHTML = tag; 
+          } else {
+            tag = '<a href="javascript:good([[${diaryVO.diaryno}]])"><img src="/diarygood/images/heart_off.png" style="width: 22px" title="좋아요 해제"></a>'
+            document.querySelector('#heart_panel').innerHTML = tag; 
+          }
+        document.querySelector('#goodCnt_panel').innerHTML = '(' + data.goodCnt + ')';
+            
+        } else {
+          alert("로그인 후 이용 가능합니다.");
+          location.href='/member/login_cookie_need'
+        }
+      });
     }
   </script>
+  
   <div class='title_line'>
     일기 조회
   </div>
@@ -43,49 +69,91 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/create|}">등록</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/diary/update?diaryno=${diaryVO.diaryno}&now_page=${now_page}&word=${word }|}">글 수정</a>
+    <a th:href="@{|/illustration/create|}">그림 등록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{/diary/update/{diaryno}(diaryno=${diaryVO.diaryno})}">글 수정</a>
     <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록</a>    
     <span class='menu_divide' >│</span>
-    <a th:href="@{|/diary/delete?diaryno=${diaryVO.diaryno}&word=${word}&now_page=${now_page}&diaryno=${diaryVO.diaryno}|}">삭제</a>  
+    <a th:href="@{/diary/delete/{diaryno}(diaryno=${diaryVO.diaryno})}">삭제</a>  
  </aside> 
 
   <aside class="aside_right" th:if="${session.grade != 'admin'}">
      <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_diaryno?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록형</a>    
+    <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록</a>    
     <span class='menu_divide' >│</span>
-    <a th:href="@{|./list_by_diaryno_grid?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">갤러리형</a>
+    <a th:href="@{|./list_by_diaryno_search_paging_grid?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">갤러리형</a>
   </aside> 
  
   <div class='menu_line'></div>
 
   <fieldset class="fieldset_basic">
     <ul>
-      <li th:if="${diaryVO != null}">
+      <!--<li th:if="${diaryVO != null}"> -->
+      <li  >
         <strong>일기 제목:</strong> <span th:text="${diaryVO.title}"></span><br>
-        <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span>
-        <strong>일기:</strong> <span th:text="${diaryVO.summary}"></span><br>      
+        <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span><br>
+        <!-- 감정 이미지 추가 -->
+        <strong style="float:right;">오늘의 감정</strong>
+        <img th:src="@{'/emotion/images/image' + ${diaryVO.emono} + '.png'}" 
+             alt="감정 이미지" 
+             style="width: 30px; height: auto; margin-top: 10px; float:right;">
+             
+        <strong style="float:right;">오늘의 날씨</strong>
+        <img th:src="@{'/weather/images/weather' + '-' + ${diaryVO.weatherno} + '.png'}" 
+             alt="날씨 이미지" 
+             style="width: 30px; height: auto; margin-top: 10px; float:right;">
+        
+         <!-- 그림 출력 반복문 추가 -->
+        <div id="carouselExample" class="carousel slide" style="width: 40%; margin: 10px auto;">
+          <div class="carousel-inner">
+            <!-- th:each로 illustrationList 반복 -->
+            <div th:each="illustration, iterStat : ${illustrationList}"
+                 class="carousel-item" 
+                 th:classappend="${iterStat.index == 0} ? 'active' : ''">
+              <img th:src="@{'/upload/' + ${illustration.illust}}" class="d-block w-100" 
+              style="height: 300px; width: auto; " alt="썸네일">
+            </div>
+          </div>
+          
+          <!-- 이전 버튼 -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          
+          <!-- 다음 버튼 -->
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        
+        <div id="carouselIllust" class="carousel slide" style="width: 30%; margin:10px auto;">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img "@{'/upload/' + ${illustration.illust}}" class="d-block w-100" >
+            </div>
+          </div>
+        </div>
+    
+        <strong>일기 내용</strong><br>
+        <span th:text="${diaryVO.summary}"></span><br>      
       </li>
       
-       <!-- 썸네일 출력 반복문 추가 -->
-      <li>
-        <strong>썸네일:</strong>
-        <div th:each="illustration : ${illustrationList}">
-          <img th:src="@{'/upload/' + ${illustration.illust}}" 
-               alt="썸네일" style="width: 200px; height: auto;">
-        </div>
-      </li>
+      
+      
       <li class="li_none">
         <div>
           <span id="heart_panel"></span>
-          <span id="cnt_panel"></span>
+          <span id="goodCnt_panel"></span>
         </div>
       </li>
+      <li class="li_none" th:text="|조회수: ${diaryVO.cnt }|"></li>
     </ul>
   </fieldset>
 
 </div>
 
 </html>
-

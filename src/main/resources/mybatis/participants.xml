@@ -10,6 +10,13 @@
     VALUES (participants_seq.nextval, #{itemno}, #{memberno}, sysdate)
   </insert>
   
+  <!-- 참여수 증가 -->
+  <update id="update_cnt" parameterType="int">
+    UPDATE surveyitem
+    SET item_cnt = item_cnt + 1
+    WHERE itemno = #{itemno}
+  </update>
+  
   <!-- 목록 -->
   <select id="list_all" parameterType="dev.mvc.participants.PartVO">
     SELECT pno, itemno, memberno, pdate
@@ -22,5 +29,27 @@
     DELETE FROM participants
     WHERE pno = #{pno}
   </delete>
+  
+  <!-- PK 조회 -->
+  <select id="read" resultType="dev.mvc.participants.PartVO" parameterType="int">
+    SELECT pno, itemno, memberno, pdate
+    FROM participants
+    WHERE pno = #{pno}
+  </select>
+  
+  <!-- surveyno, memberno로 조회! -->
+  <select id="readByitemmember" resultType="dev.mvc.participants.PartVO" parameterType="HashMap">
+    SELECT pno, itemno, memberno, pdate
+    FROM participants
+    WHERE itemno = #{itemno} AND memberno = #{memberno}
+  </select>
+  
+  <!-- 조인 목록 -->
+  <select id="list_all_join" parameterType="dev.mvc.participants.ItemMemberPartVO">
+    SELECT p.pno, p.itemno, p.memberno, p.pdate, i.item as i_item, m.memberno, m.email, m.name
+    FROM surveyitem i, participants p, member m
+    WHERE i.itemno = p.itemno AND p.memberno = m.memberno
+    ORDER BY pno DESC
+  </select>
 
 </mapper>

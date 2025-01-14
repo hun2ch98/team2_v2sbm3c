@@ -1,6 +1,9 @@
 package dev.mvc.participants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import dev.mvc.surveygood.SurveygoodVO;
 
 public interface PartDAOInter {
   
@@ -10,6 +13,12 @@ public interface PartDAOInter {
    * @return
    */
   public int create(PartVO partVO);
+  
+  /**
+   * 추천수 증가
+   * @return
+   */
+  public int update_cnt(int itemno);
   
   /**
    * 목록
@@ -23,5 +32,25 @@ public interface PartDAOInter {
    * @return
    */
   public int delete(int pno);
+  
+  /**
+   * 조회
+   * @param goodno
+   * @return
+   */
+  public PartVO read(int pno);
+  
+  /**
+   * surveyno, memberno로 조회
+   * @param map
+   * @return
+   */
+  public PartVO readByitemmember(HashMap<String, Object> map);
+  
+  /**
+   * 3개 조인
+   * @return
+   */
+  public ArrayList<ItemMemberPartVO> list_all_join();
 
 }

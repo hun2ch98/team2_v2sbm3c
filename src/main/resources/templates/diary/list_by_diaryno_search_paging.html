@@ -46,10 +46,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr th:each="diary : ${diaryList}">
-          <td>
-              <a th:href="@{/diary/read/{id}(id=${diary.diaryno})}" th:text="${diary.title}"></a>
-          </td>
+        <tr th:if="${diaryList != null and diaryList.size() > 0}" th:each="diary : ${diaryList}"
+              th:attr="onclick=|location.href='/diary/read?diaryno=${diary.diaryno}&now_page=${now_page}'|"
+              style="cursor: pointer; height: 90px;">
+          <td th:text="${diary.title}"></td>
           <td th:text="${diary.ddate != null ? #dates.format(diary.ddate, 'yyyy-MM-dd') : 'N/A'}"></td>
           <td th:text="${diary.weatherno}"></td>
           <td th:text="${diary.emono}"></td>
@@ -65,7 +65,7 @@
             <form th:action="@{/diary/delete}" method="post" style="display: inline;">
               <input type="hidden" name="diaryno" th:value="${diary.diaryno}" />
               <button type="submit" class="btn btn-link">삭제</button>
-            </form>
+          </form>
           </td>
         </tr>
       </tbody>

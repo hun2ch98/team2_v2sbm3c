@@ -32,6 +32,12 @@ public class EmotionProc implements EmotionProcInter{
         ArrayList<EmotionVO> list = this.emotionDAO.list_all();
         return list;
     }
+    
+    @Override
+    public ArrayList<EmotionVO> image_list() {
+        ArrayList<EmotionVO> image_list = this.emotionDAO.image_list();
+        return image_list;
+    }
 
     @Override
     public int update_text(EmotionVO emotionVO) {

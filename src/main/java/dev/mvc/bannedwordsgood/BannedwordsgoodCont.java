@@ -64,6 +64,24 @@ public class BannedwordsgoodCont {
 	  return json.toString();
 	}
 	
+//  /**
+//   * 목록
+//   * 
+//   * @param model
+//   * @return
+//   */
+//  // http://localhost:9091/cate/list_all
+//  @GetMapping(value = "/list_all")
+//  public String list_all(Model model) {
+//    ArrayList<BannedwordsgoodVO> list = this.bannedwordsgoodProc.list_all();
+//    model.addAttribute("list", list);
+//
+////	    ArrayList<CateVOMenu> menu = this.cateProc.menu();
+////	    model.addAttribute("menu", menu);
+//
+//    return "/bannedwordsgood/list_all"; // /templates/bannedwordsgood/list_all.html
+//  }
+  
   /**
    * 목록
    * 
@@ -73,7 +91,7 @@ public class BannedwordsgoodCont {
   // http://localhost:9091/cate/list_all
   @GetMapping(value = "/list_all")
   public String list_all(Model model) {
-    ArrayList<BannedwordsgoodVO> list = this.bannedwordsgoodProc.list_all();
+    ArrayList<BannedwordsBannedwordsgoodMemberVO> list = this.bannedwordsgoodProc.list_all_join();
     model.addAttribute("list", list);
 
 //	    ArrayList<CateVOMenu> menu = this.cateProc.menu();

@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import dev.mvc.schedule.ScheduleVO;
+
 public interface DiaryDAOInter {
   /**
    * <pre>
@@ -37,10 +39,10 @@ public interface DiaryDAOInter {
   public DiaryVO read(Integer diaryno);
   
   
-  public int increaseGoodCnt(int goodno);
+  public int increaseGoodCnt(int diaryno);
   
   
-  public int decreaseGoodCnt(int goodno);
+  public int decreaseGoodCnt(int diaryno);
   
   /**
    * 수정
@@ -100,6 +102,9 @@ public interface DiaryDAOInter {
   
   DiaryVO getDiaryByDiaryNo(int diaryno);
   
-  public List<DiaryVO> readList(int diaryno);
+  // public List<DiaryVO> readList(int diaryno);
+
+  public int increaseCnt(int diaryno);
+  
   
 }

@@ -44,8 +44,8 @@ public class BannedwordsProc implements BannedwordsProcInter {
      */
     @Override
     public BannedwordsVO read(int wordno) {
-      BannedwordsVO BannedwordsVO = this.bannedwordsDAO.read(wordno);
-      return BannedwordsVO;
+      BannedwordsVO bannedwordsVO = this.bannedwordsDAO.read(wordno);
+      return bannedwordsVO;
     }
     
     @Override

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.score.ScoreDAOInter">
+
+  <!-- 평점 글 추가 -->
+  <insert id="create" parameterType="dev.mvc.score.ScoreVO">
+    INSERT INTO score (scoreno, jumsu, rdate, memberno)
+    VALUES (score_seq.nextval, #{jumsu}, sysdate, #{memberno})
+  </insert>
+  
+  <!-- 평점 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.score.ScoreVO">
+    SELECT scoreno, jumsu, rdate, memberno
+    FROM score
+    WHERE scoreno = #{scoreno}
+  </select>
+  
+  <!-- 모든 목록 -->
+  <select id="list_all" parameterType="dev.mvc.score.ScoreVO">
+    SELECT scoreno, jumsu, rdate, memberno
+    FROM score
+    ORDER BY scoreno DESC
+  </select>
+  
+  <!-- 등록된 목록 -->
+  <select id="list_by_scoreno" resultType="dev.mvc.score.ScoreVO">
+    SELECT scoreno, jumsu, rdate, memberno
+    FROM score
+    ORDER BY scoreno DESC
+  </select>
+  
+  <!-- 내용 수정 -->
+  <update id="update_score" parameterType="dev.mvc.score.ScoreVO">
+    UPDATE score
+    SET jumsu=#{jumsu},memberno=#{memberno}, rdate=sysdate
+    WHERE scoreno = #{scoreno}
+  </update>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM score
+    WHERE scoreno = #{scoreno}
+  </delete>
+  
+  <!-- 검색 목록 -->
+  <select id="list_by_scoreno_search" resultType="dev.mvc.score.ScoreVO" parameterType="HashMap">
+    SELECT *
+    FROM (
+        SELECT scoreno, jumsu, rdate, memberno,
+               ROW_NUMBER() OVER (ORDER BY scoreno DESC) AS rnum
+        FROM score
+        WHERE (#{jumsu} IS NULL OR #{jumsu} = '' OR jumsu = #{jumsu})
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+  
+  <!-- 검색 레코드 갯수 -->
+  <select id="count_by_scoreno_search" resultType="int" parameterType="HashMap">
+      SELECT COUNT(*)
+      FROM score
+      WHERE (#{jumsu} IS NULL OR #{jumsu} = '' OR jumsu = #{jumsu})
+  </select>
+   
+  <select id="list_search_count" resultType="int">
+    SELECT COUNT(*) FROM score
+  </select>
+  
+  <!-- 평점별 검색 + 페이징 목록 -->
+  <select id="list_by_scoreno_search_paging" resultType="dev.mvc.score.ScoreVO" parameterType="HashMap">
+      SELECT *
+      FROM (
+          SELECT scoreno, jumsu, rdate, memberno,
+                 ROW_NUMBER() OVER (ORDER BY scoreno DESC) AS rnum
+          FROM score
+          WHERE (#{jumsu} IS NULL OR #{jumsu} = '' OR jumsu = #{jumsu})
+      )
+      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  </select>
+
+</mapper>

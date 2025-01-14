@@ -12,6 +12,8 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -22,11 +24,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.diary.DiaryProcInter;
 import dev.mvc.diary.DiaryVO;
+import dev.mvc.log.LogProcInter;
+import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -56,6 +61,35 @@ public class IllustrationCont {
   /** 페이징 목록 주소 */
   private String list_file_name = "/illustration/list_all";
 
+  @Autowired
+  @Qualifier("dev.mvc.log.LogProc")
+  private LogProcInter logProc;
+
+  private void logAction(String action, String table, int memberno, String details, HttpServletRequest request, String is_success) {
+      LogVO logVO = new LogVO();
+      logVO.setMemberno(memberno);
+      logVO.setTable_name(table);
+      logVO.setAction(action);
+      logVO.setDetails(details);
+      logVO.setIp(getClientIp(request)); // IP 주소 설정
+      logVO.setIs_success(is_success);
+      logProc.create(logVO); // Log 테이블에 삽입
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+      String ip = request.getHeader("X-Forwarded-For");
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("WL-Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getRemoteAddr();
+      }
+      return ip;
+  }
+  
   /**
    * 등록 폼
    */
@@ -77,6 +111,8 @@ public class IllustrationCont {
                        @RequestParam("selectedDate") String selectedDate, // 선택된 날짜
                        RedirectAttributes ra, HttpSession session, 
                        Model model, HttpServletRequest request) {
+    
+    int memberno = (int) session.getAttribute("memberno");
       if (memberProc.isMemberAdmin(session)) {
           String illust = "";
           String illust_saved = "";
@@ -116,9 +152,11 @@ public class IllustrationCont {
           int cnt = this.illustrationProc.create(illustrationVO);
 
           if (cnt == 1) {
+            logAction("create", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "Y");
               ra.addAttribute("illustno", illustrationVO.getIllustno());
               return "redirect:/illustration/list_all";
           } else {
+            logAction("create", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "N");
               ra.addFlashAttribute("code", "check_upload_file_fail");
               ra.addFlashAttribute("url", "/illustration/msg");
               ra.addFlashAttribute("cnt", 0);
@@ -130,8 +168,8 @@ public class IllustrationCont {
   }
 
   @GetMapping(path="/read/{illustno}")
-  public String read(Model model, 
-                     @PathVariable("illustno") int illustno, 
+  public String read(Model model, HttpSession session, 
+                     @PathVariable("illustno") int illustno, HttpServletRequest request,
                      @RequestParam(value = "title", required = false, defaultValue = "") String title,
                      @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
                      @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
@@ -139,6 +177,7 @@ public class IllustrationCont {
       IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
       model.addAttribute("illustrationVO", illustrationVO);
 
+      int memberno = (int) session.getAttribute("memberno");
       if (illustrationVO.getDiaryno() > 0) {
           DiaryVO diaryVO = this.illustrationProc.readDiary(illustrationVO.getDiaryno());
           model.addAttribute("diaryVO", diaryVO);
@@ -151,7 +190,7 @@ public class IllustrationCont {
       model.addAttribute("title", title);
       model.addAttribute("start_date", start_date);
       model.addAttribute("end_date", end_date);
-
+      logAction("read", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "Y");
       return "/illustration/read";
   }
   
@@ -230,13 +269,14 @@ public class IllustrationCont {
    * @return
    */
   @PostMapping(value = "/delete")
-  public String delete(RedirectAttributes ra, Model model, 
+  public String delete(RedirectAttributes ra, Model model, HttpServletRequest request, HttpSession session, 
       @RequestParam(name="illustno", defaultValue = "0") int illustno,
       @RequestParam(value = "title", required = false, defaultValue = "") String title,
       @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
       @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue = "1") int now_page) {
     
+    int memberno = (int) session.getAttribute("memberno");
     IllustrationVO illustrationVO_read = illustrationProc.read(illustno);
         
     String file1saved = illustrationVO_read.getIllust_saved();
@@ -250,7 +290,7 @@ public class IllustrationCont {
     model.addAttribute("title", title);
     model.addAttribute("start_date", start_date);
     model.addAttribute("end_date", end_date);
-    
+    logAction("delete", "illustration", memberno, "title=" + illustrationVO_read.getIllust(), request, "Y");
     return "redirect:/illustration/list_all";    
     
   }   
@@ -275,13 +315,15 @@ public class IllustrationCont {
   
   
   @PostMapping(value="/update")
-  public String update(HttpSession session, Model model,RedirectAttributes ra, 
+  public String update(HttpSession session, Model model,RedirectAttributes ra, HttpServletRequest request,
       @ModelAttribute("illustrationVO") IllustrationVO illustrationVO, 
       @RequestParam(value = "title", required = false, defaultValue = "") String title,
       @RequestParam(value = "start_date", required = false, defaultValue = "") String start_date,
       @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue="0") int now_page, 
       @RequestParam(name="illustno", defaultValue="0") int illustno ) {
+    
+    int memberno = (int) session.getAttribute("memberno");
     if (this.memberProc.isMemberAdmin(session)) {
       IllustrationVO illustrationVO_old = illustrationProc.read(illustrationVO.getIllustno());
       
@@ -331,9 +373,10 @@ public class IllustrationCont {
       model.addAttribute("title", title);
       model.addAttribute("start_date", start_date);
       model.addAttribute("end_date", end_date);
+      logAction("update", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "Y");
       return "redirect:/illustration/list_all";
     } else {
-        
+      logAction("update", "illustration", memberno, "title=" + illustrationVO.getIllust(), request, "N");
         return "/member/login_cookie_need"; // GET
       }
   }
@@ -345,6 +388,69 @@ public class IllustrationCont {
 
       return "diary/read";  // "diary/read" 템플릿으로 이동
   }
+  
+  @GetMapping(value="/list_calendar")
+  public String list_calendar(HttpSession session, Model model, 
+      @RequestParam(name="year", defaultValue="0") int year, 
+    @RequestParam(name="month", defaultValue="0") int month) {
+
+      if (year == 0) {
+        // 현재 날짜를 가져옴
+        LocalDate today  = LocalDate.now();
+        
+        //연도와 월을 추출
+        year = today.getYear();
+        month = today.getMonthValue();
+      }
+      
+      String month_str = String.format("%02d", month); // 두 자리 형식으로
+    System.out.println("-> month: " + month_str);
+  
+    String date = year + "-" + month;
+    System.out.println("-> date: " + date);
+    
+    model.addAttribute("year", year);
+    model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
+      
+    return "/illustration/list_calendar"; // /templates/calendar/list_calendar.html
+  }
+  
+  
+  @GetMapping(value="/list_calendar_day")
+  @ResponseBody
+  public String list_calendar_day(Model model, 
+      @RequestParam(name="ddate", defaultValue = "") Date ddate) {
+    
+    System.out.println("-> ddate : " + ddate);
+    
+    ArrayList<DiaryIllustrationVO> list = this.illustrationProc.list_calendar_day(ddate);
+    model.addAttribute(list);
+    
+    JSONArray calendar_list = new JSONArray();
+    
+    for (DiaryIllustrationVO diaryillustrationVO : list) {
+      System.out.println("Illustno: " + diaryillustrationVO.getIllustno());
+      System.out.println("Illust Thumb: " + diaryillustrationVO.getIllust_thumb());
+      
+      JSONObject calendar = new JSONObject();
+      //diaryVO
+      calendar.put("diaryno", diaryillustrationVO.getDiaryno());
+      calendar.put("ddate", diaryillustrationVO);
+      //emotionVO
+      calendar.put("emono", diaryillustrationVO.getEmono());
+      calendar.put("em_file1", diaryillustrationVO);
+      //weatherVO
+      calendar.put("weatherno", diaryillustrationVO.getWeatherno());
+      calendar.put("we_file1", diaryillustrationVO.getWe_file1());
+      //illustrationVO
+      calendar.put("illustno", diaryillustrationVO.getIllustno());
+      calendar.put("illust_thumb", diaryillustrationVO.getIllust_thumb());
+      
+      calendar_list.put(calendar);
+    }
+    return calendar_list.toString();
+  }
+  
   
   
   

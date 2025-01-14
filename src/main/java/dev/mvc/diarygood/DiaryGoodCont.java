@@ -52,16 +52,14 @@ public class DiaryGoodCont {
   public String create(HttpSession session, @RequestBody DiaryGoodVO diaryGoodVO) {
     System.out.println("-> 수신 데이터 : " + diaryGoodVO.toString());
     
-    // test용
-    int memberno = 1;
-    
+    int memberno = (int) session.getAttribute("memberno");
     //int memberno = (int) session.getAttribute("memberno");
     diaryGoodVO.setMemberno(memberno);
     
-    int cnt = this.diaryGoodProc.create(diaryGoodVO);
+    int goodcnt = this.diaryGoodProc.create(diaryGoodVO);
     
     JSONObject json = new JSONObject();
-    json.put("res", cnt);
+    json.put("res", goodcnt);
     return json.toString();
   }
   

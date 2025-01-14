@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.mvc.dto.SearchDTO;
 import dev.mvc.tool.Security;
 
 @Component("dev.mvc.notice.NoticeProc")
@@ -75,5 +76,17 @@ public class NoticeProc implements NoticeProcInter{
   public int delete(int noticeVO) {
     int cnt = this.noticeDAO.delete(noticeVO);
     return cnt;
+  }
+  
+  /** 조건에 맞는 공지사항 수 */
+  @Override
+  public int list_search_count(SearchDTO searchDTO) {
+    return noticeDAO.list_search_count(searchDTO);
+  }
+  
+  /** 공지사항 검색 + 목록 페이징 */
+  @Override
+  public ArrayList<NoticeVO> list_search_paging(SearchDTO searchDTO) {
+    return noticeDAO.list_search_paging(searchDTO);
   }
 }

@@ -29,7 +29,11 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
     return cnt;
   }
   
-  
+  @Override
+  public int f_delete(int diaryno) {
+    int cnt = this.diaryGoodDAO.f_delete(diaryno);
+    return cnt;
+  }
   @Override
   public DiaryGoodVO read(int goodno) {
     DiaryGoodVO diaryGoodVO = this.diaryGoodDAO.read(goodno);
@@ -38,8 +42,8 @@ public class DiaryGoodProc implements DiaryGoodProcInter {
   
   
   @Override
-  public DiaryGoodVO read(HashMap<String, Object> map) {
-    DiaryGoodVO diaryGoodVO = this.diaryGoodDAO.read(map);
+  public DiaryGoodVO readByDiaryMember(HashMap<String, Object> map) {
+    DiaryGoodVO diaryGoodVO = this.diaryGoodDAO.readByDiaryMember(map);
     return diaryGoodVO;
   }
 

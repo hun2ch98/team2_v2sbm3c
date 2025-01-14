@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    설문조사 목록 조회
+    <span th:if="${is_continue != ''}" th:text="|> ${is_continue} (${search_count} 건)|" class="title_line_text"></span>
+  </div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{/survey/create}">등록</a>
+      <span class="menu_divide">│</span>    
+    </span>
+    <a href="javascript:location.reload();">새로고침</a>  
+  </aside> 
+  
+  <!-- /survey/list_search_com.html 파일의 list_search_fragment import -->
+  <div th:replace="~{survey/list_search_com::list_search_fragment}"></div>
+
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 40%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 7.5%;'/>
+      <col style='width: 7.5%;'/>
+      <col style='width: 5%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>파일</th>
+      <th class='th_bs'>주제</th>
+      <th class='th_bs'>시작일</th>
+      <th class='th_bs'>종료일</th>
+      <th class='th_bs'>참여인원</th>
+      <th class='th_bs'>진행여부</th>
+      <th class='th_bs'>기타</th>
+    </tr>
+    </thead>
+    
+    <tr th:each="surveyVO : ${list}" 
+        th:attr="onclick=|location.href='@{/surveyitem/list_search(surveyno=${surveyVO.surveyno})}'|"
+        style="cursor: pointer; height: 90px;">
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <div th:if="${surveyVO.file1.endsWith('jpg') or surveyVO.file1.endsWith('png')  or surveyVO.file1.endsWith('gif')}">
+          <img th:src="@{|/survey/storage/${surveyVO.thumb1}|}" style="width: 120px; height: 90px;">
+        </div>
+        
+        <!--% 이미지가 이닌 파일은 파일명만 출력 %-->
+        <div th:if="${((surveyVO.file1.endsWith('jpg') or surveyVO.file1.endsWith('png')  or surveyVO.file1.endsWith('gif')) == false) and (surveyVO.size1 > 0)}">
+          <span th:text="${surveyVO.file1}"></span>
+        </div>
+
+        <!--% 파일이 없는 경우 기본 이미지 출력 %-->
+        <div th:if="${surveyVO.size1 == 0}">
+          <img src="/survey/images/none1.png" style="width: 120px; height: 90px;">
+        </div>
+        
+      </td>
+      </td>
+      <td class='td_left'>
+        <span th:text="${surveyVO.topic}" style="font-weight: bold;"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="| ${surveyVO.sdate.substring(0, 10)}|"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="| ${surveyVO.edate.substring(0, 10)}|"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="| ${surveyVO.s_number}|"></span>
+      </td>
+      <td class='td_left'>
+        <span th:text="| ${surveyVO.is_continue}|"></span>
+      </td>
+
+      <td>
+        <a th:href="@{|/survey/list_all_delete/${surveyVO.surveyno}|}">
+          <img src="/survey/images/delete.png" class="icon" title="삭제">
+        </a> 
+        <!-- 결과 버튼 -->
+        <a th:href="@{/surveyitem/result(surveyno=${surveyno})}" >
+          <img src="/survey/images/result.png" class="icon" title="결과">
+        </a>        
+      </td>
+    </tr>
+
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="2" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    </tr> 
+
+  </table>
+   
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+
+</div>
+</html>

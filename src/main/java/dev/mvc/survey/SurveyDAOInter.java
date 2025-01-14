@@ -2,6 +2,7 @@ package dev.mvc.survey;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public interface SurveyDAOInter {
   
@@ -37,7 +38,7 @@ public interface SurveyDAOInter {
    * @param hashMap
    * @return
    */
-  public int count_by_surveyno_search(HashMap<String, Object> map);
+  public int count_by_surveyno_search(HashMap<String, Object> hashMap);
   
   /**
    * 회원
@@ -73,22 +74,14 @@ public interface SurveyDAOInter {
    * @param surveyno
    * @return
    */
-  public int delete(int surveyno);
-  
-  /**
-   * 자식 무시하고 삭제
-   * @param surveyno
-   * @return
-   */
-  public int delete_survey(int surveyno);
- 
+  public int delete(int surveyno); 
   
   /**
    * 자료수 산출
    * @param surveyno
    * @return
    */
-  public int cntnount(int surveyno);
+  public int cntcount(int surveyno);
   
   /**
    * 추천 증가

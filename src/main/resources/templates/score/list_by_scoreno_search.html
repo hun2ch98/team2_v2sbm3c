@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class='title_line'>검색목록</div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'member'}">
+      <a th:href="@{/score/create}">등록</a>
+      <span class="menu_devide">│</span>    
+    </span>
+    
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside> 
+
+  <!-- /contents/list_search_com.html 파일의 list_search_fragment import -->
+  <div th:replace="~{score/list_search_com::list_search_fragment}"></div>
+     
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 30%;'/>      
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>평점 번호</th>
+      <th class='th_bs'>평점</th>
+      <th class='th_bs'>회원</th>
+      <th class='th_bs'>등록일</th>
+      <th class='th_bs'>기타</th>
+    </tr>
+   
+    <tr th:each="modeltrainingVO, status:${list}" 
+         th:attr="onclick=|location.href='/score/read?scoreno=${scoreVO.scoreno}&jumsu=${jumsu}'|"
+         style="cursor: pointer; height: 90px;">
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${scoreVO.scoreno}" style="font-weight: bold;"></span><br>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${scoreVO.jumsu}" style="font-weight: bold;"></span><br>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${scoreVO.memberno}" style="font-weight: bold;"></span><br>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${scoreVO.rdate}" style="font-weight: bold;"></span><br>
+      </td>
+     
+    </tr>
+  </table>
+   
+  <div class='bottom_menu'>
+    <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+  </div>
+
+</div>
+</html>
+
