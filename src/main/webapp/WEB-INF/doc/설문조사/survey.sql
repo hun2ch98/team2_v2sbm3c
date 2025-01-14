@@ -99,7 +99,7 @@ DELETE FROM survey;
 
 DELETE FROM survey WHERE topic='교육적 가치';
 
-DELETE FROM survey WHERE surveyno=14;
+DELETE FROM survey WHERE surveyno=13;
 
 COMMIT;
 

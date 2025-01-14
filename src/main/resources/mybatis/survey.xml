@@ -16,14 +16,14 @@
   <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
     SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1, goodcnt
     FROM survey
-    ORDER BY surveyno DESC
+    ORDER BY surveyno ASC
   </select>
   
   <!-- 특정 카테고리의 등록된 글목록 -->
   <select id="list_by_surveyno" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
     SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
     FROM survey
-    ORDER BY surveyno DESC
+    ORDER BY surveyno ASC
   </select>
   
   <!-- 카테고리별 검색 목록 -->

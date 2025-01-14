@@ -19,6 +19,13 @@ public interface PartProcInter {
   public int update_cnt(int itemno);
   
   /**
+   * 특정 개수 산출
+   * @param map
+   * @return
+   */
+  public int updateCnt(HashMap<String, Object> map);
+  
+  /**
    * 목록
    * @return
    */

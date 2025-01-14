@@ -26,6 +26,12 @@ public class PartProc implements PartProcInter {
     int cnt = this.partDAO.update_cnt(itemno);
     return cnt;
   }
+  
+  @Override
+  public int updateCnt(HashMap<String, Object> map) {
+    int cnt = this.partDAO.updateCnt(map);
+    return cnt;
+  }
 
   @Override
   public ArrayList<PartVO> list_all() {

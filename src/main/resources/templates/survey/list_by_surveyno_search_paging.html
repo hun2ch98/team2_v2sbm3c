@@ -78,11 +78,9 @@
       </td>
 
       <td>
-        <span th:if="${session.grade == 'admin'}">
-          <a th:href="@{|/survey/list_all_delete/${surveyVO.surveyno}|}">
-            <img src="/survey/images/delete.png" class="icon" title="삭제">
-          </a> 
-        </span>
+        <a th:href="@{/surveyitem/result_admin(surveyno=${surveyVO.surveyno})}" >
+          <img src="/survey/images/result.png" class="icon" title="결과">
+        </a>
       </td>
     </tr>
 
