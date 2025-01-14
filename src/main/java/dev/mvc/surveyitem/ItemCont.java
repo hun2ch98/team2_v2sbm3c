@@ -128,8 +128,10 @@ public class ItemCont {
     
       model.addAttribute("surveyno", surveyno);
       model.addAttribute("itemno", itemno);
-      // 관리자인지 확인  
+      // 회원인지 확인  
       if (this.memberProc.isMember(session)) {
+        
+        model.addAttribute("defaultItemno", 1);  // 설문조사 항목 선택 기본값 지정
         
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);     
@@ -157,6 +159,24 @@ public class ItemCont {
         
         
         model.addAttribute("heartCnt", heartCnt);
+//    -------------------------------------------------------------------
+        
+//      -------------------------------------------------------------------
+//      참여 관련
+//      -------------------------------------------------------------------
+
+        map.put("itemno", itemno);
+        
+        int updateCnt = 0;
+        if(session.getAttribute("memberno") != null) {  // 회원인 경우만 카운트 처리
+          int memberno = (int)session.getAttribute("memberno");
+          map.put("memberno", memberno);
+          
+          updateCnt = this.partProc.updateCnt(map);
+        } 
+        
+        
+        model.addAttribute("updateCnt", updateCnt);
 //    -------------------------------------------------------------------
 
         return "/surveyitem/list_search_member";
@@ -186,6 +206,9 @@ public class ItemCont {
         
         SurveyVO surveyVO = this.surveyProc.read(surveyno);
         model.addAttribute("surveyVO", surveyVO);
+        
+        ItemVO itemVO = this.itemProc.read(itemno);
+        model.addAttribute("itemVO", itemVO);
 
         word = Tool.checkNull(word);
         
@@ -380,23 +403,23 @@ public class ItemCont {
 //    return "redirect:/surveyitem/finish"; 
 //  }
   
-  @GetMapping(value = "/finish/{surveyno}")
-  public String update_cnt(
-      Model model,
-      @PathVariable("surveyno") int surveyno,
-      @RequestParam(name = "itemno", defaultValue = "") int itemno,
-      RedirectAttributes ra) {
-
-      System.out.println("Received surveyno: " + surveyno);
-      System.out.println("Received itemno: " + itemno);
-
-      this.itemProc.update_cnt(itemno);
-      
-      ra.addAttribute("itemno", itemno);
-      ra.addAttribute("surveyno", surveyno);
-      
-      return "redirect:/surveyitem/finish"; // "surveyitem" 폴더의 finish.html을 반환
-  }
+//  @GetMapping(value = "/finish/{surveyno}")
+//  public String update_cnt(
+//      Model model,
+//      @PathVariable("surveyno") int surveyno,
+//      @RequestParam(name = "itemno", defaultValue = "") int itemno,
+//      RedirectAttributes ra) {
+//
+//      System.out.println("Received surveyno: " + surveyno);
+//      System.out.println("Received itemno: " + itemno);
+//
+//      this.itemProc.update_cnt(itemno);
+//      
+//      ra.addAttribute("itemno", itemno);
+//      ra.addAttribute("surveyno", surveyno);
+//      
+//      return "redirect:/surveyitem/finish"; // "surveyitem" 폴더의 finish.html을 반환
+//  }
 
 
   
@@ -466,24 +489,109 @@ public class ItemCont {
   }  
   
   /**
+   * 참여 처리 
+   * @return
+   */
+  @PostMapping(value = "/finish")
+  @ResponseBody
+  public String updateCnt(HttpSession session,
+      Model model, @RequestBody String json_src,
+      @ModelAttribute("itemno") int itemno) {
+    System.out.println("-> updatecnt called:" );
+    System.out.println("-> json_src: " + json_src); // json_src: {"surveyno":"12"}
+    
+    PartVO partVO = this.partProc.updateCnt(map);
+    model.addAttribute("partVO", partVO);
+    
+    JSONObject src = new JSONObject(json_src); // String -> JSON
+    int itemno = (int)src.get("itemno"); // 값 가져오기
+    System.out.println("-> itemno: " + itemno);
+    
+    if (this.memberProc.isMember(session)) { // 회원 로그인 확인
+      System.out.println("->회원 처리: ");
+      // 추천을 한 상태인지 확인
+      int memberno = (int)session.getAttribute("memberno");
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("itemno", itemno);
+      map.put("memberno", memberno);
+      
+      int item_cnt = this.partProc.updateCnt(map);
+      System.out.println("-> item_cnt: " + item_cnt);
+      
+      if(item_cnt == 1) {
+        System.out.println("-> 참여 실패: " + itemno + ' ' + memberno);
+//        PartVO partVO = this.partProc.readByitemmember(map);
+        
+//        this.partProc.delete(partVO.getPno());  // 추천 삭제
+//        this.itemProc.decreasegoodcnt(itemno);    // 카운트 감소
+        
+      }else {
+        System.out.println("-> 참여 완료: " + itemno + ' ' + memberno);
+        
+        PartVO partVO_new = new PartVO();
+        partVO_new.setItemno(itemno);
+        partVO_new.setMemberno(memberno);
+        
+        this.partProc.create(partVO_new);
+        this.itemProc.update_cnt(itemno);
+      }
+      
+      // 추천 여부가 변경되어 다시 새로운 값을 읽어옴
+      int updateCnt = this.partProc.updateCnt(map);
+      int itemcnt = this.itemProc.read(itemno).getItem_cnt();
+      
+      JSONObject result = new JSONObject();
+      result.put("isMember", 1);  // 로그인:1, 비회원:0
+      result.put("updateCnt", updateCnt);  // 추천 여부, 추천:1, 비추천:0
+      result.put("itemcnt", itemcnt);   // 추천인수
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      return result.toString();
+
+    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+      System.out.println("->비회원 처리: ");
+      JSONObject result = new JSONObject();
+      result.put("isMember", 0);  // 로그인:1, 비회원:0
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      return result.toString();
+    }
+
+  }  
+  
+  /**
    * 설문조사 결과 보기
-   * @param surveyno
-   * @param model
+   * 회원
    * @return
    */
   @GetMapping("/result")
   public String result(@RequestParam("surveyno") int surveyno, Model model) {
-      // 설문조사 정보 읽기
+
       SurveyVO surveyVO = this.surveyProc.read(surveyno);
       model.addAttribute("surveyVO", surveyVO);
 
-      // 설문조사 항목 및 참여 인원 데이터 가져오기
       ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
       model.addAttribute("list", list);
 
       return "/surveyitem/result";
   }
 
+  /**
+   * 관리자 모드
+   * 설문조사 결과 조회
+   * @return
+   */
+  @GetMapping("/result_admin")
+  public String result_admin(@RequestParam("surveyno") int surveyno, Model model) {
+      // 설문조사 정보 읽기
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      model.addAttribute("surveyVO", surveyVO);
+      
+      ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
+      model.addAttribute("list", list);
+
+      return "/surveyitem/result_admin";
+  }
 
 
 }

@@ -1,5 +1,7 @@
   /* ver 2.5 2024_0912 */
   
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
+  
   /* 폰트 선언 */
   @font-face {
       font-family: 'TTHakgyoansimMonggeulmonggeulR';
@@ -108,7 +110,7 @@
     padding-bottom: 20px;
     text-align: center;
     width: 100%;
-    background-color: white;
+    background-color: #f0e5d8;
   }
   
   .content_bottom {
@@ -594,14 +596,15 @@
   /* ---------------------------------------------------------------------- */
   /* member CSS 관련 코드 시작                                                 */
   /* ---------------------------------------------------------------------- */
+    
+
+
   body {
       background-color: #f0e5d8; /* 부드러운 배경색 */
       font-family: 'Comic Sans MS', cursive, sans-serif; /* 어린이 책에서 자주 사용되는 폰트 */
       color: #333; /* 텍스트 색상 */
   }
   
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
-
   /* 검색 컨테이너 스타일 */
   .search-container {
     display: flex; /* 플렉스 박스를 사용하여 정렬 */

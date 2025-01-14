@@ -17,6 +17,13 @@
     WHERE itemno = #{itemno}
   </update>
   
+  <!-- surveyno, memberno로 조회! -->
+  <select id="updateCnt" resultType="int" parameterType="HashMap">
+    SELECT COUNT (*) as cnt
+    FROM participants
+    WHERE itemno = #{itemno} AND memberno = #{memberno}
+  </select>
+  
   <!-- 목록 -->
   <select id="list_all" parameterType="dev.mvc.participants.PartVO">
     SELECT pno, itemno, memberno, pdate
@@ -60,7 +67,7 @@
     JOIN member m ON p.memberno = m.memberno
     <where>
       <if test="word != null and word != ''">
-        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' AND UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
       </if>
     </where>
   </select>
@@ -83,7 +90,7 @@
         JOIN member m ON p.memberno = m.memberno
         <where>
           <if test="word != null and word != ''">
-            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' AND UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
           </if>
         </where>
     )

@@ -84,17 +84,17 @@ WHERE itemno = 24;
 
 SELECT COUNT (*) as cnt
 FROM participants
-WHERE itemno=24 AND memberno =2;
+WHERE itemno=2 AND memberno =1;
        CNT
 ----------
-         0
+         11
 
 SELECT COUNT (*) as cnt
 FROM participants
-WHERE surveyno=1 AND memberno =1;
+WHERE itemno=1 AND memberno =1;
       CNT
 ----------
-         1
+         5
          
 -- memberno FK 특정 관리자에 속한 레코드 모두 삭제
 DELETE FROM surveyitem
