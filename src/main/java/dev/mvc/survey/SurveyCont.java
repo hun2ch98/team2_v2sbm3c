@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import dev.mvc.log.LogProcInter;
+import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.survey.Survey;
@@ -52,6 +54,35 @@ public class SurveyCont {
   
   /** 페이징 목록 주소 */
   private String list_file_name = "/survey/list_by_surveyno_search_paging";
+  
+  @Autowired
+  @Qualifier("dev.mvc.log.LogProc")
+  private LogProcInter logProc;
+
+  private void logAction(String action, String table, int memberno, String details, HttpServletRequest request, String is_success) {
+      LogVO logVO = new LogVO();
+      logVO.setMemberno(memberno);
+      logVO.setTable_name(table);
+      logVO.setAction(action);
+      logVO.setDetails(details);
+      logVO.setIp(getClientIp(request)); // IP 주소 설정
+      logVO.setIs_success(is_success);
+      logProc.create(logVO); // Log 테이블에 삽입
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+      String ip = request.getHeader("X-Forwarded-For");
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("WL-Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getRemoteAddr();
+      }
+      return ip;
+  }
   
   public SurveyCont() {
     System.out.println("-> SurveyCont created.");
@@ -102,6 +133,7 @@ public class SurveyCont {
       BindingResult bindingResult, 
       RedirectAttributes ra) {
     
+    int memberno = (int) session.getAttribute("memberno");
     if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
@@ -154,7 +186,6 @@ public class SurveyCont {
 
       // Call By Reference: 메모리 공유, Hashcode 전달
 //      int memberno = 1; // memberno FK
-      int memberno = (int)session.getAttribute("memberno");
       surveyVO.setMemberno(memberno);
       int cnt = this.surveyProc.create(surveyVO);
 
@@ -182,12 +213,14 @@ public class SurveyCont {
         // ra.addFlashAttribute("cateno", contentsVO.getCateno()); // controller ->
         // controller: X
 
+        logAction("create", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");  
         ra.addAttribute("memberno", surveyVO.getMemberno()); // controller -> controller: O
         return "redirect:/survey/list_by_surveyno_search_paging";
 
         // return "redirect:/contents/list_by_cateno?cateno=" + contentsVO.getCateno();
         // // /templates/contents/list_by_cateno.html
       } else {
+        logAction("create", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");  
         ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
         ra.addFlashAttribute("cnt", 0); // 업로드 실패
         ra.addFlashAttribute("url", "/survey/msg"); // msg.html, redirect parameter 적용
@@ -425,7 +458,7 @@ public class SurveyCont {
    */
   @PostMapping(value = "/update_text/{surveyno}")
   public String update_text(HttpSession session, 
-      Model model, 
+      Model model, HttpServletRequest request,
       @ModelAttribute("surveyVO") SurveyVO surveyVO, 
       @PathVariable("surveyno") int surveyno,
       RedirectAttributes ra,
@@ -435,19 +468,21 @@ public class SurveyCont {
       // Redirect 시 검색어 및 현재 페이지 유지
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
-
+      int memberno = (int) session.getAttribute("memberno");
+      
       if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
           HashMap<String, Object> map = new HashMap<>();
           map.put("surveyno", surveyVO.getSurveyno());
 
           this.surveyProc.update_text(surveyVO); // 글 수정 처리
-
+          logAction("update_text", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
           return "redirect:/survey/list_by_surveyno_search_paging"; // @GetMapping(value = "/read")
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+        logAction("update_text", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");
           ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
           return "redirect:/survey/post2get"; // @GetMapping(value = "/msg")
       }
@@ -486,12 +521,13 @@ public class SurveyCont {
    * @return
    */
   @PostMapping(value = "/update_file/{surveyno}")
-  public String update_file(HttpSession session, Model model, RedirectAttributes ra,
+  public String update_file(HttpSession session, Model model, RedirectAttributes ra,HttpServletRequest request,
                             @ModelAttribute("surveyVO") SurveyVO surveyVO,
                             @PathVariable("surveyno") int surveyno,
                             @RequestParam(name="is_continue", defaultValue="") String is_continue, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
+    int memberno = (int) session.getAttribute("memberno");
     if (this.memberProc.isMemberAdmin(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       SurveyVO surveyVO_old = surveyProc.read(surveyVO.getSurveyno());
@@ -553,9 +589,10 @@ public class SurveyCont {
       ra.addAttribute("memberno", surveyVO.getMemberno());
       ra.addAttribute("is_continue", is_continue);
       ra.addAttribute("now_page", now_page);
-      
+      logAction("update_file", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");
       return "redirect:/survey/list_by_surveyno_search_paging";
     } else {
+      logAction("update_file", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); 
       return "redirect:/survey/post2get"; // GET
     }
@@ -658,12 +695,13 @@ public class SurveyCont {
    * @return
    */
   @PostMapping(value = "/delete")
-  public String delete_process(HttpSession session, Model model, 
+  public String delete_process(HttpSession session, Model model, HttpServletRequest request,
                                @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-                               @RequestParam(name = "memberno", defaultValue = "0") int memberno,
                                @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
                                @RequestParam(name = "now_page", defaultValue = "") int now_page, 
                                RedirectAttributes ra) {
+
+    int memberno = (int) session.getAttribute("memberno");
       // 관리자 권한 확인
       if (this.memberProc.isMemberAdmin(session)) {
           System.out.println("-> delete_process");
@@ -693,9 +731,10 @@ public class SurveyCont {
                   }
 
                   ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-
+                  logAction("delete", "survey", memberno, "title=" + surveyVO.getTopic(), request, "Y");
                   return "redirect:/survey/list_by_surveyno_search_paging"; // 설문조사 목록 페이지로 리다이렉트
               } else {
+                logAction("delete", "survey", memberno, "title=" + surveyVO.getTopic(), request, "N");
                   model.addAttribute("code", "delete_fail");
                   return "/survey/msg"; // 실패 메시지 출력
               }
