@@ -52,5 +52,19 @@ public interface PartDAOInter {
    * @return
    */
   public ArrayList<ItemMemberPartVO> list_all_join();
+  
+  /**
+   * 검색 개수
+   * @param Map
+   * @return
+   */
+  public int count_search(HashMap<String, Object> Map);
+  
+  /**
+   * 검색 + 페이징
+   * @param Map
+   * @return
+   */
+  public ArrayList<ItemMemberPartVO> list_search_paging(HashMap<String, Object> Map);
 
 }

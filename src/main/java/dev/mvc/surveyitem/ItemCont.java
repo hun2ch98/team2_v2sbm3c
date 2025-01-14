@@ -369,16 +369,35 @@ public class ItemCont {
    * 설문조사 참여
    * @return
    */
+//  @GetMapping(value = "/finish/{surveyno}")
+//  public String update_cnt(Model model, @PathVariable("surveyno") int surveyno,
+//      @RequestParam(name = "itemno", defaultValue = "") int itemno, RedirectAttributes ra) {
+//    
+//    this.itemProc.update_cnt(itemno);
+//    ra.addAttribute("surveyno", surveyno);
+//    ra.addAttribute("itemno", itemno);
+//
+//    return "redirect:/surveyitem/finish"; 
+//  }
+  
   @GetMapping(value = "/finish/{surveyno}")
-  public String update_cnt(Model model, @PathVariable("surveyno") int surveyno,
-      @RequestParam(name = "itemno", defaultValue = "") int itemno, RedirectAttributes ra) {
-    
-    this.itemProc.update_cnt(itemno);
-    ra.addAttribute("surveyno", surveyno);
-    ra.addAttribute("itemno", itemno);
+  public String update_cnt(
+      Model model,
+      @PathVariable("surveyno") int surveyno,
+      @RequestParam(name = "itemno", defaultValue = "") int itemno,
+      RedirectAttributes ra) {
 
-    return "redirect:/surveyitem/finish"; 
+      System.out.println("Received surveyno: " + surveyno);
+      System.out.println("Received itemno: " + itemno);
+
+      this.itemProc.update_cnt(itemno);
+      
+      ra.addAttribute("itemno", itemno);
+      ra.addAttribute("surveyno", surveyno);
+      
+      return "redirect:/surveyitem/finish"; // "surveyitem" 폴더의 finish.html을 반환
   }
+
 
   
   /**
