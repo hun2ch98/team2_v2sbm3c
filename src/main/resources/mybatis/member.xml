@@ -19,20 +19,20 @@
   
   <!-- 회원 가입 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade, gradeno)
-      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, #{replycnt}, sysdate, #{grade}, #{gradeno})
+      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, gradeno, phone)
+      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade}, #{gradeno}, #{phone})
   </insert>
   
   <!-- memberno로 회원 정보 조회 -->
   <select id="read" resultType="dev.mvc.member.MemberVO" parameterType="int">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, phone
     FROM member
     WHERE memberno = #{memberno}
   </select>
 
   <!-- id로 회원 정보 조회 -->
   <select id="readById" resultType="dev.mvc.member.MemberVO" parameterType="String">
-    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, replycnt, mdate, grade
+    SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, phone
     FROM member
     WHERE id = #{id}
   </select>
@@ -90,14 +90,14 @@
   <select id="find_id_check" resultType="int" parameterType="HashMap">
     SELECT COUNT(id) as cnt
     FROM member
-    WHERE name=#{name} AND tel=#{email}
+    WHERE name=#{name} AND phone=#{phone}
   </select> 
   
   <!-- 비밀번호 찾기 회원 정보 일치 검증(id, phone) -->
   <select id="find_passwd_check" resultType="int" parameterType="String">
     SELECT COUNT(id) as cnt
     FROM member
-    WHERE id=#{id} AND tel=#{phone}
+    WHERE id=#{id} AND phone=#{phone}
   </select>
   
   <!-- 회원 검색 목록 + 페이징 -->

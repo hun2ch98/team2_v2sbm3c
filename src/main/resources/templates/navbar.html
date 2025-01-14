@@ -1,11 +1,8 @@
 <div th:fragment="navbarFragment">
-  <div class="top_menu_img">
-    <div class="top_menu_label">추억의 저장소 그림 일기</div>
-  </div>
-  
-  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+
+  <nav class="navbar navbar-expand-lg navbar-light border-bottom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">메인화면</a>
+        <a class="top_menu_img" href="/"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -36,7 +33,8 @@
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                       <li class="nav-item"><a class="nav-link"th:href="@{|/notice/list_all|}">공지사항 목록</a></li>
-                      <span th:if="${session.grade == 'admin'}"> 
+                      <span th:if="${session.grade == 'admin'}">
+                        <li class="nav-item"><a class="nav-link"th:href="@{|/notice/create|}">공지사항 등록</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/noticegood/list_all|}">추천 회원</a></li>
                       </span>
                   </ul>
