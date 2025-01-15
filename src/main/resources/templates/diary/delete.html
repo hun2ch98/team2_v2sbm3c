@@ -8,11 +8,11 @@
   </div>
 
   <aside class="aside_right">
-    <a th:href="@{|./create?diaryno=${diaryVO.diaryno}|}">등록</a>
+    <a th:href="@{|/diary/create?diaryno=${diaryVO.diaryno}|}">등록</a>
     <span class='menu_divide'>│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|./list_by_diaryno_search_paging|}">목록</a>
+    <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno}|}">목록</a>
   </aside>
 
   <div class='menu_line'></div>
@@ -23,7 +23,7 @@
         <div style='text-align: left; width: 47%; float: left;'>
           <span style='font-size: 1.5em;' th:text="${diaryVO.title}"></span>
           <br>
-          <form name='frm' method='POST' action='./delete'>
+          <form name='frm' method='POST' action='/diary/delete'>
             <input type="hidden" name="diaryno" th:value="${diaryVO.diaryno}">
             <input type="hidden" name="now_page" th:value="${now_page}">
             <br> 

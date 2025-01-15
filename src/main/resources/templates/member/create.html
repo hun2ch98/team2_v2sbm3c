@@ -41,6 +41,12 @@
         }
       });
       
+      document.querySelector('#phone').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          document.getElementById('email').focus();
+        }
+      });
+      
       document.querySelector('#email').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           document.getElementById('btn_DaumPostcode').focus();
@@ -52,6 +58,12 @@
           document.getElementById('btn_send').focus();
         }
       });
+      
+      // 복구키가 존재할 경우 경고창 표시
+      var recoveryKey = /*[[${recoveryKey}]]*/ '';
+      if (recoveryKey) {
+        alert("이 복구키는 본인만 가지고 있어야하며 누군가에게 알려줘서는 안됩니다.\n복구키: " + recoveryKey);
+      }
     }
 
     // 중복 아이디 검사
@@ -311,6 +323,14 @@
         <input type='date' name='birth' id='birth' value="${memberVO.birth}" required="required" 
                placeholder="생년월일" class="form-control form-control-sm" style="width: 30%;">
         <span id='birth_msg'></span>
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">전화 번호*(-없이 입력해 주세요.)</label>
+        <input type='text' name='phone' id='phone' value='' required="required" placeholder="전화번호"
+          class="form-control form-control-sm" style="width: 30%;">
+        <span id='phone_msg'></span>
+        예) 01012345678
       </div>
   
       <div class="form-group"> 

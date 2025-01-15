@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import dev.mvc.participants.PartVO;
+
 public interface ItemProcInter {
   
   /**
@@ -21,6 +23,14 @@ public interface ItemProcInter {
   public ItemVO read(int itemno);
   
   /**
+   * 회원
+   * 목록
+   * @return
+   */
+  public ArrayList<ItemVO> list_member(int surveyno);
+  
+  /**
+   * 관리자
    * 목록
    * @return
    */
@@ -46,6 +56,13 @@ public interface ItemProcInter {
    * @return
    */
   public int update_cnt(int itemno);
+  
+  /**
+   * 등록
+   * @param partVO
+   * @return
+   */
+  public int create(PartVO partVO);
   
   /**
    * 검색 목록
@@ -87,13 +104,28 @@ public interface ItemProcInter {
    * @param surveyno
    * @return
    */
-  public int count_by_surveyno(int surveyno);
+  public int count_survey(int itemno, int memberno);
   
   /**
    * 특정 레코드 삭제
    * @param surveyno
    * @return
    */
-  public int delete_by_surveyno(int surveyno);
+  public int delete_survey(int surveyno);
+  
+  /**
+   * 설문 참여 결과 조회
+   * @param itemno
+   * @return
+   */
+  public int count_result(int itemno);
+  
+  /**
+   * 설문 참여 회원 결과 총합
+   * @param surveyno
+   * @return
+   */
+  public int count_sum(int surveyno);
+
 
 }

@@ -22,6 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.dto.PageDTO;
 import dev.mvc.dto.SearchDTO;
 import dev.mvc.grade.GradeProcInter;
+import dev.mvc.loginlog.LoginlogProcInter;
+import dev.mvc.loginlog.LoginlogVO;
 //import dev.mvc.loginlog.LoginlogProcInter;
 import dev.mvc.member.MemberVO.UpdateValidationGroup;
 import dev.mvc.tool.Tool;
@@ -38,9 +40,9 @@ public class MemberCont {
   @Qualifier("dev.mvc.member.MemberProc")  // @Service("dev.mvc.member.MemberProc")
   private MemberProcInter memberProc;
   
-//  @Autowired
-//  @Qualifier("dev.mvc.loginlog.LoginlogProc")
-//  private LoginlogProcInter loginlogProc;
+  @Autowired
+  @Qualifier("dev.mvc.loginlog.LoginlogProc")
+  private LoginlogProcInter loginlogProc;
   
   @Autowired
   @Qualifier("dev.mvc.grade.GradeProc")
@@ -183,6 +185,7 @@ public class MemberCont {
               model.addAttribute("name", memberVO.getName());
               model.addAttribute("id", memberVO.getId());
               model.addAttribute("gradeno", memberVO.getGradeno());
+              model.addAttribute("recoveryKey", memberVO.getRecovery_key());
           } else {
               model.addAttribute("code", "create_fail");
           }
@@ -201,7 +204,7 @@ public class MemberCont {
 
       return "/member/msg"; // 결과 메시지 페이지로 이동
   }
-//----------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------
   // 회원가입 폼 및 처리 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
   
@@ -423,7 +426,6 @@ public class MemberCont {
     
     JSONObject json = new JSONObject();
     json.put("cnt", cnt);
-    System.out.println("cnt -> : " + cnt);
     System.out.println(json.toString());
     
     return json.toString();
@@ -442,7 +444,6 @@ public class MemberCont {
       @RequestParam(value = "current_passwd", defaultValue = "") String current_passwd,
       @RequestParam(value = "passwd", defaultValue = "") String passwd) {
     
-    System.out.println("asdf");
     if (this.memberProc.isMember(session)) {
       int memberno = (int) session.getAttribute("memberno");
       HashMap<String, Object> map = new HashMap<String, Object>();
@@ -618,7 +619,7 @@ public class MemberCont {
     
     MemberVO memberVO_old = memberProc.read(memberVO.getMemberno());
     
- // -------------------------------------------------------------------
+    // -------------------------------------------------------------------
     // 파일 삭제 시작
     // -------------------------------------------------------------------
     String file1saved = memberVO_old.getFile1saved(); // 실제 저장된 파일명
@@ -754,19 +755,17 @@ public class MemberCont {
     int cnt = this.memberProc.login(map);
     System.out.println("-> login_proc cnt: " + cnt);
     
-//    // 로그인 시도한 IP 주소 가져오기
-//    String ip = request.getRemoteAddr();
-//    
-//    // 로그인 로그를 기록하기 위한 객체 생성
-//    LoginlogVO loginlogVO = new LoginlogVO();
-//    loginlogVO.setId(id);
-//    loginlogVO.setIp(ip);
-//    loginlogVO.setResult(cnt == 1 ? "T" : "F"); // 로그인 성공 여부
-//    
-//    // 로그인 기록 저장
-//    this.loginlogProc.login_log(loginlogVO);
-//    
+    // 로그인 시도한 IP 주소 가져오기
+    String ip = request.getRemoteAddr();
     
+    // 로그인 로그를 기록하기 위한 객체 생성
+    LoginlogVO loginlogVO = new LoginlogVO();
+    loginlogVO.setId(id);
+    loginlogVO.setIp(ip);
+    loginlogVO.setResult(cnt == 1 ? "T" : "F"); // 로그인 성공 여부
+    
+    // 로그인 기록 저장
+    this.loginlogProc.login_log(loginlogVO);
     
     if (cnt == 1) {
       
@@ -909,121 +908,5 @@ public class MemberCont {
   
   //----------------------------------------------------------------------------------
   // 로그인 및 로그아웃 메서드 컨트롤러 종료
-  // ---------------------------------------------------------------------------------
-  
-  //----------------------------------------------------------------------------------
-  // 패스워드 수정 및 변경 메서드 컨트롤러 시작
-  // ---------------------------------------------------------------------------------
-//  /**
-//  * 패스워드 수정 폼
-//  * @param model
-//  * @param memberno
-//  * @return
-//  */
-//  @GetMapping(value="/passwd_update")
-//  public String passwd_update_form(HttpSession session, Model model) {
-//  // ArrayList<MemberVOMenu> menu = this.memberProc.menu();
-//  // model.addAttribute("menu", menu);
-//   
-//   if (this.memberProc.isMember(session)) {
-//     int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
-//     
-//     MemberVO memberVO = this.memberProc.read(memberno);
-//  
-//     model.addAttribute("memberVO", memberVO);
-//     
-//     return "/member/passwd_update";    // /templates/member/passwd_update.html      
-//   } else {
-//     return "redirect:/member/login_cookie_need"; // redirect
-//   }
-//  
-//  }
-//  
-//  /**
-//  * 현재 패스워드 확인
-//  * @param session
-//  * @param current_passwd
-//  * @return 1: 일치, 0: 불일치
-//  */
-//  @PostMapping(value="/passwd_check")
-//  @ResponseBody
-//  public String passwd_check(HttpSession session, @RequestBody String json_src) {
-//   System.out.println("-> json_src: " + json_src); // json_src: {"current_passwd":"1234"}
-//   
-//   JSONObject src = new JSONObject(json_src); // String -> JSON
-//   
-//   String current_passwd = (String)src.get("current_passwd"); // 값 가져오기
-//   System.out.println("-> current_passwd: " + current_passwd);
-//   
-//   try {
-//     Thread.sleep(3000);
-//   } catch(Exception e) {
-//     
-//   }
-//   
-//   int memberno = (int)session.getAttribute("memberno"); // session에서 가져오기
-//   HashMap<String, Object> map = new HashMap<String, Object>();
-//   map.put("memberno", memberno);
-//   map.put("passwd", current_passwd);
-//   
-//   int cnt = this.memberProc.passwd_check(map); // 현재 로그인한 사용자의 패스워드 확인
-//   
-//   JSONObject json = new JSONObject();
-//   json.put("cnt", cnt);  // 1: 패스워드 일치, 0: 불일치
-//   System.out.println(json.toString());
-//   
-//   return json.toString();   
-//  }
-//  
-//  /**
-//  * 패스워드 변경
-//  * @param session
-//  * @param model
-//  * @param current_passwd 현재 패스워드
-//  * @param passwd 새로운 패스워드
-//  * @return
-//  */
-//  @PostMapping(value="/passwd_update_proc")
-//  public String passwd_update_proc(HttpSession session, 
-//                                   Model model, 
-//                                   @RequestParam(value="current_passwd", defaultValue = "") String current_passwd, 
-//                                   @RequestParam(value="passwd", defaultValue = "") String passwd) {
-//   
-//   if (this.memberProc.isMember(session)) {
-//     int memberno = (int) session.getAttribute("memberno"); // session에서 가져오기
-//     HashMap<String, Object> map = new HashMap<String, Object>();
-//     map.put("memberno", memberno);
-//     map.put("passwd", current_passwd);
-//  
-//     int cnt = this.memberProc.passwd_check(map);
-//     
-//     if (cnt == 0) { // 패스워드 불일치
-//       model.addAttribute("code", "passwd_not_equal");
-//       model.addAttribute("cnt", 0);
-//       
-//     } else { // 패스워드 일치
-//       map = new HashMap<String, Object>();
-//       map.put("memberno", memberno);
-//       map.put("passwd", passwd); // 새로운 패스워드
-//  
-//       int passwd_change_cnt = this.memberProc.passwd_update(map);
-//       
-//       if (passwd_change_cnt == 1) {
-//         model.addAttribute("code", "passwd_change_success");
-//         model.addAttribute("cnt", 1);
-//       } else {
-//         model.addAttribute("code", "passwd_change_fail");
-//         model.addAttribute("cnt", 0);
-//       }
-//     }
-//  
-//     return "/member/msg";   // /templates/member/msg.html
-//   } else {
-//     return "redirect:/member/login_cookie_need"; // redirect
-//   }
-//  
-//  }
-  //----------------------------------------------------------------------------------
-  // 패스워드 수정 및 변경 메서드 컨트롤러 종료
   // ---------------------------------------------------------------------------------
 }

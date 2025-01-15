@@ -19,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
+import dev.mvc.log.LogProcInter;
+import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -46,9 +48,39 @@ public class BoardCont {
   /** 페이징 목록 주소 */
   private String list_file_name = "/board/list_by_boardno";
   
+  @Autowired
+  @Qualifier("dev.mvc.log.LogProc")
+  private LogProcInter logProc;
+
+  private void logAction(String action, String table, int memberno, String details, HttpServletRequest request, String is_success) {
+      LogVO logVO = new LogVO();
+      logVO.setMemberno(memberno);
+      logVO.setTable_name(table);
+      logVO.setAction(action);
+      logVO.setDetails(details);
+      logVO.setIp(getClientIp(request)); // IP 주소 설정
+      logVO.setIs_success(is_success);
+      logProc.create(logVO); // Log 테이블에 삽입
+  }
+
+  private String getClientIp(HttpServletRequest request) {
+      String ip = request.getHeader("X-Forwarded-For");
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getHeader("WL-Proxy-Client-IP");
+      }
+      if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+          ip = request.getRemoteAddr();
+      }
+      return ip;
+  }
+  
   public BoardCont() {
     System.out.println("-> BoardCont created.");
   }
+  
   
   /**
    * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
@@ -93,7 +125,7 @@ public class BoardCont {
                        Model model, 
                        @ModelAttribute("boardVO") BoardVO boardVO,
                        RedirectAttributes ra) {
-    
+    int memberno = (int) session.getAttribute("memberno");
     if (memberProc.isMember(session)) { // 회원 로그인한경우
 
         String file1 = ""; 
@@ -123,16 +155,16 @@ public class BoardCont {
         boardVO.setFile1saved(file1saved);
         boardVO.setThumb1(thumb1);
         boardVO.setSize1(size1);
-  
-        int memberno = 1; 
         boardVO.setMemberno(memberno); 
   
         int cnt = this.boardProc.create(boardVO);
         if (cnt == 1) {
+          logAction("create", "board", memberno, "title=" + boardVO.getTitle(), request, "Y");
             ra.addAttribute("boardno", boardVO.getBoardno()); 
             ra.addAttribute("now_page", 1); 
             return "redirect:/board/list_by_boardno_search_paging"; 
         } else {
+          logAction("create", "board", memberno, "title=" + boardVO.getTitle(), request, "N");
             ra.addFlashAttribute("code", "create_fail");
             return "redirect:/board/msg"; 
         }
@@ -177,7 +209,7 @@ public class BoardCont {
       @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
    
-    if (memberProc.isMember(session) || memberProc.isMemberAdmin(session)) { // 회원 로그인한경우
+    if (memberProc.isMember(session)) { // 회원 로그인한경우
 
       int record_per_page = 10;
       int startRow = (now_page - 1) * record_per_page + 1;
@@ -235,12 +267,14 @@ public class BoardCont {
    * @return
    */
   @GetMapping(value = "/read")
-  public String read(Model model, 
+  public String read(Model model, HttpSession session, HttpServletRequest request, 
                      @RequestParam(name = "boardno", defaultValue = "0") int boardno, 
                      @RequestParam(name = "board_cate", defaultValue = "") String board_cate, 
                      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
       BoardVO boardVO = this.boardProc.read(boardno);
+      int memberno = (int) session.getAttribute("memberno");
       if (boardVO == null) {
+        logAction("read", "board", memberno, "title= null" , request, "N");
           model.addAttribute("errorMessage", "해당 게시글을 찾을 수 없습니다.");
           return "errorPage"; // 적절한 에러 페이지
       }
@@ -255,6 +289,7 @@ public class BoardCont {
 
       model.addAttribute("board_cate", board_cate);
       model.addAttribute("now_page", now_page);
+      logAction("read", "board", memberno, "title=" + boardVO.getTitle(), request, "Y");
 
       return "/board/read";
   }
@@ -300,7 +335,7 @@ public class BoardCont {
    */
   @PostMapping(value = "/update_text")
   public String update_text(
-          HttpSession session, 
+          HttpSession session, HttpServletRequest request, 
           Model model, 
           @ModelAttribute("boardVO") BoardVO boardVO, 
           RedirectAttributes ra,
@@ -310,9 +345,10 @@ public class BoardCont {
       // Redirect 시 검색어 및 현재 페이지를 유지하기 위한 파라미터 추가
       ra.addAttribute("board_cate", board_cate);
       ra.addAttribute("now_page", now_page);
-
+      int memberno = (int) session.getAttribute("memberno");
       // bcontent 값 검증
       if (boardVO.getBcontent() == null || boardVO.getBcontent().trim().isEmpty()) {
+        logAction("read", "board", memberno, "title=" + boardVO.getTitle(), request, "N");
           ra.addFlashAttribute("message", "내용은 필수 입력 사항입니다.");
           ra.addFlashAttribute("code", "update_fail");
           return "redirect:/board/msg"; // 실패 시 msg 페이지로 이동
@@ -322,15 +358,18 @@ public class BoardCont {
       try {
           int cnt = this.boardProc.update_text(boardVO); // 글 수정
           if (cnt > 0) { // 수정 성공
+            logAction("update_text", "board", memberno, "title=" + boardVO.getTitle(), request, "Y");
               ra.addAttribute("boardno", boardVO.getBoardno());
               return "redirect:/board/read"; // 성공 시 게시글 조회 페이지로 이동
           } else { // 수정 실패
+            logAction("update_text", "board", memberno, "title=" + boardVO.getTitle(), request, "N");
               ra.addFlashAttribute("message", "게시글 수정에 실패했습니다.");
               ra.addFlashAttribute("code", "update_fail");
               return "redirect:/board/msg"; // 실패 시 msg 페이지로 이동
           }
       } catch (Exception e) {
           e.printStackTrace();
+          logAction("update_text", "board", memberno, "title=" + boardVO.getTitle(), request, "N");
           ra.addFlashAttribute("message", "글 수정 중 오류가 발생했습니다.");
           ra.addFlashAttribute("code", "update_fail");
           return "redirect:/board/msg"; // 오류 발생 시 msg 페이지로 이동
@@ -376,10 +415,11 @@ public class BoardCont {
    */
   @PostMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,
-                            @ModelAttribute("boardVO") BoardVO boardVO,
+                            @ModelAttribute("boardVO") BoardVO boardVO, HttpServletRequest request,
                             @RequestParam(name="board_cate", defaultValue="") String board_cate, 
                             @RequestParam(name="now_page", defaultValue="1") int now_page) {
 
+    int memberno = (int) session.getAttribute("memberno");
     if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       BoardVO boardVO_old = boardProc.read(boardVO.getBoardno());
@@ -441,9 +481,10 @@ public class BoardCont {
       ra.addAttribute("memberno", boardVO.getMemberno());
       ra.addAttribute("board_cate", board_cate);
       ra.addAttribute("now_page", now_page);
-      
+      logAction("update_file", "board", memberno, "title=" + boardVO.getTitle(), request, "Y");
       return "redirect:/board/read";
     } else {
+      logAction("update_file", "board", memberno, "title=" + boardVO.getTitle(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); 
       return "redirect:/board/post2get"; // GET
     }
@@ -490,11 +531,11 @@ public class BoardCont {
    * @return
    */
   @PostMapping(value = "/delete")
-  public String delete(RedirectAttributes ra,
-      @RequestParam(name="memberno", defaultValue="0") int memberno, 
+  public String delete(RedirectAttributes ra, HttpSession session, HttpServletRequest request,
       @RequestParam(name="boardno", defaultValue="0") int boardno, 
       @RequestParam(name="board_cate", defaultValue="") String board_cate, 
       @RequestParam(name="now_page", defaultValue="1") int now_page) {
+    int memberno = (int) session.getAttribute("memberno");
     // -------------------------------------------------------------------
     // 파일 삭제 시작
     // -------------------------------------------------------------------
@@ -535,7 +576,7 @@ public class BoardCont {
     ra.addAttribute("memberno", memberno);
     ra.addAttribute("board_cate", board_cate);
     ra.addAttribute("now_page", now_page);
-    
+    logAction("delete", "board", memberno, "title=" + boardVO_read.getTitle(), request, "Y");
     return "redirect:/board/list_by_boardno_search_paging";    
     
   }   

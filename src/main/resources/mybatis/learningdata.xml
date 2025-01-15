@@ -6,27 +6,27 @@
 
   <!-- 학습 데이터 글 추가 -->
   <insert id="create" parameterType="dev.mvc.learningdata.LearningdataVO">
-    INSERT INTO learningdata (datano, ethical, create_at, ques, ans)
-    VALUES (learningdata_seq.nextval, #{ethical}, sysdate, #{ques}, #{ans})
+    INSERT INTO learningdata (datano, ethical, create_at, ques, ans, memberno)
+    VALUES (learningdata_seq.nextval, #{ethical}, sysdate, #{ques}, #{ans}, #{memberno})
   </insert>
   
   <!-- 학습 데이터 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.learningdata.LearningdataVO">
-    SELECT datano, ethical, create_at, ques, ans
+    SELECT datano, ethical, create_at, ques, ans, memberno
     FROM learningdata
     WHERE datano = #{datano}
   </select>
   
   <!-- 모든 목록 -->
   <select id="list_all" parameterType="dev.mvc.learningdata.LearningdataVO">
-    SELECT datano, ethical, create_at, ques, ans
+    SELECT datano, ethical, create_at, ques, ans, memberno
     FROM learningdata
     ORDER BY datano DESC
   </select>
   
   <!-- 등록된 목록 -->
   <select id="list_by_datano" resultType="dev.mvc.learningdata.LearningdataVO">
-    SELECT datano, ethical, create_at, ques, ans
+    SELECT datano, ethical, create_at, ques, ans, memberno
     FROM learningdata
     ORDER BY datano DESC
   </select>
@@ -34,7 +34,7 @@
   <!-- 내용 수정 -->
   <update id="update_text" parameterType="dev.mvc.learningdata.LearningdataVO">
     UPDATE learningdata
-    SET ethical=#{ethical}, ques=#{ques}, ans=#{ans}, create_at=sysdate 
+    SET ethical=#{ethical}, ques=#{ques}, ans=#{ans}, create_at=sysdate , memberno=#{memberno}
     WHERE datano = #{datano}
   </update>
   
@@ -48,10 +48,10 @@
   <select id="list_by_datano_search" resultType="dev.mvc.learningdata.LearningdataVO" parameterType="HashMap">
     SELECT *
     FROM (
-        SELECT datano, ethical, create_at, ques, ans
+        SELECT datano, ethical, create_at, ques, ans, memberno,
                ROW_NUMBER() OVER (ORDER BY datano DESC) AS rnum
         FROM learningdata
-        WHERE (#{ans} IS NULL OR #{ans} = '' OR word = #{ans})
+        WHERE (#{ques} IS NULL OR #{ques} = '' OR ques = #{ques})
     )
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
@@ -60,7 +60,7 @@
   <select id="count_by_datano_search" resultType="int" parameterType="HashMap">
       SELECT COUNT(*)
       FROM learningdata
-      WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
+      WHERE (#{ques} IS NULL OR #{ques} = '' OR ques = #{ques})
   </select>
    
   <select id="list_search_count" resultType="int">
@@ -71,12 +71,15 @@
   <select id="list_by_datano_search_paging" resultType="dev.mvc.learningdata.LearningdataVO" parameterType="HashMap">
       SELECT *
       FROM (
-          SELECT datano, ethical, create_at, ques, ans
+          SELECT datano, ethical, create_at, ques, ans,
                  ROW_NUMBER() OVER (ORDER BY datano DESC) AS rnum
           FROM learningdata
-          WHERE (#{ans} IS NULL OR #{ans} = '' OR word = #{ans})
+          WHERE (#{ques} IS NULL OR #{ques} = '' OR ques = #{ques})
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
-
+  
+  <select id="findAll" resultType="dev.mvc.learningdata.LearningdataVO">
+      SELECT * FROM learningdata
+  </select>
 </mapper>

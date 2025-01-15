@@ -10,6 +10,20 @@
     VALUES (participants_seq.nextval, #{itemno}, #{memberno}, sysdate)
   </insert>
   
+  <!-- 참여수 증가 -->
+  <update id="update_cnt" parameterType="int">
+    UPDATE surveyitem
+    SET item_cnt = item_cnt + 1
+    WHERE itemno = #{itemno}
+  </update>
+  
+  <!-- surveyno, memberno로 조회! -->
+  <select id="updateCnt" resultType="int" parameterType="int">
+    SELECT COUNT (*) as cnt
+    FROM participants
+    WHERE itemno = #{itemno}
+  </select>
+  
   <!-- 목록 -->
   <select id="list_all" parameterType="dev.mvc.participants.PartVO">
     SELECT pno, itemno, memberno, pdate
@@ -22,5 +36,67 @@
     DELETE FROM participants
     WHERE pno = #{pno}
   </delete>
+  
+  <!-- PK 조회 -->
+  <select id="read" resultType="dev.mvc.participants.PartVO" parameterType="int">
+    SELECT pno, itemno, memberno, pdate
+    FROM participants
+    WHERE pno = #{pno}
+  </select>
+  
+  <!-- surveyno, memberno로 조회! -->
+  <select id="readByitemmember" resultType="dev.mvc.participants.PartVO" parameterType="HashMap">
+    SELECT pno, itemno, memberno, pdate
+    FROM participants
+    WHERE itemno = #{itemno} AND memberno = #{memberno}
+  </select>
+  
+  <!-- 조인 목록 -->
+  <select id="list_all_join" parameterType="dev.mvc.participants.ItemMemberPartVO">
+    SELECT p.pno, p.itemno, p.memberno, p.pdate, i.item as i_item, m.memberno, m.email, m.name
+    FROM surveyitem i, participants p, member m
+    WHERE i.itemno = p.itemno AND p.memberno = m.memberno
+    ORDER BY pno DESC
+  </select>
+  
+  <!-- 검색 개수 -->
+  <select id="count_search" resultType="int" parameterType="Map">
+    SELECT COUNT(*) AS cnt
+    FROM participants p
+    JOIN surveyitem i ON p.itemno = i.itemno
+    JOIN member m ON p.memberno = m.memberno
+    <where>
+      <if test="word != null and word != ''">
+        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+      </if>
+    </where>
+  </select>
+  
+  <!-- 검색 + 페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.participants.ItemMemberPartVO" parameterType="Map">
+    SELECT *
+    FROM (
+        SELECT 
+            p.pno, 
+            p.itemno, 
+            p.memberno, 
+            p.pdate, 
+            i.item AS i_item, 
+            m.name AS name, 
+            m.email AS email, 
+            ROW_NUMBER() OVER (ORDER BY p.pno ASC) AS r
+        FROM participants p
+        JOIN surveyitem i ON p.itemno = i.itemno
+        JOIN member m ON p.memberno = m.memberno
+        <where>
+          <if test="word != null and word != ''">
+            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+        </where>
+    )
+    WHERE r BETWEEN #{start_row} AND #{end_row}
+  </select>
+
+
 
 </mapper>

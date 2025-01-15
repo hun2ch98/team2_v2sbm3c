@@ -14,11 +14,12 @@ public interface DiaryGoodProcInter {
   
   public int delete(int goodno);
   
+  public int f_delete(int diaryno);
 
   public DiaryGoodVO read(int goodno);
   
   
-  public DiaryGoodVO read(HashMap<String, Object> map);
+  public DiaryGoodVO readByDiaryMember(HashMap<String, Object> map);
   
   
   public int heartCnt(HashMap<String, Object> map);

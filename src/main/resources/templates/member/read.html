@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
-
+<head>
+    <meta charset="UTF-8">
+    <title>회원 목록</title>
+    <!-- CSS 파일 링크 추가 -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
+    <link rel="stylesheet" href="/css/member.css"> <!-- CSS 파일 경로 -->
+</head>
+<body>
 <div layout:fragment="content">
 
   <div class="title_line">개인정보 보기 > <span th:text="@{|${memberVO.name} (${memberVO.id})|}"></span></div>
   <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/read' th:if="${session.id == memberVO.id}">개인정보 보기</a> 
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/update' th:if="${session.id == memberVO.id}">회원정보 수정</a> 
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/update_file' th:if="${session.id == memberVO.id}">프로필 변경</a>
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/passwd_update' th:if="${session.id == memberVO.id}">비밀번호 변경</a> 
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/unsub_delete' th:if="${session.id == memberVO.id}">회원 탈퇴</a>
+    <span class='menu_divide'>│</span>
+    <a href='/member/read'>개인정보 보기</a> 
+    <span class='menu_divide'>│</span>
+    <a href='/member/update'>회원정보 수정</a> 
+    <span class='menu_divide'>│</span>
+    <a href='/member/update_file'>프로필 변경</a>
+    <span class='menu_divide'>│</span>
+    <a href='/member/unsub_delete'>회원 탈퇴</a>
   </aside> 
 
   <div class='menu_line'></div>
@@ -79,6 +84,12 @@
         </div>
         
         <div class="form-group">
+          <label for="birth">생년월일</label>
+          <input type='text' name='birth' id='birth' th:value="${#strings.substring(memberVO.birth,0,4)} + '-' + ${#strings.substring(memberVO.birth,4,6)} + '-' + ${#strings.substring(memberVO.birth,6,8)}"
+                 class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;" readonly>
+        </div>
+        
+        <div class="form-group">
           <label for="nickname">닉네임</label>
           <input type='text' name='nickname' id='nickname' th:value='${memberVO.nickname}' readonly
                class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
@@ -87,6 +98,12 @@
         <div class="form-group">
           <label for="email">이메일*</label>
           <input type='text' name='email' id='email' th:value='${memberVO.email}' readonly 
+               class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">전화번호*</label>
+          <input type='text' name='phone' id='phone' th:value='${memberVO.phone}' readonly 
                class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
         </div>
         
@@ -108,16 +125,11 @@
                     class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
         </div>
         
-        <div class="form-group">
-          <label for="replycnt">작성 댓글 수</label>
-          <input type='text' name='replycnt' id='replycnt' th:value="${memberVO.replycnt} + '개'" readonly
-                 class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
-        </div>
-        
-        <div class="content_body_bottom" th:if="${session.id == memberVO.id}">
+        <div class="content_body_bottom">
           <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm" style="margin-left: 10px;">돌아가기</button>
         </div>
     </form>
   </div>
 </div>
+</body>
 </html>

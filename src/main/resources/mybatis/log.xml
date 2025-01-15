@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.log.LogDAOInter">
+  
+  <insert id="create" parameterType="dev.mvc.log.LogVO">
+    INSERT INTO log (logno, memberno, table_name, action, ldate, details, ip, is_success)
+    VALUES (LOG_SEQ.NEXTVAL, #{memberno}, #{table_name}, #{action}, SYSDATE, #{details}, #{ip}, #{is_success})
+  </insert>
+
+  <!-- 게시글 조회 -->
+  <select id="read" parameterType="int" resultType="dev.mvc.log.LogVO">
+    SELECT logno, memberno, table_name, action, ldate, details, ip, is_success
+    FROM log
+    WHERE logno = #{logno}
+  </select>
+
+  <delete id="delete" parameterType="int">
+    DELETE FROM log
+    WHERE logno = #{logno}
+  </delete>
+  
+  <select id="list_all" resultType="dev.mvc.log.LogVO">
+    SELECT logno, memberno, table_name, action, ldate, details, ip, is_success
+    FROM log
+    ORDER BY ldate DESC
+  </select>
+  
+  <select id="dev.mvc.log.LogDAOInter.countSearchResults" resultType="int" parameterType="map">
+    SELECT COUNT(*) 
+    FROM log 
+    WHERE 1=1
+    <if test="table_name != null and table_name != ''">
+        AND table_name LIKE #{table_name}
+    </if>
+    <if test="action != null and action != ''">
+        AND action LIKE #{action}
+    </if>
+    <if test="ip != null and ip != ''">
+        AND ip LIKE #{ip}
+    </if>
+    <if test="is_success != null and is_success != ''">
+        AND is_success LIKE #{is_success}
+    </if>
+    <if test="start_date != null and start_date != ''">
+        AND ldate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+    </if>
+    <if test="end_date != null and end_date != ''">
+        AND ldate &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+    </if>
+  </select>
+  
+  <select id="list_search_paging" parameterType="map" resultType="dev.mvc.log.LogVO">
+    SELECT * FROM (
+        SELECT A.*, ROWNUM AS rnum
+        FROM (
+            SELECT *
+            FROM log
+            WHERE 1=1
+            <if test="table_name != null and table_name != ''">
+                AND table_name LIKE '%' || #{table_name} || '%'
+            </if>
+            <if test="action != null and action != ''">
+                AND action LIKE '%' || #{action} || '%'
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip LIKE '%' || #{ip} || '%'
+            </if>
+            <if test="is_success != null and is_success != ''">
+                AND is_success LIKE '%' || #{is_success} || '%'
+            </if>
+            <if test="start_date != null and start_date != ''">
+                AND ldate >= TO_DATE(#{start_date}, 'YYYY-MM-DD')
+            </if>
+            <if test="end_date != null and end_date != ''">
+                AND ldate &lt;= TO_DATE(#{end_date}, 'YYYY-MM-DD')
+            </if>
+            ORDER BY ldate DESC, logno DESC
+        ) A
+        WHERE ROWNUM &lt;= #{end_num, jdbcType=INTEGER}
+    )
+    WHERE rnum >= #{start_num, jdbcType=INTEGER}
+  </select>
+</mapper>

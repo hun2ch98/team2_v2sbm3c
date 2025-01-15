@@ -70,6 +70,21 @@ public class NoticegoodCont {
     return json.toString();
   }
   
+//  /**
+//   * 목록
+//   * 
+//   * @param model
+//   * @return
+//   */
+//  // http://localhost:9093/noticegood/list_all
+//  @GetMapping(value = "/list_all")
+//  public String list_all(Model model) {
+//    ArrayList<NoticegoodVO> list = this.noticegoodProc.list_all();
+//    model.addAttribute("list", list);
+//
+//    return "/noticegood/list_all"; // /templates/noticegood/list_all.html
+//  }
+  
   /**
    * 목록
    * 
@@ -79,7 +94,7 @@ public class NoticegoodCont {
   // http://localhost:9093/noticegood/list_all
   @GetMapping(value = "/list_all")
   public String list_all(Model model) {
-    ArrayList<NoticegoodVO> list = this.noticegoodProc.list_all();
+    ArrayList<NoticeNoticegoodMemberVO> list = this.noticegoodProc.list_all_join();
     model.addAttribute("list", list);
 
     return "/noticegood/list_all"; // /templates/noticegood/list_all.html

@@ -21,9 +21,7 @@
     <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
     <a href='/member/update' th:if="${session.id == memberVO.id}">회원정보 수정</a> 
     <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/update_file' th:if="${session.id == memberVO.id}">프로필 변경</a> 
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/passwd_update' th:if="${session.id == memberVO.id}">비밀번호 변경</a> 
+    <a href='/member/update_file' th:if="${session.id == memberVO.id}">프로필 변경</a>  
     <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
     <a href='/member/unsub_delete' th:if="${session.id == memberVO.id}">회원 탈퇴</a>
   </aside>

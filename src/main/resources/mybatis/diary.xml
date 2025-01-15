@@ -23,19 +23,25 @@
   </select>
   
   <!-- 추천수 증가 -->
-  <update id="increaseGoodcnt" parameterType="int">
+  <update id="increaseGoodCnt" parameterType="int">
     UPDATE diary
-    SET cnt = cnt + 1
+    SET goodcnt = goodcnt + 1
     WHERE diaryno = #{diaryno}
   </update> 
   
   <!-- 추천수 감소 -->
-  <update id="decreaseGoodcnt" parameterType="int">
+  <update id="decreaseGoodCnt" parameterType="int">
     UPDATE diary
-    SET cnt = cnt - 1
+    SET goodcnt = goodcnt - 1
     WHERE diaryno = #{diaryno}
   </update> 
   
+  <!-- 조회수 증가 -->
+  <update id="increaseCnt" parameterType="int">
+    UPDATE diary
+    SET cnt = cnt + 1
+    WHERE diaryno = #{diaryno}
+  </update> 
 
   <select id="listSearch" parameterType="map" resultType="dev.mvc.diary.DiaryVO">
     SELECT *
@@ -98,12 +104,6 @@
     WHERE diaryno = #{diaryno}
   </update>
 
-  <select id="read" parameterType="int" resultType="dev.mvc.diary.DiaryVO">
-    SELECT diaryno, title, summary, weatherno, emono, ddate
-    FROM diary
-    WHERE diaryno = #{diaryno}
-  </select>
-
   <select id="dev.mvc.diary.DiaryDAOInter.countSearchResults" resultType="int" parameterType="map">
     SELECT COUNT(*) 
     FROM diary 
@@ -136,10 +136,10 @@
         SELECT * FROM diary WHERE diaryno = #{diaryno}
     </select>
     
-  <select id="getReadList" resultType="dev.mvc.diary.DiaryVO" parameterType="int">
-    SELECT diaryno, title, summary, ddate, weatherno, emono, summary
+  <select id="read" resultType="dev.mvc.diary.DiaryVO">
+    SELECT diaryno, title, summary, ddate, weatherno, emono, summary, cnt, goodcnt
     FROM diary
-    WHERE diaryno = #{diaryno} <!-- 파라미터 이름 명시 -->
+    WHERE diaryno = #{diaryno}
     ORDER BY ddate DESC
   </select>
 

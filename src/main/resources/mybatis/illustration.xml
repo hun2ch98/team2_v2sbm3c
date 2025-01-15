@@ -84,24 +84,19 @@
 
 
 
-
-
-
-
-
-    <select id="listSearch" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
-      SELECT *
-      FROM diary d
-      JOIN illustration i ON d.diaryno = i.diaryno
-      WHERE 1=1
-      <if test="start_date != null and start_date != ''">
-          AND SUBSTR(TO_CHAR(d.ddate), 1, 10) >= #{start_date}
-      </if>
-      <if test="end_date != null and end_date != ''">
-          AND SUBSTR(TO_CHAR(d.ddate), 1, 10) &lt;= #{end_date}
-      </if>
-      ORDER BY ddate DESC
-    </select>
+  <select id="listSearch" parameterType="map" resultType="dev.mvc.illustration.IllustrationVO">
+    SELECT *
+    FROM diary d
+    JOIN illustration i ON d.diaryno = i.diaryno
+    WHERE 1=1
+    <if test="start_date != null and start_date != ''">
+        AND SUBSTR(TO_CHAR(d.ddate), 1, 10) >= #{start_date}
+    </if>
+    <if test="end_date != null and end_date != ''">
+        AND SUBSTR(TO_CHAR(d.ddate), 1, 10) &lt;= #{end_date}
+    </if>
+    ORDER BY ddate DESC
+  </select>
 
 
   <select id="dev.mvc.illustration.IllustrationDAOInter.countSearchResults" resultType="int" parameterType="map">
@@ -124,5 +119,28 @@
   <select id="dev.mvc.illustration.IllustrationDAOInter.list_search_count" resultType="int">
     SELECT COUNT(*) FROM illustration
   </select>
+  
+  <select id="list_calendar" resultType="dev.mvc.illustration.DiaryIllustrationVO" parameterType="String">
+    SELECT 
+        d.diaryno,
+        d.ddate,
+        d.weatherno,
+        w.we_file1,
+        d.emono,
+        e.em_file1,
+        i.illustno,
+        i.illust_thumb
+    FROM 
+        diary d
+    LEFT JOIN weather w ON d.weatherno = w.weatherno
+    LEFT JOIN emotion e ON d.emono = e.emono
+    LEFT JOIN illustration i ON d.diaryno = i.diaryno
+    WHERE 
+        SUBSTR(TO_CHAR(d.ddate, 'YYYY-MM-DD'), 1, 10) = #{sdate}
+    ORDER BY 
+        d.ddate ASC, 
+        i.illustno ASC
+</select>
+  
 
 </mapper>

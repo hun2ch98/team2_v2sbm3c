@@ -32,16 +32,25 @@
   
   <!--조회-->
   <select id="read" parameterType="int" resultType="dev.mvc.bannedwordsgood.BannedwordsgoodVO" >
-  	SELECT goodno, rdata, wordno, memberno
+  	SELECT goodno, rdate, wordno, memberno
   	FROM bannedwordsgood
   	WHERE goodno = #{goodno}
   </select>
   
   <!--wordno, memberno로 조회-->
   <select id="readByWordnoMemeberno" parameterType="int" resultType="dev.mvc.bannedwordsgood.BannedwordsgoodVO" >
-  	SELECT goodno, rdata, wordno, memberno
+  	SELECT goodno, rdate, wordno, memberno
   	FROM bannedwordsgood
   	WHERE wordno=#{wordno} AND memberno=#{memberno}
   </select>
+  
+  <!-- 전체 목록, 테이블 3개 join-->
+  <select id="list_all_join" resultType="dev.mvc.bannedwordsgood.BannedwordsBannedwordsgoodMemberVO">
+  	SELECT g.goodno, g.rdate, g.wordno, b.word as b_title, g.memberno, m.id, m.name
+  	FROM bannedwords b, bannedwordsgood g, member m
+  	WHERE b.wordno = g.wordno AND g.memberno = m.memberno
+  	ORDER BY goodno DESC
+  </select>
+  
 
 </mapper>

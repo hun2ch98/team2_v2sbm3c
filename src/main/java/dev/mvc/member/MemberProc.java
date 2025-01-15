@@ -2,6 +2,7 @@ package dev.mvc.member;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import jakarta.servlet.http.HttpSession;
 import dev.mvc.dto.SearchDTO;
@@ -51,8 +52,22 @@ public class MemberProc implements MemberProcInter {
     String passwd_encoded = this.security.aesEncode(passwd); // 패스워드 AES 암호화
     memberVO.setPasswd(passwd_encoded);
     
+    // 10자리 랜덤 복구키 생성
+    String recoveryKey = generateRecoveryKey();
+    memberVO.setRecovery_key(recoveryKey); // MemberVO에 복구키 설정
+    
     int cnt = this.memberDAO.create(memberVO); // 회원 생성
     return cnt;
+  }
+  
+  /** 10자리 랜덤 복구키 생성 메서드 추가 */
+  private String generateRecoveryKey() {
+    Random random = new Random();
+    StringBuilder recoveryKey = new StringBuilder();
+    for (int i = 0; i < 10; i++) {
+        recoveryKey.append(random.nextInt(10)); // 0-9 사이의 숫자 추가
+    }
+    return recoveryKey.toString();
   }
   
   /** 조건에 맞는 회원 수 */
@@ -165,31 +180,32 @@ public class MemberProc implements MemberProcInter {
     return cnt;
   }
   
+  /**
+   * 비밀번호 찾기에서 복구키 인증 성공 후 비밀번호 변경 처리
+   */
   @Override
-  public int update_passwd_find(HashMap<String, Object> map) {
+  public int update_passwd(HashMap<String, String> map) {
     String passwd = (String)map.get("passwd");
     passwd = this.security.aesEncode(passwd);
     map.put("passwd", passwd);
     
-    int cnt = this.memberDAO.update_passwd_find(map);
+    int cnt = this.memberDAO.update_passwd(map);
     return cnt;
   }
   
-  /** 이름, 이메일 일치하는 회원 검사 */
+  /** 아이디 찾기 -> 이름, 이메일 일치하는 회원 검사 */
   @Override
-  public int find_id_check(HashMap<String, String> map) {
-    int cnt = this.memberDAO.find_id_check(map);
-    return cnt;
+  public String find_id_check(HashMap<String, String> map) {
+    String id = this.memberDAO.find_id_check(map);
+    return id;
   }
   
-  /** 아이디, 이메일 일치하는 회원 검사 */
+  /** 비밀번호 찾기 -> 복구키 일치하는 회원 검사 */
   @Override
-  public int find_passwd(String id, String phone) {
-    int cnt = this.memberDAO.find_passwd(id, phone);
-    
+  public int find_pw_check(HashMap<String, String> map) {
+    int cnt = this.memberDAO.find_pw_check(map);
     return cnt;
   }
-
   //----------------------------------------------------------------------------------
   // ~~~~~~ 로그인 및 패스워드 인증 관련 메서드 종료
   // ---------------------------------------------------------------------------------

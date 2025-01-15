@@ -1,10 +1,16 @@
 package dev.mvc.learningdata;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +24,14 @@ import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.tool.Tool;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping(value = "/learningdata")
 public class LearningdataCont {
 	
-	@Autowired
+	  @Autowired
 	  @Qualifier("dev.mvc.learningdata.LearningdataProc")
 	  private LearningdataProcInter learningdataProc;
 	  
@@ -114,9 +121,9 @@ public class LearningdataCont {
 	  public String list_by_datano_search_paging(
 	      HttpSession session,
 	      Model model,
-	      @ModelAttribute("LearningdataVO") LearningdataVO learningdataVO,
+	      @ModelAttribute("learningdataVO") LearningdataVO learningdataVO,
 	      @RequestParam(name = "datano", defaultValue = "0") int datano,
-	      @RequestParam(name = "word", defaultValue = "") String word,
+	      @RequestParam(name = "ques", defaultValue = "") String ques,
 	      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
 	      int record_per_page = 10;
@@ -130,15 +137,15 @@ public class LearningdataCont {
 	          memberVO.setMemberno(0);
 	          model.addAttribute("message", "회원 정보가 없습니다.");
 	      }
-	      word = Tool.checkNull(word).trim();
+	      ques = Tool.checkNull(ques).trim();
 	      model.addAttribute("memberVO", memberVO);
 	      model.addAttribute("datano", datano);
-	      model.addAttribute("word", word);
+	      model.addAttribute("ques", ques);
 	      model.addAttribute("now_page", now_page);
 
 	      HashMap<String, Object> map = new HashMap<>();
 	      map.put("memberno", memberno);
-	      map.put("word", word);
+	      map.put("ques", ques);
 	      map.put("now_page", now_page);
 	      map.put("startRow", startRow);
 	      map.put("endRow", endRow);
@@ -148,19 +155,19 @@ public class LearningdataCont {
 	          model.addAttribute("message", "게시물이 없습니다.");
 	      } else {
 	          model.addAttribute("list", list);          
-	          model.addAttribute("word", word);
+	          model.addAttribute("ques", ques);
 	      }
 
-//	      int search_count = this.learningdataProc.count_by_datano_search(map);
-//	      String paging = this.learningdataProc.pagingBox(memberno, now_page, "/learningdata/list_by_datano_search_paging", search_count,
-//	          Learningdata.RECORD_PER_PAGE, Learningdata.PAGE_PER_BLOCK);
-//	      model.addAttribute("paging", paging);
-//	      model.addAttribute("memberno", memberno);
-//	      model.addAttribute("now_page", now_page);
-//	      model.addAttribute("search_count", search_count);
-//
-//	      int no = search_count - ((now_page - 1) * Learningdata.RECORD_PER_PAGE);
-//	      model.addAttribute("no", no);
+	      int search_count = this.learningdataProc.count_by_datano_search(map);
+	      String paging = this.learningdataProc.pagingBox(now_page, ques, "/learningdata/list_by_datano_search_paging", search_count,
+	          Learningdata.RECORD_PER_PAGE, Learningdata.PAGE_PER_BLOCK);
+	      model.addAttribute("paging", paging);
+	      model.addAttribute("ques", ques);
+	      model.addAttribute("now_page", now_page);
+	      model.addAttribute("search_count", search_count);
+
+	      int no = search_count - ((now_page - 1) * Learningdata.RECORD_PER_PAGE);
+	      model.addAttribute("no", no);
 
 	      return "/learningdata/list_by_datano_search_paging"; // /templates/board/list_by_boardno_search_paging.html
 	 
@@ -337,5 +344,33 @@ public class LearningdataCont {
 	    
 	    return "redirect:/learningdata/list_by_datano_search_paging";
 	  }
+	  
+	  @GetMapping(value = "/download")
+	  public ResponseEntity<String> exportCsv(HttpServletResponse response) throws IOException {
+	      SimpleDateFormat date = new SimpleDateFormat("yyMMddHHmmSS");
+	      String fileName = "learningdata_" + date.format(new Date()) + ".csv";
+
+	      ArrayList<LearningdataVO> list = learningdataProc.findAll();
+	      String[] dataColumn = {"질문", "답변"};
+
+	      StringBuilder csvFile = new StringBuilder();
+
+	      // Adding the header: Each column is now a row (질문, 답변)
+	      csvFile.append(dataColumn[0]).append(',');
+	      csvFile.append(dataColumn[1]).append('\n');
+
+	      // Adding the data rows: Each row will represent a question and answer
+	      for (LearningdataVO data : list) {
+	          csvFile.append(data.getQues().replace(",", "/")).append(',');
+	          csvFile.append(data.getAns().replace(",", "/")).append('\n');
+	      }
+
+	      HttpHeaders headers = new HttpHeaders();
+	      headers.add("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+	      headers.add("Content-Type", "text/csv; charset=MS949");
+
+	      return new ResponseEntity<>(csvFile.toString(), headers, HttpStatus.CREATED);
+	  }
+
 	  
 }

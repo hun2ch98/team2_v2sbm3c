@@ -54,9 +54,6 @@ public class MemberVO {
   /** 주소 2 */
   private String address2 = "";
   
-  /** 작성 댓글수 */
-  private int replycnt = 0;
-  
   /** 가입일 */
   private String mdate = "";
   
@@ -66,6 +63,9 @@ public class MemberVO {
   /** 전화번호 */
   @NotEmpty(message="전화번호 입력은 필수입니다.")
   private String phone = "";
+  
+  /** 복구키 */
+  private String recovery_key = "";
   
   // -----------------------------------------------------------------------------------
   /** 파일 업로드 관련 */
