@@ -9,8 +9,18 @@
     INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emono, memberno)
     VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weatherno}, #{emono}, #{memberno})
   </insert>
-
-
+  
+  <!--
+  <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
+    <selectKey keyProperty="diaryno" resultType="int" order="BEFORE">
+      SELECT diary_seq.nextval FROM dual
+    </selectKey>
+    INSERT INTO diary(contentsno, memberno, cateno, title, content, web, ip,
+                                     passwd, word, rdate)
+    VALUES(#{contentsno}, #{memberno}, #{cateno}, #{title}, #{content}, #{web}, #{ip},
+                #{passwd}, #{word}, sysdate)
+  </insert> -->
+  
   <!-- 모든 카테고리의 등록된 글목록 -->
   <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
     SELECT diaryno, title, ddate, summary, weatherno, emono
@@ -143,7 +153,24 @@
     ORDER BY ddate DESC
   </select>
 
-
+<!-- 특정 달의 조회 -->
+  <select id="list_calendar" resultType="dev.mvc.diary.DiaryVO" parameterType="String">
+    SELECT diaryno, ddate, title
+    FROM diary
+    WHERE SUBSTR(ddate, 1, 7) = #{ddate}
+    ORDER BY ddate ASC
+  </select>
+  
+  
+  <!-- 특정 날짜 조회 -->
+  <select id="list_calendar_day" resultType="dev.mvc.diary.DiaryVO" parameterType="String">
+    SELECT diaryno, ddate, title
+    FROM diary
+    WHERE ddate = #{ddate}
+    ORDER BY ddate ASC, diaryno ASC
+  </select>
+  
+ 
     
 </mapper> 
 

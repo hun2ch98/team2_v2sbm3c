@@ -50,10 +50,15 @@ dependencies {
     implementation 'commons-fileupload:commons-fileupload:1.5'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     implementation 'commons-codec:commons-codec:1.16.0'
+
+    
+    
+
     // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
     implementation 'com.sun.mail:javax.mail:1.6.2'
     // https://mvnrepository.com/artifact/javax.activation0/activation
     implementation 'javax.activation:activation:1.1.1'
+
 }
 
 tasks.named('test') {

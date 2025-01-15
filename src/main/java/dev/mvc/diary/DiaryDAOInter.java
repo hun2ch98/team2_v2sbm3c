@@ -22,7 +22,7 @@ public interface DiaryDAOInter {
    * @return
    */
   public int create(DiaryVO diaryVO);
-  
+  int create2(DiaryVO diaryVO);
   /**
    * 전체 목록
    * SQL -> DiaryVO 객체 레코드 수 만큼 생성 -> ArrayList<diaryVO> 객체 생성되어 DiaryDAOInter로 리턴 
@@ -106,5 +106,7 @@ public interface DiaryDAOInter {
 
   public int increaseCnt(int diaryno);
   
+  public ArrayList<DiaryVO> list_calendar(String date);
   
+  public ArrayList<DiaryVO> list_calendar_day(String date);
 }

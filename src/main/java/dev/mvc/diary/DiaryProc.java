@@ -1,5 +1,6 @@
 package dev.mvc.diary;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +11,11 @@ import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
+
+import dev.mvc.schedule.ScheduleVO;
 
 // 알고리즘 구현
 @Service("dev.mvc.diary.DiaryProc")
@@ -28,6 +33,26 @@ public class DiaryProc implements DiaryProcInter {
     
     return cnt;
   }
+  
+  public int create2(DiaryVO diaryVO) {
+    String sql = "INSERT INTO diary (diaryno, title, summary, ddate, weatherno, emono,  memberno) " +
+                 "VALUES (diary_seq.NEXTVAL, ?, ?, ?, ?, ?, ?)";
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+
+    jdbcTemplate.update(connection -> {
+        PreparedStatement ps = connection.prepareStatement(sql, new String[] {"diaryno"});
+        ps.setString(1, diaryVO.getTitle());
+        ps.setString(2, diaryVO.getSummary());
+        ps.setDate(3, new java.sql.Date(diaryVO.getDdate().getTime()));
+        ps.setInt(4, diaryVO.getWeatherno());
+        ps.setInt(5, diaryVO.getEmono());
+        ps.setInt(6, diaryVO.getMemberno());
+        return ps;
+    }, keyHolder);
+
+    return keyHolder.getKey().intValue(); // 생성된 diaryno 반환
+}
+
 
   @Override
   public ArrayList<DiaryVO> list_all() {
@@ -278,6 +303,16 @@ public class DiaryProc implements DiaryProcInter {
       return diaryDAO.getDiaryByDiaryNo(diaryno);
   }
 
+  
+  public ArrayList<DiaryVO> list_calendar(String date){
+    ArrayList<DiaryVO> list_calendar = this.diaryDAO.list_calendar(date);
+    return list_calendar;
+  }
+  
+  public ArrayList<DiaryVO> list_calendar_day(String date){
+    ArrayList<DiaryVO> list_calendar_day = this.diaryDAO.list_calendar_day(date);
+    return list_calendar_day;
+  }
 }
 
 

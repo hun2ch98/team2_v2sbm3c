@@ -30,24 +30,21 @@ public interface IllustrationDAOInter {
    * @param diaryno
    * @return Map<String, Object>
    */
-      Map<String, Object> readDiary(int diaryno);
+    Map<String, Object> readDiary(int diaryno);
+    
+    public int delete(int illustno);
+ 
+    public int update(IllustrationVO illustrationVO);
+    
+    int cntcount(int illustno);
+    
+    List<IllustrationVO> getIllustrationsByDiaryNo(int diaryno);
+    
+    List<Map<String, Object>> list_search_paging(Map<String, Object> paramMap);
+    
+    int list_search_count(String title, String date);
+
+    ArrayList<IllustrationVO> list_search(String title, String date);
       
-      public int delete(int illustno);
-   
-      public int update(IllustrationVO illustrationVO);
-      
-      int cntcount(int illustno);
-      
-      List<IllustrationVO> getIllustrationsByDiaryNo(int diaryno);
-      
-      List<Map<String, Object>> list_search_paging(Map<String, Object> paramMap);
-      
-      int list_search_count(String title, String date);
-  
-      ArrayList<IllustrationVO> list_search(String title, String date);
-      
-      public ArrayList<DiaryIllustrationVO> list_calendar(Date date);
-      
-      public ArrayList<DiaryIllustrationVO> list_calendar_day(Date date);
-      
+    public ArrayList<IllustrationVO> get_illust(int diaryno);
 }

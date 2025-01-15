@@ -1,16 +1,27 @@
 package dev.mvc.diary;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
+import dev.mvc.schedule.ScheduleVO;
 import dev.mvc.diarygood.DiaryGoodProcInter;
 import dev.mvc.diarygood.DiaryGoodVO;
 import dev.mvc.emotion.EmotionProcInter;
@@ -161,109 +173,213 @@ public class DiaryCont {
    * @param bindingResult 폼에 에러가 있는지 검사 지원
    * @return
    */
-  // contentCont의 create 처리 과정보고 추가해야함. 
-//  @PostMapping(value = "/create")
-//  public String create(Model model, HttpSession session, HttpServletRequest request,
-//                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
-//                       BindingResult bindingResult, RedirectAttributes ra) {
-//    Integer memberno = (Integer) session.getAttribute("memberno");
-//      if (bindingResult.hasErrors()) { 
-//          // 에러 발생 시 폼으로 돌아가기
-//        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-//        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-//        return "/diary/create";
-//      }
-//
-//      // 제목 및 내용 트림 처리
-//      diaryVO.setTitle(diaryVO.getTitle().trim());
-//      diaryVO.setSummary(diaryVO.getSummary().trim());
-//      diaryVO.setEmono(diaryVO.getEmono());
-//      diaryVO.setWeatherno(diaryVO.getWeatherno());
-//      
-//
-//      // ddate 설정
-//      if (diaryVO.getDdate() == null) {
-//          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
-//      }
-//
-//      // 세션에서 memberno 가져오기
+   // contentCont의 create 처리 과정보고 추가해야함. 
+  @PostMapping(value = "/create")
+  public String create(Model model, HttpSession session, HttpServletRequest request,
+                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+                       BindingResult bindingResult, RedirectAttributes ra) {
+    Integer memberno = (Integer) session.getAttribute("memberno");
+      if (bindingResult.hasErrors()) { 
+          // 에러 발생 시 폼으로 돌아가기
+        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+        return "/diary/create";
+      }
+
+      // 제목 및 내용 트림 처리
+      diaryVO.setTitle(diaryVO.getTitle().trim());
+      diaryVO.setSummary(diaryVO.getSummary().trim());
+      diaryVO.setEmono(diaryVO.getEmono());
+      diaryVO.setWeatherno(diaryVO.getWeatherno());
+      
+
+      // ddate 설정
+      if (diaryVO.getDdate() == null) {
+          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
+      }
+
+      // 세션에서 memberno 가져오기
+      
+      if (memberno == null) {
+          ra.addFlashAttribute("message", "로그인이 필요합니다.");
+          return "/member/login_cookie_need";
+      }
+      diaryVO.setMemberno(memberno);
+
+      // DB 저장 로직 호출
+      int cnt = diaryProc.create(diaryVO);
+      System.out.println("-> create_cnt: " + cnt);
+
+      if (cnt == 1) {
+        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+        return "redirect:/diary/list_by_diaryno_search_paging";
+      } else {
+        model.addAttribute("code", "create_fail");
+        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+        return "/diary/msg";
+      }
+  }
+
+  /**
+   * File 객체를 이용한 파일 저장 메서드
+   * 중복 파일명 처리: data.txt -> data_1.txt -> data_2.txt...
+   * @param file 저장하려는 File 객체
+   * @param absPath 저장할 절대 경로
+   * @return 저장된 파일명
+   */
+  public static String saveFile(File file, String absPath) {
+      String fileName = "";
+      
+      // 원본 파일명 추출
+      String originalFileName = file.getName();
+      int extIndex = originalFileName.lastIndexOf("."); // 파일 구분자 "." 위치 추출
+      
+      if (extIndex == -1) {
+          throw new IllegalArgumentException("유효하지 않은 파일명: " + originalFileName);
+      }
+
+      String onlyFileName = originalFileName.substring(0, extIndex); // 파일명 (확장자 제외)
+      String extFileName = originalFileName.substring(extIndex);   // 확장자
+
+      try {
+          // 업로드 디렉토리가 없으면 생성
+          File uploadDir = new File(absPath);
+          if (!uploadDir.exists()) {
+              if (!uploadDir.mkdirs()) {
+                  throw new IOException("디렉토리 생성 실패: " + absPath);
+              }
+          }
+
+          File newFile = new File(absPath, originalFileName);
+
+          // 중복 파일명 처리
+          if (newFile.exists()) {
+              for (int k = 1; true; k++) {
+                  newFile = new File(absPath, onlyFileName + "_" + k + extFileName);
+                  if (!newFile.exists()) {
+                      fileName = newFile.getName();
+                      System.out.println("-> 중복되지 않는 파일명 발견: " + fileName);
+                      break;
+                  }
+              }
+          } else {
+              fileName = originalFileName;
+          }
+
+          // 파일 복사
+          try (InputStream inputStream = new FileInputStream(file);
+               OutputStream outputStream = new FileOutputStream(new File(absPath, fileName))) {
+
+              byte[] buffer = new byte[8192];
+              int bytesRead;
+              while ((bytesRead = inputStream.read(buffer)) != -1) {
+                  outputStream.write(buffer, 0, bytesRead);
+              }
+          }
+
+      } catch (IOException e) {
+          throw new RuntimeException("파일 저장 중 오류 발생: " + e.getMessage(), e);
+      }
+
+      return fileName; // 저장된 파일명 반환
+  }
+
+//  @Transactional
+//  @PostMapping(value = "/create_both")
+//  public String createBoth(Model model, HttpSession session, HttpServletRequest request,
+//                           @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+//                           @ModelAttribute IllustrationVO illustrationVO, 
+//                           @RequestParam(name="ddate", defaultValue="") Date ddate,
+//                           BindingResult bindingResult, RedirectAttributes ra) {
+//      Integer memberno = (Integer) session.getAttribute("memberno");
 //      
 //      if (memberno == null) {
 //          ra.addFlashAttribute("message", "로그인이 필요합니다.");
 //          return "/member/login_cookie_need";
 //      }
-//      diaryVO.setMemberno(memberno);
-//
-//      // DB 저장 로직 호출
-//      int cnt = diaryProc.create(diaryVO);
-//      System.out.println("-> create_cnt: " + cnt);
-//
-//      if (cnt == 1) {
-//        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
-//        return "redirect:/diary/list_by_diaryno_search_paging";
-//      } else {
-//        model.addAttribute("code", "create_fail");
-//        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-//        return "/diary/msg";
+//      
+//      if (bindingResult.hasErrors()) { 
+//          bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+//          logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//          return "/diary/create";
 //      }
+//      
+//      // Diary 데이터 처리
+//      diaryVO.setTitle(diaryVO.getTitle().trim());
+//      diaryVO.setSummary(diaryVO.getSummary().trim());
+//      diaryVO.setMemberno(memberno);
+//      diaryVO.setEmono(diaryVO.getEmono());
+//      diaryVO.setWeatherno(diaryVO.getWeatherno());
+//      if (diaryVO.getDdate() == null) {
+//          diaryVO.setDdate(Date.valueOf(LocalDate.now()));
+//      }
+//      
+//      int diaryCnt = diaryProc.create2(diaryVO);
+//      System.out.println("-> Diary create count: " + diaryCnt);
+//      
+//      if (diaryCnt != 1) {
+//          model.addAttribute("code", "diary_create_fail");
+//          logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//          return "/diary/list_by_diaryno_search_paging";
+//      }
+//      
+//      // Illustration 데이터 처리
+//      String storagePath = "C:/kd/deploy/team2/temp/storage";
+//      File folder = new File(storagePath);
+//      File[] files = folder.listFiles();
+//      if (files == null || files.length == 0) {
+//          ra.addFlashAttribute("message", "저장된 이미지가 없습니다.");
+//          return "redirect:/diary/create";
+//      }
+//      
+//      // 가장 큰 숫자를 가진 이미지 파일 찾기
+//      File largestFile = Arrays.stream(files)
+//                                .max(Comparator.comparing(File::getName))
+//                                .orElse(null);
+//      
+//      if (largestFile == null) {
+//          ra.addFlashAttribute("message", "이미지 파일을 찾을 수 없습니다.");
+//          return "redirect:/diary/create";
+//      }
+//      String illust = "";
+//      String illust_saved = "";
+//      String illust_thumb = "";
+//      
+//      String upDir = Illustration.getUploadDirTemp();
+//      
+//      illust = largestFile.getName();
+//      long illust_size =  largestFile.length();
+//      
+//      if (illust_size > 0) {
+//        if (Tool.checkUploadFile(illust)) {
+//          illust_saved = saveFile(largestFile, Illustration.getUploadDir());
+//          
+//          if (Tool.isImage(illust_saved)) {
+//            illust_thumb = Tool.preview(upDir, illust_saved, 200, 150);
+//          }
+//        }
+//      }
+// 
+//      illustrationVO.setIllust(illust);
+//      illustrationVO.setIllust_saved(illust_saved);
+//      illustrationVO.setIllust_thumb(illust_thumb);
+//      illustrationVO.setIllust_size(illust_size);
+//      int diaryno = diaryProc.getDiaryNoByDate(ddate);
+//      illustrationVO.setDiaryno(diaryno);
+//      
+//      int illustrationCnt = illustrationProc.create(illustrationVO);
+//      System.out.println("-> Illustration create count: " + illustrationCnt);
+//      
+//      if (illustrationCnt != 1) {
+//          logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "N");
+//          ra.addFlashAttribute("code", "illustration_create_fail");
+//          return "redirect:/diary/list_by_diaryno_search_paging";
+//      }
+//      
+//      logAction("create", "diary+illustration", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+//      return "redirect:/diary/list_by_diaryno_search_paging";
 //  }
 
-  
-  @PostMapping("/create")
-  public String createDiaryAndIllustration(@ModelAttribute DiaryVO diaryVO,
-                                           @RequestParam(value = "illustMF", required = false) MultipartFile illustMF,
-                                           RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
-      Integer memberno = (Integer) session.getAttribute("memberno");
-
-      if (memberno == null) {
-          ra.addFlashAttribute("message", "로그인이 필요합니다.");
-          return "/member/login_cookie_need";
-      }
-
-      diaryVO.setMemberno(memberno);
-
-      // Diary 저장
-      int diaryCnt = diaryProc.create(diaryVO);
-
-      if (diaryCnt == 1) {
-          try {
-            if (illustMF != null && !illustMF.isEmpty()) {
-              String illust = illustMF.getOriginalFilename();
-              long illustSize = illustMF.getSize();
-
-              if (illustSize > 0 && Tool.checkUploadFile(illust)) {
-                  // 파일 저장 및 썸네일 생성
-                  String upDir = Illustration.getUploadDir();
-                  String illustSaved = Upload.saveFileSpring(illustMF, upDir);
-                  String illustThumb = Tool.isImage(illustSaved) ? Tool.preview(upDir, illustSaved, 200, 150) : "";
-
-                  // Illustration 저장
-                  IllustrationVO illustrationVO = new IllustrationVO();
-                  illustrationVO.setDiaryno(diaryVO.getDiaryno());
-                  illustrationVO.setIllust(illust);
-                  illustrationVO.setIllust_saved(illustSaved);
-                  illustrationVO.setIllust_thumb(illustThumb);
-                  illustrationVO.setIllust_size(illustSize);
-
-                  illustrationProc.create(illustrationVO);
-              } else {
-                  ra.addFlashAttribute("message", "유효하지 않은 파일 형식입니다.");
-                  return "redirect:/diary/create";
-              }
-          }
-
-
-              ra.addFlashAttribute("code", "diary_with_illustration_success");
-          } catch (Exception e) {
-              e.printStackTrace();
-              ra.addFlashAttribute("code", "illustration_create_fail");
-          }
-      } else {
-          ra.addFlashAttribute("code", "diary_create_fail");
-      }
-
-      return "redirect:/diary/list_by_diaryno_search_paging";
-  }
 
 
 
@@ -560,6 +676,82 @@ public class DiaryCont {
     }
   }
 
+  /**
+   * 특정 날짜의 목록
+   * @param session
+   * @param model
+   * @param date
+   * @return
+   */
+  @GetMapping(value="/list_calendar")
+  public String list_calendar(HttpSession session, Model model, 
+      @RequestParam(name="year", defaultValue="0") int year, 
+      @RequestParam(name="month", defaultValue="0") int month) {
 
+      if (year == 0) {
+        // 현재 날짜를 가져옴
+        LocalDate today  = LocalDate.now();
+        
+        //연도와 월을 추출
+        year = today.getYear();
+        month = today.getMonthValue();
+      }
+      
+      String month_str = String.format("%02d", month); // 두 자리 형식으로
+    //System.out.println("-> month: " + month_str);
   
+    String date = year + "-" + month;
+//    System.out.println("-> date: " + date);
+    
+    model.addAttribute("year", year);
+    model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
+      
+    return "/diary/list_calendar"; // /templates/calendar/list_calendar.html
+  }
+  
+  
+  /**
+   * 특정 날짜의 목록
+   * 
+   * @param model
+   * @return
+   */
+  // http://localhost:9091/calendar/list_calendar_day?labeldate=2025-01-03
+  @GetMapping(value = "/list_calendar_day")
+  @ResponseBody
+  public String list_calendar_day(Model model, @RequestParam(name="ddate", defaultValue = "") Date ddate) {
+     System.out.println("-> ddate 호출됨: " + ddate);
+  
+    // 원하는 포맷 설정
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    // Date를 String으로 변환
+    String formattedDate = sdf.format(ddate);
+    ArrayList<DiaryVO> list = this.diaryProc.list_calendar_day(formattedDate);
+    model.addAttribute("list", list);
+
+    JSONArray diary_list = new JSONArray();
+    
+    for (DiaryVO diaryVO: list) {
+        JSONObject diaries = new JSONObject();
+        diaries.put("diaryno", diaryVO.getDiaryno());
+        diaries.put("ddate", sdf.format(diaryVO.getDdate()));
+        diaries.put("title", diaryVO.getTitle());
+        
+        ArrayList<IllustrationVO> get_illust = illustrationProc.get_illust(diaryVO.getDiaryno());
+        int size = get_illust.size();
+        
+        if (size == 0) {
+          diaries.put("illust_thumb", "");
+        } else {
+          diaries.put("illust_thumb", get_illust.get(0).getIllust_thumb());
+        }
+        
+        diary_list.put(diaries);
+        
+    }
+
+    return diary_list.toString();
+    
+  }
 }

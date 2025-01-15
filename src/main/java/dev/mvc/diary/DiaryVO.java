@@ -1,9 +1,11 @@
 package dev.mvc.diary;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import dev.mvc.illustration.IllustrationVO;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -48,4 +50,6 @@ public class DiaryVO {
   private int cnt=0;
   
   private int goodcnt=0;
+  
+  private ArrayList<IllustrationVO> get_illust;
 }

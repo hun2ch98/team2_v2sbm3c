@@ -118,7 +118,6 @@
       </div>
 
       <!-- 생성된 이미지 칸 -->
-      <input type="hidden" id="generatedImageURL" name="generatedImageURL">
       <div style="width: 45%; border: 1px solid #ccc; padding: 10px;">
         <label>생성된 이미지</label>
         <div>
@@ -176,11 +175,9 @@
         if (response.ok) {
           // 생성된 이미지 URL 표시
           const previewImage = document.getElementById('preview-image');
-          const generatedImageURL = document.getElementById('generatedImageURL');
-
           previewImage.src = result.image_url;
           previewImage.style.display = 'block';
-          generatedImageURL.value = result.image_url;
+          
           if (regenerate) {
             alert("새로운 이미지가 생성되었습니다!");
           } else {
