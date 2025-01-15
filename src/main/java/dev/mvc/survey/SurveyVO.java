@@ -41,6 +41,15 @@ public class SurveyVO {
   @Size(min=1, max=100)
   private String topic = "";
   
+  public SurveyVO() {
+    
+  }
+  
+  public SurveyVO(int surveyno, String topic) {
+    this.surveyno = surveyno;
+    this.topic = topic;
+  }
+  
   /** 시작 날짜 */
   private String sdate="";
   

@@ -102,6 +102,10 @@ FROM surveyitem
 WHERE surveyno = 1
 GROUP BY surveyno;
 
+SELECT *
+FROM surveyitem
+WHERE surveyno = 1
+ORDER BY item_seq ASC;
 
 SELECT COUNT(*) as cnt 
 FROM surveyitem 
