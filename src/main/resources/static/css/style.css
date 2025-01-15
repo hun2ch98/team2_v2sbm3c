@@ -30,7 +30,7 @@
   
   .top_menu_img {
       display: block; /* 블록 요소로 변경 */
-      width: 200px; /* 너비를 줄임 */
+      width: 100px; /* 너비를 줄임 */
       height: 100px; /* 높이를 줄임 */
       background-image: url('/images/run.gif'); /* 배경 이미지 설정 */
       background-size: contain; /* 이미지 비율 유지 */

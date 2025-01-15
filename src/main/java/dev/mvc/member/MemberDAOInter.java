@@ -97,6 +97,13 @@ public interface MemberDAOInter {
   public int passwd_update(HashMap<String, Object> map);
   
   /**
+   * 복구키 검증 성공 시 비밀번호 수정 처리
+   * @param map
+   * @return
+   */
+  public int update_passwd(HashMap<String, String> map);
+  
+  /**
    * 아이디 찾기 -> 이메일, 이름이 일치하는 회원이 있는지 검사
    * @param email
    * @param name
@@ -109,5 +116,5 @@ public interface MemberDAOInter {
    * @param memberVO
    * @return
    */
-  public String find_pw_check(HashMap<String, String> map);
+  public int find_pw_check(HashMap<String, String> map);
 }
