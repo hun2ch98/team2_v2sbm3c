@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+  <div layout:fragment="content" style="width: 80%; margin: 50px auto; text-align: center;">
+     <div id="chart_div" style='height: 500px;'></div> <!-- 차트 출력 위치 -->
+     
+     <script>
+      google.charts.load('current', {packages: ['corechart', 'bar']});
+      google.charts.setOnLoadCallback(drawBasic);
+      
+      function drawBasic() {
+      
+            var data = new google.visualization.DataTable();
+            data.addColumn('timeofday', 'Time of Day'); // timeofday: 1 ~ 24 시간, 분, 초
+            data.addColumn('number', '판매량'); // 범례
+      
+            data.addRows([
+              [{v: ['주 5회 이상'], f: '0 명'}, 8], // {v: [시, 분, 초], f: 표시할 형식}, 데이터
+              [{v: [5], f: '5 명'}, 13],
+              [{v: [10], f: '10 명'}, 3],
+              [{v: [15], f: '15 명'}, 0],
+              [{v: [20], f: '20 명'}, 0],
+              [{v: [25], f: '25 명'}, 6],
+            ]);
+      
+            var options = {
+              title: '설문조사 결과 차트 조회', // 제목
+              hAxis: {
+                title: '인원 수', // x축 레이블
+                format: '명',  // 시:분 AM/PM 
+                viewWindow: {
+                  min: [0], // 차트 영역 시작 시, 분, 초
+                  max: [25] // 차트 영역 종료 시, 분, 초
+                }
+              },
+              vAxis: {
+                title: '문항' // y축 레이블
+              }
+            };
+      
+            var chart = new google.visualization.ColumnChart(
+              document.getElementById('chart_div')); // 차트 출력 위치
+      
+            chart.draw(data, options);
+          }
+     </script>
+  </div>
+</html>

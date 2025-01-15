@@ -18,10 +18,10 @@
   </update>
   
   <!-- surveyno, memberno로 조회! -->
-  <select id="updateCnt" resultType="int" parameterType="HashMap">
+  <select id="updateCnt" resultType="int" parameterType="int">
     SELECT COUNT (*) as cnt
     FROM participants
-    WHERE itemno = #{itemno} AND memberno = #{memberno}
+    WHERE itemno = #{itemno}
   </select>
   
   <!-- 목록 -->

@@ -23,7 +23,7 @@ public interface PartProcInter {
    * @param map
    * @return
    */
-  public int updateCnt(HashMap<String, Object> map);
+  public int updateCnt(int itemno);
   
   /**
    * 목록
