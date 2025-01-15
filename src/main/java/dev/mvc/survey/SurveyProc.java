@@ -56,29 +56,6 @@ public class SurveyProc implements SurveyProcInter {
     if (hashMap.get("now_page") != null) {
         now_page = (int) hashMap.get("now_page"); // 정상 값이 있을 경우 사용
     }
-//    int begin_of_page = ((int)hashMap.get("now_page") - 1) * Survey.RECORD_PER_PAGE;
-
-    // 시작 rownum 결정
-    // 1 페이지 = 0 + 1: 1
-    // 2 페이지 = 10 + 1: 11
-    // 3 페이지 = 20 + 1: 21
-//    int start_num = begin_of_page + 1;
-
-    // 종료 rownum
-    // 1 페이지 = 0 + 10: 10
-    // 2 페이지 = 10 + 10: 20
-    // 3 페이지 = 20 + 10: 30
-//    int end_num = begin_of_page + Survey.RECORD_PER_PAGE;
-    /*
-     * 1 페이지: WHERE r >= 1 AND r <= 10 2 페이지: WHERE r >= 11 AND r <= 20 3 페이지: WHERE
-     * r >= 21 AND r <= 30
-     */
-
-    // System.out.println("begin_of_page: " + begin_of_page);
-    // System.out.println("WHERE r >= "+start_num+" AND r <= " + end_num);
-
-//    hashMap.put("start_num", start_num);
-//    hashMap.put("end_num", end_num);
 
     ArrayList<SurveyVO> list = this.surveyDAO.list_by_surveyno_search_paging(hashMap);
 

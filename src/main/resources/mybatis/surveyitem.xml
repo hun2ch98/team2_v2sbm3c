@@ -45,10 +45,10 @@
     DELETE FROM surveyitem WHERE itemno=#{itemno}
   </delete>
   
-  <!-- 삭제 -->
+  <!-- 삭제 
   <delete id="delete_item" parameterType="int">
     DELETE FROM surveyitem WHERE itemno=#{itemno}
-  </delete>
+  </delete>-->
   
   <!-- 설문조사 참여 수 -->
   <update id="update_cnt" parameterType="int">
