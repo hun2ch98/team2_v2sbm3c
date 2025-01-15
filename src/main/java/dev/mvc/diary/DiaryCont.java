@@ -203,6 +203,38 @@ public class DiaryCont {
       }
       diaryVO.setMemberno(memberno);
 
+      // Diary 저장
+      int diaryCnt = diaryProc.create(diaryVO);
+
+      if (diaryCnt == 1) {
+          try {
+            if (illustMF != null && !illustMF.isEmpty()) {
+              String illust = illustMF.getOriginalFilename();
+              long illustSize = illustMF.getSize();
+
+              if (illustSize > 0 && Tool.checkUploadFile(illust)) {
+                  // 파일 저장 및 썸네일 생성
+                  String upDir = Illustration.getUploadDir();
+                  String illustSaved = Upload.saveFileSpring(illustMF, upDir);
+                  String illustThumb = Tool.isImage(illustSaved) ? Tool.preview(upDir, illustSaved, 200, 150) : "";
+
+                  // Illustration 저장
+                  IllustrationVO illustrationVO = new IllustrationVO();
+                  illustrationVO.setDiaryno(diaryVO.getDiaryno());
+                  illustrationVO.setIllust(illust);
+                  illustrationVO.setIllust_saved(illustSaved);
+                  illustrationVO.setIllust_thumb(illustThumb);
+                  illustrationVO.setIllust_size(illustSize);
+
+                  illustrationProc.create(illustrationVO);
+              } else {
+                  ra.addFlashAttribute("message", "유효하지 않은 파일 형식입니다.");
+                  return "redirect:/diary/create";
+              }
+          }
+
+
+
       // DB 저장 로직 호출
       int cnt = diaryProc.create(diaryVO);
       System.out.println("-> create_cnt: " + cnt);
