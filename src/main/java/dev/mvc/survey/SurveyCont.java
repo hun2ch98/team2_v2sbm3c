@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import dev.mvc.contents.Contents;
+import dev.mvc.contents.ContentsVO;
 import dev.mvc.log.LogProcInter;
 import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
@@ -635,13 +637,7 @@ public class SurveyCont {
   
 
   /**
-   * 삭제 처리, http://localhost:9091/cate/delete?cateno=1
-   * 
-   * @param model         Controller -> Thymeleaf HTML로 데이터 전송에 사용
-   * @param cateVO        Form 태그 값 -> 검증 -> cateVO 자동 저장, request.getParameter()
-   *                      자동 실행
-   * @param bindingResult 폼에 에러가 있는지 검사 지원
-   * @return
+   * 삭제 처리
    */
   @PostMapping(value = "/delete")
   public String delete_process(HttpSession session, Model model, HttpServletRequest request,
@@ -653,10 +649,27 @@ public class SurveyCont {
     int memberno = (int) session.getAttribute("memberno");
       // 관리자 권한 확인
       if (this.memberProc.isMemberAdmin(session)) {
+       
           System.out.println("-> delete_process");
 
           SurveyVO surveyVO = this.surveyProc.read(surveyno); // 삭제 전에 레코드 조회
           model.addAttribute("surveyVO", surveyVO);
+          
+          // -------------------------------------------------------------------
+          // 파일 삭제 시작
+          // -------------------------------------------------------------------
+          // 삭제할 파일 정보를 읽어옴.
+          SurveyVO surveyVO_read = surveyProc.read(surveyno);
+              
+          String file1saved = surveyVO_read.getFile1saved();
+          String thumb1 = surveyVO_read.getThumb1();
+          
+          String uploadDir = Survey.getUploadDir();
+          Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
+          Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
+          // -------------------------------------------------------------------
+          // 파일 삭제 종료
+          // -------------------------------------------------------------------
 
           HashMap<String, Object> map = new HashMap<String, Object>();
           // 카테고리에 속한 콘텐츠 개수 확인
@@ -671,38 +684,24 @@ public class SurveyCont {
                   ra.addAttribute("is_continue", is_continue); // redirect로 데이터 전송
 
                   // 마지막 페이지에서 모든 레코드가 삭제되면 페이지수를 1 감소 시켜야 함.
-                  int search_cnt = this.surveyProc.count_by_surveyno_search(map);
-                  if (search_cnt % this.record_per_page == 0) {
+                  if(this.surveyProc.cntcount(surveyno) % Survey.RECORD_PER_PAGE == 0)
                       now_page = now_page - 1;
                       if (now_page < 1) {
                           now_page = 1; // 최소 시작 페이지
                       }
                   }
 
-                  ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-                  logAction("delete", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
-                  return "redirect:/survey/list_by_surveyno_search_paging"; // 설문조사 목록 페이지로 리다이렉트
-              } else {
-                logAction("delete", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
-                  model.addAttribute("code", "delete_fail");
-                  return "/survey/msg"; // 실패 메시지 출력
-              }
-
+                 ra.addAttribute("surveyno", surveyno);
+                 ra.addAttribute("is_continue", is_continue);
+                 ra.addAttribute("now_page", now_page);
+                 
+                 return "survey/list_by_surveyno_admin";
           } else {
-              // 콘텐츠가 있을 경우 cate/list_all_delete.html로 이동하여 확인 요청
-              ArrayList<ItemVO> list_item = itemProc.list_all_com(surveyno); // 해당 카테고리의 콘텐츠 리스트 불러오기
-              model.addAttribute("list_item", list_item);
-//              model.addAttribute("cnt", cnt);
-              model.addAttribute("is_continue", is_continue);
-              model.addAttribute("now_page", now_page);
-              model.addAttribute("memberno", memberno);
-              return "/survey/list_all_delete"; // cate/list_all_delete.html로 이동
+              return "redirect:/member/login_cookie_need";  // 권한 없을 때 로그인 페이지로 리다이렉트
           }
-      } else {
-          return "redirect:/member/login_cookie_need";  // 권한 없을 때 로그인 페이지로 리다이렉트
       }
+
+
   }
 
-
 }
-
