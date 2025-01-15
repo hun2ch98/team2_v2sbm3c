@@ -426,7 +426,6 @@ public class MemberCont {
     
     JSONObject json = new JSONObject();
     json.put("cnt", cnt);
-    System.out.println("cnt -> : " + cnt);
     System.out.println(json.toString());
     
     return json.toString();
@@ -445,7 +444,6 @@ public class MemberCont {
       @RequestParam(value = "current_passwd", defaultValue = "") String current_passwd,
       @RequestParam(value = "passwd", defaultValue = "") String passwd) {
     
-    System.out.println("asdf");
     if (this.memberProc.isMember(session)) {
       int memberno = (int) session.getAttribute("memberno");
       HashMap<String, Object> map = new HashMap<String, Object>();

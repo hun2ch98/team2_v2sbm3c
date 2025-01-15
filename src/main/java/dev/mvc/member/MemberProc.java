@@ -180,6 +180,19 @@ public class MemberProc implements MemberProcInter {
     return cnt;
   }
   
+  /**
+   * 비밀번호 찾기에서 복구키 인증 성공 후 비밀번호 변경 처리
+   */
+  @Override
+  public int update_passwd(HashMap<String, String> map) {
+    String passwd = (String)map.get("passwd");
+    passwd = this.security.aesEncode(passwd);
+    map.put("passwd", passwd);
+    
+    int cnt = this.memberDAO.update_passwd(map);
+    return cnt;
+  }
+  
   /** 아이디 찾기 -> 이름, 이메일 일치하는 회원 검사 */
   @Override
   public String find_id_check(HashMap<String, String> map) {
@@ -189,9 +202,9 @@ public class MemberProc implements MemberProcInter {
   
   /** 비밀번호 찾기 -> 복구키 일치하는 회원 검사 */
   @Override
-  public String find_pw_check(HashMap<String, String> map) {
-    String recoveryKey = this.memberDAO.find_pw_check(map);
-    return recoveryKey;
+  public int find_pw_check(HashMap<String, String> map) {
+    int cnt = this.memberDAO.find_pw_check(map);
+    return cnt;
   }
   //----------------------------------------------------------------------------------
   // ~~~~~~ 로그인 및 패스워드 인증 관련 메서드 종료
