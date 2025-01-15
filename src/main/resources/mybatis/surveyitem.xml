@@ -106,11 +106,11 @@
     WHERE r BETWEEN #{start_num} AND #{end_num}
   </select>
   
-  <!-- 설문조사한 회원 조회 -->
+  <!-- 항목 개수 조회 -->
   <select id="count_survey" resultType="int" parameterType="int">
     SELECT COUNT(*) as cnt 
     FROM surveyitem 
-    WHERE itemno=#{itemno} AND memberno=#{memberno}
+    WHERE surveyno=#{surveyno}
   </select>
   
   <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->
