@@ -56,29 +56,6 @@ public class PartCont {
   }
   
   /**
-   * 등록
-   * @param session
-   * @param surveygoodVO
-   * @return
-   */
-  @PostMapping(value="/create")
-  @ResponseBody
-  public String create(HttpSession session, @RequestBody PartVO partVO) {
-    System.out.println("-> 수신 데이터: " + partVO.toString());
-    
-    int memberno = 2;
-//    int memberno = (int)session.getAttribute("memberno");
-    partVO.setMemberno(memberno);
-    
-    int cnt = this.partProc.create(partVO);
-    
-    JSONObject json = new JSONObject();
-    json.put("res", cnt);
-    
-    return json.toString();
-  }
-  
-  /**
    * 목록
    * @param model
    * @return

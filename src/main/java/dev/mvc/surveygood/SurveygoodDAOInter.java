@@ -3,6 +3,8 @@ package dev.mvc.surveygood;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dev.mvc.participants.ItemMemberPartVO;
+
 public interface SurveygoodDAOInter {
   
   /**
@@ -51,4 +53,20 @@ public interface SurveygoodDAOInter {
    * @return
    */
   public ArrayList<SurveySurveygoodMemberVO> list_all_join();
+  
+  /**
+   * 검색 개수
+   * @param Map
+   * @return
+   */
+  public int count_search(HashMap<String, Object> Map);
+  
+  /**
+   * 검색 + 페이징
+   * @param Map
+   * @return
+   */
+  public ArrayList<ItemMemberPartVO> list_search_paging(HashMap<String, Object> Map);
+
+  
 }
