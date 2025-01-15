@@ -28,6 +28,9 @@ public class ItemVO {
   /** 설문조사 번호 */
   private int surveyno;
   
+  /** 회원 번호 */
+  private int memberno;
+  
   /** 항목 출력 순서 */
   private int item_seq;
   

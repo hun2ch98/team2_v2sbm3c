@@ -175,11 +175,11 @@ public class ItemCont {
    */
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
-                                  @RequestParam(name = "surveyno", defaultValue = "") int surveyno,
+                                  @RequestParam(name = "surveyno", defaultValue = "1") int surveyno,
                                   @RequestParam(name = "itemno", defaultValue = "0") int itemno,
                                   @RequestParam(name = "word", defaultValue = "") String word,
                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    
+//      System.out.println("surveyno: " + surveyno);
       model.addAttribute("surveyno", surveyno);
 
       model.addAttribute("itemno", itemno);
@@ -187,8 +187,8 @@ public class ItemCont {
       if (this.memberProc.isMemberAdmin(session)) {
         
         int record_per_page = 3;
-        int startRow = (now_page - 1) * record_per_page + 1;
-        int endRow = now_page * record_per_page;
+        int start_num = (now_page - 1) * record_per_page + 1;
+        int end_num = now_page * record_per_page;
         
         ArrayList<ItemVO> list_s = this.itemProc.list_member(surveyno);
         model.addAttribute("list_s", list_s);
@@ -206,11 +206,15 @@ public class ItemCont {
         map.put("surveyno", surveyno);
         map.put("word", word);
         map.put("now_page", now_page);
-        map.put("startRow", startRow);
-        map.put("endRow", endRow);
+        map.put("start_num", start_num);
+        map.put("end_num", end_num);
+        
+        int totalCount = this.itemProc.count_survey(surveyno);
+        model.addAttribute("totalCount", totalCount);
         
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
 //        System.out.println("-> listsize: " + list.size());
+//        System.out.println("-> word: " + word);
         model.addAttribute("list", list);
         
         // --------------------------------------------------------------------------------------

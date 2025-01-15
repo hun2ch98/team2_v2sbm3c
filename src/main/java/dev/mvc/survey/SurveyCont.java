@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dev.mvc.contents.Contents;
-import dev.mvc.contents.ContentsVO;
 import dev.mvc.log.LogProcInter;
 import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
@@ -639,69 +637,47 @@ public class SurveyCont {
   /**
    * 삭제 처리
    */
+  /**
+   * 삭제 처리
+   */
   @PostMapping(value = "/delete")
-  public String delete_process(HttpSession session, Model model, HttpServletRequest request,
-                               @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-                               @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
-                               @RequestParam(name = "now_page", defaultValue = "") int now_page, 
-                               RedirectAttributes ra) {
-
-    int memberno = (int) session.getAttribute("memberno");
+  public String deleteProcess(HttpSession session, Model model,
+                              @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                              RedirectAttributes ra) {
       // 관리자 권한 확인
-      if (this.memberProc.isMemberAdmin(session)) {
-       
-          System.out.println("-> delete_process");
-
-          SurveyVO surveyVO = this.surveyProc.read(surveyno); // 삭제 전에 레코드 조회
-          model.addAttribute("surveyVO", surveyVO);
-          
-          // -------------------------------------------------------------------
-          // 파일 삭제 시작
-          // -------------------------------------------------------------------
-          // 삭제할 파일 정보를 읽어옴.
-          SurveyVO surveyVO_read = surveyProc.read(surveyno);
-              
-          String file1saved = surveyVO_read.getFile1saved();
-          String thumb1 = surveyVO_read.getThumb1();
-          
-          String uploadDir = Survey.getUploadDir();
-          Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
-          Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
-          // -------------------------------------------------------------------
-          // 파일 삭제 종료
-          // -------------------------------------------------------------------
-
-          HashMap<String, Object> map = new HashMap<String, Object>();
-          // 카테고리에 속한 콘텐츠 개수 확인
-          int cnt = this.surveyProc.cntcount(surveyno); // 해당 카테고리 내 콘텐츠 수
-
-          if (cnt == 0) {
-              // 콘텐츠가 없으면 카테고리만 삭제
-              int deleteCnt = this.surveyProc.delete(surveyno);
-              System.out.println("-> deleteCnt: " + deleteCnt);
-
-              if (deleteCnt == 1) {
-                  ra.addAttribute("is_continue", is_continue); // redirect로 데이터 전송
-
-                  // 마지막 페이지에서 모든 레코드가 삭제되면 페이지수를 1 감소 시켜야 함.
-                  if(this.surveyProc.cntcount(surveyno) % Survey.RECORD_PER_PAGE == 0)
-                      now_page = now_page - 1;
-                      if (now_page < 1) {
-                          now_page = 1; // 최소 시작 페이지
-                      }
-                  }
-
-                 ra.addAttribute("surveyno", surveyno);
-                 ra.addAttribute("is_continue", is_continue);
-                 ra.addAttribute("now_page", now_page);
-                 
-                 return "survey/list_by_surveyno_admin";
-          } else {
-              return "redirect:/member/login_cookie_need";  // 권한 없을 때 로그인 페이지로 리다이렉트
-          }
+      if (!this.memberProc.isMemberAdmin(session)) {
+          return "redirect:/member/login_cookie_need";
       }
 
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      if (surveyVO == null) {
+          return "redirect:/survey/list_by_surveyno_admin"; // 설문조사가 없는 경우 목록으로 이동
+      }
 
+      model.addAttribute("surveyVO", surveyVO);
+
+      // 파일 삭제 로직
+      String file1saved = surveyVO.getFile1saved();
+      String thumb1 = surveyVO.getThumb1();
+      String uploadDir = Survey.getUploadDir();
+
+      if (file1saved != null && !file1saved.isEmpty()) {
+          Tool.deleteFile(uploadDir, file1saved); // 실제 파일 삭제
+      }
+
+      if (thumb1 != null && !thumb1.isEmpty()) {
+          Tool.deleteFile(uploadDir, thumb1); // 썸네일 삭제
+      }
+
+      // 삭제 처리
+      int deleteCnt = this.surveyProc.delete(surveyno);
+      System.out.println("-> deleteCnt: " + deleteCnt);
+
+      // 삭제 완료 후 목록으로 리다이렉트
+      ra.addAttribute("surveyno", surveyno);
+      return "redirect:/survey/list_by_surveyno_admin";
   }
 
+
 }
+

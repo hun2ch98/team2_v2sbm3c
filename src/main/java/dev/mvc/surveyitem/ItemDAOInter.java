@@ -89,7 +89,7 @@ public interface ItemDAOInter {
    * @param surveyno
    * @return
    */  
-  public int count_survey(int itemno, int memberno);
+  public int count_survey(int surveyno);
   
   /**
    * 특정 레코드 삭제

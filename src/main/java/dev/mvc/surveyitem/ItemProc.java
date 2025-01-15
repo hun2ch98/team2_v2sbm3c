@@ -91,19 +91,7 @@ public class ItemProc implements ItemProcInter{
   
   @Override
   public ArrayList<ItemVO> list_search_paging(int surveyno, String word, int now_page, int record_per_page) {
-    /*
-     페이지당 10개의 레코드 출력
-     1 page: WHERE r >= 1 AND r <= 10
-     2 page: WHERE r >= 11 AND r <= 20
-     3 page: WHERE r >= 21 AND r <= 30
-     
-     now_page 1: WHERE r >= 1 AND r <= 10
-     now_page 2: WHERE r >= 11 AND r <= 20
-     now_page 3: WHERE r >= 21 AND r <= 30
-     
-     int start_num = (now_page - 1) * record_per_page;
-     int end_num=start_num + record_per_page;
-     */
+
 
     int start_num = ((now_page - 1) * record_per_page) + 1;
     int end_num=(start_num + record_per_page) - 1;
@@ -116,12 +104,7 @@ public class ItemProc implements ItemProcInter{
     map.put("start_num", start_num);
     map.put("end_num", end_num);
     
-//    System.out.println("->word : " + word);
-//    System.out.println("->surveyno: " + surveyno);
-//    System.out.println("->now_page: " + now_page);
-//    System.out.println("->record_per_page: " + record_per_page);
-//    System.out.println("->start_num: " + start_num);
-//    System.out.println("->end_num: " + end_num);
+
     
     ArrayList<ItemVO> list = this.itemDAO.list_search_paging(map);
     // System.out.println("-> " + list.size());
@@ -197,7 +180,7 @@ public class ItemProc implements ItemProcInter{
     // 현재 3그룹일 경우: (3 - 1) * 10 = 2그룹의 마지막 페이지 20
     int _now_page = (now_grp - 1) * page_per_block;  
     if (now_grp >= 2){ // 현재 그룹번호가 2이상이면 페이지수가 11페이지 이상임으로 이전 그룹으로 갈수 있는 링크 생성 
-      str.append("<span class='span_box_1'><a href='"+list_file_name+"?&word="+word+"&now_page="+_now_page+"'>이전</a></span>"); 
+      str.append("<span class='span_box_1'><a href='"+list_file_name+"?surveyno=" + surveyno +"?&word="+word+"&now_page="+_now_page+"'>이전</a></span>"); 
     } 
  
     // 중앙의 페이지 목록
@@ -210,7 +193,7 @@ public class ItemProc implements ItemProcInter{
         str.append("<span class='span_box_2'>"+i+"</span>"); // 현재 페이지, 강조 
       }else{
         // 현재 페이지가 아닌 페이지는 이동이 가능하도록 링크를 설정
-        str.append("<span class='span_box_1'><a href='"+list_file_name+"?word="+word+"&now_page="+i+"'>"+i+"</a></span>");   
+        str.append("<span class='span_box_1'><a href='"+list_file_name+"?surveyno=" + surveyno +"?word="+word+"&now_page="+i+"'>"+i+"</a></span>");   
       } 
     } 
  
@@ -221,7 +204,7 @@ public class ItemProc implements ItemProcInter{
     // 현재 페이지 25일경우 -> 현재 3그룹: (3 * 10) + 1 = 4그룹의 시작페이지 31
     _now_page = (now_grp * page_per_block)+1; //  최대 페이지수 + 1 
     if (now_grp < total_grp){ 
-      str.append("<span class='span_box_1'><a href='"+list_file_name+"?&word="+word+"&now_page="+_now_page+"'>다음</a></span>"); 
+      str.append("<span class='span_box_1'><a href='"+list_file_name+"?surveyno=" + surveyno +"?&word="+word+"&now_page="+_now_page+"'>다음</a></span>"); 
     } 
     str.append("</div>"); 
      
@@ -229,8 +212,8 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public int count_survey(int itemno, int memberno) {
-    int cnt = this.itemDAO.count_survey(itemno, memberno);
+  public int count_survey(int surveyno) {
+    int cnt = this.itemDAO.count_survey(surveyno);
     return cnt;
   }
 
