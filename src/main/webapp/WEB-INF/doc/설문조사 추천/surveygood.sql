@@ -8,7 +8,7 @@ CREATE TABLE surveygood (
   rdate         DATE          NOT NULL, -- 등록 날짜
   memberno      NUMBER(10)     NOT NULL , -- FK
   FOREIGN KEY (memberno) REFERENCES member (memberno),-- 일정을 등록한 관리자 
-  FOREIGN KEY (surveyno) REFERENCES survey (surveyno)
+  FOREIGN KEY (surveyno) REFERENCES survey (surveyno) ON DELETE CASCADE
 );
 
 DROP SEQUENCE surveygood_seq;

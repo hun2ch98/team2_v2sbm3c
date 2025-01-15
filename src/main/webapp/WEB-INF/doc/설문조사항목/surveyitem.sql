@@ -13,7 +13,7 @@ CREATE TABLE surveyitem (
     item_seq    NUMBER(5)       NOT NULL,
     item        VARCHAR2(200)   NOT NULL,
     item_cnt    NUMBER(7)       DEFAULT 0    NULL,
-    FOREIGN KEY (surveyno)  REFERENCES survey (surveyno),
+    FOREIGN KEY (surveyno)  REFERENCES survey (surveyno) ON DELETE CASCADE,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 

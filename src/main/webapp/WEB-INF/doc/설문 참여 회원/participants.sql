@@ -9,7 +9,7 @@ CREATE TABLE participants(
     pdate              DATE         NOT NULL,
     itemno             NUMBER(10)   NOT NULL ,
     memberno           NUMBER(10)   NOT NULL ,
-    FOREIGN KEY (itemno) REFERENCES surveyitem (itemno),
+    FOREIGN KEY (itemno) REFERENCES surveyitem (itemno) ON DELETE CASCADE,
     FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
