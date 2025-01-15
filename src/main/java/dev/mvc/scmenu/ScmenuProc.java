@@ -1,40 +1,36 @@
-package dev.mvc.learningdata;
+package dev.mvc.scmenu;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 //알고리즘 구현
-@Component("dev.mvc.learningdata.LearningdataProc")
-public class LearningdataProc implements LearningdataProcInter{
+@Component("dev.mvc.scmenu.ScmenuProc")
+public class ScmenuProc implements ScmenuProcInter{
+	@Autowired // ScmenuVOInter를 구현한 클래스의 객체를 자동으로 생성하여 ScmenuVO 객체에 할당
+	private ScmenuDAOInter scmenuDAO;
 	
-	@Autowired // LearningdataVOInter를 구현한 클래스의 객체를 자동으로 생성하여 LearningdataVO 객체에 할당
-	private LearningdataDAOInter learningdataDAO;
-	
-	public LearningdataProc() {
-	    System.out.println("-> LearningdataProc created.");
+	public ScmenuProc() {
+	    System.out.println("-> ScmenuProc created.");
 	}
 	
 	@Override
-	public int create(LearningdataVO learningdataVO) {
-	    int cnt = this.learningdataDAO.create(learningdataVO);
+	public int create(ScmenuVO scmenuVO) {
+	    int cnt = this.scmenuDAO.create(scmenuVO);
 	    return cnt;
 	}
 	
 	@Override
-	public ArrayList<LearningdataVO> list_all() {
-	    ArrayList<LearningdataVO> list = this.learningdataDAO.list_all();
+	public ArrayList<ScmenuVO> list_all() {
+	    ArrayList<ScmenuVO> list = this.scmenuDAO.list_all();
 	    return list;
 	}
 	
 	@Override
-	public ArrayList<LearningdataVO> list_by_datano(int datano) {
-	  ArrayList<LearningdataVO> list = this.learningdataDAO.list_by_datano(datano);
+	public ArrayList<ScmenuVO> list_by_menuno(int menuno) {
+	  ArrayList<ScmenuVO> list = this.scmenuDAO.list_by_menuno(menuno);
 	  return list;
 	}
 	
@@ -42,13 +38,13 @@ public class LearningdataProc implements LearningdataProcInter{
 	 * 조회
 	 */
 	@Override
-	public LearningdataVO read(int datano) {
-	  LearningdataVO LearningdataVO = this.learningdataDAO.read(datano);
-	  return LearningdataVO;
+	public ScmenuVO read(int menuno) {
+	  ScmenuVO ScmenuVO = this.scmenuDAO.read(menuno);
+	  return ScmenuVO;
 	}
 	
 	@Override
-	public ArrayList<LearningdataVO> list_by_datano_search_paging(HashMap<String, Object> map) {
+	public ArrayList<ScmenuVO> list_by_menuno_search_paging(HashMap<String, Object> map) {
 	  // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
 	  int now_page = (int) map.get("now_page");
 	  int record_per_page = 5; // 페이지당 레코드 수
@@ -61,7 +57,7 @@ public class LearningdataProc implements LearningdataProcInter{
 	  map.put("endRow", endRow);
 	
 	  // 데이터베이스 쿼리 실행
-	      ArrayList<LearningdataVO> list = this.learningdataDAO.list_by_datano_search_paging(map);
+	      ArrayList<ScmenuVO> list = this.scmenuDAO.list_by_menuno_search_paging(map);
 	      return list;
 	    }
 	   
@@ -145,34 +141,27 @@ public class LearningdataProc implements LearningdataProcInter{
     }
 
 	@Override
-	public int count_by_datano_search(HashMap<String, Object> map) {
-	  int cnt = this.learningdataDAO.count_by_datano_search(map);
+	public int count_by_menuno_search(HashMap<String, Object> map) {
+	  int cnt = this.scmenuDAO.count_by_menuno_search(map);
 	  return cnt;
 	}
 	
 	@Override
-	public ArrayList<LearningdataVO> list_by_datano_search(HashMap<String, Object> hashMap) {
-	  ArrayList<LearningdataVO> list = this.learningdataDAO.list_by_datano_search(hashMap);
+	public ArrayList<ScmenuVO> list_by_menuno_search(HashMap<String, Object> hashMap) {
+	  ArrayList<ScmenuVO> list = this.scmenuDAO.list_by_menuno_search(hashMap);
 	  return list;
 	}
 	
 	@Override
-	public int update_text(LearningdataVO learningdataVO) {
-	    int cnt = this.learningdataDAO.update_text(learningdataVO);
+	public int update_text(ScmenuVO scmenuVO) {
+	    int cnt = this.scmenuDAO.update_text(scmenuVO);
 	    return cnt;
 	}
 	
 	@Override
-	public int delete(int datano) {
-	    int cnt = this.learningdataDAO.delete(datano);
+	public int delete(int menuno) {
+	    int cnt = this.scmenuDAO.delete(menuno);
 	    return cnt;
 	}
 	
-	@Override
-	public ArrayList<LearningdataVO> findAll() {
-	    ArrayList<LearningdataVO> list = this.learningdataDAO.findAll();
-	    return list;
-	}
-
-
 }
