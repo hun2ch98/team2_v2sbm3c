@@ -236,16 +236,9 @@ public class IllustrationProc implements IllustrationProcInter {
 
 
     @Override
-    public ArrayList<DiaryIllustrationVO> list_calendar(Date date) {
-      ArrayList<DiaryIllustrationVO> list_calendar = this.illustrationDAO.list_calendar(date);
-      return list_calendar;
-    }
-
-
-    @Override
-    public ArrayList<DiaryIllustrationVO> list_calendar_day(Date date) {
-      ArrayList<DiaryIllustrationVO> list_calendar_day = this.illustrationDAO.list_calendar_day(date);
-      return list_calendar_day;
+    public ArrayList<IllustrationVO> get_illust(int diaryno) {
+      ArrayList <IllustrationVO> get_illust = this.illustrationDAO.get_illust(diaryno);
+      return get_illust;
     }
     
     

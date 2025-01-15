@@ -153,7 +153,7 @@ public class ItemCont {
         if(session.getAttribute("memberno") != null) {  // 회원인 경우만 카운트 처리
           int memberno = (int)session.getAttribute("memberno");
           map.put("memberno", memberno);
-          
+          model.addAttribute(memberno);
           heartCnt = this.surveygoodProc.heartCnt(map);
         } 
         
@@ -171,7 +171,7 @@ public class ItemCont {
         if(session.getAttribute("memberno") != null) {  // 회원인 경우만 카운트 처리
           int memberno = (int)session.getAttribute("memberno");
           map.put("memberno", memberno);
-          
+          model.addAttribute(memberno);
           updateCnt = this.partProc.updateCnt(map);
         } 
         

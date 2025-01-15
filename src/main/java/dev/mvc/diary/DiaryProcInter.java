@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import dev.mvc.schedule.ScheduleVO;
+
 public interface DiaryProcInter {
   /**
    * <pre>
@@ -13,7 +15,7 @@ public interface DiaryProcInter {
    * @return
    */
   public int create(DiaryVO diaryVO);
-  
+  int create2(DiaryVO diaryVO);
   /**
    * 전체 목록
    * @return
@@ -110,6 +112,11 @@ public interface DiaryProcInter {
 
   int increaseCnt(int diaryno);
   
+  public ArrayList<DiaryVO> list_calendar(String date);
+  
+  public ArrayList<DiaryVO> list_calendar_day(String date);
+  
+ 
 }
 
 

@@ -62,7 +62,5 @@ public interface IllustrationProcInter {
   
   ArrayList<IllustrationVO> list_search(String title, String date);
   
-  public ArrayList<DiaryIllustrationVO> list_calendar(Date date);
-  
-  public ArrayList<DiaryIllustrationVO> list_calendar_day(Date date);
+  public ArrayList<IllustrationVO> get_illust(int diaryno);
 }
