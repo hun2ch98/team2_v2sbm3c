@@ -70,14 +70,19 @@
                 const diaryContainer = document.createElement("div");
                 diaryContainer.style.marginBottom = "10px";
                 diaryContainer.style.textAlign = "center";
+                
+                 // 제목을 클릭 시 이동
+                const titleLink = document.createElement("a");
+                titleLink.href = `/diary/read?diaryno=${item.diaryno}`;
+                titleLink.style.fontWeight = "bold";
+                titleLink.style.marginBottom = "5px";
+                titleLink.textContent = item.title;
+                diaryContainer.appendChild(titleLink);
     
-                const title = document.createElement("div");
-                title.textContent = item.title;
-                title.style.fontWeight = "bold";
-                title.style.marginBottom = "5px";
-                diaryContainer.appendChild(title);
-    
-                if (item.illust_thumb && item.illust_thumb.trim() !== "") {
+               // 썸네일 이미지를 클릭 시 이동
+              if (item.illust_thumb && item.illust_thumb.trim() !== "") {
+                  const thumbLink = document.createElement("a");
+                  thumbLink.href = `/diary/read?diaryno=${item.diaryno}`;
                   const thumbImg = document.createElement("img");
                   thumbImg.src = `/upload/${item.illust_thumb}`;
                   thumbImg.alt = "Thumbnail";
@@ -85,8 +90,9 @@
                   thumbImg.style.height = "100px";
                   thumbImg.style.display = "block";
                   thumbImg.style.margin = "0 auto";
-                  diaryContainer.appendChild(thumbImg);
-                }
+                  thumbLink.appendChild(thumbImg);
+                  diaryContainer.appendChild(thumbLink);
+              }
     
                 contentDiv.appendChild(diaryContainer);
               }
