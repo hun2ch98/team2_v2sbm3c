@@ -24,18 +24,16 @@
     <colgroup>
       <col style='width: 10%;'/>
       <col style='width: 40%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 7.5%;'/>
-      <col style='width: 7.5%;'/>
-      <col style='width: 5%;'/>
+      <col style='width: 17%;'/>
+      <col style='width: 17%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
       <th class='th_bs'>주제</th>
       <th class='th_bs'>시작일</th>
       <th class='th_bs'>종료일</th>
-      <th class='th_bs'>참여인원</th>
       <th class='th_bs'>진행여부</th>
       <th class='th_bs'>기타</th>
     </tr>
@@ -69,9 +67,6 @@
       </td>
       <td class='td_left'>
         <span th:text="| ${surveyVO.edate.substring(0, 10)}|"></span>
-      </td>
-      <td class='td_left'>
-        <span th:text="| ${surveyVO.s_number}|"></span>
       </td>
       <td class='td_left'>
         <span th:text="| ${surveyVO.is_continue}|"></span>
