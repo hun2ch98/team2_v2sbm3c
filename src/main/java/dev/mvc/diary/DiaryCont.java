@@ -1,16 +1,27 @@
 package dev.mvc.diary;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberProcInter;
+import dev.mvc.schedule.ScheduleVO;
 import dev.mvc.diarygood.DiaryGoodProcInter;
 import dev.mvc.diarygood.DiaryGoodVO;
 import dev.mvc.emotion.EmotionProcInter;
@@ -126,11 +138,8 @@ public class DiaryCont {
                                   @RequestParam(name="emono", defaultValue="1") int emono, 
                                   @RequestParam(name="weatherno", defaultValue="1") int weatherno, 
                                   @RequestParam(name="summary", defaultValue="오늘의 일기") String summary) {
-    // create method에 사용될 테이블
-    // summary를 가져올 테이블
+
     DiaryVO diaryVO = new DiaryVO();
-//    EmotionVO emotionVO = new EmotionVO();
-//    WeatherVO weatherVO = new WeatherVO();
 
     ArrayList<EmotionVO> emotions = this.emotionProc.image_list();
     ArrayList<WeatherVO> weathers = this.weatherProc.image_list();
@@ -161,67 +170,39 @@ public class DiaryCont {
    * @param bindingResult 폼에 에러가 있는지 검사 지원
    * @return
    */
-  // contentCont의 create 처리 과정보고 추가해야함. 
-//  @PostMapping(value = "/create")
-//  public String create(Model model, HttpSession session, HttpServletRequest request,
-//                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
-//                       BindingResult bindingResult, RedirectAttributes ra) {
-//    Integer memberno = (Integer) session.getAttribute("memberno");
-//      if (bindingResult.hasErrors()) { 
-//          // 에러 발생 시 폼으로 돌아가기
-//        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-//        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-//        return "/diary/create";
-//      }
-//
-//      // 제목 및 내용 트림 처리
-//      diaryVO.setTitle(diaryVO.getTitle().trim());
-//      diaryVO.setSummary(diaryVO.getSummary().trim());
-//      diaryVO.setEmono(diaryVO.getEmono());
-//      diaryVO.setWeatherno(diaryVO.getWeatherno());
-//      
-//
-//      // ddate 설정
-//      if (diaryVO.getDdate() == null) {
-//          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
-//      }
-//
-//      // 세션에서 memberno 가져오기
-//      
-//      if (memberno == null) {
-//          ra.addFlashAttribute("message", "로그인이 필요합니다.");
-//          return "/member/login_cookie_need";
-//      }
-//      diaryVO.setMemberno(memberno);
-//
-//      // DB 저장 로직 호출
-//      int cnt = diaryProc.create(diaryVO);
-//      System.out.println("-> create_cnt: " + cnt);
-//
-//      if (cnt == 1) {
-//        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
-//        return "redirect:/diary/list_by_diaryno_search_paging";
-//      } else {
-//        model.addAttribute("code", "create_fail");
-//        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
-//        return "/diary/msg";
-//      }
-//  }
+   // contentCont의 create 처리 과정보고 추가해야함. 
+  @PostMapping(value = "/create")
+  public String create(Model model, HttpSession session, HttpServletRequest request,
+                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+                       BindingResult bindingResult, RedirectAttributes ra) {
+    Integer memberno = (Integer) session.getAttribute("memberno");
+      if (bindingResult.hasErrors()) { 
+          // 에러 발생 시 폼으로 돌아가기
+        bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+        logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+        return "/diary/create";
+      }
 
-  
-  @PostMapping("/create")
-  public String createDiaryAndIllustration(@ModelAttribute DiaryVO diaryVO,
-                                           @RequestParam(value = "illustMF", required = false) MultipartFile illustMF,
-                                           RedirectAttributes ra, HttpSession session, HttpServletRequest request) {
-      Integer memberno = (Integer) session.getAttribute("memberno");
+      // 제목 및 내용 트림 처리
+      diaryVO.setTitle(diaryVO.getTitle().trim());
+      diaryVO.setSummary(diaryVO.getSummary().trim());
+      diaryVO.setEmono(diaryVO.getEmono());
+      diaryVO.setWeatherno(diaryVO.getWeatherno());
+      
 
+      // ddate 설정
+      if (diaryVO.getDdate() == null) {
+          diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
+      }
+
+      // 세션에서 memberno 가져오기
+      
       if (memberno == null) {
           ra.addFlashAttribute("message", "로그인이 필요합니다.");
           return "/member/login_cookie_need";
       }
-
       diaryVO.setMemberno(memberno);
-      
+
       // Diary 저장
       int diaryCnt = diaryProc.create(diaryVO);
 
@@ -253,17 +234,24 @@ public class DiaryCont {
           }
 
 
-              ra.addFlashAttribute("code", "diary_with_illustration_success");
-          } catch (Exception e) {
-              e.printStackTrace();
-              ra.addFlashAttribute("code", "illustration_create_fail");
-          }
-      } else {
-          ra.addFlashAttribute("code", "diary_create_fail");
-      }
 
-      return "redirect:/diary/list_by_diaryno_search_paging";
+      // DB 저장 로직 호출
+      int cnt = diaryProc.create(diaryVO);
+      System.out.println("-> create_cnt: " + cnt);
+
+      if (cnt == 1) {
+        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+        return "redirect:/diary/list_by_diaryno_search_paging";
+      } else {
+        model.addAttribute("code", "create_fail");
+        logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+        return "/diary/msg";
+      }
   }
+
+  
+
+
 
 
 
@@ -560,6 +548,81 @@ public class DiaryCont {
     }
   }
 
+  /**
+   * 특정 날짜의 목록
+   * @param session
+   * @param model
+   * @param date
+   * @return
+   */
+  @GetMapping(value="/list_calendar")
+  public String list_calendar(HttpSession session, Model model, 
+      @RequestParam(name="year", defaultValue="0") int year, 
+      @RequestParam(name="month", defaultValue="0") int month) {
 
+      if (year == 0) {
+        // 현재 날짜를 가져옴
+        LocalDate today  = LocalDate.now();
+        
+        //연도와 월을 추출
+        year = today.getYear();
+        month = today.getMonthValue();
+      }
+      
+      String month_str = String.format("%02d", month); // 두 자리 형식으로
+    //System.out.println("-> month: " + month_str);
   
+    String date = year + "-" + month;
+//    System.out.println("-> date: " + date);
+    
+    model.addAttribute("year", year);
+    model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
+      
+    return "/diary/list_calendar"; // /templates/calendar/list_calendar.html
+  }
+  
+  
+  /**
+   * 특정 날짜의 목록
+   * 
+   * @param model
+   * @return
+   */
+  // http://localhost:9091/calendar/list_calendar_day?labeldate=2025-01-03
+  @GetMapping(value = "/list_calendar_day")
+  @ResponseBody
+  public String list_calendar_day(Model model, @RequestParam(name="ddate", defaultValue = "") Date ddate) {
+  
+    // 원하는 포맷 설정
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    // Date를 String으로 변환
+    String formattedDate = sdf.format(ddate);
+    ArrayList<DiaryVO> list = this.diaryProc.list_calendar_day(formattedDate);
+    model.addAttribute("list", list);
+
+    JSONArray diary_list = new JSONArray();
+    
+    for (DiaryVO diaryVO: list) {
+        JSONObject diaries = new JSONObject();
+        diaries.put("diaryno", diaryVO.getDiaryno());
+        diaries.put("ddate", sdf.format(diaryVO.getDdate()));
+        diaries.put("title", diaryVO.getTitle());
+        
+        ArrayList<IllustrationVO> get_illust = illustrationProc.get_illust(diaryVO.getDiaryno());
+        int size = get_illust.size();
+        
+        if (size == 0) {
+          diaries.put("illust_thumb", "");
+        } else {
+          diaries.put("illust_thumb", get_illust.get(0).getIllust());
+        }
+        
+        diary_list.put(diaries);
+        
+    }
+
+    return diary_list.toString();
+    
+  }
 }

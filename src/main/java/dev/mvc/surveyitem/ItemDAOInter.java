@@ -105,12 +105,6 @@ public interface ItemDAOInter {
    */
   public int count_result(int itemno);
   
-  /**
-   * 설문 참여 회원 결과 총합
-   * @param surveyno
-   * @return
-   */
-  public int count_sum(int surveyno);
 
 
 }

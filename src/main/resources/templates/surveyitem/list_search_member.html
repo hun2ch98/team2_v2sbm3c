@@ -100,7 +100,9 @@
           </tbody>
       </table>
       <div style="text-align: center; margin-top: 15px;">
-          <button type="submit" class="btn btn-primary">참여</button>
+          <button type="submit" class="btn btn-secondary btn-sm">참여</button>
+          <button type="button" th:onclick="|location.href='/surveyitem/result_admin?surveyno=${surveyVO.surveyno}'|" class="btn btn-secondary btn-sm">결과</button>
+          <button type="button" th:onclick="|location.href='/surveyitem/survey_chart?surveyno=${surveyVO.surveyno}'|" class="btn btn-secondary btn-sm">차트보기</button>
       </div>
     </form>
   </div>

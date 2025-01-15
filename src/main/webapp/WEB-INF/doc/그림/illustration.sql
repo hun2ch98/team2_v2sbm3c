@@ -92,3 +92,7 @@ FROM (
 )
 WHERE rnum BETWEEN 1 AND 10;
 
+
+SELECT * 
+FROM illustration 
+WHERE diaryno = 70;

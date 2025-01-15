@@ -109,6 +109,13 @@ public interface MemberProcInter {
    * @return 변경된 패스워드 갯수
    */
   public int passwd_update(HashMap<String, Object> map);
+  
+  /**
+   * 복구키 검증 성공 시 비밀번호 수정 처리
+   * @param map
+   * @return
+   */
+  public int update_passwd(HashMap<String, String> map);
 
   /**
    * 이메일, 이름 입력받아서 일치하는 회원이 있는지 검사
@@ -123,5 +130,5 @@ public interface MemberProcInter {
    * @param memberVO
    * @return
    */
-  public String find_pw_check(HashMap<String, String> map);
+  public int find_pw_check(HashMap<String, String> map);
 }

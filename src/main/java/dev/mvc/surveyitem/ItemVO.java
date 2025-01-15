@@ -36,5 +36,14 @@ public class ItemVO {
   
   /** 항목 선택 인원 */
   private int item_cnt=0;
+  
+  public ItemVO() {
+    
+  }
+  
+  public ItemVO(String item, int item_cnt) {
+    this.item = item;
+    this.item_cnt = item_cnt;
+  }
 
 }

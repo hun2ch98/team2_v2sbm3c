@@ -45,6 +45,11 @@
     DELETE FROM surveyitem WHERE itemno=#{itemno}
   </delete>
   
+  <!-- 삭제 
+  <delete id="delete_item" parameterType="int">
+    DELETE FROM surveyitem WHERE itemno=#{itemno}
+  </delete>-->
+  
   <!-- 설문조사 참여 수 -->
   <update id="update_cnt" parameterType="int">
     UPDATE surveyitem
@@ -121,13 +126,5 @@
     WHERE itemno=#{itemno}
   </select>
   
-    <!-- 설문 참여 회원 결과 총합 -->
-  <select id="count_sum" parameterType="int">
-    SELECT surveyno, SUM(item_cnt) AS total_participants
-    FROM surveyitem
-    WHERE surveyno = #{surveyno}
-    GROUP BY surveyno
-  </select>
-
   
 </mapper>
