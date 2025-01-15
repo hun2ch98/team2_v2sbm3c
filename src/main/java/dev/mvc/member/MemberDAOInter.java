@@ -96,26 +96,18 @@ public interface MemberDAOInter {
    */
   public int passwd_update(HashMap<String, Object> map);
   
-//  /**
-//   * 문자 인증 성공 시 비밀번호 수정 처리
-//   * @param map
-//   * @return 수정한 비밀번호 개수
-//   */
-//  public int update_passwd_find(HashMap<String, Object> map);
-  
   /**
-   * 이메일, 이름 입력받아서 일치하는 회원이 있는지 검사
+   * 아이디 찾기 -> 이메일, 이름이 일치하는 회원이 있는지 검사
    * @param email
    * @param name
-   * @return
+   * @return 찾은 id
    */
   public String find_id_check(HashMap<String, String> map);
   
-//  /**
-//   * 아이디, 이메일 입력받아서 일치하는 회원이 있는지 검사
-//   * @param id
-//   * @param email
-//   * @return
-//   */
-//  public int find_passwd(String id, String phone);
+  /**
+   * 비밀번호 찾기 -> 복구키가 일치하는 회원이 있는지 검사
+   * @param memberVO
+   * @return
+   */
+  public String find_pw_check(HashMap<String, String> map);
 }

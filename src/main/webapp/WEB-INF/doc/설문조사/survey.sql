@@ -164,6 +164,10 @@ SELECT COUNT(*)
 FROM surveyitem 
 WHERE surveyno = 14;
 
+SELECT COUNT(*)
+FROM surveyitem
+WHERE surveyno = 1 
+
 -- 추천
 UPDATE survey SET goodcnt=goodcnt+1 WHERE surveyno=12;
 

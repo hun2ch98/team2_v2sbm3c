@@ -120,6 +120,14 @@
     FROM participants 
     WHERE itemno=#{itemno}
   </select>
+  
+    <!-- 설문 참여 회원 결과 총합 -->
+  <select id="count_sum" parameterType="int">
+    SELECT surveyno, SUM(item_cnt) AS total_participants
+    FROM surveyitem
+    WHERE surveyno = #{surveyno}
+    GROUP BY surveyno
+  </select>
 
   
 </mapper>

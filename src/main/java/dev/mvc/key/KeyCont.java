@@ -1,4 +1,4 @@
-package dev.mvc.mail;
+package dev.mvc.key;
 
 import java.util.HashMap;
 
@@ -17,10 +17,10 @@ import dev.mvc.member.MemberProcInter;
 import dev.mvc.tool.MailTool;
 
 @Controller
-@RequestMapping("/mail")
-public class MailCont {
-  public MailCont() {
-    System.out.println("-> MailCont created.");
+@RequestMapping("/key")
+public class KeyCont {
+  public KeyCont() {
+    System.out.println("-> KeyCont create.");
   }
   
   @Autowired
@@ -28,66 +28,57 @@ public class MailCont {
   private MemberProcInter memberProc;
   
   /**
-   * 메일 입력 화면 -> http://localhost:9093/mail/form
+   * 복구키 입력 화면 -> http://localhost:9093/key/form
    * @param model
    * @return
    */
   @GetMapping(value = "/form")
   public String form(Model model) {
-    return "/mail/form";
+    return "/key/form";
   }
   
-  /**
-   * 아이디 찾이에서 가입 유무 확인 db 검증
-   * @param name
-   * @param phone
-   * @return
-   */
-  @GetMapping(value="/isExist") // http://localhost:9093/mail/isExist?name=name&phone=phone
+  
+  @GetMapping(value = "/isExist")
   @ResponseBody
-  public String isExist(@RequestParam(name="name", defaultValue = "")String name,
-                        @RequestParam(name="phone", defaultValue = "")String phone) {
+  public String isExist(@RequestParam(name = "name", defaultValue = "") String name,
+                        @RequestParam(name = "recovery_key", defaultValue = "") String recovery_key) {
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("name", name);
-    map.put("phone", phone);
+    map.put("recovery_key", recovery_key);
     
     System.out.println("-> name: " + name);
-    System.out.println("-> phone: " + phone);
+    System.out.println("-> recovery_key: " + recovery_key);
     
-    String id = this.memberProc.find_id_check(map);
-    
-    System.out.println("-> id: " + id);
+    String recoveryKey = this.memberProc.find_pw_check(map);
     
     JSONObject obj = new JSONObject();
-    obj.put("id", id);
+    obj.put("recovery_key", recoveryKey);
     
     return obj.toString();
   }
   
-  /**
-   * 메일 전송
-   * @param email
-   * @param name
-   * @param phone
-   * @return
-   */
+  
   @PostMapping(value = "/send")
   public String send(@RequestParam(name = "email", defaultValue = "") String email,
-                     @RequestParam(name = "name", defaultValue = "") String name,
-                     @RequestParam(name = "phone", defaultValue = "") String phone) {
+      @RequestParam(name = "name", defaultValue = "") String name,
+      @RequestParam(name = "recovery_key", defaultValue = "") String recovery_key) {
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("name", name);
-    map.put("phone", phone);
+    map.put("recovery_key", recovery_key);
     
-    String id = this.memberProc.find_id_check(map);
-    System.out.println("-> id :" + id);
+    String recoveryKey = this.memberProc.find_pw_check(map);
+    System.out.println("-> recovery_key : " + recoveryKey);
+    
+    // 비밀번호를 가져오는 로직
+    String password = this.memberProc.find_pw_check(map); // 실제 비밀번호를 가져옵니다.
+    System.out.println("-> password : " + password);
     
     String from = "skt3246@gmail.com";
-    String title = "[Hoak]" + name + " 회원님의 아이디입니다.";
-    String content = "[Hoak]" + name + "회원님의 아이디는 " + id + "입니다.";
+    String title = "[Hoak]" + name + " 회원님의 비밀번호입니다.";
+    String content = "[Hoak]" + name + "회원님의 비밀번호는 " + password + "입니다.";
     MailTool mailTool = new MailTool();
     mailTool.send(email, from, title, content); // 메일 전송
     
-    return "/mail/sended";
+    return "/key/sended";
   }
 }

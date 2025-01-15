@@ -1,6 +1,6 @@
 -- GPT ChatBot용 관리자 계정 추가
 INSERT INTO member(memberno, gradeno, id, passwd, email, name, birth, mdate, grade)
-VALUES (member_seq.nextval, 10, 'gpt', '1234', 'gpt@example.com', 'Chatting 관리자', '1990-01-01', sysdate, 1);
+VALUES (3, 10, 'gpt', '1234', 'gpt@example.com', 'Chatting 관리자', '1990-01-01', sysdate, 1);
 
 
 COMMIT;

@@ -221,7 +221,7 @@ public class DiaryCont {
       }
 
       diaryVO.setMemberno(memberno);
-
+      
       // Diary 저장
       int diaryCnt = diaryProc.create(diaryVO);
 
