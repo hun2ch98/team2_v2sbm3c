@@ -229,8 +229,8 @@ public class ItemProc implements ItemProcInter{
   }
   
   @Override
-  public int count_survey(HashMap<String, Object> map) {
-    int cnt = this.itemDAO.count_survey(map);
+  public int count_survey(int itemno, int memberno) {
+    int cnt = this.itemDAO.count_survey(itemno, memberno);
     return cnt;
   }
 
@@ -244,6 +244,12 @@ public class ItemProc implements ItemProcInter{
   @Override
   public int count_result(int itemno) {
     int cnt = this.itemDAO.count_result(itemno);
+    return cnt;
+  }
+
+  @Override
+  public int count_sum(int surveyno) {
+    int cnt = this.itemDAO.count_sum(surveyno);
     return cnt;
   }
 

@@ -19,8 +19,8 @@
   
   <!-- 회원 가입 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, gradeno, phone)
-      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade}, #{gradeno}, #{phone})
+      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, recovery_key, size1, mdate, grade, gradeno, phone)
+      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{recovery_key}, #{size1}, sysdate, #{grade}, #{gradeno}, #{phone})
   </insert>
   
   <!-- memberno로 회원 정보 조회 -->
@@ -35,69 +35,6 @@
     SELECT memberno, gradeno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, phone
     FROM member
     WHERE id = #{id}
-  </select>
-  
-  <!-- 회원 정보 수정 -->
-  <update id="update" parameterType="dev.mvc.member.MemberVO">
-    UPDATE member 
-    SET email=#{email}, name=#{name}, nickname=#{nickname}, phone=#{phone}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
-    WHERE memberno=#{memberno}
-  </update>
-  
-  <!-- 파일 수정 -->
-  <update id="update_file" parameterType="dev.mvc.member.MemberVO">
-    UPDATE member
-    SET pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
-    WHERE memberno = #{memberno}
-  </update> 
-  
-  <!-- 회원 탈퇴 -->
-  <delete id="unsub_delete" parameterType="dev.mvc.member.MemberVO">
-    UPDATE member
-    SET grade=99
-    WHERE memberno=#{memberno}
-  </delete>
-  
-  <!-- 로그인 처리 (1: 성공, 0: 실패) -->
-  <select id="login" resultType="int" parameterType="HashMap">
-    SELECT COUNT(memberno) as cnt
-    FROM member
-    WHERE id=#{id} AND passwd=#{passwd} AND grade &lt;= 90
-  </select>
-  
-  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 -->
-  <select id="passwd_check" parameterType="HashMap" resultType="int">
-    SELECT COUNT(memberno) as cnt
-    FROM member
-    WHERE memberno=#{memberno} AND passwd=#{passwd}
-  </select> 
-  
-  <!-- 회원 정보 수정(passwd) - 로그인 상태일 때-->
-  <update id="passwd_update" parameterType="HashMap">
-    UPDATE member
-    SET passwd=#{passwd}
-    WHERE memberno=#{memberno}
-  </update>
-
-  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때 -->
-  <update id="update_passwd_find" parameterType="HashMap">
-    UPDATE member
-    SET passwd=#{passwd}
-    WHERE id=#{id}
-  </update> 
-  
-  <!-- 아이디 찾기 회원 정보 일치 검증(name, email) -->
-  <select id="find_id_check" resultType="int" parameterType="HashMap">
-    SELECT COUNT(id) as cnt
-    FROM member
-    WHERE name=#{name} AND phone=#{phone}
-  </select> 
-  
-  <!-- 비밀번호 찾기 회원 정보 일치 검증(id, phone) -->
-  <select id="find_passwd_check" resultType="int" parameterType="String">
-    SELECT COUNT(id) as cnt
-    FROM member
-    WHERE id=#{id} AND phone=#{phone}
   </select>
   
   <!-- 회원 검색 목록 + 페이징 -->
@@ -143,5 +80,68 @@
         </choose>
       </if>
     </where>
+  </select>
+  
+  <!-- 회원 정보 수정 -->
+  <update id="update" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member 
+    SET email=#{email}, name=#{name}, nickname=#{nickname}, phone=#{phone}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}
+    WHERE memberno=#{memberno}
+  </update>
+  
+  <!-- 파일 수정 -->
+  <update id="update_file" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member
+    SET pf_img=#{pf_img}, file1saved=#{file1saved}, thumb1=#{thumb1}, size1=#{size1}
+    WHERE memberno = #{memberno}
+  </update> 
+  
+  <!-- 회원 탈퇴 -->
+  <delete id="unsub_delete" parameterType="dev.mvc.member.MemberVO">
+    UPDATE member
+    SET grade=99
+    WHERE memberno=#{memberno}
+  </delete>
+  
+  <!-- 로그인 처리 (1: 성공, 0: 실패) -->
+  <select id="login" resultType="int" parameterType="HashMap">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE id=#{id} AND passwd=#{passwd} AND grade &lt;= 90
+  </select>
+  
+  <!-- 비밀번호 변경 클릭 시 현재 패스워드 검사 -->
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(memberno) as cnt
+    FROM member
+    WHERE memberno=#{memberno} AND passwd=#{passwd}
+  </select> 
+  
+  <!-- 회원 정보 수정(passwd) - 로그인 상태일 때-->
+  <update id="passwd_update" parameterType="HashMap">
+    UPDATE member
+    SET passwd=#{passwd}
+    WHERE memberno=#{memberno}
+  </update>
+  
+  <!-- 비밀번호 변경 - 비밀번호 찾기에서 복구키 인증을 성공했을 때 -->
+  <update id="update_passwd" parameterType="HashMap">
+    UPDATE member
+    SET passwd=#{passwd}
+    WHERE id=#{id}
+  </update>
+  
+  <!-- 아이디 찾기 회원 정보 일치 검증(name, phone) -->
+  <select id="find_id_check" resultType="String" parameterType="HashMap">
+    SELECT id
+    FROM member
+    WHERE name=#{name} AND phone=#{phone}
+  </select>
+  
+  <!-- 비밀번호 찾기 회원 복구키 일치 검증(recovery_key) -->
+  <select id="find_pw_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(id) as cnt
+    FROM member
+    WHERE id=#{id} AND recovery_key=#{recovery_key}
   </select>
 </mapper>

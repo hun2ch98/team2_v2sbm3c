@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+  <div layout:fragment="content" style="width: 80%; margin: 50px auto; text-align: center;">
+    <div class="title_line">
+    설문조사 결과 > 
+    <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
+    </div>
+    <div id="chart_div" style='height: 500px;'></div>
+    
+    <script type="text/javascript">
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the column chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+        var data = google.visualization.arrayToDataTable([
+          ['항목', '참여 인원 수'],
+          ['주 5회 이상',  8],
+          ['주 3회 이상',  13],
+          ['자주 사용 안함',  2]
+        ]);
+
+        // Set chart options
+        var options = {
+          title: '설문조사 결과 차트',
+          hAxis: {title: '항목', titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0}
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </div>
+  
+</html>

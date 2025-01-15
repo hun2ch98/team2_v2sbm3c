@@ -192,9 +192,6 @@
                             <a class="nav-link" th:href="@{|/member/update_file|}">프로필 변경</a>
                         </li>
                         <li class="nav-item" th:if="${session.memberno != null}">
-                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀번호 변경</a>
-                        </li>
-                        <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/unsub_delete|}">회원 탈퇴</a>
                         </li>
                     </ul>

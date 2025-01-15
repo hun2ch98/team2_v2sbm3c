@@ -104,7 +104,7 @@ public interface ItemProcInter {
    * @param surveyno
    * @return
    */
-  public int count_survey(HashMap<String, Object> map);
+  public int count_survey(int itemno, int memberno);
   
   /**
    * 특정 레코드 삭제
@@ -119,6 +119,13 @@ public interface ItemProcInter {
    * @return
    */
   public int count_result(int itemno);
+  
+  /**
+   * 설문 참여 회원 결과 총합
+   * @param surveyno
+   * @return
+   */
+  public int count_sum(int surveyno);
 
 
 }

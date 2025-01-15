@@ -97,6 +97,16 @@ DELETE FROM surveyitem;
 
 DELETE FROM surveyitem WHERE itemno =13;
 
+SELECT surveyno, SUM(item_cnt) AS total_participants
+FROM surveyitem
+WHERE surveyno = 1
+GROUP BY surveyno;
+
+
+SELECT COUNT(*) as cnt 
+FROM surveyitem 
+WHERE surveyno=1;
+
 UPDATE surveyitem
 SET item_cnt = item_cnt + 1
 WHERE itemno = 5;

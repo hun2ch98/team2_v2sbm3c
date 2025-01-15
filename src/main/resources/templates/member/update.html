@@ -5,12 +5,6 @@
 <div layout:fragment="content">
   <script th:inline="javascript">
     window.onload = () => {
-      document.querySelector('#email').addEventListener('keypress', (event) => {
-        if(event.key === 'Enter') {
-          document.getElementById('btn_checkEMAIL').focus();
-        }
-      });
-      
       document.querySelector('#name').addEventListener('keypress', (event) => {
         if(event.key === 'Enter') {
           document.getElementById('nickname').focus();
@@ -19,9 +13,21 @@
       
       document.querySelector('#nickname').addEventListener('keypress', (event) => {
         if(event.key === 'Enter') {
-          document.getElementById('btn_DaumPostcode').focus();
+          document.getElementById('email').focus();
         }
       });
+      
+      document.querySelector('#email').addEventListener('keypress', (event) => {
+        if(event.key === 'Enter') {
+          document.getElementById('btn_checkEMAIL').focus();
+        }
+      });
+      
+      document.querySelector('#phone').addEventListener('keypress', (event) => {
+          if(event.key === 'Enter') {
+            document.getElementById('btn_DaumPostcode').focus();
+          }
+        }); 
       
       document.querySelector('#zipcode').addEventListener('keypress', (event) => {
         if(event.key === 'Enter') {
@@ -136,7 +142,7 @@
         return false;  // 업데이트 진행 중지
         
       }
-      /*
+
       let birth = document.getElementById('birth');
       let birth_msg = document.getElementById('birth_msg');
 
@@ -147,7 +153,18 @@
 
         return false;  // 회원 가입 진행 중지
       }
-      */
+      
+      let phone = document.getElementById('phone');
+      let phone_msg = document.getElementById('phone_msg');
+
+      if (phone.value.length <= 10) {
+        phone_msg.innerHTML= '전화번호 입력은 필수입니다.';
+        phone_msg.classList.add('span_warning');    // class 적용
+        phone.focus();
+
+        return false;  // 회원 가입 진행 중지
+      }
+
       let zipcode = document.getElementById('zipcode');
       let zipcode_msg = document.getElementById('zipcode_msg');
 
@@ -173,8 +190,6 @@
     <a href='/member/update' th:if="${session.id == memberVO.id}">회원정보 수정</a> 
     <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
     <a href='/member/update_file' th:if="${session.id == memberVO.id}">프로필 변경</a> 
-    <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
-    <a href='/member/passwd_update' th:if="${session.id == memberVO.id}">비밀번호 변경</a> 
     <span class='menu_divide' th:if="${session.id == memberVO.id}">│</span>
     <a href='/member/unsub_delete' th:if="${session.id == memberVO.id}">회원 탈퇴</a>
   </aside>
@@ -208,6 +223,14 @@
         <label for="tel">닉네임*</label>
         <input type='text' name='nickname' id='nickname' th:value='${memberVO.nickname}' required="required" 
                   placeholder="한글, 영문 및 숫자 최대 12자" maxlength="12" class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
+      </div>
+      
+      <div class="form-group">
+        <label for="tel">전화 번호*(-없이 입력해 주세요.)</label>
+        <input type='text' name='phone' id='phone' th:value='${memberVO.phone}' required="required" 
+                  placeholder="전화번호" class="form-control form-control-sm" style="width: 30%; padding: 0.375rem 0.75rem; border-radius: 0.25rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center; margin-left: 35%;">
+        <span id='phone_msg'></span>
+        예) 01012345678
       </div>
       
       <div class="form-group">

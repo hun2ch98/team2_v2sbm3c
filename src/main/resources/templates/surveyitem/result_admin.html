@@ -20,8 +20,8 @@
     <table class="table table-hover" style="width: 100%;">
       <colgroup>
         <col style='width: 10%;'/>
-        <col style='width: 50%;'/>
         <col style='width: 40%;'/>
+        <col style='width: 30%;'/>
       </colgroup>
       <thead>
         <tr>
@@ -35,7 +35,10 @@
           <td class="td_bs" th:text="${itemVO.itemno}"></td>
           <td class="td_bs" th:text="${itemVO.item}"></td>
           <td class="td_bs">
-            <span th:text="'참여 인원: ' + ${itemVO.item_cnt} + '명'"></span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="/survey/images/chart01.png" height="20px" 
+                 th:style="'width: ' + (${itemVO.item_cnt} * 10) + 'px;'"><span th:text="${itemVO.item_cnt} + '명'"></span>
+            </div>
           </td>
         </tr>
       </tbody>
