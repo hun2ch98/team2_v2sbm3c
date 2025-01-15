@@ -47,10 +47,10 @@ public class SurveyCont {
   private MemberProcInter memberProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
-  public int record_per_page = 7;
+  public int record_per_page = 10;
 
   /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
-  public int page_per_block = 7;
+  public int page_per_block = 10;
   
   /** 페이징 목록 주소 */
   private String list_file_name = "/survey/list_by_surveyno_search_paging";
@@ -261,17 +261,15 @@ public class SurveyCont {
   public String list_by_surveyno_search_paging(
       HttpSession session, 
       Model model, 
-      @ModelAttribute("surveyVO") SurveyVO surveyVO,
       @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMember(session)) { // 회원 로그인한 경우
 
-      int record_per_page = 10;
+      int record_per_page = 8;
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
-//      int memberno = 1;
       int memberno = (int)session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       if (memberVO == null) {
@@ -299,7 +297,7 @@ public class SurveyCont {
       String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, "/survey/list_by_surveyno_search_paging", search_count,
           Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
-      model.addAttribute("is_continue", is_continue);
+//      model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
 
@@ -324,17 +322,15 @@ public class SurveyCont {
   public String list_by_surveyno_admin(
       HttpSession session, 
       Model model, 
-      @ModelAttribute("surveyVO") SurveyVO surveyVO,
       @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인한 경우
 
-      int record_per_page = 10;
+      int record_per_page = 8;
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
-//      int memberno = 1;
       int memberno = (int)session.getAttribute("memberno");
       MemberVO memberVO = this.memberProc.read(memberno);
       if (memberVO == null) {
@@ -344,7 +340,7 @@ public class SurveyCont {
       }
       is_continue = Tool.checkNull(is_continue).trim();
       model.addAttribute("memberVO", memberVO);
-      model.addAttribute("surveyno", surveyno);
+//      model.addAttribute("surveyno", surveyno);
       model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
 
@@ -362,7 +358,6 @@ public class SurveyCont {
       String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, "/survey/list_by_surveyno_search_paging", search_count,
           Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
-      model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
 
@@ -601,7 +596,7 @@ public class SurveyCont {
   /**
    * 삭제폼 http://localhost:9091/cate/delete/1
    */
-  @GetMapping(value = "/delete/{surveyno}")
+  @GetMapping(value = "/list_all_delete")
   public String delete(HttpSession session, Model model, 
                                    @PathVariable("surveyno") int surveyno,
                                    @RequestParam(name = "itemno", defaultValue = "1") int itemno,
@@ -665,28 +660,28 @@ public class SurveyCont {
   /**
    * 카테고리 및 연관 자료 삭제 처리
    */
-  @PostMapping(value = "/list_all_delete")
-  public String deleteAllCategory(@RequestParam (name="surveyno", defaultValue="0") int surveyno,
-                                  @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-                                                       RedirectAttributes redirectAttributes) {
-    // 콘텐츠 삭제
-    itemProc.delete_survey(surveyno);
-    
-    // 카테고리 삭제
-    surveyProc.delete(surveyno);
-
-    redirectAttributes.addFlashAttribute("msg", "카테고리와 관련된 모든 자료가 삭제되었습니다.");
-    return "redirect:/survey/list_by_surveyno_search_paging";
-  }
+//  @PostMapping(value = "/list_all_delete")
+//  public String deleteAllCategory(@RequestParam (name="surveyno", defaultValue="0") int surveyno,
+//                                  @RequestParam(name = "memberno", defaultValue = "0") int memberno,
+//                                                       RedirectAttributes redirectAttributes) {
+//    // 콘텐츠 삭제
+//    itemProc.delete_survey(surveyno);
+//    
+//    // 카테고리 삭제
+//    surveyProc.delete(surveyno);
+//
+//    redirectAttributes.addFlashAttribute("msg", "카테고리와 관련된 모든 자료가 삭제되었습니다.");
+//    return "survey/list_by_surveyno_search_paging";
+//  }
 
   /**
    * 카테고리 삭제 폼
    */
-  @GetMapping(value = "/delete")
-  public String delete(Model model) {
-    // 기본 삭제 폼
-    return "/survey/list_all_delete";  // survey/delete.html로 이동
-  }
+//  @GetMapping(value = "/delete")
+//  public String delete(Model model) {
+//    // 기본 삭제 폼
+//    return "/survey/list_all_delete";  // survey/delete.html로 이동
+//  }
 
   /**
    * 삭제 처리, http://localhost:9091/cate/delete?cateno=1

@@ -102,9 +102,9 @@
   </select>
   
   <!-- 설문조사한 회원 조회 -->
-  <select id="count_survey" resultType="int" parameterType="HashMap">
+  <select id="count_survey" resultType="int" parameterType="int">
     SELECT COUNT(*) as cnt 
-    FROM participants 
+    FROM surveyitem 
     WHERE itemno=#{itemno} AND memberno=#{memberno}
   </select>
   
@@ -119,6 +119,14 @@
     SELECT COUNT(*) as cnt 
     FROM participants 
     WHERE itemno=#{itemno}
+  </select>
+  
+    <!-- 설문 참여 회원 결과 총합 -->
+  <select id="count_sum" parameterType="int">
+    SELECT surveyno, SUM(item_cnt) AS total_participants
+    FROM surveyitem
+    WHERE surveyno = #{surveyno}
+    GROUP BY surveyno
   </select>
 
   

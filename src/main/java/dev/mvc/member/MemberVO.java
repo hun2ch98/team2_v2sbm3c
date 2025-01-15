@@ -64,6 +64,9 @@ public class MemberVO {
   @NotEmpty(message="전화번호 입력은 필수입니다.")
   private String phone = "";
   
+  /** 복구키 */
+  private String recovery_key = "";
+  
   // -----------------------------------------------------------------------------------
   /** 파일 업로드 관련 */
   private MultipartFile file1MF = null;

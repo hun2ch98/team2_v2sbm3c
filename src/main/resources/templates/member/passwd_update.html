@@ -106,12 +106,34 @@
       <input type="hidden" name="memberno" th:value="${memberVO.memberno}">
 
       <div class="form-group">
-        <label for="passwd">현재 비밀번호*</label> 
-        <input type='password' name='current_passwd' id='current_passwd' th:value='${memberVO.passwd}' required="required" 
-                  placeholder="비밀번호" autofocus="autofocus" 
-                  class="form-control form-control-sm" style="width: 100%;">
-        <div id='current_passwd_msg' style='width: 100%; text-align: center;'></div>
+          <label for="passwd">현재 비밀번호*</label>
+          <input type='password' name='current_passwd' id='current_passwd' value='' required="required" 
+                 placeholder="비밀번호" autofocus="autofocus" 
+                 class="form-control form-control-sm" style="width: 80%;">
+          <button type="button" id="toggle_passwd" onclick="togglePasswordVisibility();" class="btn btn-secondary btn-sm" style="width: 18%; margin-left: 5px;">
+              <i id="eye_icon" class="fas fa-eye"></i> <!-- 기본 아이콘 -->
+          </button>
+          <div id='current_passwd_msg' style='width: 100%; text-align: center;'></div>
       </div>
+      
+      <script>
+          function togglePasswordVisibility() {
+              const passwordField = document.getElementById('current_passwd');
+              const toggleButton = document.getElementById('toggle_passwd');
+              const eyeIcon = document.getElementById('eye_icon');
+              
+              if (passwordField.type === 'password') {
+                  passwordField.type = 'text'; // 비밀번호를 텍스트로 변경
+                  eyeIcon.classList.remove('fa-eye'); // 눈 아이콘 제거
+                  eyeIcon.classList.add('fa-eye-slash'); // 눈이 가려진 아이콘 추가
+              } else {
+                  passwordField.type = 'password'; // 다시 비밀번호로 변경
+                  eyeIcon.classList.remove('fa-eye-slash'); // 눈이 가려진 아이콘 제거
+                  eyeIcon.classList.add('fa-eye'); // 눈 아이콘 추가
+              }
+          }
+      </script>
+
       
       <div class="form-group">
         <label for="passwd">새로운 비밀번호*</label> 
@@ -130,8 +152,6 @@
         <button type="button" id='btn_update' class="btn btn-secondary btn-sm">저장</button>
         <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">돌아가기</button>
       </div>
-
-
     </form>
   </div>
 </div>

@@ -19,8 +19,8 @@
   
   <!-- 회원 가입 -->
   <insert id="create" parameterType="dev.mvc.member.MemberVO">
-      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, size1, mdate, grade, gradeno, phone)
-      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{size1}, sysdate, #{grade}, #{gradeno}, #{phone})
+      INSERT INTO member(memberno, id, passwd, email, name, nickname, birth, zipcode, address1, address2, pf_img, file1saved, thumb1, recovery_key, size1, mdate, grade, gradeno, phone)
+      VALUES (member_seq.nextval, #{id}, #{passwd}, #{email}, #{name}, #{nickname}, #{birth}, #{zipcode}, #{address1}, #{address2}, #{pf_img}, #{file1saved}, #{thumb1}, #{recovery_key}, #{size1}, sysdate, #{grade}, #{gradeno}, #{phone})
   </insert>
   
   <!-- memberno로 회원 정보 조회 -->
@@ -123,25 +123,18 @@
     SET passwd=#{passwd}
     WHERE memberno=#{memberno}
   </update>
-
-  <!-- 비밀번호 변경 - 비밀번호 찾기에서 문자 인증을 성공했을 때 
-  <update id="update_passwd_find" parameterType="HashMap">
-    UPDATE member
-    SET passwd=#{passwd}
-    WHERE id=#{id}
-  </update> -->
   
   <!-- 아이디 찾기 회원 정보 일치 검증(name, phone) -->
   <select id="find_id_check" resultType="String" parameterType="HashMap">
     SELECT id
     FROM member
     WHERE name=#{name} AND phone=#{phone}
-  </select> 
+  </select>
   
-  <!-- 비밀번호 찾기 회원 정보 일치 검증(id, phone) 
-  <select id="find_passwd_check" resultType="int" parameterType="String">
-    SELECT COUNT(id) as cnt
+  <!-- 비밀번호 찾기 회원 복구키 일치 검증(recovery_key) -->
+  <select id="find_pw_check" resultType="String" parameterType="HashMap">
+    SELECT recovery_key
     FROM member
-    WHERE id=#{id} AND phone=#{phone}
-  </select>-->
+    WHERE name=#{name} AND recovery_key=#{recovery_key}
+  </select>
 </mapper>
