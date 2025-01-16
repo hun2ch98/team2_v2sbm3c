@@ -26,8 +26,8 @@
       <col style='width: 40%;'/>
       <col style='width: 17%;'/>
       <col style='width: 17%;'/>
-      <col style='width: 10%;'/>
-      <col style='width: 10%;'/>
+      <col style='width: 7%;'/>
+      <col style='width: 13%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
@@ -73,6 +73,12 @@
       </td>
 
       <td>
+        <a th:href="@{|/survey/update_text?surveyno=${surveyVO.surveyno}|}">
+          <img src="/survey/images/update_text.png" class="icon" title="글수정">
+        </a> 
+        <a th:href="@{|/survey/update_file?surveyno=${surveyVO.surveyno}|}">
+          <img src="/survey/images/update_file.png" class="icon" title="파일수정">
+        </a> 
         <a th:href="@{|/survey/check_delete?surveyno=${surveyVO.surveyno}|}">
           <img src="/survey/images/delete.png" class="icon" title="삭제">
         </a> 

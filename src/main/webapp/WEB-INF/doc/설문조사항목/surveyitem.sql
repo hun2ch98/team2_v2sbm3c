@@ -16,7 +16,7 @@ CREATE TABLE surveyitem (
     FOREIGN KEY (surveyno)  REFERENCES survey (surveyno) ON DELETE CASCADE
 --    FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
-
+DESC SURVEYITEM;
 
 COMMENT ON TABLE SURVEYITEM is '설문 조사 항목';
 COMMENT ON COLUMN SURVEYITEM.ITEMNO is '설문 조사 항목 번호';
@@ -39,26 +39,28 @@ COMMIT;
 
 -- 등록
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 1, '주 5회 이상');
+VALUES (surveyitem_seq.nextval, 7, 1, '주 5회 이상');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 2, '주 3회 이상');
+VALUES (surveyitem_seq.nextval, 7, 2, '주 3회 이상');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 3, '자주 사용 안함');
+VALUES (surveyitem_seq.nextval, 7, 3, '자주 사용 안함');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 1, '예');
+VALUES (surveyitem_seq.nextval, 9, 1, '예');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 2, '아니요');
+VALUES (surveyitem_seq.nextval, 9, 2, '아니요');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 3, 1, '예');
+VALUES (surveyitem_seq.nextval, 13, 1, '쉬웠어요');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 3, 2, '아니요');
+VALUES (surveyitem_seq.nextval, 13, 2, '어려웠어요');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 4, 1, '그림 일기');
+VALUES (surveyitem_seq.nextval, 10, 1, '그림 생성');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 4, 2, '일정 조회');
+VALUES (surveyitem_seq.nextval, 10, 2, '일정 조회');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 10, 2, '일기 작성');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 5, 1, '예');
@@ -66,18 +68,18 @@ INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 5, 2, '아니요');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 3, '사용된 문구가 아이들에게 친근하고 이해하기 쉬웠나요?');
+VALUES (surveyitem_seq.nextval, 14, 1, '있었어요');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 2, 4, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?');
+VALUES (surveyitem_seq.nextval, 14, 2, '없었어요');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 1, 4, '테스트항목');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 18, 2, '테스트항목');
+VALUES (surveyitem_seq.nextval, 15, 1, '즐거워해요');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 18, 3, '테스트항목');
+VALUES (surveyitem_seq.nextval, 15, 2, '보통');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 18, 4, '테스트항목');
+VALUES (surveyitem_seq.nextval, 15, 3, '즐거워하지 않아요');
 
 -- 조회
 SELECT * FROM surveyitem;
