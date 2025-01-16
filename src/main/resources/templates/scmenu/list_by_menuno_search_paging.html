@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    목록 조회 검색
+    <span th:if="${name != ''}" th:text="|> ${name} (${search_count} 건)|" class="title_line_text"></span>
+  </div>
+
+  <aside class="aside_right">
+    <span th:if="${session.grade == 'admin'}">
+      <a th:href="@{|/scmenu/create|}">등록</a>
+      <span class="menu_devide">│</span>    
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>│</span>    
+      <a th:href="@{/scmenu/list_by_menuno_search_paging}">목록</a>
+    </span>
+  </aside> 
+  
+
+  <div th:replace="~{/scmenu/list_search_com :: list_search_fragment}"></div>
+  
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 35%;'/>
+      <col style='width: 35%;'/>
+      <col style='width: 20%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>평점 메뉴 번호</th>
+      <th class='th_bs'>평점 메뉴 이름</th>
+      <th class='th_bs'>평점 메뉴 설명</th>
+      <th class='th_bs'>등록일</th>
+    </tr>
+   
+    <tr th:if="${list != null and list.size() > 0}" th:each="scmenuVO, status:${list}" 
+         th:attr="onclick=|location.href='/scmenu/read?menuno=${scmenuVO.menuno}&now_page=${now_page}'|"
+         style="cursor: pointer; height: 90px;"> 
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <span th:text="${scmenuVO.menuno}" style="font-weight: bold;"></span><br>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <span th:if="${scmenuVO.name.length() > 160 }" 
+                  th:text="|${scmenuVO.name.substring(0, 160) }...|"></span>
+        <span th:if="${scmenuVO.name.length() <= 160 }" 
+                  th:text="|${scmenuVO.name}|"></span>
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+        <span th:if="${scmenuVO.explan.length() > 160 }" 
+                  th:text="|${scmenuVO.explan.substring(0, 160) }...|"></span>
+        <span th:if="${scmenuVO.explan.length() <= 160 }" 
+                  th:text="|${scmenuVO.explan}|"></span>        
+      </td>
+      <td class='td_basic' style="vertical-align: middle; text-align: center;">
+         <span th:text="${scmenuVO.rdate}" style="font-weight: bold;"></span><br>
+      </td>
+    </tr>
+
+    <tr th:if="${list != null and list.size() == 0}">
+      <td colspan="3" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+    </tr> 
+
+  </table>
+   
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+  
+</div>
+</html>

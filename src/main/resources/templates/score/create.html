@@ -1,65 +1,100 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
-<div layout:fragment="content">
-  <div class='title_line'>
-    평점 주기
-  </div>
-  
-  <aside class="aside_right">
-    <a th:href="@{.|/create?scoreno=${scoreVO.scoreno}|}">등록</a>
-    <span class='menu_divide'>│</span>
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{/score/list_by_scoreno_search_paging}">목록</a>
-  </aside>
-  
-  <div class='menu_line'></div>
-  
-  <form name="frm" method="post" th:object="${scoreVO}" th:action="@{/score/create}" enctype="multipart/form-data">
-    <input type="hidden" name="memberno" th:value="${scoreVO?.memberno ?: 1}">
-   
-    <div>
-    	<label>평점</label>
-    	<div style="display: flex; align-items: center; flex-direction: column; width: 300px;">
-            <!-- 라디오 버튼 평점 표시 -->
-            <div id="starRating" style="display: flex; justify-content: center;">
-                <input type="radio" id="rating5" name="rating" value="5">
-                <label for="rating5" title="5점">&#9733;</label>
-                <input type="radio" id="rating4" name="rating" value="4">
-                <label for="rating4" title="4점">&#9733;</label>
-                <input type="radio" id="rating3" name="rating" value="3">
-                <label for="rating3" title="3점">&#9733;</label>
-                <input type="radio" id="rating2" name="rating" value="2">
-                <label for="rating2" title="2점">&#9733;</label>
-                <input type="radio" id="rating1" name="rating" value="1">
-                <label for="rating1" title="1점">&#9733;</label>
-            </div>
-            <span id="scoreValue">0</span> <!-- 선택된 평점 값 표시 -->
-            <input type="hidden" name="jumsu" id="scoreInput" value="0"> <!-- 숨겨진 필드에 평점 값 저장 -->
-        </div>
-	</div>
-	
-    <div class="content_body_bottom">
-        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
-        <button type="button" th:attr="onclick=|location.href='/score/list_by_scoreno_search_paging'|"
-                class="btn btn-secondary btn-sm">목록</button>
+  <div layout:fragment="content">
+    <div class='title_line'>
+      평점 주기
     </div>
-  </form>
 
-  <script>
-    const radios = document.querySelectorAll('input[name="rating"]');
-    const scoreValue = document.getElementById('scoreValue');
-    const scoreInput = document.getElementById('scoreInput');
+    <aside class="aside_right">
+      <a th:href="@{.|/create?scoreno=${scoreVO.scoreno}|}">등록</a>
+      <span class='menu_divide'>│</span>
+      <a href="javascript:location.reload();">새로고침</a>
+      <span class='menu_divide'>│</span>
+      <a th:href="@{/score/list_all}">목록</a>
+    </aside>
 
-    // 라디오 버튼 클릭 시 평점 설정
-    radios.forEach(radio => {
-      radio.addEventListener('change', function() {
-        const value = this.value;
-        scoreInput.value = value; // 선택된 평점 값을 숨겨진 필드에 저장
-        scoreValue.textContent = value; // 선택된 평점 값 표시
-      });
-    });
-  </script>
+    <div class='menu_line'></div>
 
-</div>
+    <form name="frm" method="post" th:object="${scoreVO}" th:action="@{/score/create}" enctype="multipart/form-data">
+      <input type="hidden" name="memberno" th:value="${scoreVO?.memberno ?: 1}">
+
+      <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="diary_score">일기 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="diary_score" name="diary_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="calendar_score">달력 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="calendar_score" name="calendar_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="chat_score">채팅 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="chat_score" name="chat_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="login_score">로그인 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="login_score" name="login_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="survey_score">설문조사 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="survey_score" name="survey_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="drawing_score">그림 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="drawing_score" name="drawing_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="emotion_score">감정 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="emotion_score" name="emotion_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="weather_score">날씨 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="weather_score" name="weather_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="notice_score">공지사항 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="notice_score" name="notice_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+        
+        <div style="flex-basis: 45%; min-width: 200px;">
+          <label for="notice_score">금지단어 점수</label>
+          <div style="display: flex; align-items: center;">
+            <input type="number" id="word_score" name="word_score" min="1" max="5" step="1" value="3" class="form-control" style="width: 80px;"> 점
+          </div>
+        </div>
+        
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="submit" style="width: 100%;">제출</button>
+      </div>
+    </form>
+  </div>
+
 </html>

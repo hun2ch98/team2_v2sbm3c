@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+  <div class='title_line'>
+    
+  </div>
+  
+  <aside class="aside_right">
+    <a th:href="@{.|/create?menuno=${scmenuVO.menuno}|}">등록</a>
+    <span class='menu_divide'>│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/scmenu/list_by_menuno_search_paging}">목록</a>
+  </aside>
+  
+  <div class='menu_line'></div>
+  
+  <form name="frm" method="post" th:object="${scmenuVO}" th:action="@{/scmenu/create}" enctype="multipart/form-data">
+
+    <div>
+        <label>평점 메뉴 이름</label>
+        <textarea name="name" th:text="${scmenuVO?.name ?: ''}" required="required"
+                  class="form-control" rows="6" style="width: 100%;"></textarea>
+    </div>
+    
+    <div>
+        <label>평점 메뉴 설명</label>
+        <textarea name="explan" th:text="${scmenuVO?.explan ?: ''}" required="required"
+                  class="form-control" rows="6" style="width: 100%;"></textarea>
+    </div>
+
+    <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        <button type="button" th:attr="onclick=|location.href='/scmenu/list_by_menuno_search_paging'|"
+                class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  </form>
+
+</div>
+</html>
