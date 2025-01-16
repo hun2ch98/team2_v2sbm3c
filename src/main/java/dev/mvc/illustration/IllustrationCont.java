@@ -317,7 +317,7 @@ public class IllustrationCont {
       @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue="0") int now_page) {
     IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
-    model.addAttribute(illustrationVO);
+    model.addAttribute("illustrationVO", illustrationVO);
     model.addAttribute(now_page);
     model.addAttribute("title", title);
     model.addAttribute("start_date", start_date);

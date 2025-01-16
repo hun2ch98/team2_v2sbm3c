@@ -20,7 +20,7 @@
         <!-- 이미지 표시 -->
         <div th:if="${illustrationVO.illust != null and (illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png') or illustrationVO.illust.endsWith('gif'))}" 
              style="text-align: center; width: 50%; float: left;">
-          <img th:src="@{'/upload/' + ${illustrationVO.illust_saved}}" style="width: 90%;" alt="이미지">
+          <img th:src="@{'/upload/' + ${illustrationVO.illust}}" style="width: 90%;" alt="이미지">
         </div>
 
         <!-- 파일 이름 표시 -->
