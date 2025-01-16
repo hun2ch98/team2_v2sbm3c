@@ -72,11 +72,13 @@ public class BannedwordsCont {
 		  HttpSession session,
       @ModelAttribute("bannedwordsVO") BannedwordsVO bannedwordsVO) { 
 	
-	  int memberno =(int) session.getAttribute("memberno");
-	  bannedwordsVO.setMemberno(memberno); 
-	  model.addAttribute("BannedwordsVO", bannedwordsVO); // 수정된 BannedwordsVO 전달
-
-	  return "/bannedwords/create";
+	  if (this.memberProc.isMemberAdmin(session)) {
+		  model.addAttribute("BannedwordsVO", bannedwordsVO); // 수정된 BannedwordsVO 전달
+		  return "/bannedwords/create";
+	    } else {
+	      return "/member/login_cookie_need";
+	    }
+	  
   }
   
   /**
@@ -94,19 +96,21 @@ public class BannedwordsCont {
                        Model model,
                        @ModelAttribute("BannedwordsVO") BannedwordsVO bannedwordsVO,
                        RedirectAttributes ra) {
-	  int memberno = 1; 
-	  bannedwordsVO.setMemberno(memberno); 
-  
-	  int cnt = this.bannedwordsProc.create(bannedwordsVO);
-	  if (cnt == 1) {
-		  ra.addAttribute("bannedwordsVO", bannedwordsVO.getWordno()); 
-		  ra.addAttribute("now_page", 1); 
-		  return "redirect:/bannedwords/list_by_wordno_search_paging"; 
-	  } else {
-		  ra.addFlashAttribute("code", "create_fail");
-		  return "redirect:/bannedwords/msg"; 
-	  }
+      if (this.memberProc.isMemberAdmin(session)) { 
+          int cnt = this.bannedwordsProc.create(bannedwordsVO);  
+          if (cnt == 1) {  // 성공
+              ra.addAttribute("bannedwordsVO", bannedwordsVO.getWordno());  
+              ra.addAttribute("now_page", 1);
+              return "redirect:/bannedwords/list_by_wordno_search_paging";  
+          } else {  // 실패
+              ra.addFlashAttribute("code", "create_fail"); 
+              return "redirect:/bannedwords/list_by_wordno_search_paging"; 
+          }
+      } else { 
+          return "redirect:/bannedwords/msg";  
+      }
   }
+
     
 //  /**
 //   * 금지 단어 전체 목록(관리자)
@@ -318,6 +322,7 @@ public class BannedwordsCont {
          @RequestParam(name = "memberno", defaultValue = "0") int memberno,
          @RequestParam(name = "word", defaultValue = "") String word,
          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+	  if (this.memberProc.isMemberAdmin(session)) {
 		  model.addAttribute("wordno", wordno);
 		  model.addAttribute("word", word);
 		  model.addAttribute("now_page", now_page);
@@ -327,8 +332,10 @@ public class BannedwordsCont {
 		  
 		  MemberVO  memberVO = this.memberProc.read(bannedwordsVO.getMemberno());
 		  model.addAttribute("memberVO", memberVO);
-		    
 		  return "/bannedwords/delete"; // forward
+	    } else {
+	      return "/member/login_cookie_need";
+	    }	  
 	
   }
   

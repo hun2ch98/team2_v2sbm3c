@@ -51,3 +51,11 @@ WHERE wordno = 1;
 UPDATE bannedwords
 SET goodcnt = goodcnt -1
 WHERE wordno = 1;
+
+SELECT b.wordno, b.word, b.reason, b.goodcnt, b.memberno, b.rdate,
+       m.id AS id, m.name AS name,
+       ROW_NUMBER() OVER (ORDER BY b.wordno DESC) AS rnum
+FROM bannedwords b
+LEFT JOIN member m ON b.memberno = m.memberno;
+WHERE (#{word} IS NULL OR #{word} = '' OR b.word = #{word});
+

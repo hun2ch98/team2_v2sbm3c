@@ -74,7 +74,7 @@
           SELECT wordno, word, reason, goodcnt, memberno, rdate,
                  ROW_NUMBER() OVER (ORDER BY wordno DESC) AS rnum
           FROM bannedwords
-          WHERE (#{word} IS NULL OR #{word} = '' OR word = #{word})
+          WHERE (#{word} = '' OR word LIKE CONCAT(#{word}, '%'))
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>

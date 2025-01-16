@@ -105,14 +105,17 @@ public class EmotionCont {
    * @return
    */
   @GetMapping(value = "/create")
-  public String create(Model model, 
+  public String create(HttpSession session, Model model, 
       @ModelAttribute("emotionVO") EmotionVO emotionVO, 
       @RequestParam(name = "memberno", defaultValue = "1") int memberno) {
-
-	  emotionVO.setMemberno(memberno); // 기본값 설정
-      model.addAttribute("EmotionVO", emotionVO); // 수정된 emotionVO 전달
-
+	  if (this.memberProc.isMemberAdmin(session)) {
+		  emotionVO.setMemberno(memberno); // 기본값 설정
+	      model.addAttribute("EmotionVO", emotionVO); // 수정된 emotionVO 전달
       return "/emotion/create"; // /templates/contents/create.html
+	    } else {
+	      return "/member/login_cookie_need";
+	    }
+      
   }
 
   /**
@@ -127,7 +130,7 @@ public class EmotionCont {
                        RedirectAttributes ra) {
 	  
     int memberno = (int) session.getAttribute("memberno");
-	  if (memberProc.isMember(session)) { // 회원 로그인한경우
+	  if (memberProc.isMemberAdmin(session)) { 
 		  // ------------------------------------------------------------------------------
 	      // 파일 전송 코드 시작
 	      // ------------------------------------------------------------------------------
@@ -517,21 +520,22 @@ public class EmotionCont {
          @RequestParam(name="now_page", defaultValue="1") int now_page) {
 //    ArrayList<CateVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
-    
-    model.addAttribute("word", word);
-    model.addAttribute("now_page", now_page);
-    
-    EmotionVO emotionVO = this.emotionProc.read(emono);
-    model.addAttribute("emotionVO", emotionVO);
-    
-    MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
-    
-    DiaryVO diaryVO = this.diaryProc.read(emotionVO.getDiaryno());
-    model.addAttribute("diaryVO", diaryVO);
-
-    return "/emotion/update_file";
-
+	  if (this.memberProc.isMemberAdmin(session)) {
+	    model.addAttribute("word", word);
+	    model.addAttribute("now_page", now_page);
+	    
+	    EmotionVO emotionVO = this.emotionProc.read(emono);
+	    model.addAttribute("emotionVO", emotionVO);
+	    
+	    MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
+	    model.addAttribute("memberVO", memberVO);
+	    
+	    DiaryVO diaryVO = this.diaryProc.read(emotionVO.getDiaryno());
+	    model.addAttribute("diaryVO", diaryVO);
+	    return "/emotion/update_file";
+	    } else {
+	      return "/member/login_cookie_need";
+	    }
   }
 
   /**
@@ -627,18 +631,20 @@ public class EmotionCont {
                                @RequestParam(name="emono", defaultValue="0") int emono, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-      model.addAttribute("memberno", memberno);
-      model.addAttribute("word", word);
-      model.addAttribute("now_page", now_page);
-      
-      EmotionVO emotionVO = this.emotionProc.read(emono);
-      model.addAttribute("emotionVO", emotionVO);
-
-      MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
-      model.addAttribute("memberVO", memberVO);
-      
-      return "/emotion/delete"; // forward
-
+	    if (this.memberProc.isMemberAdmin(session)) {
+		  model.addAttribute("memberno", memberno);
+	      model.addAttribute("word", word);
+	      model.addAttribute("now_page", now_page);
+	      
+	      EmotionVO emotionVO = this.emotionProc.read(emono);
+	      model.addAttribute("emotionVO", emotionVO);
+	
+	      MemberVO memberVO = this.memberProc.read(emotionVO.getMemberno());
+	      model.addAttribute("memberVO", memberVO);
+	      return "/emotion/delete"; // forward
+	    } else {
+	      return "/member/login_cookie_need";
+	    }
   }
   
   /**

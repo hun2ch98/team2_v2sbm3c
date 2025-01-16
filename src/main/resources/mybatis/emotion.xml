@@ -73,7 +73,7 @@
         SELECT emono, type, explan, file1, file1saved, thumb1, size1, 
                ROW_NUMBER() OVER (ORDER BY emono DESC) AS rnum
         FROM emotion
-        WHERE (#{type} IS NULL OR #{type} = '' OR type = #{type})
+        WHERE (#{type} = '' OR type LIKE CONCAT(#{type}, '%'))
     )
     WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>
