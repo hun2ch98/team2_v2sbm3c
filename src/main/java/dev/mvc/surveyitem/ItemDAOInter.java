@@ -75,7 +75,7 @@ public interface ItemDAOInter {
    * @param word
    * @return
    */
-  public int count_by_search(String word);
+  public int count_by_search(Map<String, Object> map);
   
   /**
    * 검색 + 페이징 목록

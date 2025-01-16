@@ -9,19 +9,19 @@ DROP TABLE surveyitem CASCADE CONSTRAINTS;
 CREATE TABLE surveyitem (
     itemno      NUMBER(10)      NOT NULL    PRIMARY KEY,
     surveyno    NUMBER(10)      NOT NULL,
-    memberno    NUMBER(10)      NOT NULL,
+--    memberno    NUMBER(10)      NOT NULL,
     item_seq    NUMBER(5)       NOT NULL,
     item        VARCHAR2(200)   NOT NULL,
     item_cnt    NUMBER(7)       DEFAULT 0    NULL,
-    FOREIGN KEY (surveyno)  REFERENCES survey (surveyno) ON DELETE CASCADE,
-    FOREIGN KEY (memberno)  REFERENCES member (memberno)
+    FOREIGN KEY (surveyno)  REFERENCES survey (surveyno) ON DELETE CASCADE
+--    FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
 
 
 COMMENT ON TABLE SURVEYITEM is '설문 조사 항목';
 COMMENT ON COLUMN SURVEYITEM.ITEMNO is '설문 조사 항목 번호';
 COMMENT ON COLUMN SURVEYITEM.SURVEYNO is '설문 조사 번호';
-COMMENT ON COLUMN SURVEYITEM.MEMBERNO is '회원 번호';
+--COMMENT ON COLUMN SURVEYITEM.MEMBERNO is '회원 번호';
 COMMENT ON COLUMN SURVEYITEM.ITEM_SEQ is '항목 출력 순서';
 COMMENT ON COLUMN SURVEYITEM.ITEM is '항목';
 COMMENT ON COLUMN SURVEYITEM.ITEM_CNT is '항목 선택 인원';
@@ -71,7 +71,7 @@ INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 2, 4, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?');
 
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 18, 1, '테스트항목');
+VALUES (surveyitem_seq.nextval, 1, 4, '테스트항목');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
 VALUES (surveyitem_seq.nextval, 18, 2, '테스트항목');
 INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
@@ -81,6 +81,8 @@ VALUES (surveyitem_seq.nextval, 18, 4, '테스트항목');
 
 -- 조회
 SELECT * FROM surveyitem;
+
+SELECT * FROM surveyitem WHERE surveyno = 1;
     ITEMNO   SURVEYNO   ITEM_SEQ ITEM                                                                                                                                                                                                       ITEM_CNT
 ---------- ---------- ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------
          1         31          1 이 서비스를 일주일에 5회 이상 사용한다.                                                                                                                                                                          10
@@ -95,7 +97,7 @@ UPDATE surveyitem SET item_seq='5' WHERE itemno=9;
 -- 삭제
 DELETE FROM surveyitem;
 
-DELETE FROM surveyitem WHERE itemno =13;
+DELETE FROM surveyitem WHERE surveyno = 1;
 
 SELECT surveyno, SUM(item_cnt) AS total_participants
 FROM surveyitem
