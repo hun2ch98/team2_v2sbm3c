@@ -26,7 +26,7 @@
         
         <div th:if="${illustrationVO.illust.endsWith('jpg') or illustrationVO.illust.endsWith('png')  or illustrationVO.illust.endsWith('gif')}"
              style="text-align: center; width: 100%;">
-          <img th:src="@{|/upload/${#strings.urlEncode(illustrationVO.illust)}|}" style="width: 50%; max-width: 500px;">
+          <img th:src="@{'/upload/' + ${illustrationVO.illust}}" style="width: 50%; max-width: 500px;">
         </div>
 
         <div th:if="${illustrationVO.illust_size == 0}" style="text-align: center; width: 100%;">

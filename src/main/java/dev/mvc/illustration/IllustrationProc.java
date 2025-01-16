@@ -37,10 +37,11 @@ public class IllustrationProc implements IllustrationProcInter {
         String sql = "SELECT * FROM illustration WHERE illustno = ?";
         Map<String, Object> map = jdbcTemplate.queryForMap(sql, illustno);
 
-        System.out.println("-> illustno : " + illustno);
         IllustrationVO illustrationVO = new IllustrationVO();
         illustrationVO.setIllustno(((BigDecimal) map.get("illustno")).intValue());
         illustrationVO.setIllust_thumb((String) map.get("illust_thumb"));
+        illustrationVO.setIllust_saved((String) map.get("illust_saved"));
+        illustrationVO.setIllust((String) map.get("illust"));
         illustrationVO.setIllust_size(((BigDecimal) map.get("illust_size")).intValue());
         illustrationVO.setDiaryno(((BigDecimal) map.getOrDefault("diaryno", BigDecimal.ZERO)).intValue());
 
