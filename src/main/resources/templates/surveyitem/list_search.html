@@ -10,6 +10,7 @@
       
       let heartCnt = '[[${heartCnt}]]'; //  javascript -> Thymeleaf -> session
       let tag = '';
+      console.log('heartCnt:', heartCnt);
       
       if (heartCnt == 1) {
         tag = '<a href="javascript:good([[${surveyVO.surveyno}]])"><img src="/survey/images/good.png" style="width: 22px" title="추천"></a>';

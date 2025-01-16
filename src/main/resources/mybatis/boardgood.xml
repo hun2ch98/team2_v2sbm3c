@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.boardgood.BoardgoodDAOInter">
+
+<!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.boardgood.BoardgoodVO">
+    INSERT INTO boardgood(goodno, boardno, memberno, bdate)
+    VALUES (boardgood_seq.nextval, #{boardno}, #{memberno}, sysdate)
+  </insert>
+  
+  <!-- 목록 -->
+  <select id="list_all" parameterType="dev.mvc.boardgood.BoardgoodVO">
+    SELECT goodno, boardno, memberno, bdate
+    FROM boardgood
+    ORDER BY goodno DESC
+  </select>
+  
+    <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM boardgood
+    WHERE goodno = #{goodno}
+  </delete>
+
+  <!-- 특정 컨텐츠의 특정 회원 추천 개수 산출 -->
+  <select id="heart_cnt" resultType="int" parameterType="HashMap">
+    SELECT COUNT (*) as cnt
+    FROM boardgood
+    WHERE boardno = #{boardno} AND memberno = #{memberno}
+  </select>
+  
+  <!-- PK 조회 -->
+  <select id="read" resultType="dev.mvc.boardgood.BoardgoodVO" parameterType="int">
+    SELECT goodno, boardno, memberno, bdate
+    FROM boardgood
+    ORDER BY goodno = #{goodno}
+  </select>
+  
+  <!-- surveyno, memberno로 조회! -->
+  <select id="readByboardmember" resultType="dev.mvc.boardgood.BoardgoodVO" parameterType="HashMap">
+    SELECT goodno, boardno, memberno, bdate
+    FROM boardgood
+    WHERE boardno = #{boardno} AND memberno = #{memberno}
+  </select>
+  
+    <!-- 3개 조인 목록 -->
+  <select id="list_all_join" parameterType="dev.mvc.boardgood.BoardgoodMemberVO">
+    SELECT g.goodno, g.bdate, g.boardno, b.title as b_title, g.memberno, m.name, m.email
+    FROM board b, boardgood g, member m
+    WHERE b.boardno = g.boardno AND g.memberno = m.memberno
+    ORDER BY goodno DESC 
+  </select>
+  
+  <!-- 검색 개수 -->
+  <select id="count_search" resultType="int" parameterType="Map">
+    SELECT COUNT(*) AS cnt
+    FROM boardgood g
+    JOIN board b ON g.boardno = b.boardno
+    JOIN member m ON g.memberno = m.memberno
+    <where>
+      <if test="word != null and word != ''">
+        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' 
+        OR UPPER(b.title) LIKE '%' || UPPER(#{word}) || '%'
+      </if>
+    </where>
+  </select> 
+  
+  <!-- 검색 + 페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.boardgood.BoardgoodMemberVO" parameterType="Map">
+    SELECT *
+    FROM (
+        SELECT 
+            g.goodno, 
+            g.boardno, 
+            g.memberno, 
+            g.bdate, 
+            b.title as b_title, 
+            m.name AS name, 
+            m.email AS email, 
+            ROW_NUMBER() OVER (ORDER BY g.goodno ASC) AS r
+        FROM boardgood g
+        JOIN board b ON g.boardno = b.boardno
+        JOIN member m ON g.memberno = m.memberno
+        <where>
+          <if test="word != null and word != ''">
+            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%'  
+                  OR UPPER(b.title) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+        </where>
+    )
+    WHERE r BETWEEN #{start_row} AND #{end_row}
+  </select>
+
+</mapper>
