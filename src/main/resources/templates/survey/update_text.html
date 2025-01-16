@@ -18,10 +18,7 @@
   <div class='menu_line'></div>
   
   <form name='frm' method='post' th:object="${surveyVO}" action='./update_text'>
-    <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
     <input type="hidden" name="surveyno" th:value="${surveyno}" />
-    <input type="hidden" name="now_page" th:value="${now_page}">
-    <input type="hidden" name="is_continue" th:value="${is_continue}">
     
     <div>
        <label>주제</label>
@@ -45,20 +42,20 @@
     </div>
     
     <div>
-        <label>진행 여부(Y/N)</label>
-        <select id="is_continue" name="is_continue" class="form-control">
-          <option value="진행 여부" selected="selected">진행 여부</option>
-          <option value="Y">Y</option>
-          <option value="N">N</option>
-        </select>
-        <div th:if="${#fields.hasErrors('is_continue')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
-          <div th:each="err: ${#lists.sort(#fields.errors('is_continue'))}" th:text="${err}"></div>
-        </div>  
+      <label>진행 여부(Y/N)</label>
+      <select id="is_continue" name="is_continue" class="form-control">
+        <option value="진행 여부" selected="selected">진행 여부</option>
+        <option value="Y">Y</option>
+        <option value="N">N</option>
+      </select>
+      <div th:if="${#fields.hasErrors('is_continue')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+        <div th:each="err: ${#lists.sort(#fields.errors('is_continue'))}" th:text="${err}"></div>
+      </div>  
     </div>
     
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">저장</button>
-      <button type="button" th:attr="onclick=|location.href='./list_by_surveyno_search_paging?surveyno=${surveyno}'|" class="btn btn-secondary btn-sm">목록</button>
+      <button type="button" th:attr="onclick=|location.href='./list_by_surveyno_admin?surveyno=${surveyno}'|" class="btn btn-secondary btn-sm">목록</button>
     </div>
   
   </form>

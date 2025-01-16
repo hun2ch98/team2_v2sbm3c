@@ -206,6 +206,13 @@ public class MemberProc implements MemberProcInter {
     int cnt = this.memberDAO.find_pw_check(map);
     return cnt;
   }
+  
+  /** 이메일 찾기 -> 이름, 전화번호 일치하는 회원 검사 */
+  @Override
+  public String find_email_check(HashMap<String, String> map) {
+    String email = this.memberDAO.find_email_check(map);
+    return email;
+  }
   //----------------------------------------------------------------------------------
   // ~~~~~~ 로그인 및 패스워드 인증 관련 메서드 종료
   // ---------------------------------------------------------------------------------

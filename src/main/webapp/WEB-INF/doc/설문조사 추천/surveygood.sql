@@ -10,7 +10,7 @@ CREATE TABLE surveygood (
   FOREIGN KEY (memberno) REFERENCES member (memberno),-- 일정을 등록한 관리자 
   FOREIGN KEY (surveyno) REFERENCES survey (surveyno) ON DELETE CASCADE
 );
-
+DESC surveygood;
 DROP SEQUENCE surveygood_seq;
 
 CREATE SEQUENCE surveygood_seq
@@ -22,16 +22,42 @@ NOCYCLE;
 
 -- 데이터 삽입
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 1, 1, sysdate);
+VALUES (surveygood_seq.nextval, 11, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 2, 2, sysdate);
+VALUES (surveygood_seq.nextval, 13, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 3, 3, sysdate);
+VALUES (surveygood_seq.nextval, 9, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 4, 4, sysdate);
+VALUES (surveygood_seq.nextval, 19, 2, sysdate);
+
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 10, 17, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 20, 17, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 9, 17, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 14, 17, sysdate);
+
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 7, 9, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 8, 9, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 9, 9, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 14, 9, sysdate);
 
 COMMIT;
 

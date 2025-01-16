@@ -78,7 +78,10 @@ INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continu
 VALUES (survey_seq.nextval, 1, '기능 만족도', '2024/12/23', '2025/01/01', 0, 'Y');
 INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
 VALUES (survey_seq.nextval, 1, '사용 빈도', '2024/12/23', '2025/01/01', 0, 'Y');
+INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue)
+VALUES (survey_seq.nextval, 1, '테스트', '2024/12/23', '2025/01/01', 0, 'Y');
 
+COMMIT;
 -- read
 SELECT * FROM survey;
 SURVEYNO TOPIC                                                                                                SDATE      EDATE        S_NUMBER I POSTER                                                                                               POSTER_SAVED                                                                                         POSTER_SIZE POSTER_THUMB                                                                                        

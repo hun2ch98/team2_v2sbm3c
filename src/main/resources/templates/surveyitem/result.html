@@ -44,7 +44,8 @@
       </tbody>
     </table>
     <div class="content_body_bottom">
-          <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">이전</button>
+      <a th:href="@{|/survey/list_by_surveyno_search_paging|}" class="btn btn-primary">목록</a>
+      <a th:href="@{/surveyitem/survey_chart(surveyno=${surveyVO.surveyno})}" class="btn btn-primary">차트결과</a>
     </div>
   </div>
 

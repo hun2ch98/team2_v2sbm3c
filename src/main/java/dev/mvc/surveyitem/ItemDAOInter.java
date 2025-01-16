@@ -75,7 +75,7 @@ public interface ItemDAOInter {
    * @param word
    * @return
    */
-  public int count_by_search(String word);
+  public int count_by_search(Map<String, Object> map);
   
   /**
    * 검색 + 페이징 목록
@@ -89,7 +89,7 @@ public interface ItemDAOInter {
    * @param surveyno
    * @return
    */  
-  public int count_survey(int itemno, int memberno);
+  public int count_survey(int surveyno);
   
   /**
    * 특정 레코드 삭제

@@ -57,7 +57,7 @@ public class ModeltrainingCont {
   }
   
   /**
-   * 금지 단어 등록 폼
+   * 모델 학습 이력 등록 폼
    * @param model
    * @param ModeltrainingVO
    * @return
@@ -66,16 +66,17 @@ public class ModeltrainingCont {
   public String create(Model model,
 		  HttpSession session,
       @ModelAttribute("modeltrainingVO") ModeltrainingVO modeltrainingVO) { 
-	
-	  int memberno =(int) session.getAttribute("memberno");
-	  modeltrainingVO.setMemberno(memberno); 
-	  model.addAttribute("modeltrainingVO", modeltrainingVO); // 수정된 ModeltrainingVO 전달
-
-	  return "/modeltraining/create";
+	  if (this.memberProc.isMemberAdmin(session)) {
+		  model.addAttribute("modeltrainingVO", modeltrainingVO); // 수정된 ModeltrainingVO 전달
+		  return "/modeltraining/create";
+	    } else {
+	      return "/member/login_cookie_need";
+	    }
+	  
   }
   
   /**
-   * 금지 단어 등록 처리
+   * 모델 학습 이력 등록 처리
    * @param request
    * @param session
    * @param model
@@ -89,9 +90,6 @@ public class ModeltrainingCont {
                        Model model,
                        @ModelAttribute("ModeltrainingVO") ModeltrainingVO modeltrainingVO,
                        RedirectAttributes ra) {
-	  int memberno = 1; 
-	  modeltrainingVO.setMemberno(memberno); 
-  
 	  int cnt = this.modeltrainingProc.create(modeltrainingVO);
 	  if (cnt == 1) {
 		  ra.addAttribute("modeltrainingVO", modeltrainingVO.getTrainingno()); 
@@ -104,7 +102,7 @@ public class ModeltrainingCont {
   }
     
 //  /**
-//   * 금지 단어 전체 목록(관리자)
+//   * 모델 학습 이력 전체 목록(관리자)
 //   * @param session
 //   * @param model
 //   * @return
@@ -112,7 +110,7 @@ public class ModeltrainingCont {
 //  @GetMapping(value = "/list_all")
 //  public String list_all(HttpSession session, Model model) {
 //    
-//	    ArrayList<ModeltrainingVO> list = this.ModeltrainingProc.list_all(); // 금지 단어 모든 목록
+//	    ArrayList<ModeltrainingVO> list = this.ModeltrainingProc.list_all(); // 모델 학습 이력 모든 목록
 //    
 //	    model.addAttribute("list", list);
 //	    return "/Modeltraining/list_all";
@@ -120,7 +118,7 @@ public class ModeltrainingCont {
 
   /**
    * 유형 3
-   * 금지 단어별 목록 + 검색 + 페이징
+   * 모델 학습 이력별 목록 + 검색 + 페이징
    * 
    * @return
    */
@@ -133,58 +131,60 @@ public class ModeltrainingCont {
       @RequestParam(name = "name", defaultValue = "") String name,
       @RequestParam(name = "notes", defaultValue = "") String notes,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-      int record_per_page = 10;
-      int startRow = (now_page - 1) * record_per_page + 1;
-      int endRow = now_page * record_per_page;
-
-      int memberno = (int) session.getAttribute("memberno");
-      MemberVO memberVO = this.memberProc.read(memberno);
-      if (memberVO == null) {
-          memberVO = new MemberVO();
-          memberVO.setMemberno(0);
-          model.addAttribute("message", "회원 정보가 없습니다.");
-      }
-      name = Tool.checkNull(name).trim();
-      notes = Tool.checkNull(notes).trim();
-      
-      model.addAttribute("memberVO", memberVO);
-      model.addAttribute("trainingno", trainingno);
-      model.addAttribute("name", name);
-      model.addAttribute("notes", notes);
-      model.addAttribute("now_page", now_page);
-
-      HashMap<String, Object> map = new HashMap<>();
-      map.put("memberno", memberno);
-      map.put("name", name);
-      map.put("notes", notes);
-      map.put("now_page", now_page);
-      map.put("startRow", startRow);
-      map.put("endRow", endRow);
-
-      ArrayList<ModeltrainingVO> list = this.modeltrainingProc.list_by_trainingno_search_paging(map);
-      if (list == null || list.isEmpty()) {
-          model.addAttribute("message", "게시물이 없습니다.");
-      } else {
-          model.addAttribute("list", list);          
-      }
-
-      int search_count = this.modeltrainingProc.count_by_trainingno_search(map);
-      String paging = this.modeltrainingProc.pagingBox(now_page, name, notes, "/modeltraining/list_by_trainingno_search_paging", search_count,
-          record_per_page, page_per_block);
-      model.addAttribute("paging", paging);
-      model.addAttribute("now_page", now_page);
-      model.addAttribute("search_count", search_count);
-
-      int no = search_count - ((now_page - 1) * record_per_page);
-      model.addAttribute("no", no);
-
-      return "/modeltraining/list_by_trainingno_search_paging"; // /templates/modeltraining/list_by_trainingno_search_paging.html
+	  if (this.memberProc.isMemberAdmin(session)) {
+	      int record_per_page = 10;
+	      int startRow = (now_page - 1) * record_per_page + 1;
+	      int endRow = now_page * record_per_page;
+	
+	      int memberno = (int) session.getAttribute("memberno");
+	      MemberVO memberVO = this.memberProc.read(memberno);
+	      if (memberVO == null) {
+	          memberVO = new MemberVO();
+	          memberVO.setMemberno(0);
+	          model.addAttribute("message", "회원 정보가 없습니다.");
+	      }
+	      name = Tool.checkNull(name).trim();
+	      notes = Tool.checkNull(notes).trim();
+	      
+	      model.addAttribute("memberVO", memberVO);
+	      model.addAttribute("trainingno", trainingno);
+	      model.addAttribute("name", name);
+	      model.addAttribute("notes", notes);
+	      model.addAttribute("now_page", now_page);
+	
+	      HashMap<String, Object> map = new HashMap<>();
+	      map.put("memberno", memberno);
+	      map.put("name", name);
+	      map.put("notes", notes);
+	      map.put("now_page", now_page);
+	      map.put("startRow", startRow);
+	      map.put("endRow", endRow);
+	
+	      ArrayList<ModeltrainingVO> list = this.modeltrainingProc.list_by_trainingno_search_paging(map);
+	      if (list == null || list.isEmpty()) {
+	          model.addAttribute("message", "게시물이 없습니다.");
+	      } else {
+	          model.addAttribute("list", list);          
+	      }
+	
+	      int search_count = this.modeltrainingProc.count_by_trainingno_search(map);
+	      String paging = this.modeltrainingProc.pagingBox(now_page, name, notes, "/modeltraining/list_by_trainingno_search_paging", search_count,
+	          record_per_page, page_per_block);
+	      model.addAttribute("paging", paging);
+	      model.addAttribute("now_page", now_page);
+	      model.addAttribute("search_count", search_count);
+	
+	      int no = search_count - ((now_page - 1) * record_per_page);
+	      model.addAttribute("no", no);
+	      return "/modeltraining/list_by_trainingno_search_paging"; 
+	  } else {
+	      return "/member/login_cookie_need";
+	    }
   }
 
   
   /**
-   * 금지 단어 조회
+   * 모델 학습 이력 조회
    * @return
    */
   @GetMapping(value = "/read")
@@ -192,22 +192,25 @@ public class ModeltrainingCont {
       @RequestParam(name = "trainingno", defaultValue = "0") int trainingno,
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    
-    ModeltrainingVO modeltrainingVO = this.modeltrainingProc.read(trainingno);
-   
-    model.addAttribute("modeltrainingVO", modeltrainingVO);
-    
-    MemberVO memberVO = this.memberProc.read(modeltrainingVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
-    
-    model.addAttribute("word", word);
-    model.addAttribute("now_page", now_page);
-    
-    return "/modeltraining/read";
+	if (this.memberProc.isMemberAdmin(session)) {
+	    ModeltrainingVO modeltrainingVO = this.modeltrainingProc.read(trainingno);
+	   
+	    model.addAttribute("modeltrainingVO", modeltrainingVO);
+	    
+	    MemberVO memberVO = this.memberProc.read(modeltrainingVO.getMemberno());
+	    model.addAttribute("memberVO", memberVO);
+	    
+	    model.addAttribute("word", word);
+	    model.addAttribute("now_page", now_page);
+	    
+	    return "/modeltraining/read";
+	  } else {
+	      return "/member/login_cookie_need";
+	  }
   }
   
   /**
-   * 금지 단어 수정 폼
+   * 모델 학습 이력 수정 폼
    * @return
    */
   @GetMapping(value = "/update_text")
@@ -241,7 +244,7 @@ public class ModeltrainingCont {
   }
   
   /**
-   * 금지 단어 수정 처리
+   * 모델 학습 이력 수정 처리
    * @return
    */
   @PostMapping(value = "/update_text")
@@ -265,27 +268,27 @@ public class ModeltrainingCont {
         return "redirect:/modeltraining/msg"; // 실패 시 msg 페이지로 이동
       }
       
-      // 금지 단어 글 수정 처리
+      // 모델 학습 이력 글 수정 처리
       try {
-        int cnt = this.modeltrainingProc.update_text(modeltrainingVO); // 금지 단어 글 수정
+        int cnt = this.modeltrainingProc.update_text(modeltrainingVO); // 모델 학습 이력 글 수정
         if (cnt > 0) { // 수정 성공
           ra.addAttribute("trainingno", modeltrainingVO.getTrainingno());
           return "redirect:/modeltraining/read"; // 성공 시 게시글 조회 페이지로 이동
         } else { // 수정 실패
-          ra.addFlashAttribute("message", "금지 단어 글 수정에 실패했습니다.");
+          ra.addFlashAttribute("message", "모델 학습 이력 글 수정에 실패했습니다.");
           ra.addFlashAttribute("code", "update_fail");
           return "redirect:/modeltraining/msg"; // 실패 시 msg 페이지로 이동
         }
       } catch (Exception e) {
         e.printStackTrace();
-        ra.addFlashAttribute("message", "금지 단어 글 수정 중 오류가 발생했습니다.");
+        ra.addFlashAttribute("message", "모델 학습 이력 글 수정 중 오류가 발생했습니다.");
         ra.addFlashAttribute("code", "update_fail");
         return "redirect:/modeltraining/msg"; // 오류 발생 시 msg 페이지로 이동
     }
   }
   
   /**
-   * 금지 단어 삭제 폼
+   * 모델 학습 이력 삭제 폼
    * @param session
    * @param model
    * @param ra
@@ -301,6 +304,7 @@ public class ModeltrainingCont {
          @RequestParam(name = "memberno", defaultValue = "0") int memberno,
          @RequestParam(name = "word", defaultValue = "") String word,
          @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+	  if (this.memberProc.isMemberAdmin(session)) {
 		  model.addAttribute("trainingno", trainingno);
 		  model.addAttribute("word", word);
 		  model.addAttribute("now_page", now_page);
@@ -312,11 +316,13 @@ public class ModeltrainingCont {
 		  model.addAttribute("memberVO", memberVO);
 		    
 		  return "/modeltraining/delete"; // forward
-	
+	  } else {
+	    return "/member/login_cookie_need";
+	  }
   }
   
   /**
-   * 금지 단어 삭제 처리
+   * 모델 학습 이력 삭제 처리
    * @param ra
    * @param trainingno
    * @param word

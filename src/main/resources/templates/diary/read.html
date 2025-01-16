@@ -71,9 +71,13 @@
     <span class='menu_divide' >│</span>
     <a th:href="@{|/illustration/create|}">그림 등록</a>
     <span class='menu_divide' >│</span>
+    <a th:href="@{|/illustration/list_all?title=${diaryVO.title}|}">그림 목록</a>
+    <span class='menu_divide' >│</span>
     <a th:href="@{/diary/update/{diaryno}(diaryno=${diaryVO.diaryno})}">글 수정</a>
     <span class='menu_divide' >│</span>
     <a th:href="@{|/diary/list_by_diaryno_search_paging?diaryno=${diaryVO.diaryno }&word=${word }&now_page=${now_page}|}">목록</a>    
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/diary/list_calendar|}">일기 달력</a>    
     <span class='menu_divide' >│</span>
     <a th:href="@{/diary/delete/{diaryno}(diaryno=${diaryVO.diaryno})}">삭제</a>  
  </aside> 
@@ -91,7 +95,7 @@
   <fieldset class="fieldset_basic">
     <ul>
       <!--<li th:if="${diaryVO != null}"> -->
-      <li  >
+      <li style="margin-bottom: 40px; text-align:center;" >
         <strong>일기 제목:</strong> <span th:text="${diaryVO.title}"></span><br>
         <strong>작성 날짜:</strong> <span th:text="${#dates.format(diaryVO.ddate, 'yyyy-MM-dd')}"></span><br>
         <!-- 감정 이미지 추가 -->
@@ -142,7 +146,16 @@
         <span th:text="${diaryVO.summary}"></span><br>      
       </li>
       
-      
+      <form name="frm" method="post" action="/illustration/create" enctype="multipart/form-data">
+        <div>
+          <input type="hidden" name="diaryno" th:value="${diaryVO.diaryno}"> <!-- diaryno 전달 -->
+          <label>그림 추가하기</label>
+          <input type="file" class="form-control" name="illustMF" required="required" placeholder="파일 선택">
+        </div>
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        </div>
+      </form>
       
       <li class="li_none">
         <div>

@@ -117,4 +117,12 @@ public interface MemberDAOInter {
    * @return
    */
   public int find_pw_check(HashMap<String, String> map);
+  
+  /**
+   * 이름과 전화번호로 이메일 조회
+   * @param name
+   * @param phone
+   * @return
+   */
+  public String find_email_check(HashMap<String, String> map);
 }

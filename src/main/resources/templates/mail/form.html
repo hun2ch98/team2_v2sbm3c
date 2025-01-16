@@ -4,14 +4,13 @@
   <script>
     let isAuth = false;
 
-    function btn_check() {
+    function btn_id_check() {
       let name = document.getElementById('name');
       let phone = document.getElementById('phone');
       let url = '/mail/isExist?name=' + name.value + '&phone=' + phone.value;
-      let button = document.getElementById('btn_check');
       let exist_msg = document.getElementById('exist_msg');
       const row = document.getElementById('isExist');
-      const inputEmail = document.getElementById('inputEmail')
+      const inputEmail = document.getElementById('inputEmail');
 
       exist_msg.classList.remove('span_info');
 
@@ -20,38 +19,68 @@
       })
         .then(res => res.json())
         .then(data => {
-          if (data.id) {// 입력한 이름, 전화번호에 해당하는 회원이 존재할 경우
+          if (data.id) { // 입력한 이름, 전화번호에 해당하는 회원이 존재할 경우
             row.style.display = 'table-row';
 
             exist_msg.classList.remove('span_warning');
-            exist_msg.innerHTML = "가입된 회원입니다."
+            exist_msg.innerHTML = "가입된 회원입니다.";
             exist_msg.classList.add('span_info');
             inputEmail.style.display = 'table-row';
             isAuth = true;
-          }
-          else {  // 입력한 이름, 전화번호에 해당하는 회원이 존재하지 않을 경우
+          } else {  // 입력한 이름, 전화번호에 해당하는 회원이 존재하지 않을 경우
             row.style.display = 'table-row';
-            exist_msg.innerHTML = "존재하지 않는 회원입니다."
+            exist_msg.innerHTML = "존재하지 않는 회원입니다.";
             exist_msg.classList.add('span_warning');
+            inputEmail.style.display = 'none'; // 이메일 입력란 숨기기
+            isAuth = false; // 인증 상태 초기화
           }
         })
         .catch(error => { // 서버 다운 등 통신 에러
           console.error('Error: ', error);
         });
+    }
+    
+    function btn_email_check() {
+      let name = document.getElementById('name').value;
+      let phone = document.getElementById('phone').value;
+      let email = document.getElementById('email').value;
+      let url = '/mail/isEmailExist?name=' + name + '&phone=' + phone;
+      let exist_msg_email = document.getElementById('exist_msg_email'); // 이메일 메시지 표시용
+      const rowEmail = document.getElementById('isEmailExist');
 
+      fetch(url, {
+        method: 'GET',
+      })
+        .then(res => res.json())
+        .then(data => {
+          rowEmail.style.display = 'table-row'; // 결과 행 표시
+          if (data.email) { // 등록된 이메일이 있을 경우
+            if (data.email === email) {
+              exist_msg_email.classList.remove('span_warning');
+              exist_msg_email.innerHTML = "등록된 이메일입니다.";
+              exist_msg_email.classList.add('span_info');
+            } else {
+              exist_msg_email.innerHTML = "등록되지 않은 이메일입니다. 다시 입력해주세요.";
+              exist_msg_email.classList.add('span_warning');
+            }
+          } else { // 등록된 이메일이 없을 경우
+              exist_msg_email.innerHTML = "등록되지 않은 이메일입니다. 다시 입력해주세요.";
+              exist_msg_email.classList.add('span_warning');
+          }
+        })
+        .catch(error => {
+          console.error('Error: ', error);
+        });
     }
 
     function send(form) {
-      let findORcancel = document.getElementById('btn_findORcancel');
       let loading = document.getElementById('btn_loading');
 
-      if(isAuth == false) {
+      if (isAuth == false) {
         alert('가입 유무가 확인된 후 아이디를 찾을 수 있습니다.');
         return false;
-      }
-      else {
+      } else {
         form.submit();
-        btn_findORcancel.style.display = 'none';
         loading.style.display = 'block';
       }
     }
@@ -61,28 +90,42 @@
     <div class='title_line' style="text-align: center;">아이디 찾기</div>
     <form name='frm' method='post' action="/mail/send">
       <table style="width: 100%; background-color: #f8f9fa;">
+        <!-- 이름, 전화번호 가입 유무 검증 확인 -->
         <tr>
           <td style="width: 30%; padding: 15px; text-align: center; background-color: #f1f3f5;">이름</td>
-          <td style="padding: 10px; text-align: left;"><input type="text" id="name" name="name" placeholder="이름"
-              style="width: 200px; padding: 5px;"></td>
+          <td style="padding: 10px; text-align: left;">
+            <input type="text" id="name" name="name" placeholder="이름"
+              style="width: 200px; padding: 5px;" value="푸">
+          </td>
         </tr>
         <tr>
           <td style="width: 30%; padding: 15px; text-align: center; background-color: #f1f3f5;">전화번호</td>
           <td style="padding: 10px; text-align: left;">
-            <input type="text" id="phone" name="phone" placeholder="'-' 빼고 입력해 주세요." style="width: 200px; padding: 5px;">
-            <button type="button" id='check' onclick="btn_check()"
-              style="padding: 5px 10px; background-color: #f0e5d8; color: rgb(0, 0, 0); border: none; margin-left: 10px;">가입 유무
-              확인</button>
+            <input type="text" id="phone" name="phone" placeholder="'-' 빼고 입력해 주세요." style="width: 200px; padding: 5px;" value="01064559309">
+            <button type="button" id='check' onclick="btn_id_check()"
+              style="padding: 5px 10px; background-color: #f0e5d8; color: rgb(0, 0, 0); border: none; margin-left: 10px;">가입 유무 확인</button>
           </td>
         </tr>
         <tr id='isExist' style="display: none;">
           <td style="width: 30%; padding: 15px; text-align: center; background-color: #f1f3f5;">가입 유무</td>
-          <td style="padding: 10px; text-align: left;"><span id="exist_msg" style="width: 200px; padding: 5px;"></span>
+          <td style="padding: 10px; text-align: left;">
+            <span id="exist_msg" style="width: 200px; padding: 5px;"></span>
+          </td>
         </tr>
+        <!-- 이메일 등록 유무 검증 확인 -->
         <tr id='inputEmail' style="display: none;">
           <td style="width: 30%; padding: 15px; text-align: center; background-color: #f1f3f5;">수신할 이메일</td>
-          <td style="padding: 10px; text-align: left;"><input type="email" id="email" name="email" placeholder="이메일"
-              style="width: 200px; padding: 5px;"></td>
+          <td style="padding: 10px; text-align: left;">
+            <input type="email" id="email" name="email" placeholder="등록한 이메일을 입력해주세요." style="width: 200px; padding: 5px;" value="skt32@naver.com">
+            <button type="button" id='check' onclick="btn_email_check()"
+              style="padding: 5px 10px; background-color: #f0e5d8; color: rgb(0, 0, 0); border: none; margin-left: 10px;">등록 유무 확인</button>
+          </td>
+        </tr>
+        <tr id='isEmailExist' style="display: none;">
+          <td style="width: 30%; padding: 15px; text-align: center; background-color: #f1f3f5;">등록 유무</td>
+          <td style="padding: 10px; text-align: left;">
+            <span id="exist_msg_email" style="width: 200px; padding: 5px;"></span> <!-- 이메일 메시지 표시용 -->
+          </td>
         </tr>
       </table>
       <div class="bottom_menu" id="btn_findORcancel" style="display: block;">

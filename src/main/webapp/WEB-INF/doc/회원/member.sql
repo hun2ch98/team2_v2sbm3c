@@ -131,3 +131,8 @@ WHERE name = '푸' AND phone = '010-6455-9309';
 SELECT recovery_key
 FROM member
 WHERE name = '나버퍼' AND recovery_key = '8456017019';
+
+11. 이메일 찾기
+SELECT email
+FROM member
+WHERE name = '나버퍼' AND phone = '01022223333';

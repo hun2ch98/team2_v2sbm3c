@@ -40,10 +40,7 @@
           <span style='font-size: 1.5em;' th:text="${surveyVO.topic}"></span>
           <br>
           <form name='frm' method='POST' action='./update_file' enctype="multipart/form-data">
-            <input type="hidden" name="memberno" th:value="${memberVO.memberno }">
             <input type="hidden" name="surveyno" th:value="${surveyVO.surveyno }">
-            <input type="hidden" name="now_page" th:value="${now_page}">
-            <input type="hidden" name="is_continue" th:value="${is_continue}">
                 
             <br><br> 
             변경 이미지 선택<br>  
