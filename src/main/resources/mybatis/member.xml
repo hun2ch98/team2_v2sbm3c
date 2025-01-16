@@ -144,4 +144,11 @@
     FROM member
     WHERE id=#{id} AND recovery_key=#{recovery_key}
   </select>
+  
+  <!-- 이메일 찾기 -> 이름, 전화번호 일치 확인 -->
+  <select id="find_email_check" resultType="String" parameterType="HashMap">
+    SELECT email
+    FROM member
+    WHERE name=#{name} AND phone=#{phone}
+  </select>
 </mapper>
