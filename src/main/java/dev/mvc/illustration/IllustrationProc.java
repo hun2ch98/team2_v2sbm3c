@@ -210,8 +210,7 @@ public class IllustrationProc implements IllustrationProcInter {
       paramMap.put("start_date", start_date != null && !start_date.isEmpty() ? start_date : null);
       paramMap.put("end_date", end_date != null && !end_date.isEmpty() ? end_date : null);
 
-      List<Map<String, Object>> result = sqlSession.selectList("dev.mvc.illustration.IllustrationDAOInter.list_search_paging", paramMap);
-      return result;
+      return illustrationDAO.list_search_paging(paramMap);
   }
 
 
@@ -225,8 +224,9 @@ public class IllustrationProc implements IllustrationProcInter {
         paramMap.put("title", title != null ? "%" + title.trim() + "%" : null);
         paramMap.put("start_date", start_date != null ? start_date.trim() : null);
         paramMap.put("end_date", end_date != null ? end_date.trim() : null);
-
-        return sqlSession.selectOne("dev.mvc.illustration.IllustrationDAOInter.countSearchResults", paramMap);
+        int count = sqlSession.selectOne("dev.mvc.illustration.IllustrationDAOInter.countSearchResults", paramMap);
+        System.out.println("Search count: " + count); // 디버깅용 출력
+        return count;
     }
     
     @Override
