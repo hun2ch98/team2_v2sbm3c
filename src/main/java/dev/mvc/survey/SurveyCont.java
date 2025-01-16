@@ -143,12 +143,7 @@ public class SurveyCont {
       String thumb1 = ""; // preview image
 
       String upDir = Survey.getUploadDir(); // 파일을 업로드할 폴더 준비
-      // upDir = upDir + "/" + 한글을 제외한 카테고리 이름
       System.out.println("-> upDir: " + upDir);
-
-      // 전송 파일이 없어도 file1MF 객체가 생성됨.
-      // <input type='file' class="form-control" name='file1MF' id='file1MF'
-      // value='' placeholder="파일 선택">
       MultipartFile mf = surveyVO.getFile1MF();
 
       file1 = mf.getOriginalFilename(); // 원본 파일명 산출, 01.jpg
@@ -179,46 +174,17 @@ public class SurveyCont {
       } else { // 글만 등록하는 경우
         System.out.println("-> 글만 등록");
       }
-
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 종료
       // ------------------------------------------------------------------------------
-
-      // Call By Reference: 메모리 공유, Hashcode 전달
-//      int memberno = 1; // memberno FK
       surveyVO.setMemberno(memberno);
       int cnt = this.surveyProc.create(surveyVO);
 
-      // ------------------------------------------------------------------------------
-      // PK의 return
-      // ------------------------------------------------------------------------------
-      // System.out.println("--> contentsno: " + contentsVO.getContentsno());
-      // mav.addObject("contentsno", contentsVO.getContentsno()); // redirect
-      // parameter 적용
-      // ------------------------------------------------------------------------------
-
       if (cnt == 1) {
-        // type 1, 재업로드 발생
-        // return "<h1>파일 업로드 성공</h1>"; // 연속 파일 업로드 발생
-
-        // type 2, 재업로드 발생
-        // model.addAttribute("cnt", cnt);
-        // model.addAttribute("code", "create_success");
-        // return "contents/msg";
-
-        // type 3 권장
-        // return "redirect:/contents/list_all"; // /templates/contents/list_all.html
-
-        // System.out.println("-> contentsVO.getCateno(): " + contentsVO.getCateno());
-        // ra.addFlashAttribute("cateno", contentsVO.getCateno()); // controller ->
-        // controller: X
-
         logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");  
         ra.addAttribute("memberno", surveyVO.getMemberno()); // controller -> controller: O
-        return "redirect:/survey/list_by_surveyno_search_paging";
+        return "redirect:/survey/list_by_surveyno_admin";
 
-        // return "redirect:/contents/list_by_cateno?cateno=" + contentsVO.getCateno();
-        // // /templates/contents/list_by_cateno.html
       } else {
         logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");  
         ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
@@ -265,6 +231,8 @@ public class SurveyCont {
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMember(session)) { // 회원 로그인한 경우
+      System.out.println("surveyno: " + surveyno);
+      model.addAttribute("surveyno", surveyno);
 
       int record_per_page = 8;
       int startRow = (now_page - 1) * record_per_page + 1;
@@ -417,16 +385,12 @@ public class SurveyCont {
    * 글 수정 폼
    *
    */
-  @GetMapping(value = "/update_text/{surveyno}")
+  @GetMapping(value = "/update_text")
   public String update_text(HttpSession session, 
       Model model, 
-      @PathVariable("surveyno") int surveyno,
       RedirectAttributes ra, 
-      @RequestParam(name="is_continue", defaultValue="") String is_continue,
-      @RequestParam(name="now_page", defaultValue="1") int now_page) {
+      @RequestParam(name="surveyno", defaultValue="") int surveyno) {
 
-    model.addAttribute("is_continue", is_continue);
-    model.addAttribute("now_page", now_page);
     model.addAttribute("surveyno", surveyno);
 
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
@@ -451,18 +415,11 @@ public class SurveyCont {
    * 
    * @return
    */
-  @PostMapping(value = "/update_text/{surveyno}")
+  @PostMapping(value = "/update_text")
   public String update_text(HttpSession session, 
-      Model model, HttpServletRequest request,
-      @ModelAttribute("surveyVO") SurveyVO surveyVO, 
-      @PathVariable("surveyno") int surveyno,
-      RedirectAttributes ra,
-      @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
-      @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
+      Model model, HttpServletRequest request, RedirectAttributes ra,
+      @ModelAttribute("surveyVO") SurveyVO surveyVO) {
 
-      // Redirect 시 검색어 및 현재 페이지 유지
-      ra.addAttribute("is_continue", is_continue);
-      ra.addAttribute("now_page", now_page);
       int memberno = (int) session.getAttribute("memberno");
       
       if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
@@ -474,7 +431,7 @@ public class SurveyCont {
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
-          return "redirect:/survey/list_by_surveyno_search_paging"; // @GetMapping(value = "/read")
+          return "redirect:/survey/list_by_surveyno_admin"; // @GetMapping(value = "/read")
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
         logAction("update_text", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
@@ -488,14 +445,10 @@ public class SurveyCont {
    * 파일 수정 폼 
    * @return
    */
-  @GetMapping(value = "/update_file/{surveyno}")
+  @GetMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, 
-         @PathVariable("surveyno") int surveyno,
-         @RequestParam(name="is_continue", defaultValue="") String is_continue, 
-         @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    
-    model.addAttribute("is_continue", is_continue);
-    model.addAttribute("now_page", now_page);
+      @RequestParam(name="surveyno", defaultValue="") int surveyno) {
+
     model.addAttribute("surveyno", surveyno);
     
     if (memberProc.isMemberAdmin(session)) {
@@ -515,21 +468,16 @@ public class SurveyCont {
    * 파일 수정 처리 
    * @return
    */
-  @PostMapping(value = "/update_file/{surveyno}")
+  @PostMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,HttpServletRequest request,
                             @ModelAttribute("surveyVO") SurveyVO surveyVO,
-                            @PathVariable("surveyno") int surveyno,
-                            @RequestParam(name="is_continue", defaultValue="") String is_continue, 
-                            @RequestParam(name="now_page", defaultValue="1") int now_page) {
+                            @RequestParam(name="surveyno", defaultValue="") int surveyno) {
 
     int memberno = (int) session.getAttribute("memberno");
     if (this.memberProc.isMemberAdmin(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       SurveyVO surveyVO_old = surveyProc.read(surveyVO.getSurveyno());
 
-      // -------------------------------------------------------------------
-      // 파일 삭제 시작
-      // -------------------------------------------------------------------
       String file1saved = surveyVO_old.getFile1saved(); // 실제 저장된 파일명
       String thumb1 = surveyVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
       long size1 = 0;
@@ -538,18 +486,9 @@ public class SurveyCont {
 
       Tool.deleteFile(upDir, file1saved); // 실제 저장된 파일삭제
       Tool.deleteFile(upDir, thumb1); // preview 이미지 삭제
-      // -------------------------------------------------------------------
-      // 파일 삭제 종료
-      // -------------------------------------------------------------------
 
-      // -------------------------------------------------------------------
-      // 파일 전송 시작
-      // -------------------------------------------------------------------
       String file1 = ""; // 원본 파일명 image
 
-      // 전송 파일이 없어도 file1MF 객체가 생성됨.
-      // <input type='file' class="form-control" name='file1MF' id='file1MF'
-      // value='' placeholder="파일 선택">
       MultipartFile mf = surveyVO.getFile1MF();
 
       file1 = mf.getOriginalFilename(); // 원본 파일명
@@ -582,10 +521,8 @@ public class SurveyCont {
       this.surveyProc.update_file(surveyVO); // Oracle 처리
       ra.addAttribute ("surveyno", surveyVO.getSurveyno());
       ra.addAttribute("memberno", surveyVO.getMemberno());
-      ra.addAttribute("is_continue", is_continue);
-      ra.addAttribute("now_page", now_page);
       logAction("update_file", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
-      return "redirect:/survey/list_by_surveyno_search_paging";
+      return "redirect:/survey/list_by_surveyno_admin";
     } else {
       logAction("update_file", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); 
@@ -633,10 +570,6 @@ public class SurveyCont {
     }
   }
   
-
-  /**
-   * 삭제 처리
-   */
   /**
    * 삭제 처리
    */
