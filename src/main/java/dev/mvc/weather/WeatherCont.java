@@ -74,14 +74,18 @@ public class WeatherCont {
    * @return
    */
   @GetMapping(value = "/create")
-  public String create(Model model, 
+  public String create(HttpSession session, Model model, 
       @ModelAttribute("weatherVO") WeatherVO weatherVO, 
       @RequestParam(name = "memberno", defaultValue = "1") int memberno) {
-
+	    if (this.memberProc.isMemberAdmin(session)) {
 	  weatherVO.setMemberno(memberno); // 기본값 설정
       model.addAttribute("weatherVO", weatherVO); // 수정된 WeatherVO 전달
-
+      
       return "/weather/create"; // /templates/contents/create.html
+    } else {
+      return "/member/login_cookie_need";
+    }
+     
   }
 
   /**
@@ -95,7 +99,7 @@ public class WeatherCont {
                        @ModelAttribute("weatherVO") WeatherVO weatherVO,
                        RedirectAttributes ra) {
 	  
-	  if (memberProc.isMember(session)) { // 회원 로그인한경우
+	  if (memberProc.isMemberAdmin(session)) { 
 		  // ------------------------------------------------------------------------------
 	      // 파일 전송 코드 시작
 	      // ------------------------------------------------------------------------------
@@ -464,21 +468,22 @@ public class WeatherCont {
          @RequestParam(name="now_page", defaultValue="1") int now_page) {
 //    ArrayList<CateVOMenu> menu = this.cateProc.menu();
 //    model.addAttribute("menu", menu);
-    
-    model.addAttribute("word", word);
-    model.addAttribute("now_page", now_page);
-    
-    WeatherVO weatherVO = this.weatherProc.read(weatherno);
-    model.addAttribute("weatherVO", weatherVO);
-    
-    MemberVO memberVO = this.memberProc.read(weatherVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
-    
-    DiaryVO diaryVO = this.diaryProc.read(weatherVO.getDiaryno());
-    model.addAttribute("diaryVO", diaryVO);
-
-    return "/weather/update_file";
-
+	  if (this.memberProc.isMemberAdmin(session)) {
+	    model.addAttribute("word", word);
+	    model.addAttribute("now_page", now_page);
+	    
+	    WeatherVO weatherVO = this.weatherProc.read(weatherno);
+	    model.addAttribute("weatherVO", weatherVO);
+	    
+	    MemberVO memberVO = this.memberProc.read(weatherVO.getMemberno());
+	    model.addAttribute("memberVO", memberVO);
+	    
+	    DiaryVO diaryVO = this.diaryProc.read(weatherVO.getDiaryno());
+	    model.addAttribute("diaryVO", diaryVO);
+	    return "/weather/update_file";
+	  } else {
+	    return "/member/login_cookie_need";
+	  }
   }
 
   /**
@@ -573,21 +578,23 @@ public class WeatherCont {
                                @RequestParam(name="weatherno", defaultValue="0") int weatherno, 
                                @RequestParam(name="word", defaultValue="") String word, 
                                @RequestParam(name="now_page", defaultValue="1") int now_page) {
-      model.addAttribute("memberno", memberno);
-      model.addAttribute("word", word);
-      model.addAttribute("now_page", now_page);
-      
-//      ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//      model.addAttribute("menu", menu);
-      
-      WeatherVO weatherVO = this.weatherProc.read(weatherno);
-      model.addAttribute("weatherVO", weatherVO);
-
-      MemberVO memberVO = this.memberProc.read(weatherVO.getMemberno());
-      model.addAttribute("memberVO", memberVO);
-      
-      return "/weather/delete"; // forward
-     
+	    if (this.memberProc.isMemberAdmin(session)) {
+		  model.addAttribute("memberno", memberno);
+	      model.addAttribute("word", word);
+	      model.addAttribute("now_page", now_page);
+	      
+	//      ArrayList<CateVOMenu> menu = this.cateProc.menu();
+	//      model.addAttribute("menu", menu);
+	      
+	      WeatherVO weatherVO = this.weatherProc.read(weatherno);
+	      model.addAttribute("weatherVO", weatherVO);
+	
+	      MemberVO memberVO = this.memberProc.read(weatherVO.getMemberno());
+	      model.addAttribute("memberVO", memberVO);
+	      return "/weather/delete"; // forward
+	    } else {
+	      return "/member/login_cookie_need";
+	    }
   }
   
   /**
