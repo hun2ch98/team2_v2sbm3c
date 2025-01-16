@@ -12,7 +12,7 @@ COMMENT ON TABLE scmenu is '평점';
 COMMENT ON COLUMN scmenu.menuno is '평점 번호';
 COMMENT ON COLUMN scmenu.name is '평점';
 COMMENT ON COLUMN scmenu.explan is '설명';
-COMMENT ON COLUMN scmenu.explan is '등록일';
+COMMENT ON COLUMN scmenu.rdate is '등록일';
 
 DROP SEQUENCE scmenu_seq;
 
