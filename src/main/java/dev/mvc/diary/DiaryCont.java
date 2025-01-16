@@ -425,7 +425,7 @@ public class DiaryCont {
                        @RequestParam(name = "now_page", defaultValue = "1") int now_page, 
                        RedirectAttributes ra) {
     int memberno = (int) session.getAttribute("memberno");
-      if (this.memberProc.isMemberAdmin(session)) {
+      if (this.memberProc.isMember(session)) {
           if (bindingResult.hasErrors()) { // 폼 에러 처리
             DiaryVO diary1VO = diaryProc.read(diaryno);
             model.addAttribute("diaryVO", diary1VO); // 모델에 추가
@@ -525,7 +525,7 @@ public class DiaryCont {
       @RequestParam(name="year", defaultValue="0") int year, 
       @RequestParam(name="month", defaultValue="0") int month) {
     
-    int memberno = (int) session.getAttribute("memberno");
+    Integer memberno = (Integer) session.getAttribute("memberno");
     
     if (this.memberProc.isMember(session)) {
       MemberVO memberVO = memberProc.read(memberno);

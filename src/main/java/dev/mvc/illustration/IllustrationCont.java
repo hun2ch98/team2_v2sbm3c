@@ -381,6 +381,7 @@ public class IllustrationCont {
       this.illustrationProc.update(illustrationVO);
       ra.addAttribute("illustno", illustrationVO.getIllustno());
       ra.addAttribute("now_page", now_page);
+      model.addAttribute(illustrationVO);
       model.addAttribute("illustno", illustno);
       model.addAttribute("now_page", now_page);
       model.addAttribute("title", title);
