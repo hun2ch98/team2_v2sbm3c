@@ -74,7 +74,7 @@
                 
                  // 제목을 클릭 시 이동
                 const titleLink = document.createElement("a");
-                titleLink.href = `/diary/read?diaryno=${item.diaryno}`;
+                titleLink.href = `/diary/read/${item.diaryno}`;
                 titleLink.style.fontWeight = "bold";
                 titleLink.style.marginBottom = "5px";
                 titleLink.textContent = item.title;
@@ -83,7 +83,7 @@
                // 썸네일 이미지를 클릭 시 이동
               if (item.illust_thumb && item.illust_thumb.trim() !== "") {
                   const thumbLink = document.createElement("a");
-                  thumbLink.href = `/diary/read?diaryno=${item.diaryno}`;
+                  thumbLink.href = `/diary/read/${item.diaryno}`;
                   const thumbImg = document.createElement("img");
                   thumbImg.src = `/upload/${item.illust_thumb}`;
                   thumbImg.alt = "Thumbnail";
@@ -186,10 +186,12 @@
             location.href = url;
         }
     </script>
-
+    <h3>
+      [[${memberVO.nickname}]]의 일기
+    </h3>
     <h4 id='month_title' data-current_year='' data-current_month=''>
         <a href="#" onclick="changeMonth(-1)">[이전 달]</a>
-        <span id='panel_year_month'></span>
+        <span id='panel_year_month' style="margin:15px; font-size:20px;"></span>
         <a href="#" onclick="changeMonth(1)">[다음 달]</a>
     </h4>
     <table>

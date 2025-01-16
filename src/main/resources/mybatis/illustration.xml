@@ -24,7 +24,7 @@
   <select id="listAllWithDiaryDetails" resultType="map">
     SELECT 
         i.illustno,
-        i.illust_thumb,
+        i.illust,
         i.illust_size,
         d.diaryno,
         d.title,
@@ -61,7 +61,7 @@
     FROM (
         SELECT 
             i.illustno, 
-            i.illust_thumb, 
+            i.illust, 
             d.diaryno, 
             d.title, 
             TO_CHAR(d.ddate, 'YYYY-MM-DD') AS ddate,
@@ -104,6 +104,9 @@
     FROM diary d
     JOIN illustration i ON d.diaryno = i.diaryno
     WHERE 1=1
+    <if test="title != null and title != ''">
+        AND LOWER(d.title) LIKE '%' || LOWER(#{title}) || '%'
+    </if>
     <if test="start_date != null and start_date != ''">
         AND SUBSTR(TO_CHAR(d.ddate), 1, 10) >= #{start_date}
     </if>
