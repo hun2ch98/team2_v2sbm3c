@@ -116,27 +116,8 @@
                         <li class="nav-item"><a class="nav-link"th:href="@{|/modeltraining/list_by_trainingno_search_paging?is_continue=${is_continue ?: ''}|}">모델 학습 이력 목록</a></li>
                     </ul>
                 </li>
-                
-                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="평점">                                                            
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/score/create|}">평점 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/score/list_by_scoreno_search_paging?is_continue=${is_continue ?: ''}|}">평점 목록</a></li>
-                    </ul>
-                </li>
-                
-                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="평점메뉴">                                                            
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/scmenu/create|}">평점 메뉴 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/scmenu/list_by_menuno_search_paging?is_continue=${is_continue ?: ''}|}">평점 목록</a></li>
-                    </ul>
-                </li>
-                
+              
+           
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="일기">                                                            

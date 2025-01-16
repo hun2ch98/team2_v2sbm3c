@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import dev.mvc.diary.DiaryVO;
+import dev.mvc.learningdata.Learningdata;
 import dev.mvc.member.MemberProcInter;
 import dev.mvc.member.MemberVO;
 import dev.mvc.tool.Tool;
@@ -103,20 +105,20 @@ public class ScoreCont {
 	  }
   }
     
-//  /**
-//   * 평점 전체 목록(관리자)
-//   * @param session
-//   * @param model
-//   * @return
-//   */
-//  @GetMapping(value = "/list_all")
-//  public String list_all(HttpSession session, Model model) {
-//    
-//	    ArrayList<scoreVO> list = this.scoreProc.list_all(); // 평점 모든 목록
-//    
-//	    model.addAttribute("list", list);
-//	    return "/score/list_all";
-//  }
+  /**
+   * 평점 전체 목록(관리자)
+   * @param session
+   * @param model
+   * @return
+   */
+  @GetMapping(value = "/list_all")
+  public String list_all(HttpSession session, Model model) {
+    
+	    ArrayList<ScoreVO> list = this.scoreProc.list_all(); // 평점 모든 목록
+    
+	    model.addAttribute("list", list);
+	    return "/score/list_all";
+  }
 
   /**
    * 유형 3
@@ -130,48 +132,50 @@ public class ScoreCont {
       Model model,
       @ModelAttribute("scoreVO") ScoreVO scoreVO,
       @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
-      @RequestParam(name = "jumsu", defaultValue = "") String jumsu,
+      @RequestParam(value = "start_date", required = false, defaultValue = "") String startDate,
+      @RequestParam(value = "end_date", required = false, defaultValue = "") String endDate,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
+      // 날짜 값이 비어 있지 않도록 트림 처리
+      startDate = startDate.trim();
+      endDate = endDate.trim();
+
+      // 페이징 설정
       int record_per_page = 10;
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
-      int memberno = (int) session.getAttribute("memberno");
-      MemberVO memberVO = this.memberProc.read(memberno);
-      if (memberVO == null) {
-          memberVO = new MemberVO();
-          memberVO.setMemberno(0);
-          model.addAttribute("message", "회원 정보가 없습니다.");
-      }
-      jumsu = Tool.checkNull(jumsu).trim();
-
-      model.addAttribute("memberVO", memberVO);
-      model.addAttribute("scoreno", scoreno);
-      model.addAttribute("jumsu", jumsu);
-      model.addAttribute("now_page", now_page);
-
+      // 쿼리 파라미터 맵 설정
       HashMap<String, Object> map = new HashMap<>();
-      map.put("memberno", memberno);
-      map.put("jumsu", jumsu);
       map.put("now_page", now_page);
       map.put("startRow", startRow);
       map.put("endRow", endRow);
+      map.put("startDate", startDate);
+      map.put("endDate", endDate);
 
+      // 목록 가져오기
       ArrayList<ScoreVO> list = this.scoreProc.list_by_scoreno_search_paging(map);
       if (list == null || list.isEmpty()) {
-          model.addAttribute("message", "게시물이 없습니다.");
+          model.addAttribute("message", "검색 조건에 맞는 게시물이 없습니다.");
       } else {
           model.addAttribute("list", list);
       }
 
+
+      // 검색된 글 수 가져오기
       int search_count = this.scoreProc.count_by_scoreno_search(map);
-      String paging = this.scoreProc.pagingBox(now_page, jumsu, memberno, search_count,
-          record_per_page, page_per_block);
+      String paging = this.scoreProc.pagingBox(now_page, scoreno,startDate,endDate, search_count,
+    		  Score.RECORD_PER_PAGE, Score.PAGE_PER_BLOCK);
+	      
+      // 모델에 데이터 추가
+      model.addAttribute("scoreno", scoreno);
+      model.addAttribute("startDate", startDate);
+      model.addAttribute("endDate", endDate);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
 
+      // 페이지 번호 계산
       int no = search_count - ((now_page - 1) * record_per_page);
       model.addAttribute("no", no);
 
@@ -185,22 +189,32 @@ public class ScoreCont {
   @GetMapping(value = "/read")
   public String read(HttpSession session, Model model,
       @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
-      @RequestParam(name = "word", defaultValue = "") String word,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-    
-	ScoreVO scoreVO = this.scoreProc.read(scoreno);
-   
-    model.addAttribute("scoreVO", scoreVO);
-    
-    MemberVO memberVO = this.memberProc.read(scoreVO.getMemberno());
-    model.addAttribute("memberVO", memberVO);
-    
-    model.addAttribute("word", word);
-    model.addAttribute("now_page", now_page);
-    
-    return "/score/read";
+      @RequestParam(name = "now_page", required = false) String now_page) {
+      
+      // now_page가 null 또는 "null"인 경우 기본값 1로 설정
+      int currentPage = 1;
+      if (now_page != null && !now_page.equals("null")) {
+          try {
+              currentPage = Integer.parseInt(now_page);
+          } catch (NumberFormatException e) {
+              currentPage = 1;  // 잘못된 형식인 경우 기본값 1로 설정
+          }
+      }
+
+      // 평점 정보 조회
+      ScoreVO scoreVO = this.scoreProc.read(scoreno);
+      model.addAttribute("scoreVO", scoreVO);
+
+      // 회원 정보 조회
+      MemberVO memberVO = this.memberProc.read(scoreVO.getMemberno());
+      model.addAttribute("memberVO", memberVO);
+
+      // 현재 페이지 모델에 추가
+      model.addAttribute("now_page", currentPage);
+      
+      return "/score/read";
   }
-  
+
   /**
    * 평점 수정 폼
    * @return
@@ -210,10 +224,8 @@ public class ScoreCont {
       Model model, 
       @RequestParam(name = "scoreno", defaultValue = "0") int scoreno,
       RedirectAttributes ra,
-      @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     
-    model.addAttribute("word", word);
     model.addAttribute("now_page", now_page);
     
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
@@ -244,38 +256,13 @@ public class ScoreCont {
       @ModelAttribute("scoreVO") ScoreVO scoreVO,
       RedirectAttributes ra,
       @RequestParam(name = "scoreno", defaultValue = "") int scoreno,
+      @RequestParam(name = "total", defaultValue = "") int total,
       @RequestParam(name = "search_word", defaultValue = "") String search_word,
       @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
 
       // Redirect 시 검색어 및 현재 페이지를 유지하기 위한 파라미터 추가
       ra.addAttribute("word", search_word);
       ra.addAttribute("now_page", now_page);
-      
-      // 평점 값 검증 (jumsu가 0.5 단위로 입력되었는지 확인)
-      if (scoreVO.getJumsu() == null || scoreVO.getJumsu().trim().isEmpty()) {
-          ra.addFlashAttribute("message", "평점은 필수 입력 사항입니다.");
-          ra.addFlashAttribute("code", "update_fail");
-          return "redirect:/score/msg"; // 실패 시 msg 페이지로 이동
-      }
-      
-      Float jumsu = null;
-      try {
-          // 문자열로 된 평점 값을 Float로 변환
-          jumsu = Float.parseFloat(scoreVO.getJumsu().trim());
-          // 0.5단위 체크
-          if (jumsu % 0.5 != 0 || jumsu > 5) {
-              ra.addFlashAttribute("message", "평점은 0.5단위로 입력해야 하며 최대 5점까지 가능합니다.");
-              ra.addFlashAttribute("code", "update_fail");
-              return "redirect:/score/msg"; // 유효하지 않은 평점 입력 시
-          }
-      } catch (NumberFormatException e) {
-          ra.addFlashAttribute("message", "유효하지 않은 평점 값입니다.");
-          ra.addFlashAttribute("code", "update_fail");
-          return "redirect:/score/msg"; // 예외 발생 시 오류 처리
-      }
-
-      // scoreVO에 검증된 jumsu 값 설정
-      scoreVO.setJumsu(String.valueOf(jumsu));
 
       // 평점 글 수정 처리
       try {

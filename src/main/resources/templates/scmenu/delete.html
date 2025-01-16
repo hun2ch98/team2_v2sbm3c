@@ -3,15 +3,15 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
-    > 학습 데이터 삭제
+    > 평점 메뉴 삭제
   </div>
   
   <aside class="aside_right">
-    <a th:href="@{/learningdata/create}">등록</a>
+    <a th:href="@{/scmenu/create}">등록</a>
     <span class='menu_divide' >│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide' >│</span>
-    <a th:href="@{/learningdata/list_by_datano_search_paging}">목록</a>
+    <a th:href="@{/scmenu/list_by_menuno_search_paging}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
@@ -21,15 +21,14 @@
       <li class="li_none">
   
         <div style='text-align: left; width: 100%; float: left;'>
-		<span style='font-size: 1em;'>학습 데이터 질문:&nbsp;&nbsp;</span><span style='font-size: 1.5em;' th:text="${learningdataVO.ques}"></span>
+		<span style='font-size: 1em;'>평점 메뉴 이름:&nbsp;&nbsp;</span><span style='font-size: 1.5em;' th:text="${scmenuVO.name}"></span>
 		<br>
-		<span style='font-size: 1em;'>학습 데이터 답변:&nbsp;&nbsp;</span><span style='font-size: 1.5em;' th:text="${learningdataVO.ans}"></span>
+		<span style='font-size: 1em;'>평점 메뉴 설명:&nbsp;&nbsp;</span><span style='font-size: 1.5em;' th:text="${scmenuVO.explan}"></span>
           <br>
           <form name='frm' method='POST' action='./delete'>
-            <input type="hidden" name="memberno" th:value="${learningdataVO.memberno }">
-            <input type="hidden" name="datano" th:value="${learningdataVO.datano }">
+            <input type="hidden" name="menuno" th:value="${scmenuVO.menuno }">
             <input type="hidden" name="now_page" th:value="${now_page}">
-            <input type="hidden" name="search_word" th:value="${name}">
+            <input type="hidden" name="name" th:value="${name}">
                 
             <br> 
             <div style='margin-top: 20px; clear: both;'>
