@@ -84,8 +84,8 @@ public class ItemProc implements ItemProcInter{
   }
 
   @Override
-  public int count_by_search(String word) {
-      int cnt = this.itemDAO.count_by_search(word);
+  public int count_by_search(Map<String, Object> map) {
+      int cnt = this.itemDAO.count_by_search(map);
       return cnt;
   }
   
@@ -126,71 +126,59 @@ public class ItemProc implements ItemProcInter{
    */ 
   @Override
   public String pagingBox(int surveyno, int now_page, String word, String list_file_name, int search_count, 
-                                      int record_per_page, int page_per_block){    
-    int total_page = (int)(Math.ceil((double)search_count / record_per_page));
-    int total_grp = (int)(Math.ceil((double)total_page / page_per_block)); 
-    int now_grp = (int)(Math.ceil((double)now_page / page_per_block));  
+                          int record_per_page, int page_per_block) {    
+      int total_page = (int)(Math.ceil((double)search_count / record_per_page));
+      int total_grp = (int)(Math.ceil((double)total_page / page_per_block)); 
+      int now_grp = (int)(Math.ceil((double)now_page / page_per_block));  
 
-    int start_page = ((now_grp - 1) * page_per_block) + 1; // 특정 그룹의 시작 페이지  
-    int end_page = (now_grp * page_per_block);               // 특정 그룹의 마지막 페이지   
-     
-    StringBuffer str = new StringBuffer(); // String class 보다 문자열 추가등의 편집시 속도가 빠름 
-    
-    str.append("<style type='text/css'>"); 
-    str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}"); 
-    str.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}"); 
-    str.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}"); 
-    str.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}"); 
-    str.append("  .span_box_1{"); 
-    str.append("    text-align: center;");    
-    str.append("    font-size: 1em;"); 
-    str.append("    border: 1px;"); 
-    str.append("    border-style: solid;"); 
-    str.append("    border-color: #cccccc;"); 
-    str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/"); 
-    str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/"); 
-    str.append("  }"); 
-    str.append("  .span_box_2{"); 
-    str.append("    text-align: center;");    
-    str.append("    background-color: #668db4;"); 
-    str.append("    color: #FFFFFF;"); 
-    str.append("    font-size: 1em;"); 
-    str.append("    border: 1px;"); 
-    str.append("    border-style: solid;"); 
-    str.append("    border-color: #cccccc;"); 
-    str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/"); 
-    str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/"); 
-    str.append("  }"); 
-    str.append("</style>"); 
-    str.append("<div id='paging'>"); 
+      int start_page = ((now_grp - 1) * page_per_block) + 1; // 특정 그룹의 시작 페이지  
+      int end_page = (now_grp * page_per_block);            // 특정 그룹의 마지막 페이지   
+       
+      StringBuffer str = new StringBuffer(); // String class보다 문자열 추가등의 편집시 속도가 빠름 
+      
+      str.append("<style type='text/css'>"); 
+      str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}"); 
+      str.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}"); 
+      str.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}"); 
+      str.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}"); 
+      str.append("  .span_box_1{"); 
+      str.append("    text-align: center;");    
+      str.append("    font-size: 1em;"); 
+      str.append("    border: 1px;"); 
+      str.append("    border-style: solid;"); 
+      str.append("    border-color: #cccccc;"); 
+      str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/"); 
+      str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/"); 
+      str.append("  }"); 
+      str.append("  .span_box_2{"); 
+      str.append("    text-align: center;");    
+      str.append("    background-color: #668db4;"); 
+      str.append("    color: #FFFFFF;"); 
+      str.append("    font-size: 1em;"); 
+      str.append("    border: 1px;"); 
+      str.append("    border-style: solid;"); 
+      str.append("    border-color: #cccccc;"); 
+      str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/"); 
+      str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/"); 
+      str.append("  }"); 
+      str.append("</style>"); 
+      str.append("<div id='paging'>"); 
 
-    int _now_page = (now_grp - 1) * page_per_block;
-    if (now_grp > 1) {
-        str.append("<span class='span_box_1'><a href='" + list_file_name + "?surveyno="+surveyno+
-                "&word=" + word + "&now_page=" + _now_page + "'>이전</a></span>");
-    }
+   // 모든 페이지 번호 표시
+      for (int i = 1; i <= total_page; i++) {
+          if (i == now_page) {
+              str.append("<span class='span_box_2'>" + i + "</span>"); // 현재 페이지
+          } else {
+              str.append("<span class='span_box_1'><a href='" + list_file_name + "?surveyno=" + surveyno +
+                      "&word=" + word + "&now_page=" + i + "'>" + i + "</a></span>"); // 다른 페이지
+          }
+      }
 
-    // 현재 그룹의 페이지 링크
-    for (int i = start_page; i <= end_page; i++) {
-        if (i > total_page) break;
-        if (i == now_page) {
-            str.append("<span class='span_box_2'>" + i + "</span>");
-        } else {
-            str.append("<span class='span_box_1'><a href='" + list_file_name +"?surveyno="+surveyno+
-                    "&word=" + word + "&now_page=" + i + "'>" + i + "</a></span>");
-        }
-    }
-
-    // 다음 그룹 링크
-    _now_page = now_grp * page_per_block + 1;
-    if (now_grp < total_grp) {
-        str.append("<span class='span_box_1'><a href='" + list_file_name + "?surveyno="+surveyno+
-                "&word=" + word + "&now_page=" + _now_page + "'>다음</a></span>");
-    }
-    str.append("</div>"); 
-     
-    return str.toString(); 
+      str.append("</div>"); 
+       
+      return str.toString(); 
   }
+
   
   @Override
   public int count_survey(int surveyno) {

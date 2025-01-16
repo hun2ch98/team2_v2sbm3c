@@ -179,14 +179,14 @@ public class ItemCont {
                                   @RequestParam(name = "itemno", defaultValue = "0") int itemno,
                                   @RequestParam(name = "word", defaultValue = "") String word,
                                   @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-//      System.out.println("surveyno: " + surveyno);
+      System.out.println("surveyno: " + surveyno);
       model.addAttribute("surveyno", surveyno);
 
       model.addAttribute("itemno", itemno);
       // 관리자인지 확인  
       if (this.memberProc.isMemberAdmin(session)) {
         
-        int record_per_page = 3;
+        int record_per_page = 5;
         int start_num = (now_page - 1) * record_per_page + 1;
         int end_num = now_page * record_per_page;
         
@@ -220,7 +220,7 @@ public class ItemCont {
         // --------------------------------------------------------------------------------------
         // 페이지 번호 목록 생성
         // --------------------------------------------------------------------------------------
-        int search_count = this.itemProc.count_by_search(word);
+        int search_count = this.itemProc.count_by_search(map);
         String paging = this.itemProc.pagingBox(surveyno, now_page, word, "/surveyitem/list_search", 
             search_count, record_per_page, now_page);
 

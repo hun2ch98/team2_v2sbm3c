@@ -77,34 +77,30 @@
     SELECT COUNT(*) as cnt
     FROM surveyitem
     <where>
+      <if test="surveyno != null">
+        surveyno = #{surveyno}
+      </if>
       <if test="word != null and word != ''">
-        UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
+        AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
       </if>
     </where>
-    ORDER BY itemno ASC
   </select>
   
   <!-- 검색 + 페이징 목록 -->
   <select id="list_search_paging" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
     SELECT itemno, surveyno, item_seq, item, item_cnt, r
     FROM (
-        SELECT itemno, surveyno, item_seq, item, item_cnt, rownum as r
-        FROM (
-            SELECT itemno, surveyno, item_seq, item, item_cnt
-            FROM surveyitem
-            <choose>
-              <when test="word == null or word == ''">
-                WHERE surveyno=#{surveyno}
-              </when>
-              <otherwise>
-                WHERE surveyno=#{surveyno} AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
-              </otherwise>
-            </choose>
-            ORDER BY itemno ASC
-        )
+        SELECT itemno, surveyno, item_seq, item, item_cnt, ROW_NUMBER() OVER (ORDER BY itemno ASC) as r
+        FROM surveyitem
+        WHERE surveyno = #{surveyno}
+        <if test="word != null and word != ''">
+            AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
+        </if>
     )
     WHERE r BETWEEN #{start_num} AND #{end_num}
   </select>
+
+
   
   <!-- 항목 개수 조회 -->
   <select id="count_survey" resultType="int" parameterType="int">
