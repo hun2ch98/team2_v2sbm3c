@@ -137,16 +137,17 @@ public class BoardProc implements BoardProcInter {
     }
     
     @Override
-    public int update_goodcnt(int boardno) {
-        int cnt = this.boardDAO.update_goodcnt(boardno);
-        return cnt;
+    public int increasegoodcnt(int boardno) {
+      int cnt = this.boardDAO.increasegoodcnt(boardno);
+      return cnt;
+    }
+
+    @Override
+    public int decreasegoodcnt(int boardno) {
+      int cnt = this.boardDAO.decreasegoodcnt(boardno);
+      return cnt;
     }
     
-    @Override
-    public int update_badcnt(int boardno) {
-        int cnt = this.boardDAO.update_badcnt(boardno);
-        return cnt;
-    }
 
     
 }
