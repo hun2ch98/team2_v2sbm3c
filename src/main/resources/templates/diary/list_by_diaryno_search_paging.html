@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 목록</title>
+    <!-- CSS 파일 링크 추가 -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
+</head>
+<body>
 <div layout:fragment="content">
   <div class="title_line">
     일기 목록
@@ -36,7 +43,7 @@
 
   <!-- 목록 출력 -->
   <div>
-    <table class="table table-bordered">
+    <table class="table table-bordered playful-table">
       <thead>
         <tr>
           <th>제목</th>
@@ -77,4 +84,5 @@
   <!-- 페이징 처리 -->
   <div class="bottom_menu" th:utext="${paging}" ></div>
 </div>
+</body>
 </html>
