@@ -51,5 +51,8 @@ public class DiaryVO {
   
   private int goodcnt=0;
   
+  /** 자동 저장을 위한 image 변수 */
+  private String illust_file="";
+  
   private ArrayList<IllustrationVO> get_illust;
 }

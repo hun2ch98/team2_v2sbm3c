@@ -14,6 +14,8 @@
   <div class="menu_line"></div>
 
   <form name="frm" method="post" th:object="${diaryVO}" action="./create" enctype="multipart/form-data">
+     <input type="hidden" name="illust_file" id="illust_file">
+     
     <!-- 제목 -->
     <div style="margin-bottom:10px;">
       <label>제목</label>
@@ -177,6 +179,7 @@
           const previewImage = document.getElementById('preview-image');
           previewImage.src = result.image_url;
           previewImage.style.display = 'block';
+          document.getElementById('illust_file').value = result.illust;
           
           if (regenerate) {
             alert("새로운 이미지가 생성되었습니다!");
