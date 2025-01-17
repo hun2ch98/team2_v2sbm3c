@@ -21,7 +21,7 @@
       <li class="li_none">
         <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}"
                style="text-align: center; width: 50%; float: left;">
-          <img th:src="@{|/emotion/storage/${emotionVO.file1saved}|}" style="width: 90%;">
+          <img th:src="@{|/emotion/images/${emotionVO.file1}|}" style="width: 90%;">
         </div>
 
         <div th:if="${((emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')) == false) and (emotionVO.size1 > 0)}"
