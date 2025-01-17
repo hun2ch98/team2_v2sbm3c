@@ -17,13 +17,13 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="관리자">                                                            
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="관리자목록">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/loginlog/list|}">로그 목록</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">전체 글 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/member/list|}">회원 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/loginlog/list|}">로그인 로그 목록</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/grade/list_by_gradeno_search_paging?word=${word}|}">등급 목록</a></li>
                     </ul>
                 </li>
                 
