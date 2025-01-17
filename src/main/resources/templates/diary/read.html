@@ -145,7 +145,8 @@
         </div>
     
         <strong>일기 내용</strong><br>
-        <span th:text="${diaryVO.summary}"></span><br>      
+        <span th:text="${diaryVO.summary}" style="display:inline-block; width:350px;"></span><br>
+    
       </li>
       
       <form name="frm" method="post" action="/illustration/create" enctype="multipart/form-data">
