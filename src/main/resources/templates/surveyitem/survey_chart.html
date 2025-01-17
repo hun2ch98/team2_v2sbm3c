@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
   <div layout:fragment="content" style="width: 80%; margin: 50px auto; text-align: center;">
     <div class="title_line">
-    설문조사 결과 > 
+    설문조사 결과
     <span th:text="${surveyVO?.topic ?: ''}" class="title_line_text"></span>
     </div>
     <div id="chart_div" style='height: 500px;'></div>

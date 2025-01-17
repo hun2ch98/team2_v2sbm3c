@@ -503,9 +503,9 @@ public class ItemCont {
   public String survey_chart(Model model,
       @RequestParam("surveyno") int surveyno) {
     
-    model.addAttribute("title", "설문조사 차트 결과");
+    model.addAttribute("title", " ");
     model.addAttribute("xlabel", " ");
-    model.addAttribute("ylabel", "설문 참여 인원");
+    model.addAttribute("ylabel", " ");
 
     ArrayList<ItemVO> list_c = this.itemProc.list_member(surveyno);
     

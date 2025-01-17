@@ -21,7 +21,7 @@
   <select id="list_all" resultType="dev.mvc.board.BoardVO">
     SELECT boardno, memberno, title, bcontent, rdate, board_cate, file1, file1saved, thumb1, size1, goodcnt
     FROM board
-    ORDER BY boardno DESC
+    ORDER BY boardno ASC
   </select>
   
   <!-- 게시글 등록된 목록 -->
@@ -29,7 +29,7 @@
     SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
     FROM board
     WHERE boardno = #{boardno}
-    ORDER BY boardno DESC
+    ORDER BY boardno ASC
   </select>
 
   <!-- 게시글 내용 수정 -->
@@ -57,7 +57,7 @@
       SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
       FROM board
       WHERE board_cate = #{board_cate, jdbcType=VARCHAR}
-      ORDER BY boardno DESC
+      ORDER BY boardno ASC
       OFFSET #{startRow} ROWS FETCH NEXT #{pageSize} ROWS ONLY
   </select>
 
@@ -75,7 +75,7 @@
     SELECT *
     FROM (
         SELECT boardno, memberno, title, bcontent, rdate, board_cate, LOWER(file1) AS file1, file1saved, thumb1, size1, goodcnt, 
-               ROW_NUMBER() OVER (ORDER BY boardno DESC) AS rnum
+               ROW_NUMBER() OVER (ORDER BY boardno ASC) AS rnum
         FROM board
         WHERE (#{board_cate} IS NULL OR #{board_cate} = '' OR board_cate = #{board_cate})
     )
