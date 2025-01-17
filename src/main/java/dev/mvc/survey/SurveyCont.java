@@ -47,10 +47,10 @@ public class SurveyCont {
   private MemberProcInter memberProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
-  public int record_per_page = 10;
+  public int record_per_page = 5;
 
   /** 블럭당 페이지 수, 하나의 블럭은 10개의 페이지로 구성됨 */
-  public int page_per_block = 10;
+  public int page_per_block = 5;
   
   /** 페이징 목록 주소 */
   private String list_file_name = "/survey/list_by_surveyno_search_paging";
@@ -198,26 +198,6 @@ public class SurveyCont {
   }
   
   /**
-   * 전체 목록
-   * @param model
-   * @return
-   */
-  @GetMapping(value = "/list_all")
-  public String list_all(HttpSession session, Model model) {
-    
-//    if (this.memberProc.isMemberAdmin(session)) { // 관리자만 조회 가능
-  
-      ArrayList<SurveyVO> list = this.surveyProc.list_all();
-      model.addAttribute("list", list);
-  
-      return "/survey/list_all"; // /templates/cate/list_all.html
-//      } else {
-//        return "redirect:/member/login_cookie_need";
-//  
-//      }
-    }
-  
-  /**
    * 유형 3
    * 카테고리별 목록 + 검색 + 페이징 
    * 회원
@@ -234,7 +214,7 @@ public class SurveyCont {
       System.out.println("surveyno: " + surveyno);
       model.addAttribute("surveyno", surveyno);
 
-      int record_per_page = 8;
+      int record_per_page = 5;
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 
@@ -295,7 +275,7 @@ public class SurveyCont {
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인한 경우
 
-      int record_per_page = 8;
+      int record_per_page = 5;
       int startRow = (now_page - 1) * record_per_page + 1;
       int endRow = now_page * record_per_page;
 

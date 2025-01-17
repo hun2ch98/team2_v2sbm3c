@@ -52,7 +52,7 @@ ORDER BY boardno ASC;
 
 DELETE FROM board;
 
-DELETE FROM board WHERE boardno=74;
+DELETE FROM board WHERE boardno=96;
 
 -- ----------------------------------------------------------------------------------------------------
 -- 검색, board_cate 검색 목록

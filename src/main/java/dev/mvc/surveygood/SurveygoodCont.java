@@ -87,7 +87,7 @@ public class SurveygoodCont {
       @RequestParam(name = "word", defaultValue = "") String word,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
 
-    int record_per_page = 10;
+    int record_per_page = 5;
     int start_row = (now_page - 1) * record_per_page + 1;
     int end_row = now_page * record_per_page;
     
