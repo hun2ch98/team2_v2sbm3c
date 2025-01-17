@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
 <div layout:fragment="content">
   <div class='title_line'>
@@ -8,31 +7,36 @@
   
   <aside class="aside_right">
     <a th:href="@{/emotion/create}">등록</a>
-    <span class='menu_divide' >│</span>
+    <span class='menu_divide'>│</span>
     <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide' >│</span>
+    <span class='menu_divide'>│</span>
     <a th:href="@{/emotion/list_by_emono_search_paging}">목록</a>
   </aside>
   
   <div class='menu_line'></div>
   
   <form name='frm' method='post' th:object="${emotionVO}" action='./update_text'>
-    <input type="hidden" name="emono" th:value="${emotionVO.emono }">
+    <input type="hidden" name="emono" th:value="${emotionVO.emono}">
     <input type="hidden" name="now_page" th:value="${now_page}">
     <input type="hidden" name="search_word" th:value="${word}">
     
-    <div>
-       <label>유형</label>
-       <input type='text' name='type' th:value='${emotionVO.type}' required="required" 
-                 autofocus="autofocus" class="form-control" style='width: 100%;'>
-    </div>
-    <div>
-       <label>내용</label>
-       <textarea name='explan' required="required" class="form-control" rows="12" style='width: 100%;' 
-                      th:text='${emotionVO.explan}'></textarea>
+    <div style="text-align: center; width: 100%; margin: auto;">
+      <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png') or emotionVO.file1.endsWith('gif')}">
+        <img th:src="@{|/emotion/images/${emotionVO.file1}|}" style="width: 50%;">
+      </div>
+      <div style="margin-top: 20px;">
+        <label>유형</label>
+        <input type='text' name='type' th:value='${emotionVO.type}' required="required" 
+               autofocus="autofocus" class="form-control" style='width: 100%;'>
+      </div>
+      <div style="margin-top: 20px;">
+        <label>내용</label>
+        <textarea name='explan' required="required" class="form-control" rows="12" style='width: 100%;' 
+                  th:text='${emotionVO.explan}'></textarea>
+      </div>
     </div>
     
-    <div class="content_body_bottom">
+    <div class="content_body_bottom" style="text-align: center; margin-top: 20px;">
       <button type="submit" class="btn btn-secondary btn-sm">저장</button>
       <button type="button" th:attr="onclick=|location.href='./list_by_emono_search_paging'|" class="btn btn-secondary btn-sm">목록</button>
     </div>

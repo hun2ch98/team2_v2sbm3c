@@ -39,7 +39,7 @@
          style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
         <div th:if="${weatherVO.file1.endsWith('jpg') or weatherVO.file1.endsWith('png')  or weatherVO.file1.endsWith('gif')}">
-          <img th:src="@{|/weather/storage/${weatherVO.thumb1}|}" style="width: 120px; height: 90px;">
+          <img th:src="@{|/weather/images/${weatherVO.file1}|}" style="width: 120px; height: 90px;">
         </div>
         
         <!--% 이미지가 이닌 파일은 파일명만 출력 %-->

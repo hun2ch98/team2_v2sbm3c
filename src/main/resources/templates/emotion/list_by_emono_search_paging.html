@@ -16,7 +16,7 @@
       <span class="menu_devide">│</span>    
       <a href="javascript:location.reload();">새로고침</a>
       <span class='menu_divide'>│</span>    
-      <a th:href="@{|./list_by_emono_search_paging?emono=${emotionVO?.emono }&type=${type }&now_page=${now_page}|}">목록</a>    
+      <a th:href="@{|./list_by_emono_search_paging?emono=${emotionVO?.emono }&type=${type }&now_page=${now_page}|}">목록</a>  
     </aside> 
   
   <div th:replace="~{/emotion/list_search_com :: list_search_fragment}"></div>
@@ -38,7 +38,7 @@
          style="cursor: pointer; height: 90px;">
       <td class='td_basic' style="vertical-align: middle; text-align: center;">
         <div th:if="${emotionVO.file1.endsWith('jpg') or emotionVO.file1.endsWith('png')  or emotionVO.file1.endsWith('gif')}">
-          <img th:src="@{|/emotion/storage/${emotionVO.thumb1}|}" style="width: 120px; height: 90px;">
+          <img th:src="@{|/emotion/images/${emotionVO.file1}|}" style="width: 120px; height: 90px;">
         </div>
         
         <!--% 이미지가 이닌 파일은 파일명만 출력 %-->
