@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <!-- CSS 파일 링크 추가 -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
+</head>
+<body>
 <div layout:fragment="content">
   <!-- 제목 영역 -->
   <div class="title_line">
@@ -55,7 +61,7 @@
 
   <!-- 목록 출력 -->
   <div>
-    <table class="table table-bordered">
+    <table class="table table-bordered playful-table">
       <thead>
         <tr>
           <th style="width: 12%;">대상 테이블</th>
@@ -91,4 +97,5 @@
   </div>
   <div th:utext="${paging}"></div>
 </div>
+</body>
 </html>
