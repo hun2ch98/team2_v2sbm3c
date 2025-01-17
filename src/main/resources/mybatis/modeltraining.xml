@@ -67,14 +67,14 @@
     SELECT COUNT(*) FROM modeltraining
   </select>
   
-  <!-- 금지 단어별 검색 + 페이징 목록 -->
+  <!-- 검색 + 페이징 목록 -->
   <select id="list_by_trainingno_search_paging" resultType="dev.mvc.modeltraining.ModeltrainingVO" parameterType="HashMap">
       SELECT *
       FROM (
           SELECT trainingno, name, status, accuracy, rdate, notes, st_time, end_time, memberno,
                  ROW_NUMBER() OVER (ORDER BY trainingno DESC) AS rnum
           FROM modeltraining
-          WHERE (#{name} IS NULL OR #{name} = '' OR name = #{name})
+          WHERE (#{name} = '' OR name LIKE CONCAT(#{name}, '%'))
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>

@@ -3,6 +3,7 @@ package dev.mvc.board;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -11,14 +12,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import dev.mvc.member.MemberVO;
 import dev.mvc.board.Board;
 import dev.mvc.board.BoardVO;
+import dev.mvc.boardgood.BoardgoodProcInter;
+import dev.mvc.boardgood.BoardgoodVO;
 import dev.mvc.log.LogProcInter;
 import dev.mvc.log.LogVO;
 import dev.mvc.member.MemberProcInter;
@@ -38,6 +43,10 @@ public class BoardCont {
   @Autowired
   @Qualifier("dev.mvc.member.MemberProc") 
   private MemberProcInter memberProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.boardgood.BoardgoodProc")
+  private BoardgoodProcInter boardgoodProc;
   
   /** 페이지당 출력할 레코드 갯수, nowPage는 1부터 시작 */
   public int record_per_page = 8;
@@ -290,6 +299,24 @@ public class BoardCont {
       model.addAttribute("board_cate", board_cate);
       model.addAttribute("now_page", now_page);
       logAction("read", "board", memberno, "title=" + boardVO.getTitle(), request, "Y");
+      
+   // ---------------------------------------------------------------------------------
+      //추천 관련
+      // ---------------------------------------------------------------------------------
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("boardno", boardno);
+      
+      int heart_cnt = 0;
+      if (session.getAttribute("memberno") != null) {  //회원인 경우만 카운트 처리
+//        int memberno = (int)session.getAttribute("memberno");
+          map.put("memberno", memberno);
+
+          heart_cnt = this.boardgoodProc.heart_cnt(map);
+       }
+      
+      model.addAttribute("heart_cnt", heart_cnt);
+      // ---------------------------------------------------------------------------------
+
 
       return "/board/read";
   }
@@ -582,38 +609,70 @@ public class BoardCont {
   }   
   
   /**
-   * 추천
+   * 요청사항 추천 처리 
+   * 
    * @return
    */
-  @GetMapping(value = "/update_goodcnt/{boardno}")
-  public String update_goodcnt(Model model, @PathVariable("boardno") int boardno,
-      @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page, RedirectAttributes ra) {
-    this.boardProc.update_goodcnt(boardno);
+  @PostMapping(value = "/good")
+  @ResponseBody
+  public String good(HttpSession session,
+      Model model, @RequestBody String json_src) {
+    System.out.println("-> json_src: " + json_src); 
+    
+    JSONObject src = new JSONObject(json_src); // String -> JSON
+    int boardno = (int)src.get("boardno"); // 값 가져오기
+    System.out.println("-> boardno: " + boardno);
+    
+    if (this.memberProc.isMember(session)) { // 회원 로그인 확인
+      // 추천을 한 상태인지 확인
+      int memberno = (int)session.getAttribute("memberno");
+      HashMap<String, Object> map = new HashMap<String, Object>();
+      map.put("boardno", boardno);
+      map.put("memberno", memberno);
+      
+      int good_cnt = this.boardgoodProc.heart_cnt(map);
+      System.out.println("-> good_cnt: " + good_cnt);
+      
+      if(good_cnt == 1) {
+        System.out.println("-> 추천 해제: " + boardno + ' ' + memberno);
+        BoardgoodVO boardgoodVO = this.boardgoodProc.readByboardmember(map);
+        
+        this.boardgoodProc.delete(boardgoodVO.getGoodno());  // 추천 삭제
+        this.boardProc.decreasegoodcnt(boardno);    // 카운트 감소
+        
+      }else {
+        System.out.println("-> 추천: " + boardno + ' ' + memberno);
+        
+        BoardgoodVO boardgoodVO_new = new BoardgoodVO();
+        boardgoodVO_new.setBoardno(boardno);
+        boardgoodVO_new.setMemberno(memberno);
+        
+        this.boardgoodProc.create(boardgoodVO_new);
+        this.boardProc.increasegoodcnt(boardno);
+      }
+      
+      // 추천 여부가 변경되어 다시 새로운 값을 읽어옴
+      int heart_cnt = this.boardgoodProc.heart_cnt(map);
+      int goodcnt = this.boardProc.read(boardno).getGoodcnt();
+      
+      JSONObject result = new JSONObject();
+      result.put("isMember", 1);  // 로그인:1, 비회원:0
+      result.put("heart_cnt", heart_cnt);  // 추천 여부, 추천:1, 비추천:0
+      result.put("goodcnt", goodcnt);   // 추천인수
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      return result.toString();
 
-    ra.addAttribute("boardno", boardno);
-    ra.addAttribute("board_cate", board_cate); // redirect로 데이터 전송
-    ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
+    } else { // 정상적인 로그인이 아닌 경우 로그인 유도
+      JSONObject result = new JSONObject();
+      result.put("isMember", 1);  // 로그인:1, 비회원:0
+      
+      System.out.println("-> result.toString(): " + result.toString());
+      return result.toString();
+    }
 
-    return "redirect:/board/read"; 
-  }
-
-  /**
-   * 비추천
-   * @return
-   */
-  @GetMapping(value = "/update_badcnt/{boardno}")
-  public String update_badcnt(Model model, @PathVariable("boardno") int boardno,
-      @RequestParam(name = "board_cate", defaultValue = "") String board_cate,
-      @RequestParam(name = "now_page", defaultValue = "1") int now_page, RedirectAttributes ra) {
-    this.boardProc.update_badcnt(boardno);
-
-    ra.addAttribute("boardno", boardno);
-    ra.addAttribute("board_cate", board_cate); // redirect로 데이터 전송
-    ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-
-    return "redirect:/board/read"; 
-  }
+  }  
+  
 
 
 

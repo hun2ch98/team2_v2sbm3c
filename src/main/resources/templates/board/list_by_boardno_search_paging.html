@@ -3,11 +3,7 @@
 <div layout:fragment="content">
 
   <div class='title_line'>
-
-    목록 조회
-
-    검색
-
+    요청사항 게시판
     <span th:if="${board_cate != ''}" th:text="|> ${board_cate} (${search_count} 건)|" class="title_line_text"></span>
   </div>
 
@@ -26,15 +22,13 @@
   <table class="table table-striped" style='width: 100%;'>
     <colgroup>
       <col style='width: 10%;'/>
-      <col style='width: 70%;'/>
-      <col style='width: 7%;'/>
-      <col style='width: 7%;'/>
+      <col style='width: 75%;'/>
+      <col style='width: 25%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
       <th class='th_bs'>제목</th>
-      <th class='th_bs'>추천수</th>
-      <th class='th_bs'>비추천</th>
+      <th class='th_bs'>요청사항 종류</th>
     </tr>
    
     <tr th:if="${list != null and list.size() > 0}" th:each="boardVO, status:${list}" 
@@ -67,10 +61,7 @@
                   th:text="|${boardVO.bcontent}|"></span>
       </td>
       <td class='td_left'>
-        <span th:text="${boardVO.goodcnt}"></span>
-      </td>
-      <td class='td_left'>
-        <span th:text="${boardVO.badcnt}"></span>
+        <span th:text="${boardVO.board_cate}"></span>
       </td>
     </tr>
 
