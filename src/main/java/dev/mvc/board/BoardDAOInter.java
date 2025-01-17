@@ -75,17 +75,18 @@ public interface BoardDAOInter {
   public int delete(int boardno);
   
   /**
-   * 추천수
-   * @param boardno
+   * 추천 증가
+   * @param surveyno
    * @return
    */
-  public int update_goodcnt(int boardno);
+  public int increasegoodcnt(int boardno);
   
   /**
-   * 비추천수
-   * @param boardno
+   * 추천 감소
+   * @param surveyno
    * @return
    */
-  public int update_badcnt(int boardno);
+  public int decreasegoodcnt(int boardno);
+
   
 }
