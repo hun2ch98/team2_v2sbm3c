@@ -45,6 +45,11 @@
     DELETE FROM surveyitem WHERE itemno=#{itemno}
   </delete>
   
+  <!-- 삭제 
+  <delete id="delete_item" parameterType="int">
+    DELETE FROM surveyitem WHERE itemno=#{itemno}
+  </delete>-->
+  
   <!-- 설문조사 참여 수 -->
   <update id="update_cnt" parameterType="int">
     UPDATE surveyitem
@@ -72,40 +77,36 @@
     SELECT COUNT(*) as cnt
     FROM surveyitem
     <where>
+      <if test="surveyno != null">
+        surveyno = #{surveyno}
+      </if>
       <if test="word != null and word != ''">
-        UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
+        AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
       </if>
     </where>
-    ORDER BY itemno ASC
   </select>
   
   <!-- 검색 + 페이징 목록 -->
   <select id="list_search_paging" resultType="dev.mvc.surveyitem.ItemVO" parameterType="Map">
     SELECT itemno, surveyno, item_seq, item, item_cnt, r
     FROM (
-        SELECT itemno, surveyno, item_seq, item, item_cnt, rownum as r
-        FROM (
-            SELECT itemno, surveyno, item_seq, item, item_cnt
-            FROM surveyitem
-            <choose>
-              <when test="word == null or word == ''">
-                WHERE surveyno=#{surveyno}
-              </when>
-              <otherwise>
-                WHERE surveyno=#{surveyno} AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
-              </otherwise>
-            </choose>
-            ORDER BY itemno ASC
-        )
+        SELECT itemno, surveyno, item_seq, item, item_cnt, ROW_NUMBER() OVER (ORDER BY itemno ASC) as r
+        FROM surveyitem
+        WHERE surveyno = #{surveyno}
+        <if test="word != null and word != ''">
+            AND UPPER(item) LIKE '%' || UPPER(#{word}) || '%'
+        </if>
     )
     WHERE r BETWEEN #{start_num} AND #{end_num}
   </select>
+
+
   
-  <!-- 설문조사한 회원 조회 -->
+  <!-- 항목 개수 조회 -->
   <select id="count_survey" resultType="int" parameterType="int">
     SELECT COUNT(*) as cnt 
     FROM surveyitem 
-    WHERE itemno=#{itemno} AND memberno=#{memberno}
+    WHERE surveyno=#{surveyno}
   </select>
   
   <!-- 특정 카테고리에 속한 모든 레코드 삭제 -->
@@ -121,13 +122,5 @@
     WHERE itemno=#{itemno}
   </select>
   
-    <!-- 설문 참여 회원 결과 총합 -->
-  <select id="count_sum" parameterType="int">
-    SELECT surveyno, SUM(item_cnt) AS total_participants
-    FROM surveyitem
-    WHERE surveyno = #{surveyno}
-    GROUP BY surveyno
-  </select>
-
   
 </mapper>

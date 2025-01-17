@@ -4,13 +4,21 @@
  
 <mapper namespace="dev.mvc.diary.DiaryDAOInter">
 
-  <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 -->
+  <!-- 등록한 레코드 갯수 1 리턴, #{memberno}: public int getAdminno() 호출됨 
   <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
     INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emono, memberno)
     VALUES(diary_seq.nextval, #{title}, #{ddate}, #{summary}, #{weatherno}, #{emono}, #{memberno})
-  </insert>
-
-
+  </insert>-->
+  
+  
+  <insert id="create" parameterType="dev.mvc.diary.DiaryVO">
+    <selectKey keyProperty="diaryno" resultType="int" order="BEFORE">
+      SELECT diary_seq.nextval FROM dual
+    </selectKey>
+    INSERT INTO diary(diaryno, title, ddate, summary, weatherno, emono, memberno)
+    VALUES(#{diaryno}, #{title}, #{ddate}, #{summary}, #{weatherno}, #{emono}, #{memberno})
+  </insert> 
+  
   <!-- 모든 카테고리의 등록된 글목록 -->
   <select id="list_all" resultType="dev.mvc.diary.DiaryVO">
     SELECT diaryno, title, ddate, summary, weatherno, emono
@@ -143,7 +151,24 @@
     ORDER BY ddate DESC
   </select>
 
-
+<!-- 특정 달의 조회 -->
+  <select id="list_calendar" resultType="dev.mvc.diary.DiaryVO" parameterType="String">
+    SELECT diaryno, ddate, title
+    FROM diary
+    WHERE SUBSTR(ddate, 1, 7) = #{ddate}
+    ORDER BY ddate ASC
+  </select>
+  
+  
+  <!-- 특정 날짜 조회 -->
+  <select id="list_calendar_day" resultType="dev.mvc.diary.DiaryVO" parameterType="String">
+    SELECT diaryno, ddate, title
+    FROM diary
+    WHERE ddate = #{ddate}
+    ORDER BY ddate ASC, diaryno ASC
+  </select>
+  
+ 
     
 </mapper> 
 

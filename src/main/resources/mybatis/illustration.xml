@@ -24,7 +24,7 @@
   <select id="listAllWithDiaryDetails" resultType="map">
     SELECT 
         i.illustno,
-        i.illust_thumb,
+        i.illust,
         i.illust_size,
         d.diaryno,
         d.title,
@@ -61,7 +61,7 @@
     FROM (
         SELECT 
             i.illustno, 
-            i.illust_thumb, 
+            i.illust, 
             d.diaryno, 
             d.title, 
             TO_CHAR(d.ddate, 'YYYY-MM-DD') AS ddate,
@@ -104,6 +104,9 @@
     FROM diary d
     JOIN illustration i ON d.diaryno = i.diaryno
     WHERE 1=1
+    <if test="title != null and title != ''">
+        AND LOWER(d.title) LIKE '%' || LOWER(#{title}) || '%'
+    </if>
     <if test="start_date != null and start_date != ''">
         AND SUBSTR(TO_CHAR(d.ddate), 1, 10) >= #{start_date}
     </if>
@@ -120,27 +123,12 @@
     SELECT COUNT(*) FROM illustration
   </select>
   
-  <select id="list_calendar" resultType="dev.mvc.illustration.DiaryIllustrationVO" parameterType="String">
-    SELECT 
-        d.diaryno,
-        d.ddate,
-        d.weatherno,
-        w.we_file1,
-        d.emono,
-        e.em_file1,
-        i.illustno,
-        i.illust_thumb
-    FROM 
-        diary d
-    LEFT JOIN weather w ON d.weatherno = w.weatherno
-    LEFT JOIN emotion e ON d.emono = e.emono
-    LEFT JOIN illustration i ON d.diaryno = i.diaryno
-    WHERE 
-        SUBSTR(TO_CHAR(d.ddate, 'YYYY-MM-DD'), 1, 10) = #{sdate}
-    ORDER BY 
-        d.ddate ASC, 
-        i.illustno ASC
-</select>
   
+   <!-- illust 불러오기 -->
+  <select id="get_illust" resultType="dev.mvc.illustration.IllustrationVO">
+    SELECT * 
+    FROM illustration 
+    WHERE diaryno = #{diaryno}
+  </select> 
 
 </mapper>

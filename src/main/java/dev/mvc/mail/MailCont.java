@@ -65,6 +65,30 @@ public class MailCont {
   }
   
   /**
+   * 이메일 찾기 가입 유무 확인 db 검증
+   * @param name
+   * @param phone
+   * @return
+   */
+  @GetMapping(value = "/isEmailExist")
+  @ResponseBody
+  public String isEmailExist(@RequestParam(name="name", defaultValue = "") String name,
+      @RequestParam(name = "phone", defaultValue = "") String phone) {
+    HashMap<String, String> map = new HashMap<String, String>();
+    map.put("name", name);
+    map.put("phone", phone);
+    
+    String email = this.memberProc.find_email_check(map);
+    
+    System.out.println("-> email: " + email);
+    
+    JSONObject obj = new JSONObject();
+    obj.put("email", email);
+    
+    return obj.toString();
+  }
+  
+  /**
    * 메일 전송
    * @param email
    * @param name
@@ -79,6 +103,7 @@ public class MailCont {
     map.put("name", name);
     map.put("phone", phone);
     
+    // ID 찾기
     String id = this.memberProc.find_id_check(map);
     System.out.println("-> id :" + id);
     

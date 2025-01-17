@@ -11,6 +11,8 @@
     <a href="javascript:location.reload();">새로 고침</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{/diary/create}">새 일기 등록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{/diary/list_calendar}">일기 달력</a>
   </aside>
 
   <div class="menu_line"></div>
@@ -47,7 +49,7 @@
       </thead>
       <tbody>
         <tr th:if="${diaryList != null and diaryList.size() > 0}" th:each="diary : ${diaryList}"
-              th:attr="onclick=|location.href='/diary/read?diaryno=${diary.diaryno}&now_page=${now_page}'|"
+              th:attr="onclick=|location.href='/diary/read/${diary.diaryno}?now_page=${now_page}'|"
               style="cursor: pointer; height: 90px;">
           <td th:text="${diary.title}"></td>
           <td th:text="${diary.ddate != null ? #dates.format(diary.ddate, 'yyyy-MM-dd') : 'N/A'}"></td>

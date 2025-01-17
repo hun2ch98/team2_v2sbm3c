@@ -1,6 +1,61 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
+  <script>
+    window.onload = function() {
+      
+      let heart_cnt = '[[${heart_cnt}]]'; //  javascript -> Thymeleaf -> session
+      let tag = '';
+      console.log('heart_cnt:', heart_cnt);
+      
+      if (heart_cnt == 1) {
+        tag = '<a href="javascript:good([[${boardVO.boardno}]])"><img src="/board/images/good.png" style="width: 22px" title="추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag;
+      } else {
+        tag = '<a href="javascript:good([[${boardVO.boardno}]])"><img src="/board/images/bad.png" style="width: 22px" title="비추천"></a>';
+        document.querySelector('#heart_panel').innerHTML = tag;
+      }
+
+      document.querySelector('#goodcnt_panel').innerHTML = '([[${boardVO.goodcnt}]])';
+    }
+    
+    function good(boardno) {
+      console.log('-> boardno: ' + boardno);
+
+      fetch("/board/good", {
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({boardno}) // {"noticeno":noticeno, JSON 형식으로 전송
+      })
+      .then((response) => response.json()) // 응답 문자열 추출
+      .then((data) => {
+        console.log('-> data.isMember: ' + data.isMember);
+
+        if (data.isMember == 1) { // 회원
+          let heart_cnt = data.heart_cnt; //  javascript -> Thymeleaf -> session
+          let tag = '';
+          
+          if (heart_cnt == 1) {
+            tag = '<a href="javascript:good([[${boardVO.boardno}]])"><img src="/board/images/good.png" style="width: 22px" title="추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          } else {
+            tag = '<a href="javascript:good([[${boardVO.boardno}]])"><img src="/board/images/bad.png" style="width: 22px" title="비추천"></a>';
+            document.querySelector('#heart_panel').innerHTML = tag;
+          }
+    
+          document.querySelector('#goodcnt_panel').innerHTML = '(' + data.goodcnt + ')';
+
+        } else { // 비회원
+          alert("로그인해야 추천 할 수 있습니다.");
+          location.href='/member/login_cookie_need';
+        }
+      });
+    }
+  </script>
+
+
   <div class='title_line'>
     <span th:text="${boardVO?.board_cate ?: '요청사항'}" class="title_line_text"></span>
     > 글 조회
@@ -18,8 +73,6 @@
     <a th:href="@{|/board/update_file?boardno=${boardVO.boardno}&now_page=${now_page}|}">파일 수정</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{|/board/delete?boardno=${boardVO.boardno}&now_page=${now_page}|}">삭제</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{/reply/read}">댓글보기</a>
   </aside>
     
   <div class='menu_line'></div>
@@ -47,19 +100,8 @@
         작성자: <span th:text="${memberVO?.nickname ?: '알 수 없음'}"></span> <br>
         이메일: <span th:text="${memberVO?.email ?: '알 수 없음'}"></span> <br>
       </li>
-
-      <li class="li_none">
-        추천: <span th:text="${boardVO.goodcnt}"></span>
-        <a th:href="@{|/board/update_goodcnt/${boardVO.boardno}?board_cate=${board_cate}&now_page=${now_page}|}">
-          <img src="/board/images/png-clipart-laugh-emoji-emoticon-facebook-like-button-facebook-smiley-circle-thumbnail.png" class="icon" title="추천수">
-        </a>
-        비추천: <span th:text="${boardVO.badcnt}"></span>
-        <a th:href="@{|/board/update_badcnt/${boardVO.boardno}?board_cate=${board_cate}&now_page=${now_page}|}">
-          <img src="/board/images/png-clipart-social-media-facebook-emoji-like-button-emoticon-sad-emoji-sad-emoji-icon-face-head-thumbnail.png" class="icon" title="비추천">
-        </a>
-      </li>
-
-
+      
+      <span id="heart_panel"></span><span id="goodcnt_panel"></span>
 
       <!-- 파일 -->
       <li class="li_none" th:if="${boardVO.size1 > 0}">
@@ -72,6 +114,7 @@
                 <img th:src="@{/board/images/download.png}" class="icon" title="download">
             </a>
         </div>
+        
       </li>   
     </ul>
   </fieldset>

@@ -6,27 +6,27 @@
 
   <!-- 평점 글 추가 -->
   <insert id="create" parameterType="dev.mvc.score.ScoreVO">
-    INSERT INTO score (scoreno, jumsu, rdate, memberno)
-    VALUES (score_seq.nextval, #{jumsu}, sysdate, #{memberno})
+    INSERT INTO score (scoreno, diary_score, calendar_score, chat_score, login_score, survey_score, drawing_score, emotion_score, weather_score, notice_score, word_score, memberno, rdate)
+    VALUES (score_seq.nextval, #{diary_score}, #{calendar_score}, #{chat_score}, #{login_score}, #{survey_score}, #{drawing_score}, #{emotion_score}, #{weather_score}, #{notice_score}, #{word_score}, #{memberno}, sysdate)
   </insert>
   
   <!-- 평점 조회 -->
   <select id="read" parameterType="int" resultType="dev.mvc.score.ScoreVO">
-    SELECT scoreno, jumsu, rdate, memberno
+    SELECT scoreno, diary_score, calendar_score, chat_score, login_score, survey_score, drawing_score, emotion_score, weather_score, notice_score, word_score, total, memberno, rdate
     FROM score
     WHERE scoreno = #{scoreno}
   </select>
   
   <!-- 모든 목록 -->
-  <select id="list_all" parameterType="dev.mvc.score.ScoreVO">
-    SELECT scoreno, jumsu, rdate, memberno
+  <select id="list_all" resultType="dev.mvc.score.ScoreVO">
+    SELECT scoreno, diary_score, calendar_score, chat_score, login_score, survey_score, drawing_score, emotion_score, weather_score, notice_score, word_score, total, memberno, rdate
     FROM score
     ORDER BY scoreno DESC
   </select>
   
   <!-- 등록된 목록 -->
   <select id="list_by_scoreno" resultType="dev.mvc.score.ScoreVO">
-    SELECT scoreno, jumsu, rdate, memberno
+    SELECT scoreno, diary_score, calendar_score, chat_score, login_score, survey_score, drawing_score, emotion_score, weather_score, notice_score, word_score, total, memberno, rdate
     FROM score
     ORDER BY scoreno DESC
   </select>
@@ -34,7 +34,7 @@
   <!-- 내용 수정 -->
   <update id="update_score" parameterType="dev.mvc.score.ScoreVO">
     UPDATE score
-    SET jumsu=#{jumsu},memberno=#{memberno}, rdate=sysdate
+    SET diary_score=#{diary_score}, calendar_score=#{calendar_score}, chat_score=#{chat_score}, login_score=#{login_score}, survey_score=#{survey_score}, drawing_score=#{drawing_score}, emotion_score=#{emotion_score}, weather_score=#{weather_score}, notice_score=#{notice_score}, word_score=#{word_score}, total=#{total}, memberno=#{memberno}, rdate=sysdate
     WHERE scoreno = #{scoreno}
   </update>
   
@@ -42,41 +42,49 @@
   <delete id="delete" parameterType="int">
     DELETE FROM score
     WHERE scoreno = #{scoreno}
-  </delete>
+  </delete>	
+  
+  <!-- 검색 레코드 개수 -->				
+  <select id="count_by_scoreno_search" resultType="int">
+    SELECT COUNT(*) FROM score
+  </select>						
   
   <!-- 검색 목록 -->
-  <select id="list_by_scoreno_search" resultType="dev.mvc.score.ScoreVO" parameterType="HashMap">
+  <select id="list_by_scoreno_search" parameterType="map" resultType="dev.mvc.score.ScoreVO">
     SELECT *
-    FROM (
-        SELECT scoreno, jumsu, rdate, memberno,
-               ROW_NUMBER() OVER (ORDER BY scoreno DESC) AS rnum
-        FROM score
-        WHERE (#{jumsu} IS NULL OR #{jumsu} = '' OR jumsu = #{jumsu})
-    )
-    WHERE rnum BETWEEN #{startRow} AND #{endRow}
-  </select>
+    FROM score
+    WHERE 1=1
+    <if test="scoreno != null">
+      AND scoreno = #{scoreno}
+    </if>
+    <if test="startDate != null and startDate != ''">
+      AND TRUNC(rdate) >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+    </if>
+    <if test="endDate != null and endDate != ''">
+      AND TRUNC(rdate) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+    </if>
+    ORDER BY rdate DESC
+  </select>					
   
-  <!-- 검색 레코드 갯수 -->
-  <select id="count_by_scoreno_search" resultType="int" parameterType="HashMap">
-      SELECT COUNT(*)
-      FROM score
-      WHERE (#{jumsu} IS NULL OR #{jumsu} = '' OR jumsu = #{jumsu})
-  </select>
-   
-  <select id="list_search_count" resultType="int">
-    SELECT COUNT(*) FROM score
-  </select>
-  
-  <!-- 평점별 검색 + 페이징 목록 -->
+  <!-- 날짜별 검색 + 페이징 목록 -->
   <select id="list_by_scoreno_search_paging" resultType="dev.mvc.score.ScoreVO" parameterType="HashMap">
-      SELECT *
-      FROM (
-          SELECT scoreno, jumsu, rdate, memberno,
-                 ROW_NUMBER() OVER (ORDER BY scoreno DESC) AS rnum
-          FROM score
-          WHERE (#{jumsu} IS NULL OR #{jumsu} = '' OR jumsu = #{jumsu})
-      )
-      WHERE rnum BETWEEN #{startRow} AND #{endRow}
+	SELECT * FROM (
+	  SELECT A.*, ROWNUM AS rnum
+	  FROM (
+	    SELECT *
+	    FROM score
+	    WHERE 1=1
+	    <if test="startDate != null and startDate != ''">
+	      AND TRUNC(rdate) >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="endDate != null and endDate != ''">
+	      AND TRUNC(rdate) &lt;= TO_DATE(#{endDate}, 'YYYY-MM-DD')
+	    </if>
+	      ORDER BY rdate DESC, scoreno DESC
+	      ) A
+	      WHERE ROWNUM &lt;= #{endNum, jdbcType=INTEGER}
+	    )
+	    WHERE rnum >= #{startNum, jdbcType=INTEGER}
   </select>
 
 </mapper>

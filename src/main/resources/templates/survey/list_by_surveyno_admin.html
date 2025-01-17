@@ -24,18 +24,16 @@
     <colgroup>
       <col style='width: 10%;'/>
       <col style='width: 40%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 7.5%;'/>
-      <col style='width: 7.5%;'/>
-      <col style='width: 5%;'/>
+      <col style='width: 17%;'/>
+      <col style='width: 17%;'/>
+      <col style='width: 7%;'/>
+      <col style='width: 13%;'/>
     </colgroup>
     <tr>
       <th class='th_bs'>파일</th>
       <th class='th_bs'>주제</th>
       <th class='th_bs'>시작일</th>
       <th class='th_bs'>종료일</th>
-      <th class='th_bs'>참여인원</th>
       <th class='th_bs'>진행여부</th>
       <th class='th_bs'>기타</th>
     </tr>
@@ -71,14 +69,17 @@
         <span th:text="| ${surveyVO.edate.substring(0, 10)}|"></span>
       </td>
       <td class='td_left'>
-        <span th:text="| ${surveyVO.s_number}|"></span>
-      </td>
-      <td class='td_left'>
         <span th:text="| ${surveyVO.is_continue}|"></span>
       </td>
 
       <td>
-        <a th:href="@{|/survey/list_all_delete?surveyno=${surveyVO.surveyno}|}">
+        <a th:href="@{|/survey/update_text?surveyno=${surveyVO.surveyno}|}">
+          <img src="/survey/images/update_text.png" class="icon" title="글수정">
+        </a> 
+        <a th:href="@{|/survey/update_file?surveyno=${surveyVO.surveyno}|}">
+          <img src="/survey/images/update_file.png" class="icon" title="파일수정">
+        </a> 
+        <a th:href="@{|/survey/check_delete?surveyno=${surveyVO.surveyno}|}">
           <img src="/survey/images/delete.png" class="icon" title="삭제">
         </a> 
         <!-- 결과 버튼 -->

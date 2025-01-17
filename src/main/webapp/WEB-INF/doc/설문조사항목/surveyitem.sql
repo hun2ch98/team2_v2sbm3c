@@ -9,19 +9,19 @@ DROP TABLE surveyitem CASCADE CONSTRAINTS;
 CREATE TABLE surveyitem (
     itemno      NUMBER(10)      NOT NULL    PRIMARY KEY,
     surveyno    NUMBER(10)      NOT NULL,
-    memberno    NUMBER(10)      NOT NULL,
+--    memberno    NUMBER(10)      NOT NULL,
     item_seq    NUMBER(5)       NOT NULL,
     item        VARCHAR2(200)   NOT NULL,
     item_cnt    NUMBER(7)       DEFAULT 0    NULL,
-    FOREIGN KEY (surveyno)  REFERENCES survey (surveyno),
-    FOREIGN KEY (memberno)  REFERENCES member (memberno)
+    FOREIGN KEY (surveyno)  REFERENCES survey (surveyno) ON DELETE CASCADE
+--    FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
-
+DESC SURVEYITEM;
 
 COMMENT ON TABLE SURVEYITEM is '설문 조사 항목';
 COMMENT ON COLUMN SURVEYITEM.ITEMNO is '설문 조사 항목 번호';
 COMMENT ON COLUMN SURVEYITEM.SURVEYNO is '설문 조사 번호';
-COMMENT ON COLUMN SURVEYITEM.MEMBERNO is '회원 번호';
+--COMMENT ON COLUMN SURVEYITEM.MEMBERNO is '회원 번호';
 COMMENT ON COLUMN SURVEYITEM.ITEM_SEQ is '항목 출력 순서';
 COMMENT ON COLUMN SURVEYITEM.ITEM is '항목';
 COMMENT ON COLUMN SURVEYITEM.ITEM_CNT is '항목 선택 인원';
@@ -38,49 +38,53 @@ CREATE SEQUENCE surveyitem_seq
 COMMIT;
 
 -- 등록
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 1, 1, '주 5회 이상');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 1, 2, '주 3회 이상');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 1, 3, '자주 사용 안함');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 7, 1, '주 5회 이상');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 7, 2, '주 3회 이상');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 7, 3, '자주 사용 안함');
 
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 2, 1, '예');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 2, 2, '아니요');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 9, 1, '예');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 9, 2, '아니요');
 
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 3, 1, '예');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 3, 2, '아니요');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 13, 1, '쉬웠어요');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 13, 2, '어려웠어요');
 
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 4, 1, '그림 일기');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 4, 2, '일정 조회');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 10, 1, '그림 생성');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 10, 2, '일정 조회');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 10, 2, '일기 작성');
 
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 5, 1, '예');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 5, 2, '아니요');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 5, 1, '예');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 5, 2, '아니요');
 
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 2, 3, '사용된 문구가 아이들에게 친근하고 이해하기 쉬웠나요?');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 2, 4, '아이가 사용된 표현에 대해 부정적인 반응을 보인 적이 있나요?');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 14, 1, '있었어요');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 14, 2, '없었어요');
 
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 14, 1, '테스트항목');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 14, 2, '테스트항목');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 14, 3, '테스트항목');
-INSERT INTO surveyitem(itemno, memberno, surveyno, item_seq, item)
-VALUES (surveyitem_seq.nextval, 1, 14, 4, '테스트항목');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 1, 4, '테스트항목');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 15, 1, '즐거워해요');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 15, 2, '보통');
+INSERT INTO surveyitem(itemno, surveyno, item_seq, item)
+VALUES (surveyitem_seq.nextval, 15, 3, '즐거워하지 않아요');
 
 -- 조회
 SELECT * FROM surveyitem;
+
+SELECT * FROM surveyitem WHERE surveyno = 1;
     ITEMNO   SURVEYNO   ITEM_SEQ ITEM                                                                                                                                                                                                       ITEM_CNT
 ---------- ---------- ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------
          1         31          1 이 서비스를 일주일에 5회 이상 사용한다.                                                                                                                                                                          10
@@ -95,13 +99,17 @@ UPDATE surveyitem SET item_seq='5' WHERE itemno=9;
 -- 삭제
 DELETE FROM surveyitem;
 
-DELETE FROM surveyitem WHERE itemno =13;
+DELETE FROM surveyitem WHERE surveyno = 1;
 
 SELECT surveyno, SUM(item_cnt) AS total_participants
 FROM surveyitem
 WHERE surveyno = 1
 GROUP BY surveyno;
 
+SELECT *
+FROM surveyitem
+WHERE surveyno = 1
+ORDER BY item_seq ASC;
 
 SELECT COUNT(*) as cnt 
 FROM surveyitem 

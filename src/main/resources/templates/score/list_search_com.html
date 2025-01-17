@@ -1,12 +1,12 @@
 <div th:fragment="list_search_fragment"> <!-- <div th:replace=... -->
   <div style="text-align: right; clear: both;">
   <form name="frm_search" method="get" action="/score/list_by_scoreno_search_paging">
-    <input type="hidden" name="memberno" id="memberno" th:value="${memberVO.memberno}" >
+    <input type="hidden" name="scoreno" id="scoreno" th:value="${scoreVO.scoreno}" >
     
-    <input type="text" name="jumsu" id="jumsu" th:value="${jumsu}" >
+    <input type="text" name="rdate" id="rdate" th:value="${rdate}" >
     <button type='submit' class='btn btn-secondary btn-sm' 
                  style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>
-    <span th:if="${jumsu != null and jumsu != ''}">
+    <span th:if="${rdate != null and rdate != ''}">
       <button type='button' class='btn btn-secondary btn-sm' 
                    style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;"
                    th:onclick="|location.href='/score/list_by_scoreno_search_paging?scoreno=${scoreVO.scoreno}'|">검색 취소</button>

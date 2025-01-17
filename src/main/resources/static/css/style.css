@@ -24,13 +24,45 @@
     margin: 5px auto;
   }
   
+  .star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  justify-content: space-around;
+  padding: 0 0.2em;
+  text-align: center;
+  width: 5em;
+}
+ 
+.star-rating input {
+  display: none;
+}
+ 
+.star-rating label {
+  -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: 2.3px;
+  -webkit-text-stroke-color: #2b2a29;
+  cursor: pointer;
+}
+ 
+.star-rating :checked ~ label {
+  -webkit-text-fill-color: gold;
+  font-weight: bold; /* 체크된 별을 더 진하게 */
+}
+ 
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  -webkit-text-fill-color: #fff58c;
+}
+  
   /* ----------------------------------------------------------------------*/
   /* 상단 이미지 CSS 관련 코드                                                  */
   /* ----------------------------------------------------------------------*/
   
   .top_menu_img {
       display: block; /* 블록 요소로 변경 */
-      width: 200px; /* 너비를 줄임 */
+      width: 100px; /* 너비를 줄임 */
       height: 100px; /* 높이를 줄임 */
       background-image: url('/images/run.gif'); /* 배경 이미지 설정 */
       background-size: contain; /* 이미지 비율 유지 */

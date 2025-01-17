@@ -8,9 +8,9 @@ CREATE TABLE surveygood (
   rdate         DATE          NOT NULL, -- 등록 날짜
   memberno      NUMBER(10)     NOT NULL , -- FK
   FOREIGN KEY (memberno) REFERENCES member (memberno),-- 일정을 등록한 관리자 
-  FOREIGN KEY (surveyno) REFERENCES survey (surveyno)
+  FOREIGN KEY (surveyno) REFERENCES survey (surveyno) ON DELETE CASCADE
 );
-
+DESC surveygood;
 DROP SEQUENCE surveygood_seq;
 
 CREATE SEQUENCE surveygood_seq
@@ -22,16 +22,42 @@ NOCYCLE;
 
 -- 데이터 삽입
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 1, 1, sysdate);
+VALUES (surveygood_seq.nextval, 11, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 2, 2, sysdate);
+VALUES (surveygood_seq.nextval, 13, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 3, 3, sysdate);
+VALUES (surveygood_seq.nextval, 9, 2, sysdate);
 
 INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
-VALUES (surveygood_seq.nextval, 4, 4, sysdate);
+VALUES (surveygood_seq.nextval, 19, 2, sysdate);
+
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 10, 17, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 20, 17, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 9, 17, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 14, 17, sysdate);
+
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 7, 9, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 8, 9, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 9, 9, sysdate);
+
+INSERT INTO surveygood(goodno, surveyno, memberno, rdate)
+VALUES (surveygood_seq.nextval, 14, 9, sysdate);
 
 COMMIT;
 
@@ -93,4 +119,38 @@ WHERE c.noticeno = r.noticeno AND r.memberno = m.memberno
 ORDER BY noticegoodno DESC;
 
 
+-- 검색된 데이터의 총 개수 계산
+
+SELECT COUNT(*) AS cnt
+FROM surveygood g
+JOIN survey s ON g.surveyno = s.surveyno
+JOIN member m ON g.memberno = m.memberno
+WHERE UPPER(m.id) LIKE '%' || UPPER('test') || '%'  
+        OR UPPER(s.topic) LIKE '%' || UPPER('서비스') || '%';
+
+
+
+-- 조인 + 검색 + 페이징
+SELECT *
+FROM (
+    SELECT 
+        g.goodno, 
+        g.surveyno, 
+        g.memberno, 
+        g.rdate, 
+        s.topic AS s_topic, 
+        m.id AS id, 
+        ROW_NUMBER() OVER (ORDER BY g.goodno ASC) AS r
+    FROM surveygood g
+    JOIN survey s ON g.surveyno = s.surveyno
+    JOIN member m ON g.memberno = m.memberno
+    WHERE UPPER(m.id) LIKE '%' || UPPER('test') || '%'  
+        OR UPPER(s.topic) LIKE '%' || UPPER('서비스') || '%'
+)
+WHERE r >= 1 AND r <= 2;
+
+   GOODNO   SURVEYNO   MEMBERNO RDATE             S_TOPIC                                                                                              ID                                                          R
+---------- ---------- ---------- ----------------- ---------------------------------------------------------------------------------------------------- -------------------------------------------------- ----------
+         1          2          1 25/01/14 10:17:02 이 서비스를 자주 이용하는데 어려움이 있나요?                                                         admin                                                       1
+         6          1          2 25/01/15 12:49:07 이 서비스를 일주일에 얼마나 사용하나요?                                                              test                                                        2
 

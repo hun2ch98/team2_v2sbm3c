@@ -67,7 +67,8 @@
     JOIN member m ON p.memberno = m.memberno
     <where>
       <if test="word != null and word != ''">
-        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+        UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' 
+        OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
       </if>
     </where>
   </select>
@@ -90,7 +91,8 @@
         JOIN member m ON p.memberno = m.memberno
         <where>
           <if test="word != null and word != ''">
-            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
+            UPPER(m.name) LIKE '%' || UPPER(#{word}) || '%' 
+            OR UPPER(i.item) LIKE '%' || UPPER(#{word}) || '%'
           </if>
         </where>
     )

@@ -24,10 +24,9 @@
     <colgroup>
       <col style='width: 10%;'/>
       <col style='width: 40%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 15%;'/>
-      <col style='width: 7.5%;'/>
-      <col style='width: 7.5%;'/>
+      <col style='width: 17%;'/>
+      <col style='width: 17%;'/>
+      <col style='width: 10%;'/>
       <col style='width: 5%;'/>
     </colgroup>
     <tr>
@@ -35,7 +34,6 @@
       <th class='th_bs'>주제</th>
       <th class='th_bs'>시작일</th>
       <th class='th_bs'>종료일</th>
-      <th class='th_bs'>참여인원</th>
       <th class='th_bs'>진행여부</th>
       <th class='th_bs'>기타</th>
     </tr>
@@ -71,14 +69,11 @@
         <span th:text="| ${surveyVO.edate.substring(0, 10)}|"></span>
       </td>
       <td class='td_left'>
-        <span th:text="| ${surveyVO.s_number}|"></span>
-      </td>
-      <td class='td_left'>
         <span th:text="| ${surveyVO.is_continue}|"></span>
       </td>
 
       <td>
-        <a th:href="@{/surveyitem/result_admin(surveyno=${surveyVO.surveyno})}" >
+        <a th:href="@{/surveyitem/result(surveyno=${surveyVO.surveyno})}" >
           <img src="/survey/images/result.png" class="icon" title="결과">
         </a>
         <a th:href="@{/surveyitem/survey_chart(surveyno=${surveyVO.surveyno})}" >

@@ -70,7 +70,7 @@
     <span class='menu_divide'>│</span> 
     <a th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a>
   </aside>
-
+  설문조사 참여하고 기프티콘 받아가세요~
   <div class="menu_line"></div>
   
   <!-- 회원 모드 -->
@@ -100,7 +100,9 @@
           </tbody>
       </table>
       <div style="text-align: center; margin-top: 15px;">
-          <button type="submit" class="btn btn-primary">참여</button>
+          <button type="submit" class="btn btn-secondary btn-sm">참여</button>
+          <button type="button" th:onclick="|location.href='/surveyitem/result_admin?surveyno=${surveyVO.surveyno}'|" class="btn btn-secondary btn-sm">결과</button>
+          <button type="button" th:onclick="|location.href='/surveyitem/survey_chart?surveyno=${surveyVO.surveyno}'|" class="btn btn-secondary btn-sm">차트보기</button>
       </div>
     </form>
   </div>

@@ -1,67 +1,122 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
-<div layout:fragment="content">
+  <div layout:fragment="content">
 
-  <div class='title_line'>
-    목록 조회 검색
-    <span th:if="${jumsu != ''}" th:text="|> ${jumsu} (${search_count} 건)|" class="title_line_text"></span>
+    <div class='title_line'>
+      평점 목록 조회 검색
+      <span th:if="${start_date != null and end_date != null}" th:text="|날짜: ${start_date} ~ ${end_date}|"></span>
+    </div>
+
+    <aside class="aside_right">
+      <span th:if="${session.grade == 'admin'}">
+        <a th:href="@{|/score/create|}">등록</a>
+        <span class="menu_divide">│</span>    
+        <a href="javascript:location.reload();">새로고침</a>
+        <span class="menu_divide">│</span>    
+        <a th:href="@{/score/list_by_scoreno_search_paging}">목록</a>
+      </span>
+    </aside> 
+
+    <div th:replace="~{/score/list_search_com :: list_search_fragment}"></div>
+        
+    <div class='menu_line'></div>
+    <!-- 검색 및 날짜 범위 설정 -->
+    <form name="searchForm" method="get" action="/diary/list_by_diaryno_search_paging" style="margin: 20px 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        
+        <!-- 시작 날짜 -->
+        <input type="date" name="start_date" th:value="${start_date}" class="form-control">
+
+        <!-- 종료 날짜 -->
+        <input type="date" name="end_date" th:value="${end_date}" class="form-control">
+
+        <!-- 검색 버튼 -->
+        <button type="submit" class="btn btn-secondary btn-sm">검색</button>
+      </div>
+    </form>
+    
+    <table class="table table-striped" style='width: 100%;'>
+      <colgroup>
+        <col style='width: 5%;'/>
+        <col style='width: 7%;'/>   
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 10%;'/>
+        <col style='width: 15%;'/>
+      </colgroup>
+      <tr>
+        <th class='th_bs'>평점 번호</th>
+        <th class='th_bs'>일기</th>
+        <th class='th_bs'>달력</th>
+        <th class='th_bs'>채팅</th>
+        <th class='th_bs'>로그인</th>
+        <th class='th_bs'>설문조사</th>
+        <th class='th_bs'>그림</th>
+        <th class='th_bs'>감정</th>
+        <th class='th_bs'>날씨</th>
+        <th class='th_bs'>공지사항</th>
+        <th class='th_bs'>금지단어</th>
+        <th class='th_bs'>총점</th>
+        <th class='th_bs'>등록일</th>
+      </tr>
+
+      <tr th:each="scoreVO, status:${list}" 
+           th:attr="onclick=|location.href='/score/read?scoreno=${scoreVO.scoreno}&now_page=${now_page}'|"
+           style="cursor: pointer; height: 90px;">
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.scoreno}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.diary_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.calendar_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.chat_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.login_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.survey_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.drawing_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.emotion_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.weather_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.notice_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.word_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.total}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.rdate != null ? #dates.format(scoreVO.rdate, 'yyyy-MM-dd') : 'N/A'}" style="font-weight: bold;"></span><br>
+        </td>
+      </tr>
+
+      <tr th:if="${list != null and list.size() == 0}">
+        <td colspan="13" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
+      </tr> 
+    </table>
+
+    <div class="bottom_menu" th:utext="${paging}"></div>
+
   </div>
-
-  <aside class="aside_right">
-    <span th:if="${session.grade == 'admin'}">
-      <a th:href="@{|/score/create|}">등록</a>
-      <span class="menu_divide">│</span>    
-      <a href="javascript:location.reload();">새로고침</a>
-      <span class="menu_divide">│</span>    
-      <a th:href="@{/score/list_by_scoreno_search_paging}">목록</a>
-    </span>
-  </aside> 
-
-  <div th:replace="~{/score/list_search_com :: list_search_fragment}"></div>
-     
-  <div class='menu_line'></div>
-       
-  <table class="table table-striped" style='width: 100%;'>
-    <colgroup>
-      <col style='width: 10%;'/>
-      <col style='width: 30%;'/>      
-      <col style='width: 20%;'/>
-      <col style='width: 20%;'/>
-      <col style='width: 20%;'/>
-    </colgroup>
-    <tr>
-      <th class='th_bs'>평점 번호</th>
-      <th class='th_bs'>평점</th>
-      <th class='th_bs'>회원</th>
-      <th class='th_bs'>등록일</th>
-      <th class='th_bs'>기타</th>
-    </tr>
-   
-    <tr th:each="modeltrainingVO, status:${list}" 
-         th:attr="onclick=|location.href='/score/read?scoreno=${scoreVO.scoreno}&jumsu=${jumsu}'|"
-         style="cursor: pointer; height: 90px;">
-      </td>
-      <td class='td_basic' style="vertical-align: middle; text-align: center;">
-         <span th:text="${scoreVO.scoreno}" style="font-weight: bold;"></span><br>
-      </td>
-      <td class='td_basic' style="vertical-align: middle; text-align: center;">
-         <span th:text="${scoreVO.jumsu}" style="font-weight: bold;"></span><br>
-      </td>
-      <td class='td_basic' style="vertical-align: middle; text-align: center;">
-         <span th:text="${scoreVO.memberno}" style="font-weight: bold;"></span><br>
-      </td>
-      <td class='td_basic' style="vertical-align: middle; text-align: center;">
-         <span th:text="${scoreVO.rdate}" style="font-weight: bold;"></span><br>
-      </td>
-     
-    </tr>
-
-    <tr th:if="${list != null and list.size() == 0}">
-      <td colspan="4" style="text-align: center;">관련 글이 등록되지 않았습니다.</td>
-    </tr> 
-  </table>
-   
-  <div class="bottom_menu" th:utext="${paging}"></div>
-  
-</div>
 </html>

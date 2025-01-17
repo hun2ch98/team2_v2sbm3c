@@ -47,27 +47,24 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link" th:href="@{|/board/create|}">요청사항 쓰기</a></li>
                         <li class="nav-item"><a class="nav-link"th:href="@{|/board/list_by_boardno_search_paging?board_cate=${board_cate ?: ''}|}">요청사항 목록</a></li>
-                    </ul>
-                </li>
-    
-                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="설문조사관리자">                                                            
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/surveygood/list_all|}">설문조사 추천</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/participants/list_all|}">설문조사 참여회원</a></li>
+                        <span th:if="${session.grade == 'admin'}">
+                          <li class="nav-item"><a class="nav-link" th:href="@{|/boardgood/list_all|}">요청사항 추천</a></li>
+                        </span>
                     </ul>
                 </li>
                 
                 <li class="nav-item dropdown" >
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="설문조사회원">                                                            
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="설문조사">                                                            
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_search_paging?is_continue=${is_continue ?: ''}|}">설문조사 목록</a></li>
+                        <span th:if="${session.grade == 'admin'}">
+                          <li class="nav-item"><a class="nav-link" th:href="@{|/survey/create|}">설문조사 주제 등록</a></li>
+                          <li class="nav-item"><a class="nav-link"th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}">설문조사 관리자 목록</a></li>
+                          <li class="nav-item"><a class="nav-link"th:href="@{|/surveygood/list_all|}">설문조사 추천</a></li>
+                          <li class="nav-item"><a class="nav-link"th:href="@{|/participants/list_all|}">설문조사 참여회원</a></li>
+                        </span>
                     </ul>
                 </li>
                 
@@ -122,17 +119,8 @@
                         <li class="nav-item"><a class="nav-link"th:href="@{|/modeltraining/list_by_trainingno_search_paging?is_continue=${is_continue ?: ''}|}">모델 학습 이력 목록</a></li>
                     </ul>
                 </li>
-                
-                <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="평점">                                                            
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/score/create|}">평점 등록</a></li>
-                        <li class="nav-item"><a class="nav-link"th:href="@{|/score/list_by_scoreno_search_paging?is_continue=${is_continue ?: ''}|}">평점 목록</a></li>
-                    </ul>
-                </li>
-                
+              
+           
                 <li class="nav-item dropdown" th:if="${session.grade == 'admin'}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" 
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="일기">                                                            
@@ -141,7 +129,7 @@
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/create|}">일기 작성</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_by_diaryno_search_paging?word=${word}|}">일기 목록</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{|/diarygood/list_all|}">일기 좋아요</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{|/illustration/list_calendar|}">일기 달력</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{|/diary/list_calendar|}">일기 달력</a></li>
                     </ul>
                 </li>
                 
@@ -190,9 +178,6 @@
                         </li>
                         <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/update_file|}">프로필 변경</a>
-                        </li>
-                        <li class="nav-item" th:if="${session.memberno != null}">
-                            <a class="nav-link" th:href="@{|/member/passwd_update|}">비밀번호 변경</a>
                         </li>
                         <li class="nav-item" th:if="${session.memberno != null}">
                             <a class="nav-link" th:href="@{|/member/unsub_delete|}">회원 탈퇴</a>

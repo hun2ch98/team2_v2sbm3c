@@ -1,0 +1,214 @@
+<html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
+<div layout:fragment="content">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 2px;
+            text-align: center;
+            height: 100px;
+            vertical-align: top;
+            word-wrap: break-word;
+            width: 15%;
+        }
+        th {
+            background-color: #f4f4f4;
+            height: 20px;
+        }
+        td div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        td div img {
+            max-width: 100%; /* 이미지가 칸 너비를 넘지 않도록 */
+            max-height: 80px; /* 최대 높이 설정 */
+            object-fit: contain; /* 이미지 비율 유지하며 크기 조정 */
+            margin: 0 auto; /* 중앙 정렬 */
+            display: block;
+            background-color: #f5e9dc;
+        }
+        .weekend {
+            color: red;
+        }
+        .saturday {
+            color: blue;
+        }
+    </style>
+
+    <script>
+        async function fetchCalendarData(date_calendar, contentDiv) {
+            try {
+              const response = await fetch(`/diary/list_calendar_day?ddate=${date_calendar}`, {
+                  method: "get",
+              });
+
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+
+              const data = await response.json();
+              
+              while (contentDiv.childNodes.length > 1) {
+                contentDiv.removeChild(contentDiv.lastChild);
+              }
+      
+              for (let item of data) {
+                const diaryContainer = document.createElement("div");
+                diaryContainer.style.marginBottom = "10px";
+                diaryContainer.style.textAlign = "center";
+                
+                 // 제목을 클릭 시 이동
+                const titleLink = document.createElement("a");
+                titleLink.href = `/diary/read/${item.diaryno}`;
+                titleLink.style.fontWeight = "bold";
+                titleLink.style.marginBottom = "5px";
+                titleLink.textContent = item.title;
+                diaryContainer.appendChild(titleLink);
+    
+               // 썸네일 이미지를 클릭 시 이동
+              if (item.illust_thumb && item.illust_thumb.trim() !== "") {
+                  const thumbLink = document.createElement("a");
+                  thumbLink.href = `/diary/read/${item.diaryno}`;
+                  const thumbImg = document.createElement("img");
+                  thumbImg.src = `/upload/${item.illust_thumb}`;
+                  thumbImg.alt = "Thumbnail";
+                  thumbImg.style.width = "100px";
+                  thumbImg.style.height = "100px";
+                  thumbImg.style.display = "block";
+                  thumbImg.style.margin = "0 auto";
+                  thumbLink.appendChild(thumbImg);
+                  diaryContainer.appendChild(thumbLink);
+              }
+    
+                contentDiv.appendChild(diaryContainer);
+              }
+            } catch (error) {
+              console.error("Error fetching calendar data:", error);
+            }
+        }
+
+        window.onload = function () {
+            const year = parseInt('[[${year}]]');
+            const month = parseInt('[[${month}]]');
+            console.log(year, month);
+
+            const monthTitle = document.getElementById('month_title');
+            monthTitle.setAttribute('data-current_year', year);
+            monthTitle.setAttribute('data-current_month', month);
+
+            const panel_year_month = document.getElementById("panel_year_month");
+            panel_year_month.innerHTML = `${year}년 ${month + 1} 월`;
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const calendarBody = document.querySelector("tbody");
+            calendarBody.innerHTML = "";
+
+            const firstDay = new Date(year, month, 1).getDay();
+            let row = document.createElement("tr");
+
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement("td");
+                row.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cell = document.createElement("td");
+                const contentDiv = document.createElement("div");
+
+                contentDiv.style.display = "flex";
+                contentDiv.style.flexDirection = "column";
+                contentDiv.style.justifyContent = "flex-start";
+                contentDiv.style.height = "100%";
+
+                const dateSpan = document.createElement("span");
+                dateSpan.textContent = day; // 날짜만 표시
+                dateSpan.style.fontSize = "16px";
+                dateSpan.style.fontWeight = "bold";
+                contentDiv.appendChild(dateSpan);
+
+                let date_calendar = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                fetchCalendarData(date_calendar, contentDiv);
+                cell.appendChild(contentDiv);
+
+                if ((firstDay + day - 1) % 7 === 0) {
+                    cell.classList.add("weekend");
+                } else if ((firstDay + day - 1) % 7 === 6) {
+                    cell.classList.add("saturday");
+                }
+
+                row.appendChild(cell);
+
+                if ((firstDay + day) % 7 === 0) {
+                    calendarBody.appendChild(row);
+                    row = document.createElement("tr");
+                }
+            }
+
+            if (row.children.length > 0 && row.children.length < 7) {
+                while (row.children.length < 7) {
+                    const emptyCell = document.createElement("td");
+                    row.appendChild(emptyCell);
+                }
+                calendarBody.appendChild(row);
+            }
+        };
+
+        function changeMonth(cnt) {
+            const monthTitle = document.getElementById('month_title');
+            let currentYear = parseInt(monthTitle.getAttribute('data-current_year'), 10);
+            let currentMonth = parseInt(monthTitle.getAttribute('data-current_month'), 10);
+
+            currentMonth += cnt;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+
+            const url = `/diary/list_calendar?year=${currentYear}&month=${currentMonth + 1}`;
+            location.href = url;
+        }
+    </script>
+    <h3>
+      [[${memberVO.nickname}]]의 일기
+    </h3>
+    <h4 id='month_title' data-current_year='' data-current_month=''>
+        <a href="#" onclick="changeMonth(-1)">[이전 달]</a>
+        <span id='panel_year_month' style="margin:15px; font-size:20px;"></span>
+        <a href="#" onclick="changeMonth(1)">[다음 달]</a>
+    </h4>
+    <table>
+        <thead>
+            <tr>
+                <th class="weekend">일요일</th>
+                <th>월요일</th>
+                <th>화요일</th>
+                <th>수요일</th>
+                <th>목요일</th>
+                <th>금요일</th>
+                <th class="saturday">토요일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 달력 데이터가 동적으로 생성됩니다 -->
+        </tbody>
+    </table>
+</div>
+</html>

@@ -108,7 +108,8 @@ public class IllustrationCont {
    */
   @PostMapping("/create")
   public String create(@ModelAttribute IllustrationVO illustrationVO, 
-                       @RequestParam("selectedDate") String selectedDate, // 선택된 날짜
+                       @RequestParam(value = "diaryno", required = false) Integer diaryno,
+                       @RequestParam(value="selectedDate", required = false) String selectedDate, // 선택된 날짜
                        RedirectAttributes ra, HttpSession session, 
                        Model model, HttpServletRequest request) {
     
@@ -144,22 +145,31 @@ public class IllustrationCont {
               }
           }
 
-          // ddate로 diaryno 가져오기
-          java.sql.Date ddate = java.sql.Date.valueOf(selectedDate); // String -> Date 변환
-          int diaryno = diaryProc.getDiaryNoByDate(ddate);
-          illustrationVO.setDiaryno(diaryno);
+          // diaryno 처리
+          if (diaryno == null && selectedDate != null) {
+              java.sql.Date ddate = java.sql.Date.valueOf(selectedDate); // String -> Date 변환
+              diaryno = diaryProc.getDiaryNoByDate(ddate);
+          }
 
-          int cnt = this.illustrationProc.create(illustrationVO);
+          if (diaryno != null) {
+              illustrationVO.setDiaryno(diaryno);
 
-          if (cnt == 1) {
-            logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "Y");
-              ra.addAttribute("illustno", illustrationVO.getIllustno());
-              return "redirect:/illustration/list_all";
+              int cnt = this.illustrationProc.create(illustrationVO);
+
+              if (cnt == 1) {
+                  logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "Y");
+                  ra.addAttribute("illustno", illustrationVO.getIllustno());
+                  return "redirect:/diary/read/" + diaryno;
+              } else {
+                  logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "N");
+                  ra.addFlashAttribute("code", "check_upload_file_fail");
+                  ra.addFlashAttribute("url", "/illustration/msg");
+                  ra.addFlashAttribute("cnt", 0);
+                  return "redirect:/illustration/msg";
+              }
           } else {
-            logAction("create", "illustration", memberno, "파일명=" + illustrationVO.getIllust(), request, "N");
-              ra.addFlashAttribute("code", "check_upload_file_fail");
+              ra.addFlashAttribute("code", "diaryno_not_found");
               ra.addFlashAttribute("url", "/illustration/msg");
-              ra.addFlashAttribute("cnt", 0);
               return "redirect:/illustration/msg";
           }
       } else {
@@ -206,13 +216,16 @@ public class IllustrationCont {
       start_date = start_date.trim();
       end_date = end_date.trim();
       
+      System.out.println("Title: " + title);
+      System.out.println("Start Date: " + start_date);
+      System.out.println("End Date: " + end_date);
+      
       int startNum = (now_page - 1) * record_per_page + 1;
       int endNum = now_page * record_per_page;
       int searchCount = illustrationProc.countSearchResults(title, start_date, end_date);
    
       String paging = illustrationProc.pagingBox(now_page, title, start_date, end_date, list_file_name, searchCount, record_per_page, page_per_block);
-      System.out.println("Generated Paging HTML: " + paging);
-      
+    
       model.addAttribute("illustno", illustno);
       model.addAttribute("title", title);
       model.addAttribute("start_date", start_date);
@@ -304,7 +317,7 @@ public class IllustrationCont {
       @RequestParam(value = "end_date", required = false, defaultValue = "") String end_date,
       @RequestParam(name="now_page", defaultValue="0") int now_page) {
     IllustrationVO illustrationVO = this.illustrationProc.read(illustno);
-    model.addAttribute(illustrationVO);
+    model.addAttribute("illustrationVO", illustrationVO);
     model.addAttribute(now_page);
     model.addAttribute("title", title);
     model.addAttribute("start_date", start_date);
@@ -368,6 +381,7 @@ public class IllustrationCont {
       this.illustrationProc.update(illustrationVO);
       ra.addAttribute("illustno", illustrationVO.getIllustno());
       ra.addAttribute("now_page", now_page);
+      model.addAttribute(illustrationVO);
       model.addAttribute("illustno", illustno);
       model.addAttribute("now_page", now_page);
       model.addAttribute("title", title);
@@ -388,69 +402,6 @@ public class IllustrationCont {
 
       return "diary/read";  // "diary/read" 템플릿으로 이동
   }
-  
-  @GetMapping(value="/list_calendar")
-  public String list_calendar(HttpSession session, Model model, 
-      @RequestParam(name="year", defaultValue="0") int year, 
-    @RequestParam(name="month", defaultValue="0") int month) {
-
-      if (year == 0) {
-        // 현재 날짜를 가져옴
-        LocalDate today  = LocalDate.now();
-        
-        //연도와 월을 추출
-        year = today.getYear();
-        month = today.getMonthValue();
-      }
-      
-      String month_str = String.format("%02d", month); // 두 자리 형식으로
-    System.out.println("-> month: " + month_str);
-  
-    String date = year + "-" + month;
-    System.out.println("-> date: " + date);
-    
-    model.addAttribute("year", year);
-    model.addAttribute("month", month-1);  // javascript는 1월이 0임. 
-      
-    return "/illustration/list_calendar"; // /templates/calendar/list_calendar.html
-  }
-  
-  
-  @GetMapping(value="/list_calendar_day")
-  @ResponseBody
-  public String list_calendar_day(Model model, 
-      @RequestParam(name="ddate", defaultValue = "") Date ddate) {
-    
-    System.out.println("-> ddate : " + ddate);
-    
-    ArrayList<DiaryIllustrationVO> list = this.illustrationProc.list_calendar_day(ddate);
-    model.addAttribute(list);
-    
-    JSONArray calendar_list = new JSONArray();
-    
-    for (DiaryIllustrationVO diaryillustrationVO : list) {
-      System.out.println("Illustno: " + diaryillustrationVO.getIllustno());
-      System.out.println("Illust Thumb: " + diaryillustrationVO.getIllust_thumb());
-      
-      JSONObject calendar = new JSONObject();
-      //diaryVO
-      calendar.put("diaryno", diaryillustrationVO.getDiaryno());
-      calendar.put("ddate", diaryillustrationVO);
-      //emotionVO
-      calendar.put("emono", diaryillustrationVO.getEmono());
-      calendar.put("em_file1", diaryillustrationVO);
-      //weatherVO
-      calendar.put("weatherno", diaryillustrationVO.getWeatherno());
-      calendar.put("we_file1", diaryillustrationVO.getWe_file1());
-      //illustrationVO
-      calendar.put("illustno", diaryillustrationVO.getIllustno());
-      calendar.put("illust_thumb", diaryillustrationVO.getIllust_thumb());
-      
-      calendar_list.put(calendar);
-    }
-    return calendar_list.toString();
-  }
-  
   
   
   

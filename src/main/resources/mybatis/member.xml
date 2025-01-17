@@ -124,6 +124,13 @@
     WHERE memberno=#{memberno}
   </update>
   
+  <!-- 비밀번호 변경 - 비밀번호 찾기에서 복구키 인증을 성공했을 때 -->
+  <update id="update_passwd" parameterType="HashMap">
+    UPDATE member
+    SET passwd=#{passwd}
+    WHERE id=#{id}
+  </update>
+  
   <!-- 아이디 찾기 회원 정보 일치 검증(name, phone) -->
   <select id="find_id_check" resultType="String" parameterType="HashMap">
     SELECT id
@@ -132,9 +139,16 @@
   </select>
   
   <!-- 비밀번호 찾기 회원 복구키 일치 검증(recovery_key) -->
-  <select id="find_pw_check" resultType="String" parameterType="HashMap">
-    SELECT recovery_key
+  <select id="find_pw_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(id) as cnt
     FROM member
-    WHERE name=#{name} AND recovery_key=#{recovery_key}
+    WHERE id=#{id} AND recovery_key=#{recovery_key}
+  </select>
+  
+  <!-- 이메일 찾기 -> 이름, 전화번호 일치 확인 -->
+  <select id="find_email_check" resultType="String" parameterType="HashMap">
+    SELECT email
+    FROM member
+    WHERE name=#{name} AND phone=#{phone}
   </select>
 </mapper>

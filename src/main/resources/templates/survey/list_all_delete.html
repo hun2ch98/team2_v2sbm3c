@@ -19,7 +19,6 @@
     
     <div style="width: 50%; margin: 0px auto;">  
       <form name="frm" method="post" action="/survey/delete" style="text-align: center;" th:object="${surveyVO}">
-        <input type="hidden" name="itemno" th:value="${surveyVO.itemno}">
         <input type="hidden" name="surveyno" th:value="${surveyVO.surveyno}"> <!-- 값 유지 -->
         <input type="hidden" name="is_continue" th:value="${is_continue}"> <!-- 값 유지 -->
         <input type="hidden" name="now_page" th:value="${now_page}"> <!-- 값 유지 -->
@@ -31,17 +30,14 @@
         <div style="width: 60%; margin: 0px auto; background-color: #DDDDDD;">
           <label>설문조사 주제</label>: <span th:text="${surveyVO.topic}"></span><br>
           <label>설문조사 진행여부</label>: <span th:text="${surveyVO.is_continue}"></span>
-            <!--<a th:href="@{|./list_by_surveyno_search_paging?surveyno=${surveyVO.surveyno }&is_continue=${is_continue }&now_page=${now_page}|}">
-              <img th:src="@{/survey/images/delete.png}" alt="Go" style="cursor: pointer; width: 35px; height: auto;">
-            </a><br>-->
         </div>
           
         <div class="content_body_bottom">
-          <button type="submit" class="btn btn-secondary btn-sm">모두 삭제</button>
+          <button type="submit" th:href="@{|/survey/list_by_surveyno_admin?is_continue=${is_continue ?: ''}|}" class="btn btn-secondary btn-sm">모두 삭제</button>
           <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
         </div>
       </form>
-      <div th:replace="~{survey/list_search_com::list_all_fragment}"></div> 
+      <!--<div th:replace="~{survey/list_all_com::list_all_fragment}"></div> -->
     </div>
   </div>
 </html>

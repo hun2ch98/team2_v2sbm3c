@@ -48,8 +48,49 @@
   <select id="list_all_join" parameterType="dev.mvc.surveygood.SurveySurveygoodMemberVO">
     SELECT g.goodno, g.rdate, g.surveyno, s.topic as s_topic, g.memberno, m.id, m.email
     FROM survey s, surveygood g, member m
-    WHERE s.surveyno = g.surveyno AND g.surveyno = m.memberno
+    WHERE s.surveyno = g.surveyno AND g.memberno = m.memberno
     ORDER BY goodno DESC 
   </select>
+  
+  <!-- 검색 개수 -->
+  <select id="count_search" resultType="int" parameterType="Map">
+    SELECT COUNT(*) AS cnt
+    FROM surveygood g
+    JOIN survey s ON g.surveyno = s.surveyno
+    JOIN member m ON g.memberno = m.memberno
+    <where>
+      <if test="word != null and word != ''">
+        UPPER(m.id) LIKE '%' || UPPER(#{word}) || '%' 
+        OR UPPER(s.topic) LIKE '%' || UPPER(#{word}) || '%'
+      </if>
+    </where>
+  </select>
+  
+  <!-- 검색 + 페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.surveygood.SurveySurveygoodMemberVO" parameterType="Map">
+    SELECT *
+    FROM (
+        SELECT 
+            g.goodno, 
+            g.surveyno, 
+            g.memberno, 
+            g.rdate, 
+            s.topic AS s_topic, 
+            m.id AS id, 
+            m.email AS email, 
+            ROW_NUMBER() OVER (ORDER BY g.goodno ASC) AS r
+        FROM surveygood g
+        JOIN survey s ON g.surveyno = s.surveyno
+        JOIN member m ON g.memberno = m.memberno
+        <where>
+          <if test="word != null and word != ''">
+            UPPER(m.id) LIKE '%' || UPPER(#{word}) || '%'  
+                  OR UPPER(s.topic) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+        </where>
+    )
+    WHERE r BETWEEN #{start_row} AND #{end_row}
+  </select>
+
   
 </mapper>

@@ -74,12 +74,13 @@ public class LearningdataCont {
 	  public String create(Model model,
 			  HttpSession session,
 	      @ModelAttribute("learningdataVO") LearningdataVO learningdataVO) { 
-		
-		  int memberno =(int) session.getAttribute("memberno");
-		  learningdataVO.setMemberno(memberno); 
-		  model.addAttribute("learningdataVO", learningdataVO); // 수정된 LearningdataVO 전달
-
-		  return "/learningdata/create";
+		  if (this.memberProc.isMemberAdmin(session)) {
+			  model.addAttribute("learningdataVO", learningdataVO); // 수정된 LearningdataVO 전달
+	
+			  return "/learningdata/create";
+		  } else {
+	      return "/member/login_cookie_need";
+	    }
 	  }
 	  
 	  /**
@@ -97,9 +98,6 @@ public class LearningdataCont {
 	                       Model model,
 	                       @ModelAttribute("LearningdataVO") LearningdataVO learningdataVO,
 	                       RedirectAttributes ra) {
-		  int memberno = 1; 
-		  learningdataVO.setMemberno(memberno); 
-	  
 		  int cnt = this.learningdataProc.create(learningdataVO);
 		  if (cnt == 1) {
 			  ra.addAttribute("learningdataVO", learningdataVO.getDatano()); 
@@ -125,52 +123,54 @@ public class LearningdataCont {
 	      @RequestParam(name = "datano", defaultValue = "0") int datano,
 	      @RequestParam(name = "ques", defaultValue = "") String ques,
 	      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-
-	      int record_per_page = 10;
-	      int startRow = (now_page - 1) * record_per_page + 1;
-	      int endRow = now_page * record_per_page;
-
-	      int memberno = (int) session.getAttribute("memberno");
-	      MemberVO memberVO = this.memberProc.read(memberno);
-	      if (memberVO == null) {
-	          memberVO = new MemberVO();
-	          memberVO.setMemberno(0);
-	          model.addAttribute("message", "회원 정보가 없습니다.");
+		    if (this.memberProc.isMemberAdmin(session)) {
+		      int record_per_page = 10;
+		      int startRow = (now_page - 1) * record_per_page + 1;
+		      int endRow = now_page * record_per_page;
+	
+		      int memberno = (int) session.getAttribute("memberno");
+		      MemberVO memberVO = this.memberProc.read(memberno);
+		      if (memberVO == null) {
+		          memberVO = new MemberVO();
+		          memberVO.setMemberno(0);
+		          model.addAttribute("message", "회원 정보가 없습니다.");
+		      }
+		      ques = Tool.checkNull(ques).trim();
+		      model.addAttribute("memberVO", memberVO);
+		      model.addAttribute("datano", datano);
+		      model.addAttribute("ques", ques);
+		      model.addAttribute("now_page", now_page);
+	
+		      HashMap<String, Object> map = new HashMap<>();
+		      map.put("memberno", memberno);
+		      map.put("ques", ques);
+		      map.put("now_page", now_page);
+		      map.put("startRow", startRow);
+		      map.put("endRow", endRow);
+	
+		      ArrayList<LearningdataVO> list = this.learningdataProc.list_by_datano_search_paging(map);
+		      if (list == null || list.isEmpty()) {
+		          model.addAttribute("message", "게시물이 없습니다.");
+		      } else {
+		          model.addAttribute("list", list);          
+		          model.addAttribute("ques", ques);
+		      }
+	
+		      int search_count = this.learningdataProc.count_by_datano_search(map);
+		      String paging = this.learningdataProc.pagingBox(now_page, ques, "/learningdata/list_by_datano_search_paging", search_count,
+		          Learningdata.RECORD_PER_PAGE, Learningdata.PAGE_PER_BLOCK);
+		      model.addAttribute("paging", paging);
+		      model.addAttribute("ques", ques);
+		      model.addAttribute("now_page", now_page);
+		      model.addAttribute("search_count", search_count);
+	
+		      int no = search_count - ((now_page - 1) * Learningdata.RECORD_PER_PAGE);
+		      model.addAttribute("no", no);
+	
+		      return "/learningdata/list_by_datano_search_paging"; // /templates/board/list_by_boardno_search_paging.html
+		    } else {
+	        return "/member/login_cookie_need";
 	      }
-	      ques = Tool.checkNull(ques).trim();
-	      model.addAttribute("memberVO", memberVO);
-	      model.addAttribute("datano", datano);
-	      model.addAttribute("ques", ques);
-	      model.addAttribute("now_page", now_page);
-
-	      HashMap<String, Object> map = new HashMap<>();
-	      map.put("memberno", memberno);
-	      map.put("ques", ques);
-	      map.put("now_page", now_page);
-	      map.put("startRow", startRow);
-	      map.put("endRow", endRow);
-
-	      ArrayList<LearningdataVO> list = this.learningdataProc.list_by_datano_search_paging(map);
-	      if (list == null || list.isEmpty()) {
-	          model.addAttribute("message", "게시물이 없습니다.");
-	      } else {
-	          model.addAttribute("list", list);          
-	          model.addAttribute("ques", ques);
-	      }
-
-	      int search_count = this.learningdataProc.count_by_datano_search(map);
-	      String paging = this.learningdataProc.pagingBox(now_page, ques, "/learningdata/list_by_datano_search_paging", search_count,
-	          Learningdata.RECORD_PER_PAGE, Learningdata.PAGE_PER_BLOCK);
-	      model.addAttribute("paging", paging);
-	      model.addAttribute("ques", ques);
-	      model.addAttribute("now_page", now_page);
-	      model.addAttribute("search_count", search_count);
-
-	      int no = search_count - ((now_page - 1) * Learningdata.RECORD_PER_PAGE);
-	      model.addAttribute("no", no);
-
-	      return "/learningdata/list_by_datano_search_paging"; // /templates/board/list_by_boardno_search_paging.html
-	 
 	  }
 	  
 	  /**
@@ -182,18 +182,21 @@ public class LearningdataCont {
 	      @RequestParam(name = "datano", defaultValue = "0") int datano,
 	      @RequestParam(name = "word", defaultValue = "") String word,
 	      @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
-	    
-	    LearningdataVO learningdataVO = this.learningdataProc.read(datano);
-	   
-	    model.addAttribute("learningdataVO", learningdataVO);
-	    
-	    MemberVO memberVO = this.memberProc.read(learningdataVO.getMemberno());
-	    model.addAttribute("memberVO", memberVO);
-	    
-	    model.addAttribute("word", word);
-	    model.addAttribute("now_page", now_page);
-	    
-	    return "/learningdata/read";
+		    if (this.memberProc.isMemberAdmin(session)) {
+			    LearningdataVO learningdataVO = this.learningdataProc.read(datano);
+			   
+			    model.addAttribute("learningdataVO", learningdataVO);
+			    
+			    MemberVO memberVO = this.memberProc.read(learningdataVO.getMemberno());
+			    model.addAttribute("memberVO", memberVO);
+			    
+			    model.addAttribute("word", word);
+			    model.addAttribute("now_page", now_page);
+			    
+			    return "/learningdata/read";
+		    } else {
+		      return "/member/login_cookie_need";
+		    }
 	  }
 	  
 	  /**
@@ -296,6 +299,7 @@ public class LearningdataCont {
 	         @RequestParam(name = "memberno", defaultValue = "0") int memberno,
 	         @RequestParam(name = "word", defaultValue = "") String word,
 	         @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
+		    if (this.memberProc.isMemberAdmin(session)) {
 			  model.addAttribute("datano", datano);
 			  model.addAttribute("word", word);
 			  model.addAttribute("now_page", now_page);
@@ -307,7 +311,9 @@ public class LearningdataCont {
 			  model.addAttribute("memberVO", memberVO);
 			    
 			  return "/learningdata/delete"; // forward
-		
+		    } else {
+	        return "/member/login_cookie_need";
+	      }
 	  }
 	  
 	  /**

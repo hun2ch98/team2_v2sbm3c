@@ -70,16 +70,9 @@
     <span class='menu_divide'>│</span>
     <a th:href="@{/bannedwords/create}">등록</a>
     <span class='menu_divide'>│</span>
-    <a th:href="@{|/bannedwords/update_text?wordno=${bannedwordsVO.wordno}&now_page=${now_page}|}">글 수정</a>
+    <a th:href="@{|/bannedwords/update_text?wordno=${bannedwordsVO.wordno}&now_page=${now_page}|}">금지단어 수정</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{|/bannedwords/delete?wordno=${bannedwordsVO.wordno}&now_page=${now_page}|}">삭제</a>
-  </aside>
-
-  <aside class="aside_right" th:if="${session?.gradle != 1}">
-    <a href="javascript:location.reload();">새로고침</a>
-    <span class='menu_divide'>│</span>
-    <a th:href="@{/bannedwords/list_by_wordno_search_paging}">금지단어 보기</a>
-    <span class='menu_divide' >│</span>   
   </aside>
 
   <div class='menu_line'></div>

@@ -2,6 +2,12 @@
 <div th:replace="~{calendar/list_all_com::list_all_fragment}"></div> 
 '/calendar/list_all_com.html' 파일의 list_all_fragment를 가져다 사용
 */-->
+
+<!-- /survey/list_search_com.html 파일의 list_search_fragment import -->
+<div th:replace="~{surveygood/list_search_com::list_search_fragment}"></div>
+
+<div class='menu_line'></div>
+
 <div th:fragment="list_all_fragment"> 
   <table class="table table-hover" style="width: 100%;">
     <colgroup>
@@ -52,5 +58,7 @@
   <form name="frm" id="frm" method="post" action="/surveygood/delete">
     <input type="hidden" name="goodno" id="goodno">
   </form>
+  
+  <div class="bottom_menu" th:utext="${paging}"></div>
   
 </div>

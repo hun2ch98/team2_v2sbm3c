@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import dev.mvc.member.MemberProcInter;
-import dev.mvc.tool.MailTool;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/key")
@@ -33,52 +33,69 @@ public class KeyCont {
    * @return
    */
   @GetMapping(value = "/form")
-  public String form(Model model) {
-    return "/key/form";
+  public String form(Model model, HttpSession session) {
+    
+    // ID는 세션에 저장, 이후 복구키 검증 시 사용
+    session.setAttribute("id", "user1");
+    
+    return "/key/form"; // 복구키 입력 화면
   }
   
-  
+  /**
+   * 비밀번호 찾기 -> 복구키 유무 확인
+   * @param name
+   * @param recovery_key
+   * @return
+   */
   @GetMapping(value = "/isExist")
   @ResponseBody
-  public String isExist(@RequestParam(name = "name", defaultValue = "") String name,
-                        @RequestParam(name = "recovery_key", defaultValue = "") String recovery_key) {
+  public String isExist(HttpSession session,
+      @RequestParam(name = "id", defaultValue = "") String id,
+      @RequestParam(name = "recovery_key", defaultValue = "") String recovery_key) {
     HashMap<String, String> map = new HashMap<String, String>();
-    map.put("name", name);
+    map.put("id", id);
     map.put("recovery_key", recovery_key);
     
-    System.out.println("-> name: " + name);
+    System.out.println("-> id: " + id);
     System.out.println("-> recovery_key: " + recovery_key);
     
-    String recoveryKey = this.memberProc.find_pw_check(map);
-    
+    int cnt = this.memberProc.find_pw_check(map); // 복구키 검증
     JSONObject obj = new JSONObject();
-    obj.put("recovery_key", recoveryKey);
     
+    if(cnt == 1) { // 복구키가 일치하는 경우
+      session.setAttribute("authenticatedID", id); // 인증된 ID 저장
+    }
+    
+    obj.put("cnt", cnt);
     return obj.toString();
   }
   
+  /** 복구키 인증 완료된 후 비밀번호 변경 폼 */
+  @GetMapping(value = "/update_passwd")
+  public String update_passwd_form(Model model) {
+    return "/key/update_passwd"; // 비밀번호 변경 폼
+  }
   
-  @PostMapping(value = "/send")
-  public String send(@RequestParam(name = "email", defaultValue = "") String email,
-      @RequestParam(name = "name", defaultValue = "") String name,
-      @RequestParam(name = "recovery_key", defaultValue = "") String recovery_key) {
+  /**
+   * 복구키 인증 완료된 후 비밀번호 변경 처리
+   * @param model
+   * @param session
+   * @param passwd
+   * @return
+   */
+  @PostMapping(value = "/update_passwd")
+  @ResponseBody
+  public String update_passwd_proc(Model model, HttpSession session,
+      @RequestParam(name = "passwd", defaultValue = "") String passwd) {
     HashMap<String, String> map = new HashMap<String, String>();
-    map.put("name", name);
-    map.put("recovery_key", recovery_key);
+    map.put("id", (String)session.getAttribute("authenticatedID"));
+    map.put("passwd", passwd);
     
-    String recoveryKey = this.memberProc.find_pw_check(map);
-    System.out.println("-> recovery_key : " + recoveryKey);
+    JSONObject obj = new JSONObject();
     
-    // 비밀번호를 가져오는 로직
-    String password = this.memberProc.find_pw_check(map); // 실제 비밀번호를 가져옵니다.
-    System.out.println("-> password : " + password);
+    int cnt = this.memberProc.update_passwd(map);
+    obj.put("cnt", cnt);
     
-    String from = "skt3246@gmail.com";
-    String title = "[Hoak]" + name + " 회원님의 비밀번호입니다.";
-    String content = "[Hoak]" + name + "회원님의 비밀번호는 " + password + "입니다.";
-    MailTool mailTool = new MailTool();
-    mailTool.send(email, from, title, content); // 메일 전송
-    
-    return "/key/sended";
+    return obj.toString();
   }
 }

@@ -143,12 +143,7 @@ public class SurveyCont {
       String thumb1 = ""; // preview image
 
       String upDir = Survey.getUploadDir(); // 파일을 업로드할 폴더 준비
-      // upDir = upDir + "/" + 한글을 제외한 카테고리 이름
       System.out.println("-> upDir: " + upDir);
-
-      // 전송 파일이 없어도 file1MF 객체가 생성됨.
-      // <input type='file' class="form-control" name='file1MF' id='file1MF'
-      // value='' placeholder="파일 선택">
       MultipartFile mf = surveyVO.getFile1MF();
 
       file1 = mf.getOriginalFilename(); // 원본 파일명 산출, 01.jpg
@@ -179,46 +174,17 @@ public class SurveyCont {
       } else { // 글만 등록하는 경우
         System.out.println("-> 글만 등록");
       }
-
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 종료
       // ------------------------------------------------------------------------------
-
-      // Call By Reference: 메모리 공유, Hashcode 전달
-//      int memberno = 1; // memberno FK
       surveyVO.setMemberno(memberno);
       int cnt = this.surveyProc.create(surveyVO);
 
-      // ------------------------------------------------------------------------------
-      // PK의 return
-      // ------------------------------------------------------------------------------
-      // System.out.println("--> contentsno: " + contentsVO.getContentsno());
-      // mav.addObject("contentsno", contentsVO.getContentsno()); // redirect
-      // parameter 적용
-      // ------------------------------------------------------------------------------
-
       if (cnt == 1) {
-        // type 1, 재업로드 발생
-        // return "<h1>파일 업로드 성공</h1>"; // 연속 파일 업로드 발생
-
-        // type 2, 재업로드 발생
-        // model.addAttribute("cnt", cnt);
-        // model.addAttribute("code", "create_success");
-        // return "contents/msg";
-
-        // type 3 권장
-        // return "redirect:/contents/list_all"; // /templates/contents/list_all.html
-
-        // System.out.println("-> contentsVO.getCateno(): " + contentsVO.getCateno());
-        // ra.addFlashAttribute("cateno", contentsVO.getCateno()); // controller ->
-        // controller: X
-
         logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");  
         ra.addAttribute("memberno", surveyVO.getMemberno()); // controller -> controller: O
-        return "redirect:/survey/list_by_surveyno_search_paging";
+        return "redirect:/survey/list_by_surveyno_admin";
 
-        // return "redirect:/contents/list_by_cateno?cateno=" + contentsVO.getCateno();
-        // // /templates/contents/list_by_cateno.html
       } else {
         logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");  
         ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
@@ -265,6 +231,8 @@ public class SurveyCont {
       @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
       @RequestParam(name = "now_page", defaultValue = "1") int now_page) {
     if (this.memberProc.isMember(session)) { // 회원 로그인한 경우
+      System.out.println("surveyno: " + surveyno);
+      model.addAttribute("surveyno", surveyno);
 
       int record_per_page = 8;
       int startRow = (now_page - 1) * record_per_page + 1;
@@ -355,7 +323,7 @@ public class SurveyCont {
       model.addAttribute("list", list);
 
       int search_count = this.surveyProc.count_by_surveyno_search(map);
-      String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, "/survey/list_by_surveyno_search_paging", search_count,
+      String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, "/survey/list_by_surveyno_admin", search_count,
           Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
       model.addAttribute("now_page", now_page);
@@ -417,16 +385,12 @@ public class SurveyCont {
    * 글 수정 폼
    *
    */
-  @GetMapping(value = "/update_text/{surveyno}")
+  @GetMapping(value = "/update_text")
   public String update_text(HttpSession session, 
       Model model, 
-      @PathVariable("surveyno") int surveyno,
       RedirectAttributes ra, 
-      @RequestParam(name="is_continue", defaultValue="") String is_continue,
-      @RequestParam(name="now_page", defaultValue="1") int now_page) {
+      @RequestParam(name="surveyno", defaultValue="") int surveyno) {
 
-    model.addAttribute("is_continue", is_continue);
-    model.addAttribute("now_page", now_page);
     model.addAttribute("surveyno", surveyno);
 
     if (this.memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
@@ -451,18 +415,11 @@ public class SurveyCont {
    * 
    * @return
    */
-  @PostMapping(value = "/update_text/{surveyno}")
+  @PostMapping(value = "/update_text")
   public String update_text(HttpSession session, 
-      Model model, HttpServletRequest request,
-      @ModelAttribute("surveyVO") SurveyVO surveyVO, 
-      @PathVariable("surveyno") int surveyno,
-      RedirectAttributes ra,
-      @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
-      @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
+      Model model, HttpServletRequest request, RedirectAttributes ra,
+      @ModelAttribute("surveyVO") SurveyVO surveyVO) {
 
-      // Redirect 시 검색어 및 현재 페이지 유지
-      ra.addAttribute("is_continue", is_continue);
-      ra.addAttribute("now_page", now_page);
       int memberno = (int) session.getAttribute("memberno");
       
       if (this.memberProc.isMemberAdmin(session)) { // 관리자 로그인 확인
@@ -474,7 +431,7 @@ public class SurveyCont {
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
-          return "redirect:/survey/list_by_surveyno_search_paging"; // @GetMapping(value = "/read")
+          return "redirect:/survey/list_by_surveyno_admin"; // @GetMapping(value = "/read")
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
         logAction("update_text", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
@@ -488,14 +445,10 @@ public class SurveyCont {
    * 파일 수정 폼 
    * @return
    */
-  @GetMapping(value = "/update_file/{surveyno}")
+  @GetMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, 
-         @PathVariable("surveyno") int surveyno,
-         @RequestParam(name="is_continue", defaultValue="") String is_continue, 
-         @RequestParam(name="now_page", defaultValue="1") int now_page) {
-    
-    model.addAttribute("is_continue", is_continue);
-    model.addAttribute("now_page", now_page);
+      @RequestParam(name="surveyno", defaultValue="") int surveyno) {
+
     model.addAttribute("surveyno", surveyno);
     
     if (memberProc.isMemberAdmin(session)) {
@@ -515,21 +468,16 @@ public class SurveyCont {
    * 파일 수정 처리 
    * @return
    */
-  @PostMapping(value = "/update_file/{surveyno}")
+  @PostMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,HttpServletRequest request,
                             @ModelAttribute("surveyVO") SurveyVO surveyVO,
-                            @PathVariable("surveyno") int surveyno,
-                            @RequestParam(name="is_continue", defaultValue="") String is_continue, 
-                            @RequestParam(name="now_page", defaultValue="1") int now_page) {
+                            @RequestParam(name="surveyno", defaultValue="") int surveyno) {
 
     int memberno = (int) session.getAttribute("memberno");
     if (this.memberProc.isMemberAdmin(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       SurveyVO surveyVO_old = surveyProc.read(surveyVO.getSurveyno());
 
-      // -------------------------------------------------------------------
-      // 파일 삭제 시작
-      // -------------------------------------------------------------------
       String file1saved = surveyVO_old.getFile1saved(); // 실제 저장된 파일명
       String thumb1 = surveyVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
       long size1 = 0;
@@ -538,18 +486,9 @@ public class SurveyCont {
 
       Tool.deleteFile(upDir, file1saved); // 실제 저장된 파일삭제
       Tool.deleteFile(upDir, thumb1); // preview 이미지 삭제
-      // -------------------------------------------------------------------
-      // 파일 삭제 종료
-      // -------------------------------------------------------------------
 
-      // -------------------------------------------------------------------
-      // 파일 전송 시작
-      // -------------------------------------------------------------------
       String file1 = ""; // 원본 파일명 image
 
-      // 전송 파일이 없어도 file1MF 객체가 생성됨.
-      // <input type='file' class="form-control" name='file1MF' id='file1MF'
-      // value='' placeholder="파일 선택">
       MultipartFile mf = surveyVO.getFile1MF();
 
       file1 = mf.getOriginalFilename(); // 원본 파일명
@@ -582,10 +521,8 @@ public class SurveyCont {
       this.surveyProc.update_file(surveyVO); // Oracle 처리
       ra.addAttribute ("surveyno", surveyVO.getSurveyno());
       ra.addAttribute("memberno", surveyVO.getMemberno());
-      ra.addAttribute("is_continue", is_continue);
-      ra.addAttribute("now_page", now_page);
       logAction("update_file", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
-      return "redirect:/survey/list_by_surveyno_search_paging";
+      return "redirect:/survey/list_by_surveyno_admin";
     } else {
       logAction("update_file", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
       ra.addAttribute("url", "/member/login_cookie_need"); 
@@ -596,60 +533,36 @@ public class SurveyCont {
   /**
    * 삭제폼 http://localhost:9091/cate/delete/1
    */
-  @GetMapping(value = "/list_all_delete")
+  @GetMapping(value = "/check_delete")
   public String delete(HttpSession session, Model model, 
-                                   @PathVariable("surveyno") int surveyno,
-                                   @RequestParam(name = "itemno", defaultValue = "1") int itemno,
-                                   @RequestParam(name = "memberno", defaultValue = "1") int memberno,
-                                   @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
-                                   @RequestParam(name = "now_page", defaultValue = "0") int now_page) {
+      @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                                   @RequestParam(name = "itemno", defaultValue = "1") int itemno) {
     if (this.memberProc.isMemberAdmin(session)) {
+      
+      model.addAttribute("surveyno", surveyno);
+      
+      int memberno = (int)session.getAttribute("memberno");
+      model.addAttribute("memberno", memberno);
+      System.out.println("memberno: " + memberno);
+
       SurveyVO surveyVO = this.surveyProc.read(surveyno);
       model.addAttribute("surveyVO", surveyVO);
       
       ItemVO itemVO = this.itemProc.read(itemno);
       model.addAttribute("itemVO", itemVO);     
-      
+            
+      // 자식레코드 산출
       int cnt = this.surveyProc.cntcount(surveyno);
       
-      HashMap<String, Object> map = new HashMap<String, Object>();
-//      ArrayList<SurveyVO> list = this.surveyProc.list_by_surveyno_search_paging(map);
-      map.put("is_continue", is_continue);
-      map.put("surveyno", surveyno);
-      map.put("now_page", now_page);
-      
-//      model.addAttribute("list", list);
-
-      model.addAttribute("cnt", cnt);  // 콘텐츠 개수 추가
-      model.addAttribute("is_continue", is_continue);
-      model.addAttribute("now_page", now_page);
-
-      // --------------------------------------------------------------------------------------
-      // 페이지 번호 목록 생성
-      // --------------------------------------------------------------------------------------
-//      int memberno = (int) session.getAttribute("memberno"); // memberno FK
-//      itemVO.setSurveyno(surveyno);
-//      int cnt = this.contentsProc.create(contentsVO);
-      int search_count = this.surveyProc.count_by_surveyno_search(map);
-      String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, this.list_file_name, search_count, this.record_per_page,
-          this.page_per_block);
-      model.addAttribute("paging", paging);
-      model.addAttribute("now_page", now_page);
-
-      // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
-      int no = search_count - ((now_page - 1) * this.record_per_page);
-      model.addAttribute("no", no);
-      // --------------------------------------------------------------------------------------
       if (cnt == 0) {
         // 콘텐츠가 없을 경우 cate/delete.html로 이동
-        return "/survey/list_all_delete";
+        return "/survey/delete";
       } else {
         // 콘텐츠가 있을 경우 cate/list_all_delete.html로 이동
         ArrayList<ItemVO> list_item = itemProc.list_all_com(surveyno); // 해당 카테고리의 콘텐츠 리스트 불러오기
         model.addAttribute("list_item", list_item);
-//        model.addAttribute("cnt", cnt);
-        model.addAttribute("is_continue", is_continue);
-        model.addAttribute("now_page", now_page);
+        model.addAttribute("cnt", cnt);
+        
         return "/survey/list_all_delete"; // cate/list_all_delete.html로 이동
       }
     } else {
@@ -658,98 +571,44 @@ public class SurveyCont {
   }
   
   /**
-   * 카테고리 및 연관 자료 삭제 처리
-   */
-//  @PostMapping(value = "/list_all_delete")
-//  public String deleteAllCategory(@RequestParam (name="surveyno", defaultValue="0") int surveyno,
-//                                  @RequestParam(name = "memberno", defaultValue = "0") int memberno,
-//                                                       RedirectAttributes redirectAttributes) {
-//    // 콘텐츠 삭제
-//    itemProc.delete_survey(surveyno);
-//    
-//    // 카테고리 삭제
-//    surveyProc.delete(surveyno);
-//
-//    redirectAttributes.addFlashAttribute("msg", "카테고리와 관련된 모든 자료가 삭제되었습니다.");
-//    return "survey/list_by_surveyno_search_paging";
-//  }
-
-  /**
-   * 카테고리 삭제 폼
-   */
-//  @GetMapping(value = "/delete")
-//  public String delete(Model model) {
-//    // 기본 삭제 폼
-//    return "/survey/list_all_delete";  // survey/delete.html로 이동
-//  }
-
-  /**
-   * 삭제 처리, http://localhost:9091/cate/delete?cateno=1
-   * 
-   * @param model         Controller -> Thymeleaf HTML로 데이터 전송에 사용
-   * @param cateVO        Form 태그 값 -> 검증 -> cateVO 자동 저장, request.getParameter()
-   *                      자동 실행
-   * @param bindingResult 폼에 에러가 있는지 검사 지원
-   * @return
+   * 삭제 처리
    */
   @PostMapping(value = "/delete")
-  public String delete_process(HttpSession session, Model model, HttpServletRequest request,
-                               @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
-                               @RequestParam(name = "is_continue", defaultValue = "") String is_continue,
-                               @RequestParam(name = "now_page", defaultValue = "") int now_page, 
-                               RedirectAttributes ra) {
-
-    int memberno = (int) session.getAttribute("memberno");
+  public String deleteProcess(HttpSession session, Model model,
+                              @RequestParam(name = "surveyno", defaultValue = "0") int surveyno,
+                              RedirectAttributes ra) {
       // 관리자 권한 확인
-      if (this.memberProc.isMemberAdmin(session)) {
-          System.out.println("-> delete_process");
-
-          SurveyVO surveyVO = this.surveyProc.read(surveyno); // 삭제 전에 레코드 조회
-          model.addAttribute("surveyVO", surveyVO);
-
-          HashMap<String, Object> map = new HashMap<String, Object>();
-          // 카테고리에 속한 콘텐츠 개수 확인
-          int cnt = this.surveyProc.cntcount(surveyno); // 해당 카테고리 내 콘텐츠 수
-
-          if (cnt == 0) {
-              // 콘텐츠가 없으면 카테고리만 삭제
-              int deleteCnt = this.surveyProc.delete(surveyno);
-              System.out.println("-> deleteCnt: " + deleteCnt);
-
-              if (deleteCnt == 1) {
-                  ra.addAttribute("is_continue", is_continue); // redirect로 데이터 전송
-
-                  // 마지막 페이지에서 모든 레코드가 삭제되면 페이지수를 1 감소 시켜야 함.
-                  int search_cnt = this.surveyProc.count_by_surveyno_search(map);
-                  if (search_cnt % this.record_per_page == 0) {
-                      now_page = now_page - 1;
-                      if (now_page < 1) {
-                          now_page = 1; // 최소 시작 페이지
-                      }
-                  }
-
-                  ra.addAttribute("now_page", now_page); // redirect로 데이터 전송
-                  logAction("delete", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "Y");
-                  return "redirect:/survey/list_by_surveyno_search_paging"; // 설문조사 목록 페이지로 리다이렉트
-              } else {
-                logAction("delete", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
-                  model.addAttribute("code", "delete_fail");
-                  return "/survey/msg"; // 실패 메시지 출력
-              }
-
-          } else {
-              // 콘텐츠가 있을 경우 cate/list_all_delete.html로 이동하여 확인 요청
-              ArrayList<ItemVO> list_item = itemProc.list_all_com(surveyno); // 해당 카테고리의 콘텐츠 리스트 불러오기
-              model.addAttribute("list_item", list_item);
-//              model.addAttribute("cnt", cnt);
-              model.addAttribute("is_continue", is_continue);
-              model.addAttribute("now_page", now_page);
-              model.addAttribute("memberno", memberno);
-              return "/survey/list_all_delete"; // cate/list_all_delete.html로 이동
-          }
-      } else {
-          return "redirect:/member/login_cookie_need";  // 권한 없을 때 로그인 페이지로 리다이렉트
+      if (!this.memberProc.isMemberAdmin(session)) {
+          return "redirect:/member/login_cookie_need";
       }
+
+      SurveyVO surveyVO = this.surveyProc.read(surveyno);
+      if (surveyVO == null) {
+          return "redirect:/survey/list_by_surveyno_admin"; // 설문조사가 없는 경우 목록으로 이동
+      }
+
+      model.addAttribute("surveyVO", surveyVO);
+
+      // 파일 삭제 로직
+      String file1saved = surveyVO.getFile1saved();
+      String thumb1 = surveyVO.getThumb1();
+      String uploadDir = Survey.getUploadDir();
+
+      if (file1saved != null && !file1saved.isEmpty()) {
+          Tool.deleteFile(uploadDir, file1saved); // 실제 파일 삭제
+      }
+
+      if (thumb1 != null && !thumb1.isEmpty()) {
+          Tool.deleteFile(uploadDir, thumb1); // 썸네일 삭제
+      }
+
+      // 삭제 처리
+      int deleteCnt = this.surveyProc.delete(surveyno);
+      System.out.println("-> deleteCnt: " + deleteCnt);
+
+      // 삭제 완료 후 목록으로 리다이렉트
+      ra.addAttribute("surveyno", surveyno);
+      return "redirect:/survey/list_by_surveyno_admin";
   }
 
 

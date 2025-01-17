@@ -28,6 +28,9 @@ public class ItemVO {
   /** 설문조사 번호 */
   private int surveyno;
   
+  /** 회원 번호 */
+  private int memberno;
+  
   /** 항목 출력 순서 */
   private int item_seq;
   
@@ -36,5 +39,14 @@ public class ItemVO {
   
   /** 항목 선택 인원 */
   private int item_cnt=0;
+  
+  public ItemVO() {
+    
+  }
+  
+  public ItemVO(String item, int item_cnt) {
+    this.item = item;
+    this.item_cnt = item_cnt;
+  }
 
 }

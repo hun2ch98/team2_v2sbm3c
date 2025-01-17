@@ -74,7 +74,7 @@
           SELECT datano, ethical, create_at, ques, ans,
                  ROW_NUMBER() OVER (ORDER BY datano DESC) AS rnum
           FROM learningdata
-          WHERE (#{ques} IS NULL OR #{ques} = '' OR ques = #{ques})
+          WHERE (#{ques} = '' OR ques LIKE CONCAT(#{ques}, '%'))
       )
       WHERE rnum BETWEEN #{startRow} AND #{endRow}
   </select>

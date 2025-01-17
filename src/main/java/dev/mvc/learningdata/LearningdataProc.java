@@ -8,8 +8,6 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dev.mvc.learningdata.LearningdataDAOInter;
-import dev.mvc.learningdata.LearningdataVO;
 
 //알고리즘 구현
 @Component("dev.mvc.learningdata.LearningdataProc")

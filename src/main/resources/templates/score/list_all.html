@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class='title_line'>전체 평점 목록</div>
+
+  <aside class="aside_right">
+    <a th:href="@{/score/create}">등록</a>
+    <span class='menu_divide'>│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside> 
+   
+  <div class='menu_line'></div>
+       
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+        <col style='width: 5%;'/>
+        <col style='width: 7%;'/>   
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 7%;'/>      
+        <col style='width: 10%;'/>
+        <col style='width: 15%;'/>
+      </colgroup>
+    <tr>
+      <th class='th_bs'>평점 번호</th>
+        <th class='th_bs'>일기</th>
+        <th class='th_bs'>달력</th>
+        <th class='th_bs'>채팅</th>
+        <th class='th_bs'>로그인</th>
+        <th class='th_bs'>설문조사</th>
+        <th class='th_bs'>그림</th>
+        <th class='th_bs'>감정</th>
+        <th class='th_bs'>날씨</th>
+        <th class='th_bs'>공지사항</th>
+        <th class='th_bs'>금지단어</th>
+        <th class='th_bs'>총점</th>
+        <th class='th_bs'>등록일</th>
+    </tr>
+   
+    <tr th:each="scoreVO, status:${list}" 
+           th:attr="onclick=|location.href='/score/read?scoreno=${scoreVO.scoreno}&now_page=${now_page}'|"
+           style="cursor: pointer; height: 90px;">
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.scoreno}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.diary_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.calendar_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.chat_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.login_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.survey_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.drawing_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.emotion_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.weather_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.notice_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.word_score}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.total}" style="font-weight: bold;"></span><br>
+        </td>
+        <td class='td_basic' style="vertical-align: middle; text-align: center;">
+          <span th:text="${scoreVO.rdate != null ? #dates.format(scoreVO.rdate, 'yyyy-MM-dd') : 'N/A'}" style="font-weight: bold;"></span><br>
+        </td>
+      </tr>
+  </table>
+   
+  <div class='bottom_menu'>
+    <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+  </div>
+
+</div>
+</html>
+

@@ -7,12 +7,12 @@ DROP TABLE participants;
 CREATE TABLE participants(
     pno                NUMBER(10)   NOT NULL    PRIMARY KEY,
     pdate              DATE         NOT NULL,
-    itemno             NUMBER(10)       NULL ,
-    memberno           NUMBER(6)        NULL ,
-    FOREIGN KEY (itemno) REFERENCES surveyitem (itemno),
-    FOREIGN KEY (memberno) REFERENCES MEMBER (memberno)
+    itemno             NUMBER(10)   NOT NULL ,
+    memberno           NUMBER(10)   NOT NULL ,
+    FOREIGN KEY (itemno) REFERENCES surveyitem (itemno) ON DELETE CASCADE,
+    FOREIGN KEY (memberno)  REFERENCES member (memberno)
 );
-
+DESC participants;
 COMMENT ON TABLE participants is '설문 참여 회원';
 COMMENT ON COLUMN participants.pno is '설문 참여 회원 번호';
 COMMENT ON COLUMN participants.itemno is '설문 조사 항목 번호';
@@ -32,7 +32,7 @@ COMMIT;
 
 -- 데이터 삽입
 INSERT INTO participants(pno, itemno, memberno, pdate)
-VALUES (participants_seq.nextval, 1, 1, sysdate);
+VALUES (participants_seq.nextval, 35, 11, sysdate);
 
 INSERT INTO participants(pno, itemno, memberno, pdate)
 VALUES (participants_seq.nextval, 2, 1, sysdate);
@@ -164,7 +164,7 @@ FROM (
         p.memberno, 
         p.pdate, 
         i.item AS i_item, 
-        m.name AS member_name, 
+        m.name AS name, 
         ROW_NUMBER() OVER (ORDER BY p.pno ASC) AS r
     FROM participants p
     JOIN surveyitem i ON p.itemno = i.itemno
