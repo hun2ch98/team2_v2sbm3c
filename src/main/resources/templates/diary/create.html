@@ -156,7 +156,6 @@
         return;
       }
 
-      // API 요청 데이터 구성
       const payload = {
         title: title,
         weatherCode: weatherCode,
@@ -166,7 +165,7 @@
 
       try {
         // Flask API 호출
-        const response = await fetch('http://127.0.0.1:5000/generate_image', {
+        const response = await fetch('http://192.168.12.146:5000/generate_image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
