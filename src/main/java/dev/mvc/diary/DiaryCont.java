@@ -1,5 +1,8 @@
 package dev.mvc.diary;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +18,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -125,6 +130,80 @@ public class DiaryCont {
   public DiaryCont() {
     System.out.println("-> DiaryCont created.");
   }
+  
+  public static synchronized String preview2(String upDir, String _src, int width,  int height) {
+    int RATIO = 0;
+    int SAME = -1;
+ 
+    File src = new File(upDir + "/" + _src); // 원본 파일 객체 생성
+    String srcname = src.getName(); // 원본 파일명 추출
+ 
+    // 순수 파일명 추출, mt.jpg -> mt 만 추출
+    String _dest = srcname.substring(0, srcname.indexOf("."));
+ 
+    // 축소 이미지 조합 /upDir/mt_t.jpg
+    File dest = new File(upDir + "/" + _dest + "_t.jpg");
+ 
+    Image srcImg = null;
+ 
+    String name = src.getName().toLowerCase(); // 파일명을 추출하여 소문자로 변경
+    // 이미지 파일인지 검사
+    if (name.endsWith("jpg") || name.endsWith("bmp") || name.endsWith("png")
+        || name.endsWith("gif")) {
+      try {
+        srcImg = ImageIO.read(src); // 메모리에 원본 이미지 생성
+        int srcWidth = srcImg.getWidth(null); // 원본 이미지 너비 추출
+        int srcHeight = srcImg.getHeight(null); // 원본 이미지 높이 추출
+        int destWidth = -1, destHeight = -1; // 대상 이미지 크기 초기화
+ 
+        if (width == SAME) { // width가 같은 경우
+          destWidth = srcWidth;
+        } else if (width > 0) {
+          destWidth = width; // 새로운 width를 할당
+        }
+ 
+        if (height == SAME) { // 높이가 같은 경우
+          destHeight = srcHeight;
+        } else if (height > 0) {
+          destHeight = height; // 새로운 높이로 할당
+        }
+ 
+        // 비율에 따른 크기 계산
+        if (width == RATIO && height == RATIO) {
+          destWidth = srcWidth;
+          destHeight = srcHeight;
+        } else if (width == RATIO) {
+          double ratio = ((double) destHeight) / ((double) srcHeight);
+          destWidth = (int) ((double) srcWidth * ratio);
+        } else if (height == RATIO) {
+          double ratio = ((double) destWidth) / ((double) srcWidth);
+          destHeight = (int) ((double) srcHeight * ratio);
+        }
+ 
+        // 메모리에 대상 이미지 생성
+        Image imgTarget = srcImg.getScaledInstance(destWidth, destHeight,
+            Image.SCALE_SMOOTH);
+        int pixels[] = new int[destWidth * destHeight];
+        PixelGrabber pg = new PixelGrabber(imgTarget, 0, 0, destWidth,
+            destHeight, pixels, 0, destWidth);
+ 
+        pg.grabPixels();
+ 
+        BufferedImage destImg = new BufferedImage(destWidth, destHeight,
+            BufferedImage.TYPE_INT_RGB);
+        destImg.setRGB(0, 0, destWidth, destHeight, pixels, 0, destWidth);
+ 
+        // 파일에 기록
+        ImageIO.write(destImg, "jpg", dest);
+ 
+        System.out.println(dest.getName() + " 이미지를 생성했습니다.");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+ 
+    return dest.getName();
+  }
 
   /**
    * 등록 폼
@@ -172,9 +251,58 @@ public class DiaryCont {
    * @return
    */
    // contentCont의 create 처리 과정보고 추가해야함. 
+//  @PostMapping(value = "/create")
+//  public String create(Model model, HttpSession session, HttpServletRequest request,
+//                       @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+//                       BindingResult bindingResult, RedirectAttributes ra) {
+//    Integer memberno = (Integer) session.getAttribute("memberno");
+//    if (bindingResult.hasErrors()) { 
+//        // 에러 발생 시 폼으로 돌아가기
+//      bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+//      logAction("read", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//      return "/diary/create";
+//    }
+//
+//    // 제목 및 내용 트림 처리
+//    diaryVO.setTitle(diaryVO.getTitle().trim());
+//    diaryVO.setSummary(diaryVO.getSummary().trim());
+//    diaryVO.setEmono(diaryVO.getEmono());
+//    diaryVO.setWeatherno(diaryVO.getWeatherno());
+//    
+//
+//    // ddate 설정
+//    if (diaryVO.getDdate() == null) {
+//        diaryVO.setDdate(Date.valueOf(LocalDate.now())); // 현재 날짜로 설정
+//    }
+//
+//    // 세션에서 memberno 가져오기
+//    
+//    if (memberno == null) {
+//        ra.addFlashAttribute("message", "로그인이 필요합니다.");
+//        return "/member/login_cookie_need";
+//    }
+//    diaryVO.setMemberno(memberno);
+//
+//    // DB 저장 로직 호출
+//    int cnt = diaryProc.create(diaryVO);
+//    System.out.println("-> create_cnt: " + cnt);
+//
+//    if (cnt == 1) {
+//      logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+//      int diaryno = diaryVO.getDiaryno();
+//      return "redirect:/diary/read/" + diaryno;
+//    } else {
+//      model.addAttribute("code", "create_fail");
+//      logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "N");
+//      return "/diary/msg";
+//    }
+//  }
+  
+  @Transactional
   @PostMapping(value = "/create")
   public String create(Model model, HttpSession session, HttpServletRequest request,
                        @Valid @ModelAttribute("diaryVO") DiaryVO diaryVO, 
+                       @ModelAttribute("illustrationVO") IllustrationVO illustrationVO,
                        BindingResult bindingResult, RedirectAttributes ra) {
     Integer memberno = (Integer) session.getAttribute("memberno");
     if (bindingResult.hasErrors()) { 
@@ -204,13 +332,41 @@ public class DiaryCont {
     }
     diaryVO.setMemberno(memberno);
 
+    // Hidden input에서 전달된 illust 값을 illust_file로 설정
+    if (diaryVO.getIllust_file() != null && !diaryVO.getIllust_file().isEmpty()) {
+        diaryVO.setIllust_file(diaryVO.getIllust_file());
+        System.out.println("Illust file set: " + diaryVO.getIllust_file());
+    } else {
+        System.out.println("Illust is null or empty");
+    }
+    
     // DB 저장 로직 호출
-    int cnt = diaryProc.create(diaryVO);
-    System.out.println("-> create_cnt: " + cnt);
+    int diary_cnt = diaryProc.create(diaryVO);
+    System.out.println("-> create_diary_cnt: " + diary_cnt);
 
-    if (cnt == 1) {
-      logAction("create", "diary", memberno, "title=" + diaryVO.getTitle(), request, "Y");
+    if (diary_cnt == 1) {
       int diaryno = diaryVO.getDiaryno();
+      String illust_thumb = "";
+      String upDir = Illustration.getUploadDir();
+      String illust_file = diaryVO.getIllust_file();
+      System.out.println("-> illust_file: " + illust_file);
+      
+      if (illust_file != null && !illust_file.isEmpty()) {
+        File illustFile = new File(upDir, illust_file); // 파일 객체 생성
+        System.out.println("Illustration file: " + illustFile.getAbsolutePath());
+        illust_thumb = preview2(upDir, illust_file, 200, 150);
+        String illust = illust_file;
+        String illust_saved = illust_file;
+        long illust_size = illust_file.length();
+        illustrationVO.setDiaryno(diaryno);
+        illustrationVO.setIllust(illust);
+        illustrationVO.setIllust_saved(illust_saved);
+        illustrationVO.setIllust_thumb(illust_thumb);
+        illustrationVO.setIllust_size(illust_size);
+        int illust_cnt = illustrationProc.create(illustrationVO);
+        System.out.println("-> create_illust_cnt: " + illust_cnt);
+      }
+      
       return "redirect:/diary/read/" + diaryno;
     } else {
       model.addAttribute("code", "create_fail");
@@ -234,7 +390,7 @@ public class DiaryCont {
     
     // 일기 번호에 해당하는 일러스트 데이터 조회
     List<IllustrationVO> illustrationList = illustrationProc.getIllustrationsByDiaryNo(diaryno);  // IllustrationProc에서 일러스트 데이터 조회
-    System.out.println(illustrationList);
+    //System.out.println(illustrationList);
     // List<DiaryVO> diaryList = diaryProc.read(diaryno);
     
     // 모델에 일기 데이터와 일러스트 목록 추가

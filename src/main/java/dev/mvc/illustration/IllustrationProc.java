@@ -108,8 +108,12 @@ public class IllustrationProc implements IllustrationProcInter {
     public String pagingBox(int now_page, String title, String start_date, String end_date, String list_file_name, 
                             int search_count, int record_per_page, int page_per_block) {
         // 전체 페이지 수 계산
+      
       int total_page = (int) Math.ceil((double) search_count / record_per_page);
-      if (now_page > total_page) {
+      if (search_count == 0) {
+        now_page = 1;
+        total_page = 1;
+      } else if (now_page > total_page) {
           now_page = total_page; // 마지막 페이지로 조정
       } else if (now_page < 1) {
           now_page = 1; // 최소 페이지는 1
