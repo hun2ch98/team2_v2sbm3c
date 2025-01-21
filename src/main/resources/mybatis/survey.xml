@@ -6,29 +6,29 @@
 
   <!-- 등록 -->
   <insert id="create" parameterType="dev.mvc.survey.SurveyVO">
-    INSERT INTO survey(surveyno, memberno, topic, sdate, edate, s_number, is_continue, 
+    INSERT INTO survey(surveyno, memberno, topic, sdate, edate, is_continue, 
                         file1, file1saved, thumb1, size1, goodcnt)
-    VALUES (survey_seq.nextval,#{memberno}, #{topic}, #{sdate}, #{edate}, #{s_number}, #{is_continue}, 
+    VALUES (survey_seq.nextval,#{memberno}, #{topic}, #{sdate}, #{edate}, #{is_continue}, 
             #{file1}, #{file1saved}, #{thumb1}, #{size1}, #{goodcnt})
   </insert>
   
   <!-- 전체 조회 -->
   <select id="list_all" resultType="dev.mvc.survey.SurveyVO">
-    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1, goodcnt
+    SELECT surveyno, memberno, topic, sdate, edate, is_continue, file1, file1saved, thumb1, size1, goodcnt
     FROM survey
     ORDER BY surveyno ASC
   </select>
   
   <!-- 특정 카테고리의 등록된 글목록 -->
   <select id="list_by_surveyno" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
-    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
+    SELECT surveyno, memberno, topic, sdate, edate, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
     FROM survey
     ORDER BY surveyno ASC
   </select>
   
   <!-- 카테고리별 검색 목록 -->
   <select id="list_by_surveyno_search" resultType="dev.mvc.survey.SurveyVO" parameterType="String">
-      SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
+      SELECT surveyno, memberno, topic, sdate, edate, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt
       FROM survey
       WHERE is_continue = #{is_continue, jdbcType=VARCHAR}
       ORDER BY surveyno ASC
@@ -46,7 +46,7 @@
   <select id="list_by_surveyno_search_paging" resultType="dev.mvc.survey.SurveyVO" parameterType="HashMap">
     SELECT *
     FROM (
-        SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt, 
+        SELECT surveyno, memberno, topic, sdate, edate, is_continue, LOWER(file1) as file1, file1saved, thumb1, size1, goodcnt, 
                ROW_NUMBER() OVER (ORDER BY surveyno ASC) AS rnum
         FROM survey
         WHERE (#{is_continue} = '' OR is_continue LIKE '%' || #{is_continue} || '%')
@@ -56,7 +56,7 @@
   
   <!-- 일반적인 조회 -->
   <select id="read" resultType="dev.mvc.survey.SurveyVO" parameterType="int">
-    SELECT surveyno, memberno, topic, sdate, edate, s_number, is_continue, file1, file1saved, thumb1, size1, goodcnt
+    SELECT surveyno, memberno, topic, sdate, edate, is_continue, file1, file1saved, thumb1, size1, goodcnt
     FROM survey
     WHERE surveyno = #{surveyno}
   </select>
@@ -64,7 +64,7 @@
   <!-- 수정 -->
   <update id="update_text" parameterType="dev.mvc.survey.SurveyVO">
     UPDATE survey
-    SET topic=#{topic}, sdate=#{sdate},  edate=#{edate},  s_number=#{s_number}, is_continue=#{is_continue}
+    SET topic=#{topic}, sdate=#{sdate}, edate=#{edate}, is_continue=#{is_continue}
     WHERE surveyno = #{surveyno}
   </update>
   

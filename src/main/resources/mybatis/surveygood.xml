@@ -86,6 +86,7 @@
           <if test="word != null and word != ''">
             UPPER(m.id) LIKE '%' || UPPER(#{word}) || '%'  
                   OR UPPER(s.topic) LIKE '%' || UPPER(#{word}) || '%'
+                  OR UPPER(g.surveyno) LIKE '%' || UPPER(#{word}) || '%'
           </if>
         </where>
     )
