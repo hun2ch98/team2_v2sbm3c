@@ -353,7 +353,6 @@ public class ItemCont {
   /**
    * 설문조사 참여
    * http://localhost:9093/surveyitem/finish
-   * @return
    */
   @PostMapping(value = "/finish")
   public String update_cnt(HttpSession session,
@@ -366,10 +365,8 @@ public class ItemCont {
       int memberno = (int)session.getAttribute("memberno");
    
       System.out.println("-> Received surveyno: " + surveyno);
-      
       System.out.println("-> itemno: "+ itemno);
       System.out.println("-> memberno: "+ memberno);
-//      this.itemProc.
 
       this.itemProc.update_cnt(itemno);
       
@@ -508,7 +505,6 @@ public class ItemCont {
     model.addAttribute("ylabel", " ");
 
     ArrayList<ItemVO> list_c = this.itemProc.list_member(surveyno);
-    
     ArrayList<String> chart_data = new ArrayList<>();
     
     chart_data.add(String.format("['%s', '%s']", " ", "설문 참여 인원"));
@@ -520,7 +516,7 @@ public class ItemCont {
 //    -> chart_data: [[' ', '설문 참여 인원'], ['주 5회 이상', 8], ['주 3회 이상', 13], ['자주 사용 안함', 2]]
     model.addAttribute("chart_data", chart_data);
     
-    return "/surveyitem/survey_chart.html";
+    return "/surveyitem/survey_chart";
   }
 
 
