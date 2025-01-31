@@ -55,13 +55,12 @@
     }
   </script>
 
-
   <div class='title_line'>
     <span th:text="${boardVO?.board_cate ?: '요청사항'}" class="title_line_text"></span>
     > 글 조회
   </div>
 
-  <aside class="aside_right" th:if="${session?.gradle != 'admin'}">
+  <aside class="aside_right">
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{/board/list_by_boardno_search_paging}">목록</a>

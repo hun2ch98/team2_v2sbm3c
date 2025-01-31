@@ -1,8 +1,6 @@
 <div th:fragment="list_search_fragment"> <!-- <div th:replace=... -->
   <div style="text-align: right; clear: both;">
-  <form name="frm_search" method="get" action="/survey/list_by_surveyno_admin">
-    <!--<input type="hidden" name="surveyno" id="surveyno" th:value="${surveyVO.surveyno}" >-->
-    
+  <form name="frm_search" method="get" action="/survey/list_by_surveyno_admin">    
     <input type="text" name="is_continue" id="is_continue" th:value="${is_continue}" >
     <button type='submit' class='btn btn-secondary btn-sm' 
                  style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색</button>

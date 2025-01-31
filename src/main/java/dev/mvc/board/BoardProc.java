@@ -43,18 +43,16 @@ public class BoardProc implements BoardProcInter {
 
     @Override
     public ArrayList<BoardVO> list_by_boardno_search_paging(HashMap<String, Object> map) {
-        // `now_page`를 기반으로 `startRow`와 `endRow`를 계산합니다.
+
         int now_page = (int) map.get("now_page");
-        int record_per_page = 5; // 페이지당 레코드 수
+        int record_per_page = 8; // 페이지당 레코드 수
 
         int startRow = (now_page - 1) * record_per_page + 1;
         int endRow = now_page * record_per_page;
 
-        // 계산된 값을 `HashMap`에 추가합니다.
         map.put("startRow", startRow);
         map.put("endRow", endRow);
 
-        // 데이터베이스 쿼리 실행
         ArrayList<BoardVO> list = this.boardDAO.list_by_boardno_search_paging(map);
         return list;
     }

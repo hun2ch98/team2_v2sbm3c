@@ -89,24 +89,17 @@ public class SurveyCont {
   }
   
   /**
-   * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
-   * 전송
-   * 
-   * @return
+   * POST 전송
    */
   @GetMapping(value = "/post2get")
   public String post2get(Model model, 
       @RequestParam(name="url", defaultValue="") String url) {
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
 
     return url; // forward, /templates/...
   }
   
   /**
    * 등록
-   * @param model
-   * @return
    */
   @GetMapping(value = "/create")
   public String create(Model model,
@@ -121,10 +114,6 @@ public class SurveyCont {
   
   /**
    * 등록 처리
-   * @param model
-   * @param surveyVO
-   * @param bindingResult
-   * @return
    */
   @PostMapping(value = "/create")
   public String create(HttpServletRequest request, 
@@ -135,9 +124,7 @@ public class SurveyCont {
     
     int memberno = (int) session.getAttribute("memberno");
     if (memberProc.isMemberAdmin(session)) { // 관리자로 로그인한경우
-      // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
-      // ------------------------------------------------------------------------------
       String file1 = ""; // 원본 파일명 image
       String file1saved = ""; // 저장된 파일명, image
       String thumb1 = ""; // preview image
@@ -146,17 +133,14 @@ public class SurveyCont {
       System.out.println("-> upDir: " + upDir);
       MultipartFile mf = surveyVO.getFile1MF();
 
-      file1 = mf.getOriginalFilename(); // 원본 파일명 산출, 01.jpg
-      System.out.println("-> 원본 파일명 산출 file1: " + file1);
+      file1 = mf.getOriginalFilename(); 
 
       long size1 = mf.getSize(); // 파일 크기
       if (size1 > 0) { // 파일 크기 체크, 파일을 올리는 경우
-        if (Tool.checkUploadFile(file1) == true) { // 업로드 가능한 파일인지 검사
-          // 파일 저장 후 업로드된 파일명이 리턴됨, spring.jsp, spring_1.jpg, spring_2.jpg...
+        if (Tool.checkUploadFile(file1) == true) { 
           file1saved = Upload.saveFileSpring(mf, upDir);
 
-          if (Tool.isImage(file1saved)) { // 이미지인지 검사
-            // thumb 이미지 생성후 파일명 리턴됨, width: 200, height: 150
+          if (Tool.isImage(file1saved)) { 
             thumb1 = Tool.preview(upDir, file1saved, 200, 150);
           }
 
@@ -174,9 +158,7 @@ public class SurveyCont {
       } else { // 글만 등록하는 경우
         System.out.println("-> 글만 등록");
       }
-      // ------------------------------------------------------------------------------
-      // 파일 전송 코드 종료
-      // ------------------------------------------------------------------------------
+
       surveyVO.setMemberno(memberno);
       int cnt = this.surveyProc.create(surveyVO);
 
@@ -187,10 +169,10 @@ public class SurveyCont {
 
       } else {
         logAction("create", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");  
-        ra.addFlashAttribute("code", "create_fail"); // DBMS 등록 실패
-        ra.addFlashAttribute("cnt", 0); // 업로드 실패
-        ra.addFlashAttribute("url", "/survey/msg"); // msg.html, redirect parameter 적용
-        return "redirect:/survey/msg"; // Post -> Get - param...
+        ra.addFlashAttribute("code", "create_fail"); 
+        ra.addFlashAttribute("cnt", 0); 
+        ra.addFlashAttribute("url", "/survey/msg"); 
+        return "redirect:/survey/msg"; 
       }
     } else { // 로그인 실패 한 경우
       return "redirect:/member/login_cookie_need"; // /member/login_cookie_need.html
@@ -198,10 +180,8 @@ public class SurveyCont {
   }
   
   /**
-   * 유형 3
    * 카테고리별 목록 + 검색 + 페이징 
    * 회원
-   * @return
    */
   @GetMapping(value = "/list_by_surveyno_search_paging")
   public String list_by_surveyno_search_paging(
@@ -245,7 +225,6 @@ public class SurveyCont {
       String paging = this.surveyProc.pagingBox(memberno, now_page, is_continue, "/survey/list_by_surveyno_search_paging", search_count,
           Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
       model.addAttribute("paging", paging);
-//      model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
       model.addAttribute("search_count", search_count);
 
@@ -253,7 +232,7 @@ public class SurveyCont {
       int no = search_count - ((now_page - 1) * Survey.RECORD_PER_PAGE);
       model.addAttribute("no", no);
 
-      return "/survey/list_by_surveyno_search_paging"; // /templates/board/list_by_boardno_search_paging.html
+      return "/survey/list_by_surveyno_search_paging";
       } else {
       return "member/login_cookie_need";
       }
@@ -261,10 +240,8 @@ public class SurveyCont {
   }
   
   /**
-   * 유형 3
    * 카테고리별 목록 + 검색 + 페이징 
    * 관리자 
-   * @return
    */
   @GetMapping(value = "/list_by_surveyno_admin")
   public String list_by_surveyno_admin(
@@ -288,7 +265,6 @@ public class SurveyCont {
       }
       is_continue = Tool.checkNull(is_continue).trim();
       model.addAttribute("memberVO", memberVO);
-//      model.addAttribute("surveyno", surveyno);
       model.addAttribute("is_continue", is_continue);
       model.addAttribute("now_page", now_page);
 
@@ -313,7 +289,7 @@ public class SurveyCont {
       int no = search_count - ((now_page - 1) * Survey.RECORD_PER_PAGE);
       model.addAttribute("no", no);
 
-      return "/survey/list_by_surveyno_admin"; // /templates/board/list_by_boardno_search_paging.html
+      return "/survey/list_by_surveyno_admin"; 
       } else {
       return "member/login_cookie_need";
       }
@@ -323,7 +299,6 @@ public class SurveyCont {
 
   /**
    * 글 수정 폼
-   *
    */
   @GetMapping(value = "/update_text")
   public String update_text(HttpSession session, 
@@ -340,9 +315,7 @@ public class SurveyCont {
       MemberVO memberVO = this.memberProc.read(surveyVO.getMemberno());
       model.addAttribute("memberVO", memberVO);
 
-      return "/survey/update_text"; // /templates/contents/update_text.html
-      // String content = "장소:\n인원:\n준비물:\n비용:\n기타:\n";
-      // model.addAttribute("content", content);
+      return "/survey/update_text"; 
 
     } else {
       return "member/login_cookie_need";
@@ -352,8 +325,6 @@ public class SurveyCont {
 
   /**
    * 글 수정 처리 
-   * 
-   * @return
    */
   @PostMapping(value = "/update_text")
   public String update_text(HttpSession session, 
@@ -371,19 +342,18 @@ public class SurveyCont {
           // Redirect 시 필요한 데이터 추가
           ra.addAttribute("surveyno", surveyVO.getSurveyno());
           ra.addAttribute("memberno", surveyVO.getMemberno());
-          return "redirect:/survey/list_by_surveyno_admin"; // @GetMapping(value = "/read")
+          return "redirect:/survey/list_by_surveyno_admin"; 
 
       } else { // 정상적인 로그인이 아닌 경우 로그인 유도
         logAction("update_text", "survey", memberno, "topic=" + surveyVO.getTopic(), request, "N");
-          ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-          return "redirect:/survey/post2get"; // @GetMapping(value = "/msg")
+          ra.addAttribute("url", "/member/login_cookie_need"); 
+          return "redirect:/survey/post2get"; 
       }
   }
 
 
   /**
    * 파일 수정 폼 
-   * @return
    */
   @GetMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, 
@@ -406,7 +376,6 @@ public class SurveyCont {
   
   /**
    * 파일 수정 처리 
-   * @return
    */
   @PostMapping(value = "/update_file")
   public String update_file(HttpSession session, Model model, RedirectAttributes ra,HttpServletRequest request,
@@ -422,7 +391,7 @@ public class SurveyCont {
       String thumb1 = surveyVO_old.getThumb1(); // 실제 저장된 preview 이미지 파일명
       long size1 = 0;
 
-      String upDir = Survey.getUploadDir(); // C:/kd/deploy/resort_v4sbm3c/contents/storage/
+      String upDir = Survey.getUploadDir(); 
 
       Tool.deleteFile(upDir, file1saved); // 실제 저장된 파일삭제
       Tool.deleteFile(upDir, thumb1); // preview 이미지 삭제
@@ -434,12 +403,10 @@ public class SurveyCont {
       file1 = mf.getOriginalFilename(); // 원본 파일명
       size1 = mf.getSize(); // 파일 크기
 
-      if (size1 > 0) { // 폼에서 새롭게 올리는 파일이 있는지 파일 크기로 체크 ★
-        // 파일 저장 후 업로드된 파일명이 리턴됨, spring.jsp, spring_1.jpg...
+      if (size1 > 0) { 
         file1saved = Upload.saveFileSpring(mf, upDir);
 
-        if (Tool.isImage(file1saved)) { // 이미지인지 검사
-          // thumb 이미지 생성후 파일명 리턴됨, width: 250, height: 200
+        if (Tool.isImage(file1saved)) { 
           thumb1 = Tool.preview(upDir, file1saved, 250, 200);
         }
 
@@ -454,9 +421,6 @@ public class SurveyCont {
       surveyVO.setFile1saved(file1saved);
       surveyVO.setThumb1(thumb1);
       surveyVO.setSize1(size1);
-      // -------------------------------------------------------------------
-      // 파일 전송 코드 종료
-      // -------------------------------------------------------------------
 
       this.surveyProc.update_file(surveyVO); // Oracle 처리
       ra.addAttribute ("surveyno", surveyVO.getSurveyno());
@@ -471,7 +435,7 @@ public class SurveyCont {
   }
   
   /**
-   * 삭제폼 http://localhost:9091/cate/delete/1
+   * 삭제폼 
    */
   @GetMapping(value = "/check_delete")
   public String delete(HttpSession session, Model model, 

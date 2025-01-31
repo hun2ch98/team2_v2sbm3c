@@ -71,9 +71,6 @@ public class ItemCont {
 
   /**
    * 설문조사 항목 추가 폼
-   * @param surveyno
-   * @param model
-   * @return
    */
     @GetMapping(value = "/create/{surveyno}")
     public String create(Model model,
@@ -88,7 +85,6 @@ public class ItemCont {
 
   /**
    * 설문조사 항목 추가 처리
-   * @return
    */
   @PostMapping(value = "/create")
   public String create(
@@ -96,13 +92,11 @@ public class ItemCont {
       BindingResult bindingResult,
       RedirectAttributes ra,
       HttpSession session) {
-//    System.out.println("surveyno: " + surveyno);
     if (memberProc.isMemberAdmin(session)) { 
       if (bindingResult.hasErrors()) {
         return "/surveyitem/create";
       }
 
-//      itemVO.setSurveyno(surveyno); // 경로 변수에서 가져온 surveyno 설정
       int cnt = this.itemProc.create(itemVO); // 항목 추가
 
       if (cnt == 1) {
@@ -118,8 +112,6 @@ public class ItemCont {
 
   /**
    * 설문조사 항목 목록 
-   * 회원 모드
-   * @return
    */
   @GetMapping(value = "/list_search_member")
   public String list_search_paging(HttpSession session, Model model,
@@ -142,10 +134,7 @@ public class ItemCont {
         System.out.println("-> list size: " + list_m.size());
         model.addAttribute("list_m", list_m);
 
-        
-//      -------------------------------------------------------------------
 //      추천 관련
-//      -------------------------------------------------------------------
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("surveyno", surveyno);
         
@@ -170,8 +159,6 @@ public class ItemCont {
 
   /**
    * 등록 폼 및 검색 목록 + 페이징 
-   * 관리자 모드
-   * @return
    */
   @GetMapping(value = "/list_search")
   public String list_search_paging(HttpSession session, Model model,
@@ -213,13 +200,9 @@ public class ItemCont {
         model.addAttribute("totalCount", totalCount);
         
         ArrayList<ItemVO> list = this.itemProc.list_search_paging(surveyno, word, now_page, this.record_per_page);
-//        System.out.println("-> listsize: " + list.size());
-//        System.out.println("-> word: " + word);
         model.addAttribute("list", list);
         
-        // --------------------------------------------------------------------------------------
         // 페이지 번호 목록 생성
-        // --------------------------------------------------------------------------------------
         int search_count = this.itemProc.count_by_search(map);
         String paging = this.itemProc.pagingBox(surveyno, now_page, word, "/surveyitem/list_search", 
             search_count, record_per_page, now_page);
@@ -232,13 +215,8 @@ public class ItemCont {
         // 일련 변호 생성: 레코드 갯수 - ((현재 페이지수 -1) * 페이지당 레코드 수)
         int no = search_count - ((now_page - 1) * this.record_per_page);
         model.addAttribute("no", no);
-        // --------------------------------------------------------------------------------------
         
-        
-//      -------------------------------------------------------------------
 //      추천 관련
-//      -------------------------------------------------------------------
-//        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("surveyno", surveyno);
         
         int heartCnt = 0;
@@ -248,10 +226,7 @@ public class ItemCont {
           
           heartCnt = this.surveygoodProc.heartCnt(map);
         } 
-        
-        
         model.addAttribute("heartCnt", heartCnt);
-//    -------------------------------------------------------------------
 
         return "/surveyitem/list_search";
       } else {
@@ -387,9 +362,7 @@ public class ItemCont {
 
   
   /**
-   * 추천 처리 http://localhost:9093/surveyitem/good
-   * 
-   * @return
+   * 추천 처리 
    */
   @PostMapping(value = "/good")
   @ResponseBody
@@ -452,9 +425,8 @@ public class ItemCont {
   }  
   
   /**
-   * 설문조사 결과 보기
-   * 회원
-   * @return
+   * 회원 모드
+   * 설문조사 결과 조회
    */
   @GetMapping("/result")
   public String result(@RequestParam("surveyno") int surveyno, Model model) {
@@ -474,7 +446,6 @@ public class ItemCont {
   /**
    * 관리자 모드
    * 설문조사 결과 조회
-   * @return
    */
   @GetMapping("/result_admin")
   public String result_admin(@RequestParam("surveyno") int surveyno, Model model) {
@@ -484,17 +455,11 @@ public class ItemCont {
       
       ArrayList<ItemVO> list = this.itemProc.list_member(surveyno);
       model.addAttribute("list", list);
-      
-//      int totalParticipants = this.itemProc.count_sum(surveyno);
-//      model.addAttribute("totalParticipants", totalParticipants);
-
       return "/surveyitem/result_admin";
   }
   
   /**
    * 컬럼 차트, http://localhost:9093/surveyitem/survey_chart?surveyno=1
-   * @param model
-   * @return
    */
   @GetMapping("/survey_chart")
   public String survey_chart(Model model,

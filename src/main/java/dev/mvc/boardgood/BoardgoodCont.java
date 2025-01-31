@@ -40,7 +40,6 @@ public class BoardgoodCont {
   
   /**
    * POST 전송
-   * @return
    */
   @GetMapping(value = "/post2get")
   public String post2get(Model model, 
@@ -70,8 +69,6 @@ public class BoardgoodCont {
   
   /**
    * 서치 + 페이징 목록
-   * @param model
-   * @return
    */
   @GetMapping(value = "/list_all")
   public String list_search_paging(HttpSession session, Model model,

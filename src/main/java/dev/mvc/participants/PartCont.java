@@ -43,10 +43,7 @@ public class PartCont {
   }
   
   /**
-   * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
-   * 전송
-   * 
-   * @return
+   * POST 전송
    */
   @GetMapping(value = "/post2get")
   public String post2get(Model model, 
@@ -57,8 +54,6 @@ public class PartCont {
   
   /**
    * 목록
-   * @param model
-   * @return
    */
   @GetMapping(value = "/list_all")
   public String list_search_paging(HttpSession session, Model model,
@@ -88,8 +83,6 @@ public class PartCont {
       model.addAttribute("now_page", now_page);
       
       HashMap<String, Object> map = new HashMap<>();
-//      map.put("memberno", memberno);
-//      map.put("pno", pno);
       map.put("word", word);
       map.put("now_page", now_page);
       map.put("start_row", start_row);
@@ -119,7 +112,6 @@ public class PartCont {
   
   /**
    * 삭제 처리 
-   * @return
    */
   @PostMapping(value = "/delete")
   public String delete_proc(HttpSession session, 

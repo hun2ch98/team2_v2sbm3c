@@ -24,7 +24,6 @@
     <a href="javascript:location.reload();">새로고침</a>  
   </aside> 
   
-  <!-- /survey/list_search_com.html 파일의 list_search_fragment import -->
   <div th:replace="~{survey/list_search_com::list_search_fragment}"></div>
 
   <div class='menu_line'></div>
@@ -96,11 +95,7 @@
     </tr> 
 
   </table>
-   
-  <!-- 페이지 버튼 목록 출력 시작 -->
   <div class="bottom_menu" th:utext="${paging}"></div>
-  <!-- 페이지 버튼 목록 출력 종료 --> 
-
 </div>
 </body>
 </html>
