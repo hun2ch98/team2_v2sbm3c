@@ -56,12 +56,6 @@ public class ItemProc implements ItemProcInter{
     return cnt;
   }
   
-//  @Override
-//  public int update_cnt(int itemno) {
-//    int cnt = this.itemDAO.update_cnt(itemno);
-//    return cnt;
-//  }
-  
   @Override
   public int update_cnt(int itemno) {
       System.out.println("update_cnt called with itemno: " + itemno); // 로그 추가
@@ -69,7 +63,6 @@ public class ItemProc implements ItemProcInter{
       System.out.println("update_cnt result: " + cnt);
       return cnt;
   }
-
   
   @Override
   public int create(PartVO partVO) {
@@ -95,8 +88,6 @@ public class ItemProc implements ItemProcInter{
 
     int start_num = ((now_page - 1) * record_per_page) + 1;
     int end_num=(start_num + record_per_page) - 1;
-
-    // System.out.println("WHERE r >= "+start_num+" AND r <= " + end_num);
     
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("word", word);
@@ -104,25 +95,13 @@ public class ItemProc implements ItemProcInter{
     map.put("start_num", start_num);
     map.put("end_num", end_num);
     
-
-    
     ArrayList<ItemVO> list = this.itemDAO.list_search_paging(map);
-    // System.out.println("-> " + list.size());
     
     return list;
   }
 
   /** 
-   * SPAN태그를 이용한 박스 모델의 지원, 1 페이지부터 시작 
-   * 현재 페이지: 11 / 22   [이전] 11 12 13 14 15 16 17 18 19 20 [다음] 
-   *
-   * @param now_page  현재 페이지
-   * @param word 검색어
-   * @param list_file_name 목록 파일명
-   * @param search_count 검색 레코드수   
-   * @param record_per_page 페이지당 레코드 수
-   * @param page_per_block 블럭당 페이지 수
-   * @return 페이징 생성 문자열
+   * 페이징 박스
    */ 
   @Override
   public String pagingBox(int surveyno, int now_page, String word, String list_file_name, int search_count, 

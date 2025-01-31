@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}"> <!-- layout.html 상속 -->
 <div layout:fragment="content">
-  <div class='title_line'>
-    요청사항 작성하기
-    
-  </div>
+  <div class='title_line'>요청사항 작성하기</div>
   
   <aside class="aside_right">
-    <a th:href="@{.|/create?boardno=${boardVO.boardno}|}">등록</a>
-    <span class='menu_divide'>│</span>
     <a href="javascript:location.reload();">새로고침</a>
     <span class='menu_divide'>│</span>
     <a th:href="@{/board/list_by_boardno_search_paging}">목록</a>

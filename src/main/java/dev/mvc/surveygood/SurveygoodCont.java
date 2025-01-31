@@ -33,7 +33,7 @@ public class SurveygoodCont {
   SurveygoodProcInter surveygoodProc;
   
   @Autowired
-  @Qualifier("dev.mvc.member.MemberProc") // @Service("dev.mvc.member.MemberProc")
+  @Qualifier("dev.mvc.member.MemberProc") 
   private MemberProcInter memberProc;
   
   public SurveygoodCont() {
@@ -41,18 +41,13 @@ public class SurveygoodCont {
   }
   
   /**
-   * POST 요청시 새로고침 방지, POST 요청 처리 완료 → redirect → url → GET → forward -> html 데이터
-   * 전송
-   * 
+   * POST 전송
    * @return
    */
   @GetMapping(value = "/post2get")
   public String post2get(Model model, 
       @RequestParam(name="url", defaultValue = "") String url) {
-//    ArrayList<CateVOMenu> menu = this.cateProc.menu();
-//    model.addAttribute("menu", menu);
-
-    return url; // forward, /templates/...
+    return url; 
   }
   
   /**
@@ -76,10 +71,7 @@ public class SurveygoodCont {
   
   /**
    * 목록
-   * @param model
-   * @return
    */
-  // http://localhost:9091/cate/list_all
   @GetMapping(value = "/list_all")
   public String list_search_paging(HttpSession session, Model model,
       @ModelAttribute("surveygoodVO") SurveygoodVO surveygoodVO,
@@ -115,7 +107,6 @@ public class SurveygoodCont {
     model.addAttribute("list", list);
     
     int search_count = this.surveygoodProc.count_search(map);
-//    System.out.println("search_count: " + search_count);
     String paging = this.surveygoodProc.pagingBox(memberno, now_page, word, "/surveygood/list_all", search_count,
         Survey.RECORD_PER_PAGE, Survey.PAGE_PER_BLOCK);
     model.addAttribute("paging", paging);
@@ -127,13 +118,11 @@ public class SurveygoodCont {
     int no = search_count - ((now_page - 1) * Survey.RECORD_PER_PAGE);
     model.addAttribute("no", no);
 
-    return "/surveygood/list_all"; // /templates/calendar/list_all.html
+    return "/surveygood/list_all"; 
   }
   
   /**
-   * 삭제 처리 http://localhost:9091/contentsgood/delete?goodno=1
-   * 
-   * @return
+   * 삭제 처리 
    */
   @PostMapping(value = "/delete")
   public String delete_proc(HttpSession session, 
@@ -147,8 +136,8 @@ public class SurveygoodCont {
       return "redirect:/surveygood/list_all";
 
     } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-      ra.addAttribute("url", "/member/login_cookie_need"); // /templates/member/login_cookie_need.html
-      return "redirect:/surveygood/post2get"; // @GetMapping(value = "/msg")
+      ra.addAttribute("url", "/member/login_cookie_need"); 
+      return "redirect:/surveygood/post2get"; 
     }
 
   }

@@ -55,13 +55,7 @@ public class BoardVO {
   /** 비추천수 */
   private int badcnt;
   
-  //파일 업로드 관련
-  // -----------------------------------------------------------------------------------
-  /**
-  이미지 파일
-  <input type='file' class="form-control" name='file1MF' id='file1MF' 
-             value='' placeholder="파일 선택">
-  */
+  /** 이미지 파일 */
   private MultipartFile file1MF = null;
   /** 메인 이미지 크기 단위, 파일 크기 */
   private String size1_label = "";
